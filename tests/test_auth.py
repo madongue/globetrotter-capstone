@@ -25,7 +25,7 @@ def client():
 
 def test_register_and_login(client):
     response = client.post(
-        "/register",
+        "/api/register",
         data=json.dumps(
             {"username": "alice", "password": "password123", "preferences": ["beach"]}
         ),
@@ -35,7 +35,7 @@ def test_register_and_login(client):
     assert response.get_json()["message"] == "user registered successfully"
 
     response = client.post(
-        "/login",
+        "/api/login",
         data=json.dumps({"username": "alice", "password": "password123"}),
         content_type="application/json",
     )
@@ -45,12 +45,12 @@ def test_register_and_login(client):
 
 def test_register_duplicate_username(client):
     client.post(
-        "/register",
+        "/api/register",
         data=json.dumps({"username": "alice", "password": "password123"}),
         content_type="application/json",
     )
     response = client.post(
-        "/register",
+        "/api/register",
         data=json.dumps({"username": "alice", "password": "otherpass"}),
         content_type="application/json",
     )
@@ -60,7 +60,7 @@ def test_register_duplicate_username(client):
 
 def test_login_invalid_credentials(client):
     response = client.post(
-        "/login",
+        "/api/login",
         data=json.dumps({"username": "bob", "password": "wrong"}),
         content_type="application/json",
     )

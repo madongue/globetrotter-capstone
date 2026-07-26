@@ -18,6 +18,15 @@ function App() {
   const [paymentTargetType, setPaymentTargetType] = useState('total');
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [newDiscussionTitle, setNewDiscussionTitle] = useState('');
+  const [newDiscussionMessage, setNewDiscussionMessage] = useState('');
+  const [discussionReplies, setDiscussionReplies] = useState({});
+  const [media, setMedia] = useState([]);
+  const [newMediaUrl, setNewMediaUrl] = useState('');
+  const [newMediaCaption, setNewMediaCaption] = useState('');
+  const [newMediaType, setNewMediaType] = useState('photo');
+  const [mediaGroupId, setMediaGroupId] = useState('');
   const [newItinerary, setNewItinerary] = useState({
     title: '',
     location: '',
@@ -68,9 +77,19 @@ function App() {
       }
 
       if (groupsRes.ok) {
-        setGroups(await groupsRes.json());
+        const groupsData = await groupsRes.json();
+        setGroups(groupsData);
       } else {
         setGroups([]);
+      }
+
+      const mediaRes = await fetch(`${API_BASE}/media`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (mediaRes.ok) {
+        setMedia(await mediaRes.json());
+      } else {
+        setMedia([]);
       }
     } catch (error) {
       setAlert({ type: 'error', message: 'Unable to load dashboard data.' });
@@ -278,6 +297,139 @@ function App() {
     }
   };
 
+  const handleCreateDiscussion = async (event) => {
+    event.preventDefault();
+    if (!token || !selectedGroup) {
+      setAlert({ type: 'error', message: 'Please login and select a group first.' });
+      return;
+    }
+
+    const title = newDiscussionTitle.trim();
+    const message = newDiscussionMessage.trim();
+    if (!title || !message) {
+      setAlert({ type: 'error', message: 'Both title and message are required.' });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/groups/${selectedGroup.id}/discussions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title, message }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        setAlert({ type: 'error', message: result.error || 'Unable to create discussion.' });
+        return;
+      }
+
+      setSelectedGroup(result.group);
+      setNewDiscussionTitle('');
+      setNewDiscussionMessage('');
+      setAlert({ type: 'success', message: 'Discussion thread created.' });
+    } catch (error) {
+      setAlert({ type: 'error', message: 'Unable to create discussion.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReplyToDiscussion = async (groupId, discussionId, replyText) => {
+    if (!token) {
+      setAlert({ type: 'error', message: 'Please login to reply.' });
+      return;
+    }
+
+    if (!replyText.trim()) {
+      setAlert({ type: 'error', message: 'Reply text is required.' });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/groups/${groupId}/discussions/${discussionId}/reply`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ message: replyText }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        setAlert({ type: 'error', message: result.error || 'Unable to post reply.' });
+        return;
+      }
+
+      setSelectedGroup((current) => {
+        if (!current) return current;
+        return { ...current, discussions: current.discussions.map((discussion) => (
+          discussion.id === discussionId ? result.discussion : discussion
+        )) };
+      });
+      setDiscussionReplies((prev) => ({ ...prev, [discussionId]: '' }));
+      setAlert({ type: 'success', message: 'Reply posted.' });
+    } catch (error) {
+      setAlert({ type: 'error', message: 'Unable to post reply.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleShareMedia = async (event) => {
+    event.preventDefault();
+    if (!token) {
+      setAlert({ type: 'error', message: 'Please login to share media.' });
+      return;
+    }
+
+    const url = newMediaUrl.trim();
+    if (!url) {
+      setAlert({ type: 'error', message: 'Media URL is required.' });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/media`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          type: newMediaType,
+          url,
+          caption: newMediaCaption.trim(),
+          group_id: mediaGroupId || undefined,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        setAlert({ type: 'error', message: result.error || 'Unable to share media.' });
+        return;
+      }
+
+      setMedia((current) => [result, ...current]);
+      setNewMediaUrl('');
+      setNewMediaCaption('');
+      setNewMediaType('photo');
+      setMediaGroupId('');
+      setAlert({ type: 'success', message: 'Media shared successfully.' });
+    } catch (error) {
+      setAlert({ type: 'error', message: 'Unable to share media.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleJoinGroup = async (groupId) => {
     if (!token) {
       setAlert({ type: 'error', message: 'Please login to join a group.' });
@@ -304,6 +456,11 @@ function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleViewGroup = (group) => {
+    setSelectedGroup(group);
+    setPage('group');
   };
 
   const handleSelectItinerary = (itinerary) => {
@@ -669,9 +826,14 @@ function App() {
                           <strong>{group.name}</strong>
                           <p>{group.description}</p>
                         </div>
-                        <button type="button" className="button button-secondary" onClick={() => handleJoinGroup(group.id)}>
-                          Join
-                        </button>
+                        <div className="group-card-actions">
+                          <button type="button" className="button button-secondary" onClick={() => handleJoinGroup(group.id)}>
+                            Join
+                          </button>
+                          <button type="button" className="button button-tertiary" onClick={() => handleViewGroup(group)}>
+                            View
+                          </button>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -689,100 +851,183 @@ function App() {
           </div>
         )}
 
-        {page === 'itinerary' && selectedItinerary && (
+        {(page === 'itinerary' && selectedItinerary) || (page === 'group' && selectedGroup) ? (
           <section className="dashboard-section">
             <div className="panel panel-primary">
               <button type="button" className="link-button" onClick={() => setPage('dashboard')}>
                 ← Back to dashboard
               </button>
-              <h2>{selectedItinerary.title}</h2>
-              <p>{selectedItinerary.location}</p>
-              <p>{selectedItinerary.notes}</p>
-              <div className="detail-grid">
-                <div>
-                  <strong>Participants</strong>
-                  <p>{selectedItinerary.participants?.join(', ') || 'None'}</p>
-                </div>
-                <div>
-                  <strong>Status</strong>
-                  <p>{selectedItinerary.payment_status}</p>
-                </div>
-                <div>
-                  <strong>Total budget</strong>
-                  <p>${selectedItinerary.cost_breakdown?.total_budget ?? 0}</p>
-                </div>
-              </div>
+              {page === 'itinerary' && selectedItinerary && (
+                <>
+                  <h2>{selectedItinerary.title}</h2>
+                  <p>{selectedItinerary.location}</p>
+                  <p>{selectedItinerary.notes}</p>
+                </>
+              )}
+              {page === 'group' && selectedGroup && (
+                <>
+                  <h2>{selectedGroup.name}</h2>
+                  <p>{selectedGroup.description}</p>
+                  <p>
+                    <strong>Members:</strong> {selectedGroup.members?.join(', ') || 'None'}
+                  </p>
+                </>
+              )}
             </div>
 
-            <div className="grid-2 mt-24">
-              <div className="panel">
-                <h3>Trip details</h3>
-                <p><strong>Hotel:</strong> {selectedItinerary.hotel?.name || 'None'}</p>
-                <p><strong>Activities:</strong></p>
-                <ul>
-                  {(selectedItinerary.activities || []).map((activity) => (
-                    <li key={activity.name}>{activity.name} — ${activity.cost}</li>
-                  ))}
-                </ul>
-                <p><strong>Places to visit:</strong></p>
-                <ul>
-                  {(selectedItinerary.places_to_visit || []).map((place) => (
-                    <li key={place.name}>{place.name} — ${place.cost}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="panel">
-                <h3>Payment receipt</h3>
-                {selectedItinerary.receipts?.length > 0 ? (
-                  <ul className="list-card">
-                    {selectedItinerary.receipts.map((receipt) => (
-                      <li key={receipt.id}>
-                        <strong>{receipt.note || receipt.target_type}</strong>
-                        <p>Amount: ${receipt.amount.toFixed(2)}</p>
-                        <p>Commission: ${receipt.commission_amount.toFixed(2)}</p>
-                        <p>Net: ${receipt.net_amount.toFixed(2)}</p>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No payments recorded yet.</p>
-                )}
-              </div>
-            </div>
+            {page === 'itinerary' && selectedItinerary && (
+              <>
+                <div className="grid-2 mt-24">
+                  <div className="panel">
+                    <h3>Trip details</h3>
+                    <p><strong>Hotel:</strong> {selectedItinerary.hotel?.name || 'None'}</p>
+                    <p><strong>Activities:</strong></p>
+                    <ul>
+                      {(selectedItinerary.activities || []).map((activity) => (
+                        <li key={activity.name}>{activity.name} — ${activity.cost}</li>
+                      ))}
+                    </ul>
+                    <p><strong>Places to visit:</strong></p>
+                    <ul>
+                      {(selectedItinerary.places_to_visit || []).map((place) => (
+                        <li key={place.name}>{place.name} — ${place.cost}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="panel">
+                    <h3>Payment receipt</h3>
+                    {selectedItinerary.receipts?.length > 0 ? (
+                      <ul className="list-card">
+                        {selectedItinerary.receipts.map((receipt) => (
+                          <li key={receipt.id}>
+                            <strong>{receipt.note || receipt.target_type}</strong>
+                            <p>Amount: ${receipt.amount.toFixed(2)}</p>
+                            <p>Commission: ${receipt.commission_amount.toFixed(2)}</p>
+                            <p>Net: ${receipt.net_amount.toFixed(2)}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No payments recorded yet.</p>
+                    )}
+                  </div>
+                </div>
 
-            <div className="panel mt-24">
-              <h3>Make a payment</h3>
-              <form onSubmit={handlePayItinerary} className="stacked-form">
-                <label>
-                  Amount
-                  <input
-                    type="number"
-                    value={paymentAmount}
-                    onChange={(event) => setPaymentAmount(event.target.value)}
-                    placeholder="150"
-                    required
-                  />
-                </label>
-                <label>
-                  Payment method
-                  <select value={paymentMethod} onChange={(event) => setPaymentMethod(event.target.value)}>
-                    <option value="mobile">Mobile</option>
-                    <option value="card">Card</option>
-                  </select>
-                </label>
-                <label>
-                  Target type
-                  <select value={paymentTargetType} onChange={(event) => setPaymentTargetType(event.target.value)}>
-                    <option value="total">Total</option>
-                    <option value="share">Share</option>
-                    <option value="event_ticket">Event ticket</option>
-                  </select>
-                </label>
-                <button type="submit" className="button button-primary">Submit payment</button>
-              </form>
-            </div>
+                <div className="panel mt-24">
+                  <h3>Make a payment</h3>
+                  <form onSubmit={handlePayItinerary} className="stacked-form">
+                    <label>
+                      Amount
+                      <input
+                        type="number"
+                        value={paymentAmount}
+                        onChange={(event) => setPaymentAmount(event.target.value)}
+                        placeholder="150"
+                        required
+                      />
+                    </label>
+                    <label>
+                      Payment method
+                      <select value={paymentMethod} onChange={(event) => setPaymentMethod(event.target.value)}>
+                        <option value="mobile">Mobile</option>
+                        <option value="card">Card</option>
+                      </select>
+                    </label>
+                    <label>
+                      Target type
+                      <select value={paymentTargetType} onChange={(event) => setPaymentTargetType(event.target.value)}>
+                        <option value="total">Total</option>
+                        <option value="share">Share</option>
+                        <option value="event_ticket">Event ticket</option>
+                      </select>
+                    </label>
+                    <button type="submit" className="button button-primary">Submit payment</button>
+                  </form>
+                </div>
+              </>
+            )}
+
+            {page === 'group' && selectedGroup && (
+              <>
+                <div className="grid-2 mt-24">
+                  <div className="panel">
+                    <h3>Group discussions</h3>
+                    {selectedGroup.discussions?.length > 0 ? (
+                      <ul className="list-card">
+                        {selectedGroup.discussions.map((discussion) => (
+                          <li key={discussion.id}>
+                            <strong>{discussion.title}</strong>
+                            <p>{discussion.posts[0]?.message}</p>
+                            <div className="discussion-meta">
+                              <span>{discussion.posts.length} posts</span>
+                              <span>Started by {discussion.created_by}</span>
+                            </div>
+                            <div className="reply-box">
+                              <input
+                                type="text"
+                                value={discussionReplies[discussion.id] || ''}
+                                onChange={(event) => setDiscussionReplies((prev) => ({ ...prev, [discussion.id]: event.target.value }))}
+                                placeholder="Write a reply"
+                              />
+                              <button
+                                type="button"
+                                className="button button-secondary"
+                                onClick={() => handleReplyToDiscussion(selectedGroup.id, discussion.id, discussionReplies[discussion.id] || '')}
+                              >
+                                Reply
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No discussions yet. Start the conversation below.</p>
+                    )}
+                  </div>
+                  <div className="panel">
+                    <h3>Share media with this group</h3>
+                    <form onSubmit={handleShareMedia} className="stacked-form">
+                      <label>
+                        Media URL
+                        <input
+                          value={newMediaUrl}
+                          onChange={(event) => setNewMediaUrl(event.target.value)}
+                          placeholder="https://example.com/photo.jpg"
+                          required
+                        />
+                      </label>
+                      <label>
+                        Caption
+                        <input
+                          value={newMediaCaption}
+                          onChange={(event) => setNewMediaCaption(event.target.value)}
+                          placeholder="Sunset at the beach"
+                        />
+                      </label>
+                      <label>
+                        Type
+                        <select value={newMediaType} onChange={(event) => setNewMediaType(event.target.value)}>
+                          <option value="photo">Photo</option>
+                          <option value="video">Video</option>
+                        </select>
+                      </label>
+                      <label>
+                        Group
+                        <select value={mediaGroupId} onChange={(event) => setMediaGroupId(event.target.value)}>
+                          <option value="">Public</option>
+                          {groups.map((group) => (
+                            <option key={group.id} value={group.id}>{group.name}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <button type="submit" className="button button-primary">Share media</button>
+                    </form>
+                  </div>
+                </div>
+              </>
+            )}
           </section>
-        )}
+        ) : null}
       </main>
     </div>
   );

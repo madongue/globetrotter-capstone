@@ -22,18 +22,22 @@ def create_app():
         "SECRET_KEY", "globetrotter-secret-change-in-prod"
     )
 
-    # Register all route blueprints
+    # Register all route blueprints under the API prefix so both development
+    # proxy and production builds can use a unified /api contract.
+    api_prefix = "/api"
     from app.auth import auth_bp
     from app.destinations import destinations_bp
     from app.recommendations import recommendations_bp
     from app.itineraries import itineraries_bp
     from app.resources import resources_bp
+    from app.ui import ui_bp
 
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(destinations_bp)
-    app.register_blueprint(recommendations_bp)
-    app.register_blueprint(itineraries_bp)
-    app.register_blueprint(resources_bp)
+    app.register_blueprint(auth_bp, url_prefix=api_prefix)
+    app.register_blueprint(destinations_bp, url_prefix=api_prefix)
+    app.register_blueprint(recommendations_bp, url_prefix=api_prefix)
+    app.register_blueprint(itineraries_bp, url_prefix=api_prefix)
+    app.register_blueprint(resources_bp, url_prefix=api_prefix)
+    app.register_blueprint(ui_bp)
 
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")
