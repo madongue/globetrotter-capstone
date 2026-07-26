@@ -5,7 +5,7 @@ Flask application factory.
 """
 import os
 import time
-from flask import Flask, g, jsonify, request, send_from_directory
+from flask import Flask, Response, g, jsonify, request, send_from_directory
 
 
 def create_app():
@@ -89,6 +89,11 @@ def create_app():
             "service": "globetrotter",
             "mode": "monolith",
         }), 200
+
+    @app.route("/favicon.ico", methods=["GET"])
+    def favicon():
+        """Avoid noisy browser 404s when no packaged favicon is present."""
+        return Response(status=204)
 
     @app.route(f"{api_prefix}/metrics", methods=["GET"])
     @app.route("/metrics", methods=["GET"])

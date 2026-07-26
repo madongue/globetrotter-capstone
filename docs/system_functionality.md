@@ -78,6 +78,8 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - `participants`: list of usernames
 - `stage`: string
 - `cost_breakdown`: object
+- `currency`: string, defaults to `XAF`
+- `currency_label`: string, defaults to `FCFA`
 - `duration_hours`: number
 - `created_at`: ISO 8601 timestamp
 
@@ -112,7 +114,7 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | `/itineraries/{itinerary_id}/join` | POST | Yes | Join an existing itinerary |
 | `/itineraries` | GET | Yes | List itineraries available to the user |
 | `/itineraries/{itinerary_id}/share` | POST | Yes | Share an itinerary with another user |
-| `/itineraries/{itinerary_id}/map` | GET | Yes | Get map metadata for an itinerary |
+| `/itineraries/{itinerary_id}/map` | GET | Yes | Get Google Maps metadata, directions, embed links, stage map links, and Cameroon-focused nearby searches |
 | `/itineraries/{itinerary_id}/progress` | GET, PATCH, POST | Yes | Read or update stage progress and current location |
 | `/itineraries/{itinerary_id}/feedback` | POST | Yes | Record trip feedback for recommendation ranking |
 | `/itineraries/generate` | POST | Yes | Generate a draft itinerary from local catalogue/resource data |
@@ -142,6 +144,9 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - Stores users and itineraries in JSON files.
 - Stores destination catalogue in `data/destinations.json`.
 - Supports itinerary sharing, joining, payments, media, community groups, trip progress, feedback, and generated itinerary drafts.
+- Money is stored and calculated in FCFA/XAF by default. The React UI can display and accept values in another supported currency, then converts them back to FCFA before API submission.
+- The React UI includes a persistent English/French language switcher. French mode translates navigation, forms, alerts, placeholders, dashboard panels, itinerary detail views, payment labels, map controls, groups, media, and resource-management text.
+- Map metadata uses Google Maps URLs for global search/directions/embed links without requiring an API key. Cameroon destinations receive extra Google Maps searches for hotels, restaurants, attractions, transport, hospitals, pharmacies, and banks.
 - Uses a simple monolithic design for Phase 1.
 
 ## Future Functionality Expectations
@@ -161,6 +166,13 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - `401 Unauthorized` for missing or invalid JWT tokens.
 - `404 Not Found` if an authenticated user is missing from storage.
 - `409 Conflict` if a registration username already exists.
+
+## E2E Verification
+- Production build smoke test: open the React app from Flask and confirm there are no browser console errors on first load.
+- Authentication flow: register a user, log in, and render the dashboard without unauthorized admin calls for non-admin users.
+- Itinerary flow: create an itinerary with hotel, activity, place, dates, and costs, then open its detail page.
+- Collaboration and finance flow: load budget, load audit log, create an invite token, submit payment, and confirm receipts plus budget totals update in the UI.
+- Media feed flow: stale upload references render a local placeholder instead of broken image requests.
 
 ## Deployment and Operations
 - Local run: `pip install -r requirements.txt` and `python app/main.py`

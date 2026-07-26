@@ -1,10 +1,331 @@
 import { useEffect, useState } from 'react';
 
 const API_BASE = '/api';
+const DEFAULT_CURRENCY = 'XAF';
+const CURRENCY_OPTIONS = [
+  { code: 'XAF', label: 'FCFA', rateFromXaf: 1, fractionDigits: 0 },
+  { code: 'EUR', label: 'EUR', rateFromXaf: 1 / 655.957, fractionDigits: 2 },
+  { code: 'USD', label: 'USD', rateFromXaf: 1 / 600, fractionDigits: 2 },
+  { code: 'GBP', label: 'GBP', rateFromXaf: 1 / 760, fractionDigits: 2 },
+  { code: 'NGN', label: 'NGN', rateFromXaf: 2.45, fractionDigits: 2 },
+];
+const DEFAULT_LANGUAGE = 'en';
+const LANGUAGE_OPTIONS = [
+  { code: 'en', label: 'English' },
+  { code: 'fr', label: 'Francais' },
+];
+
+const FR_TEXT = {
+  Home: 'Accueil',
+  Login: 'Connexion',
+  Register: 'Inscription',
+  Dashboard: 'Tableau de bord',
+  Logout: 'Deconnexion',
+  Currency: 'Devise',
+  Language: 'Langue',
+  English: 'Anglais',
+  Francais: 'Francais',
+  'Travel meets community': 'Le voyage rencontre la communaute',
+  'Plan trips, sell event tickets, and connect with travelers.': 'Planifiez des voyages, vendez des billets et connectez-vous avec des voyageurs.',
+  'GlobeTrotter brings itineraries, payments, groups, and media sharing into one polished React experience.': 'GlobeTrotter reunit itineraires, paiements, groupes et partage de medias dans une experience React soignee.',
+  'Get Started': 'Commencer',
+  'Sign In': 'Se connecter',
+  'Shared travel plans': 'Plans de voyage partages',
+  'Build itineraries together, invite friends, and track every booking.': 'Creez des itineraires ensemble, invitez des amis et suivez chaque reservation.',
+  'Ticket monetization': 'Monetisation des billets',
+  'Sell event tickets with receipts, commission tracking, and secure payment records.': 'Vendez des billets avec recus, suivi des commissions et paiements securises.',
+  'Community feed': 'Fil communautaire',
+  'Post photos, comment, like, and reach travel groups with media sharing.': 'Publiez des photos, commentez, aimez et rejoignez des groupes de voyage.',
+  'Sign in': 'Connexion',
+  'Create account': 'Creer un compte',
+  Username: "Nom d'utilisateur",
+  Password: 'Mot de passe',
+  Interests: 'Centres d interet',
+  'Already have an account?': 'Vous avez deja un compte ?',
+  'New here?': 'Nouveau ici ?',
+  'Create an account': 'Creer un compte',
+  'Welcome back': 'Bon retour',
+  'Access your itineraries, event receipts, and community groups in one place.': 'Accedez a vos itineraires, recus et groupes communautaires au meme endroit.',
+  'Create itinerary': 'Creer un itineraire',
+  'Join a group': 'Rejoindre un groupe',
+  'Quick links': 'Liens rapides',
+  'My itineraries': 'Mes itineraires',
+  'Destination recommendations': 'Recommandations de destinations',
+  'Profile preferences': 'Preferences du profil',
+  Notifications: 'Notifications',
+  'No notifications yet.': 'Aucune notification pour le moment.',
+  'Place autocomplete': 'Autocompletion de lieux',
+  'Search catalogue': 'Rechercher dans le catalogue',
+  Suggest: 'Suggerer',
+  'Save preferences': 'Enregistrer les preferences',
+  'Recent itineraries': 'Itineraires recents',
+  'No itineraries found yet.': 'Aucun itineraire trouve.',
+  'Recommended destinations': 'Destinations recommandees',
+  Budget: 'Budget',
+  Location: 'Lieu',
+  Filter: 'Filtrer',
+  Loading: 'Chargement',
+  'Loading...': 'Chargement...',
+  'No recommendations available yet.': 'Aucune recommandation disponible.',
+  Title: 'Titre',
+  'Hotel name': 'Nom de l hotel',
+  'Hotel cost': 'Cout de l hotel',
+  'Activity name': 'Nom de l activite',
+  'Activity cost': 'Cout de l activite',
+  'Place to visit': 'Lieu a visiter',
+  'Place cost': 'Cout du lieu',
+  'Start date': 'Date de debut',
+  'End date': 'Date de fin',
+  'Generate itinerary draft': 'Generer un brouillon d itineraire',
+  Days: 'Jours',
+  'Generate draft': 'Generer le brouillon',
+  'Save draft': 'Enregistrer le brouillon',
+  'Destination search': 'Recherche de destination',
+  Search: 'Rechercher',
+  Tag: 'Etiquette',
+  Continent: 'Continent',
+  'Max daily cost': 'Cout journalier maximal',
+  Results: 'Resultats',
+  Groups: 'Groupes',
+  'Group name': 'Nom du groupe',
+  Description: 'Description',
+  'Create group': 'Creer un groupe',
+  Join: 'Rejoindre',
+  View: 'Voir',
+  'No groups available yet.': 'Aucun groupe disponible.',
+  'Trip suggestions': 'Suggestions de voyage',
+  'Find matches': 'Trouver des correspondances',
+  hotels: 'hotels',
+  activities: 'activites',
+  places: 'lieux',
+  'No matches yet.': 'Aucune correspondance.',
+  'Shared media feed': 'Fil de medias partages',
+  'No media posts yet.': 'Aucune publication media.',
+  Like: 'Aimer',
+  Comment: 'Commenter',
+  Share: 'Partager',
+  'Resource management': 'Gestion des ressources',
+  Type: 'Type',
+  Hotel: 'Hotel',
+  Activity: 'Activite',
+  Place: 'Lieu',
+  Name: 'Nom',
+  Cost: 'Cout',
+  'Add resource': 'Ajouter une ressource',
+  'No entries.': 'Aucune entree.',
+  Remove: 'Supprimer',
+  'Review type': 'Type d avis',
+  'Resource ID': 'ID de la ressource',
+  Rating: 'Note',
+  'Add review': 'Ajouter un avis',
+  'Admin users': 'Utilisateurs admin',
+  'Please log in to view your dashboard.': 'Veuillez vous connecter pour voir votre tableau de bord.',
+  'Back to dashboard': 'Retour au tableau de bord',
+  Owner: 'Proprietaire',
+  Participants: 'Participants',
+  'Shared with': 'Partage avec',
+  Nobody: 'Personne',
+  'Nobody yet': 'Personne pour le moment',
+  'Total budget': 'Budget total',
+  Duration: 'Duree',
+  Progress: 'Progression',
+  'not started': 'non demarre',
+  Activities: 'Activites',
+  'Places to visit': 'Lieux a visiter',
+  'Event tickets': 'Billets evenementiels',
+  'Payment receipt': 'Recu de paiement',
+  Amount: 'Montant',
+  Commission: 'Commission',
+  Net: 'Net',
+  'No payments recorded yet.': 'Aucun paiement enregistre.',
+  'Trip stages': 'Etapes du voyage',
+  'No stages calculated yet.': 'Aucune etape calculee.',
+  'Open map': 'Ouvrir la carte',
+  'Open in Google Maps': 'Ouvrir dans Google Maps',
+  Directions: 'Itineraire',
+  'Checklist item': 'Element de checklist',
+  Add: 'Ajouter',
+  'Update progress': 'Mettre a jour la progression',
+  Status: 'Statut',
+  'Not started': 'Non demarre',
+  'In progress': 'En cours',
+  Completed: 'Termine',
+  Delayed: 'Retarde',
+  'Current stage': 'Etape actuelle',
+  Auto: 'Auto',
+  'Completed stage IDs': 'IDs des etapes terminees',
+  'Current location': 'Position actuelle',
+  Percent: 'Pourcentage',
+  'Share itinerary': 'Partager l itineraire',
+  Permission: 'Permission',
+  'View only': 'Lecture seule',
+  'Can edit': 'Peut modifier',
+  'Join itinerary': 'Rejoindre l itineraire',
+  'Optional payment': 'Paiement optionnel',
+  'Join trip': 'Rejoindre le voyage',
+  'Map metadata': 'Donnees cartographiques',
+  Provider: 'Fournisseur',
+  'Invite link': 'Lien d invitation',
+  Uses: 'Utilisations',
+  'Create invite': 'Creer une invitation',
+  'Budget and exports': 'Budget et exports',
+  'Load budget': 'Charger le budget',
+  Calendar: 'Calendrier',
+  PDF: 'PDF',
+  Planned: 'Planifie',
+  Paid: 'Paye',
+  Remaining: 'Restant',
+  'Audit log': 'Journal d audit',
+  'Load audit': 'Charger l audit',
+  'Make a payment': 'Effectuer un paiement',
+  'Payment method': 'Methode de paiement',
+  Mobile: 'Mobile',
+  Card: 'Carte',
+  'Target type': 'Type de cible',
+  Total: 'Total',
+  'Event ticket': 'Billet evenementiel',
+  'Submit payment': 'Soumettre le paiement',
+  'Trip feedback': 'Avis sur le voyage',
+  Tags: 'Etiquettes',
+  'Save feedback': 'Enregistrer l avis',
+  Members: 'Membres',
+  'Group discussions': 'Discussions du groupe',
+  'New topic': 'Nouveau sujet',
+  Message: 'Message',
+  'Start discussion': 'Demarrer la discussion',
+  Reply: 'Repondre',
+  'Post reply': 'Publier la reponse',
+  'Share media with this group': 'Partager un media avec ce groupe',
+  Caption: 'Legende',
+  'Media type': 'Type de media',
+  Photo: 'Photo',
+  Video: 'Video',
+  'Media URL': 'URL du media',
+  'Upload file': 'Importer un fichier',
+  'Share media': 'Partager le media',
+  'Account created. You can now login.': 'Compte cree. Vous pouvez maintenant vous connecter.',
+  'Login successful.': 'Connexion reussie.',
+  'Logged out successfully.': 'Deconnexion reussie.',
+  'Itinerary created successfully.': 'Itineraire cree avec succes.',
+  'Generated itinerary saved.': 'Itineraire genere enregistre.',
+  'Draft itinerary generated.': 'Brouillon d itineraire genere.',
+  'Profile preferences updated.': 'Preferences du profil mises a jour.',
+  'Payment complete. Receipt generated.': 'Paiement effectue. Recu genere.',
+  'Invite link created.': 'Lien d invitation cree.',
+  'Trip progress updated.': 'Progression du voyage mise a jour.',
+  'Feedback recorded.': 'Avis enregistre.',
+  'Please login to create an itinerary.': 'Veuillez vous connecter pour creer un itineraire.',
+  'Title and location are required.': 'Le titre et le lieu sont requis.',
+};
+
+const FR_PLACEHOLDERS = {
+  'beach, food, culture': 'plage, cuisine, culture',
+  'Bali, surf, hotel': 'Douala, plage, hotel',
+  Asia: 'Afrique',
+  'Beach Escape': 'Escapade a Kribi',
+  Bali: 'Douala',
+  'Seaside Hotel': 'Hotel a Akwa',
+  'Surf Lesson': 'Visite culinaire',
+  Uluwatu: 'Musee national',
+  'Paris, Bali, beach': 'Yaounde, Kribi, plage',
+  food: 'cuisine',
+  'Bali Travelers': 'Voyageurs du Cameroun',
+  'Share tips and meet other travellers': 'Partager des conseils et rencontrer d autres voyageurs',
+  'Add comment': 'Ajouter un commentaire',
+  'Share with username': 'Partager avec un utilisateur',
+  'hotel id': 'id hotel',
+  bob: 'paul',
+  Airport: 'Aeroport',
+  'hotel, activity-1': 'hotel, activite-1',
+  'Best local guides': 'Meilleurs guides locaux',
+  'Share a question or tip': 'Partager une question ou un conseil',
+  'Write a reply': 'Ecrire une reponse',
+  'Sunset in Kribi': 'Coucher de soleil a Kribi',
+  'https://example.com/photo.jpg': 'https://exemple.com/photo.jpg',
+  'What worked well?': 'Qu est-ce qui a bien fonctionne ?',
+};
+
+function getCurrencyOption(currencyCode) {
+  return CURRENCY_OPTIONS.find((option) => option.code === currencyCode) || CURRENCY_OPTIONS[0];
+}
+
+function translateWithWhitespace(text, translator) {
+  const leading = text.match(/^\s*/)?.[0] || '';
+  const trailing = text.match(/\s*$/)?.[0] || '';
+  const core = text.trim();
+  if (!core) return text;
+  return `${leading}${translator(core)}${trailing}`;
+}
+
+function translateDynamicText(text, language) {
+  if (language !== 'fr') return text;
+  return translateWithWhitespace(text, (core) => {
+    if (FR_TEXT[core]) return FR_TEXT[core];
+
+    const currencyLabel = core.match(/^(Budget|Hotel cost|Activity cost|Place cost|Max daily cost|Cost|Optional payment|Amount) \((.+)\)$/);
+    if (currencyLabel) {
+      return `${FR_TEXT[currencyLabel[1]] || currencyLabel[1]} (${currencyLabel[2]})`;
+    }
+
+    const strongLabel = core.match(/^(.+):$/);
+    if (strongLabel && FR_TEXT[strongLabel[1]]) return `${FR_TEXT[strongLabel[1]]}:`;
+
+    const matchScore = core.match(/^Match score: (.+)$/);
+    if (matchScore) return `Score de correspondance : ${matchScore[1]}`;
+
+    const feedbackMatch = core.match(/^Feedback match: (.+)$/);
+    if (feedbackMatch) return `Correspondance d avis : ${feedbackMatch[1]}`;
+
+    const byLine = core.match(/^By (.+) · (\d+) likes · (\d+) comments$/);
+    if (byLine) return `Par ${byLine[1]} · ${byLine[2]} mentions J'aime · ${byLine[3]} commentaires`;
+
+    const ticketLine = core.match(/^(.+) per ticket · (.+) seats left$/);
+    if (ticketLine) return `${ticketLine[1]} par billet · ${ticketLine[2]} places restantes`;
+
+    const amountLine = core.match(/^(Amount|Commission|Net|Planned|Paid|Remaining): (.+)$/);
+    if (amountLine) return `${FR_TEXT[amountLine[1]] || amountLine[1]} : ${amountLine[2]}`;
+
+    const providerLine = core.match(/^Google Maps · (.+)$/);
+    if (providerLine) return `Google Maps · ${providerLine[1] === 'World' ? 'Monde' : providerLine[1]}`;
+
+    const durationLine = core.replace(/\bdays\b/g, 'jours').replace(/\bhours\b/g, 'heures');
+    if (durationLine !== core) return durationLine;
+
+    return core;
+  });
+}
+
+function translatePage(root, language) {
+  if (!root || language !== 'fr') return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const parent = node.parentElement;
+      if (!parent || ['SCRIPT', 'STYLE', 'TEXTAREA'].includes(parent.tagName)) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      return node.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    },
+  });
+
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach((node) => {
+    node.nodeValue = translateDynamicText(node.nodeValue, language);
+  });
+
+  root.querySelectorAll('input[placeholder], textarea[placeholder]').forEach((element) => {
+    const placeholder = element.getAttribute('placeholder');
+    if (placeholder) {
+      element.setAttribute('placeholder', FR_PLACEHOLDERS[placeholder] || translateDynamicText(placeholder, language));
+    }
+  });
+}
 
 function App() {
   const [page, setPage] = useState('home');
   const [token, setToken] = useState(localStorage.getItem('gt_token') || '');
+  const [currency, setCurrency] = useState(localStorage.getItem('gt_currency') || DEFAULT_CURRENCY);
+  const [language, setLanguage] = useState(localStorage.getItem('gt_language') || DEFAULT_LANGUAGE);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState(null);
@@ -85,6 +406,42 @@ function App() {
     endDate: '',
   });
 
+  const currencyOption = getCurrencyOption(currency);
+  const currencyLabel = currencyOption.label;
+  const formatMoney = (amount) => {
+    const numericAmount = Number(amount || 0);
+    const convertedAmount = numericAmount * currencyOption.rateFromXaf;
+    if (currencyOption.code === 'XAF') {
+      return `${Math.round(convertedAmount).toLocaleString('fr-CM')} FCFA`;
+    }
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currencyOption.code,
+      minimumFractionDigits: currencyOption.fractionDigits,
+      maximumFractionDigits: currencyOption.fractionDigits,
+    }).format(convertedAmount);
+  };
+  const toBaseMoney = (amount) => {
+    if (amount === '' || amount === null || amount === undefined) return 0;
+    const numericAmount = Number(amount);
+    if (Number.isNaN(numericAmount)) return Number.NaN;
+    if (!numericAmount) return 0;
+    return Number((numericAmount / currencyOption.rateFromXaf).toFixed(2));
+  };
+
+  useEffect(() => {
+    localStorage.setItem('gt_currency', currency);
+  }, [currency]);
+
+  useEffect(() => {
+    localStorage.setItem('gt_language', language);
+    document.documentElement.lang = language;
+  }, [language]);
+
+  useEffect(() => {
+    window.requestAnimationFrame(() => translatePage(document.querySelector('.app-shell'), language));
+  });
+
   const navigate = (target) => {
     setAlert(null);
     setPage(target);
@@ -134,8 +491,10 @@ function App() {
         setGroups([]);
       }
 
+      let currentProfile = null;
       if (profileRes.ok) {
         const profileData = await profileRes.json();
+        currentProfile = profileData;
         setProfile(profileData);
         setProfilePreferences((profileData.preferences || []).join(', '));
       }
@@ -146,11 +505,15 @@ function App() {
         setNotifications([]);
       }
 
-      const adminUsersRes = await fetch(`${API_BASE}/admin/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (adminUsersRes.ok) {
-        setAdminUsers(await adminUsersRes.json());
+      if (currentProfile?.role === 'admin') {
+        const adminUsersRes = await fetch(`${API_BASE}/admin/users`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (adminUsersRes.ok) {
+          setAdminUsers(await adminUsersRes.json());
+        } else {
+          setAdminUsers([]);
+        }
       } else {
         setAdminUsers([]);
       }
@@ -251,7 +614,7 @@ function App() {
     if (searchFilters.q.trim()) params.set('q', searchFilters.q.trim());
     if (searchFilters.tag.trim()) params.set('tag', searchFilters.tag.trim());
     if (searchFilters.continent.trim()) params.set('continent', searchFilters.continent.trim());
-    if (searchFilters.maxCost) params.set('max_cost', searchFilters.maxCost);
+    if (searchFilters.maxCost) params.set('max_cost', toBaseMoney(searchFilters.maxCost));
 
     setLoading(true);
     try {
@@ -335,7 +698,7 @@ function App() {
     }
 
     const params = new URLSearchParams({ limit: '4' });
-    if (filters.budget) params.set('budget', filters.budget);
+    if (filters.budget) params.set('budget', toBaseMoney(filters.budget));
     if (filters.location.trim()) params.set('location', filters.location.trim());
 
     const response = await fetch(`${API_BASE}/recommendations?${params.toString()}`, {
@@ -361,7 +724,7 @@ function App() {
 
     const params = new URLSearchParams({
       location: suggestionFilters.location.trim(),
-      budget: suggestionFilters.budget || '0',
+      budget: toBaseMoney(suggestionFilters.budget || '0'),
     });
 
     setLoading(true);
@@ -415,7 +778,9 @@ function App() {
         },
         body: JSON.stringify({
           location: generateForm.location.trim(),
-          budget: Number(generateForm.budget) || 500,
+          budget: toBaseMoney(generateForm.budget) || 500,
+          currency: DEFAULT_CURRENCY,
+          currency_label: 'FCFA',
           duration_days: Number(generateForm.durationDays) || 3,
           start_date: generateForm.startDate,
         }),
@@ -486,15 +851,17 @@ function App() {
         hotel: newItinerary.hotelName.trim()
           ? {
               name: newItinerary.hotelName.trim(),
-              cost_per_night: Number(newItinerary.hotelCost) || 0,
+              cost_per_night: toBaseMoney(newItinerary.hotelCost),
             }
           : {},
         activities: newItinerary.activityName.trim()
-          ? [{ name: newItinerary.activityName.trim(), cost: Number(newItinerary.activityCost) || 0 }]
+          ? [{ name: newItinerary.activityName.trim(), cost: toBaseMoney(newItinerary.activityCost) }]
           : [],
         places_to_visit: newItinerary.placeName.trim()
-          ? [{ name: newItinerary.placeName.trim(), cost: Number(newItinerary.placeCost) || 0 }]
+          ? [{ name: newItinerary.placeName.trim(), cost: toBaseMoney(newItinerary.placeCost) }]
           : [],
+        currency: DEFAULT_CURRENCY,
+        currency_label: 'FCFA',
         start_date: newItinerary.startDate,
         end_date: newItinerary.endDate,
       };
@@ -829,7 +1196,7 @@ function App() {
 
     setLoading(true);
     try {
-      const payload = joinPaymentAmount ? { payment_amount: Number(joinPaymentAmount), payment_method: paymentMethod } : {};
+      const payload = joinPaymentAmount ? { payment_amount: toBaseMoney(joinPaymentAmount), payment_method: paymentMethod } : {};
       const response = await fetch(`${API_BASE}/itineraries/${selectedItinerary.id}/join`, {
         method: 'POST',
         headers: {
@@ -1072,7 +1439,7 @@ function App() {
       return;
     }
 
-    const amount = Number(paymentAmount);
+    const amount = toBaseMoney(paymentAmount);
     if (!amount || amount <= 0) {
       setAlert({ type: 'error', message: 'Enter a valid payment amount.' });
       return;
@@ -1088,6 +1455,8 @@ function App() {
         },
         body: JSON.stringify({
           amount,
+          currency: DEFAULT_CURRENCY,
+          currency_label: 'FCFA',
           payment_method: paymentMethod,
           target_type: paymentTargetType,
         }),
@@ -1100,6 +1469,7 @@ function App() {
       }
 
       refreshSelectedItinerary(result.itinerary);
+      await handleLoadBudget();
       setAlert({ type: 'success', message: 'Payment complete. Receipt generated.' });
     } catch (error) {
       setAlert({ type: 'error', message: 'Unable to process payment.' });
@@ -1183,7 +1553,7 @@ function App() {
 
     const name = newResource.name.trim();
     const location = newResource.location.trim();
-    const cost = Number(newResource.cost);
+    const cost = toBaseMoney(newResource.cost);
     if (!name || !location || Number.isNaN(cost)) {
       setAlert({ type: 'error', message: 'Name, location, and cost are required.' });
       return;
@@ -1280,7 +1650,7 @@ function App() {
   };
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" key={language}>
       <header className="app-header">
         <div className="container header-inner">
           <div className="brand">GlobeTrotter</div>
@@ -1290,6 +1660,22 @@ function App() {
             {!token && <button type="button" onClick={() => navigate('register')}>Register</button>}
             {token && <button type="button" onClick={() => navigate('dashboard')}>Dashboard</button>}
             {token && <button type="button" onClick={handleLogout}>Logout</button>}
+            <label className="language-picker">
+              <span>Language</span>
+              <select value={language} onChange={(event) => setLanguage(event.target.value)}>
+                {LANGUAGE_OPTIONS.map((option) => (
+                  <option key={option.code} value={option.code}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+            <label className="currency-picker">
+              <span>Currency</span>
+              <select value={currency} onChange={(event) => setCurrency(event.target.value)}>
+                {CURRENCY_OPTIONS.map((option) => (
+                  <option key={option.code} value={option.code}>{option.label}</option>
+                ))}
+              </select>
+            </label>
           </nav>
         </div>
       </header>
@@ -1336,11 +1722,11 @@ function App() {
               <form onSubmit={handleLogin}>
                 <label>
                   Username
-                  <input name="username" type="text" required />
+                  <input name="username" type="text" autoComplete="username" required />
                 </label>
                 <label>
                   Password
-                  <input name="password" type="password" required />
+                  <input name="password" type="password" autoComplete="current-password" required />
                 </label>
                 <button type="submit" className="button button-primary">Login</button>
               </form>
@@ -1358,11 +1744,11 @@ function App() {
               <form onSubmit={handleRegister}>
                 <label>
                   Username
-                  <input name="username" type="text" required />
+                  <input name="username" type="text" autoComplete="username" required />
                 </label>
                 <label>
                   Password
-                  <input name="password" type="password" required />
+                  <input name="password" type="password" autoComplete="new-password" required />
                 </label>
                 <label>
                   Interests
@@ -1492,7 +1878,7 @@ function App() {
                 <h3>Recommended destinations</h3>
                 <form onSubmit={handleFilterRecommendations} className="stacked-form compact-form">
                   <label>
-                    Budget
+                    Budget ({currencyLabel})
                     <input
                       type="number"
                       value={recommendationFilters.budget}
@@ -1559,12 +1945,12 @@ function App() {
                     />
                   </label>
                   <label>
-                    Hotel cost
+                    Hotel cost ({currencyLabel})
                     <input
                       type="number"
                       value={newItinerary.hotelCost}
                       onChange={(event) => setNewItinerary((prev) => ({ ...prev, hotelCost: event.target.value }))}
-                      placeholder="120"
+                      placeholder={currency === 'XAF' ? '75000' : '120'}
                     />
                   </label>
                   <label>
@@ -1576,12 +1962,12 @@ function App() {
                     />
                   </label>
                   <label>
-                    Activity cost
+                    Activity cost ({currencyLabel})
                     <input
                       type="number"
                       value={newItinerary.activityCost}
                       onChange={(event) => setNewItinerary((prev) => ({ ...prev, activityCost: event.target.value }))}
-                      placeholder="50"
+                      placeholder={currency === 'XAF' ? '30000' : '50'}
                     />
                   </label>
                   <label>
@@ -1593,7 +1979,7 @@ function App() {
                     />
                   </label>
                   <label>
-                    Place cost
+                    Place cost ({currencyLabel})
                     <input
                       type="number"
                       value={newItinerary.placeCost}
@@ -1634,7 +2020,7 @@ function App() {
                   />
                 </label>
                 <label>
-                  Budget
+                  Budget ({currencyLabel})
                   <input
                     type="number"
                     value={generateForm.budget}
@@ -1665,7 +2051,7 @@ function App() {
               {generatedItinerary && (
                 <div className="callout">
                   <strong>{generatedItinerary.title}</strong>
-                  <p>{generatedItinerary.location} · {generatedItinerary.duration_days} days · ${generatedItinerary.cost_breakdown.total_budget}</p>
+                  <p>{generatedItinerary.location} · {generatedItinerary.duration_days} days · {formatMoney(generatedItinerary.cost_breakdown.total_budget)}</p>
                   <p className="small-text">
                     {generatedItinerary.stages.map((stage) => stage.name).join(' · ')}
                   </p>
@@ -1704,12 +2090,12 @@ function App() {
                     />
                   </label>
                   <label>
-                    Max daily cost
+                    Max daily cost ({currencyLabel})
                     <input
                       type="number"
                       value={searchFilters.maxCost}
                       onChange={(event) => setSearchFilters((prev) => ({ ...prev, maxCost: event.target.value }))}
-                      placeholder="120"
+                      placeholder={currency === 'XAF' ? '75000' : '120'}
                     />
                   </label>
                   <button type="submit" className="button button-primary">Search</button>
@@ -1788,7 +2174,7 @@ function App() {
                     />
                   </label>
                   <label>
-                    Budget
+                    Budget ({currencyLabel})
                     <input
                       type="number"
                       value={suggestionFilters.budget}
@@ -1873,7 +2259,7 @@ function App() {
                   <input value={newResource.location} onChange={(event) => setNewResource((prev) => ({ ...prev, location: event.target.value }))} required />
                 </label>
                 <label>
-                  Cost
+                  Cost ({currencyLabel})
                   <input type="number" value={newResource.cost} onChange={(event) => setNewResource((prev) => ({ ...prev, cost: event.target.value }))} required />
                 </label>
                 <label>
@@ -1988,26 +2374,26 @@ function App() {
                     <p><strong>Owner:</strong> {selectedItinerary.username}</p>
                     <p><strong>Participants:</strong> {selectedItinerary.participants?.join(', ') || 'None'}</p>
                     <p><strong>Shared with:</strong> {selectedItinerary.shared_with?.join(', ') || 'Nobody yet'}</p>
-                    <p><strong>Total budget:</strong> ${selectedItinerary.cost_breakdown?.total_budget || 0}</p>
+                    <p><strong>Total budget:</strong> {formatMoney(selectedItinerary.cost_breakdown?.total_budget || 0)}</p>
                     <p><strong>Duration:</strong> {selectedItinerary.duration_days || 0} days · {selectedItinerary.duration_hours || 0} hours</p>
                     <p><strong>Progress:</strong> {selectedItinerary.progress?.progress_percent || 0}% · {selectedItinerary.progress?.status || 'not started'}</p>
                     <p><strong>Hotel:</strong> {selectedItinerary.hotel?.name || 'None'}</p>
                     <p><strong>Activities:</strong></p>
                     <ul>
                       {(selectedItinerary.activities || []).map((activity) => (
-                        <li key={activity.name}>{activity.name} — ${activity.cost}</li>
+                        <li key={activity.name}>{activity.name} - {formatMoney(activity.cost)}</li>
                       ))}
                     </ul>
                     <p><strong>Places to visit:</strong></p>
                     <ul>
                       {(selectedItinerary.places_to_visit || []).map((place) => (
-                        <li key={place.name}>{place.name} — ${place.cost}</li>
+                        <li key={place.name}>{place.name} - {formatMoney(place.cost)}</li>
                       ))}
                     </ul>
                     {selectedItinerary.event_listing?.for_sale && (
                       <div className="callout">
                         <strong>Event tickets</strong>
-                        <p>${selectedItinerary.event_listing.price_per_ticket} per ticket · {selectedItinerary.event_listing.seats_available ?? 'Unlimited'} seats left</p>
+                        <p>{formatMoney(selectedItinerary.event_listing.price_per_ticket)} per ticket · {selectedItinerary.event_listing.seats_available ?? 'Unlimited'} seats left</p>
                       </div>
                     )}
                   </div>
@@ -2018,9 +2404,9 @@ function App() {
                         {selectedItinerary.receipts.map((receipt) => (
                           <li key={receipt.id}>
                             <strong>{receipt.note || receipt.target_type}</strong>
-                            <p>Amount: ${receipt.amount.toFixed(2)}</p>
-                            <p>Commission: ${receipt.commission_amount.toFixed(2)}</p>
-                            <p>Net: ${receipt.net_amount.toFixed(2)}</p>
+                            <p>Amount: {formatMoney(receipt.amount)}</p>
+                            <p>Commission: {formatMoney(receipt.commission_amount)}</p>
+                            <p>Net: {formatMoney(receipt.net_amount)}</p>
                           </li>
                         ))}
                       </ul>
@@ -2038,7 +2424,7 @@ function App() {
                         {selectedItinerary.stages.map((stage) => (
                           <li key={stage.id}>
                             <strong>{stage.name}</strong>
-                            <p>{stage.type} · {stage.duration_hours} hours · ${stage.cost}</p>
+                            <p>{stage.type} · {stage.duration_hours} hours · {formatMoney(stage.cost)}</p>
                             <p className="small-text">{stage.id} · {stage.status}</p>
                             {stage.map_info?.google_map_url && (
                               <a href={stage.map_info.google_map_url} target="_blank" rel="noreferrer">Open map</a>
@@ -2147,7 +2533,7 @@ function App() {
                     <h3>Join itinerary</h3>
                     <form onSubmit={handleJoinItinerary} className="stacked-form">
                       <label>
-                        Optional payment
+                        Optional payment ({currencyLabel})
                         <input
                           type="number"
                           value={joinPaymentAmount}
@@ -2164,11 +2550,30 @@ function App() {
                     {mapInfo && (
                       <div className="map-info">
                         <p><strong>Location:</strong> {mapInfo.location}</p>
+                        <p><strong>Provider:</strong> Google Maps · {mapInfo.country_focus}</p>
                         {mapInfo.map_info?.google_map_url && (
-                          <a href={mapInfo.map_info.google_map_url} target="_blank" rel="noreferrer">Open map</a>
+                          <a href={mapInfo.map_info.google_map_url} target="_blank" rel="noreferrer">Open in Google Maps</a>
+                        )}
+                        {mapInfo.map_info?.google_maps_directions_url && (
+                          <a href={mapInfo.map_info.google_maps_directions_url} target="_blank" rel="noreferrer">Directions</a>
+                        )}
+                        {mapInfo.map_info?.google_maps_embed_url && (
+                          <iframe
+                            className="map-embed"
+                            title={`Google map for ${mapInfo.location}`}
+                            src={mapInfo.map_info.google_maps_embed_url}
+                            loading="lazy"
+                          />
                         )}
                         {mapInfo.map_info?.latitude && (
                           <p>{mapInfo.map_info.latitude}, {mapInfo.map_info.longitude}</p>
+                        )}
+                        {mapInfo.map_info?.cameroon_searches && (
+                          <div className="map-links">
+                            {Object.entries(mapInfo.map_info.cameroon_searches).map(([label, url]) => (
+                              <a key={label} href={url} target="_blank" rel="noreferrer">{label}</a>
+                            ))}
+                          </div>
                         )}
                       </div>
                     )}
@@ -2205,9 +2610,9 @@ function App() {
                     </div>
                     {budgetInfo && (
                       <div className="map-info">
-                        <p><strong>Planned:</strong> ${budgetInfo.planned_total}</p>
-                        <p><strong>Paid:</strong> ${budgetInfo.paid_total}</p>
-                        <p><strong>Remaining:</strong> ${budgetInfo.remaining_total}</p>
+                        <p><strong>Planned:</strong> {formatMoney(budgetInfo.planned_total)}</p>
+                        <p><strong>Paid:</strong> {formatMoney(budgetInfo.paid_total)}</p>
+                        <p><strong>Remaining:</strong> {formatMoney(budgetInfo.remaining_total)}</p>
                       </div>
                     )}
                   </div>
@@ -2231,7 +2636,7 @@ function App() {
                   <h3>Make a payment</h3>
                   <form onSubmit={handlePayItinerary} className="stacked-form">
                     <label>
-                      Amount
+                      Amount ({currencyLabel})
                       <input
                         type="number"
                         value={paymentAmount}
@@ -2417,3 +2822,4 @@ function App() {
 }
 
 export default App;
+

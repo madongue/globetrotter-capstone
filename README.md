@@ -320,6 +320,8 @@ Key platform features inspired by research:
 - Google-based registration and login for easier onboarding.
 - Destination discovery with tags, cost filters, continent search, and autocomplete.
 - Personalised recommendations based on user preferences, feedback, budget, and travel history.
+- Money defaults to FCFA/XAF across budgets, payments, receipts, and exports. The React UI includes a currency selector and converts selected-currency input back to FCFA for consistent API storage.
+- Map metadata is backed by Google Maps URLs for worldwide search, directions, and embeds. Cameroon-focused trips get extra Google Maps links for nearby hotels, restaurants, attractions, transport, hospitals, pharmacies, and banks.
 - Trip creation with dates, locations, hotels, activities, notes, stage progress, and receipts.
 - Shared trips with participant collaboration and view/edit permissions.
 - Local AI-style itinerary draft generation from catalogue and resource data.

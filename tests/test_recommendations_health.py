@@ -68,6 +68,11 @@ def test_health_endpoint(client):
     assert "X-Response-Time-ms" in response.headers
 
 
+def test_favicon_does_not_create_browser_404(client):
+    response = client.get("/favicon.ico")
+    assert response.status_code == 204
+
+
 def test_metrics_endpoint_records_requests(client):
     client.get("/api/health")
     response = client.get("/api/metrics")

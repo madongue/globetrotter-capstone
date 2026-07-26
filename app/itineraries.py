@@ -50,17 +50,109 @@ from app.models import (
 
 itineraries_bp = Blueprint("itineraries", __name__)
 
+DEFAULT_CURRENCY = "XAF"
+DEFAULT_CURRENCY_LABEL = "FCFA"
+CAMEROON_TERMS = {
+    "cameroon",
+    "cameroun",
+    "douala",
+    "yaounde",
+    "yaoundé",
+    "buea",
+    "limbe",
+    "kribi",
+    "bamenda",
+    "bafoussam",
+    "garoua",
+    "maroua",
+    "ngaoundere",
+    "ngaoundéré",
+    "bertoua",
+    "edea",
+    "edéa",
+    "dschang",
+    "foumban",
+}
+GOOGLE_MAPS_DATA_CATEGORIES = [
+    "place details",
+    "photos",
+    "reviews",
+    "directions",
+    "street view",
+    "nearby hotels",
+    "nearby restaurants",
+    "nearby attractions",
+    "public transport",
+    "traffic",
+]
+
 
 def _map_link(query: str) -> str:
     return f"https://www.google.com/maps/search/?api=1&query={urllib.parse.quote_plus(query)}"
 
 
+def _directions_link(query: str) -> str:
+    encoded_query = urllib.parse.quote_plus(query)
+    return f"https://www.google.com/maps/dir/?api=1&destination={encoded_query}"
+
+
+def _embed_link(query: str) -> str:
+    return f"https://www.google.com/maps?q={urllib.parse.quote_plus(query)}&output=embed"
+
+
+def _is_cameroon_context(query: str) -> bool:
+    normalized_query = (query or "").lower()
+    return any(term in normalized_query for term in CAMEROON_TERMS)
+
+
+def _map_query(item: dict, fallback_location: str = "") -> str:
+    name = item.get("name", "")
+    location = item.get("location") or fallback_location
+    query = ", ".join(part for part in [name, location] if part).strip()
+    if not query:
+        return ""
+    if _is_cameroon_context(query) and "cameroon" not in query.lower() and "cameroun" not in query.lower():
+        query = f"{query}, Cameroon"
+    return query
+
+
+def _cameroon_map_searches(query: str) -> dict:
+    return {
+        "hotels": _map_link(f"hotels near {query}"),
+        "restaurants": _map_link(f"restaurants near {query}"),
+        "attractions": _map_link(f"tourist attractions near {query}"),
+        "transport": _map_link(f"transport near {query}"),
+        "hospitals": _map_link(f"hospitals near {query}"),
+        "pharmacies": _map_link(f"pharmacies near {query}"),
+        "banks": _map_link(f"banks near {query}"),
+    }
+
+
+def _google_maps_metadata(query: str) -> dict:
+    cameroon_focus = _is_cameroon_context(query)
+    metadata = {
+        "provider": "google_maps",
+        "query": query,
+        "google_map_url": _map_link(query),
+        "google_maps_search_url": _map_link(query),
+        "google_maps_directions_url": _directions_link(query),
+        "google_maps_embed_url": _embed_link(query),
+        "available_google_maps_data": GOOGLE_MAPS_DATA_CATEGORIES,
+        "cameroon_focus": cameroon_focus,
+    }
+    if cameroon_focus:
+        metadata["country_focus"] = "Cameroon"
+        metadata["cameroon_searches"] = _cameroon_map_searches(query)
+    return metadata
+
+
 def _ensure_map_info(item: dict, fallback_location: str = "") -> None:
-    location = item.get("location") or item.get("name") or fallback_location
-    if not location:
+    query = _map_query(item, fallback_location)
+    if not query:
         return
     map_info = item.setdefault("map_info", {})
-    map_info.setdefault("google_map_url", _map_link(location))
+    for key, value in _google_maps_metadata(query).items():
+        map_info.setdefault(key, value)
 
 
 def _calculate_cost_breakdown(data: dict) -> dict:
@@ -74,7 +166,16 @@ def _calculate_cost_breakdown(data: dict) -> dict:
         "activity_cost": activity_cost,
         "place_cost": place_cost,
         "total_budget": hotel_cost + activity_cost + place_cost,
+        "currency": data.get("currency", DEFAULT_CURRENCY),
+        "currency_label": DEFAULT_CURRENCY_LABEL,
     }
+
+
+def _money_label(amount: float | int | None, currency_label: str = DEFAULT_CURRENCY_LABEL) -> str:
+    amount = amount or 0
+    if currency_label == DEFAULT_CURRENCY_LABEL:
+        return f"{round(amount):,} {currency_label}".replace(",", " ")
+    return f"{amount:.2f} {currency_label}"
 
 
 def _parse_date(value: str):
@@ -273,6 +374,8 @@ def _create_payment_receipt(itinerary: dict, username: str, amount: float, metho
         "target_type": target_type,
         "target_id": target_id,
         "amount": amount,
+        "currency": itinerary.get("currency", DEFAULT_CURRENCY),
+        "currency_label": itinerary.get("currency_label", DEFAULT_CURRENCY_LABEL),
         "commission_rate": commission_rate,
         "commission_amount": round(amount * commission_rate, 2),
         "net_amount": round(amount - (amount * commission_rate), 2),
@@ -432,6 +535,8 @@ def create_itinerary():
         "start_date": data.get("start_date", ""),
         "end_date": data.get("end_date", ""),
         "notes": data.get("notes", ""),
+        "currency": data.get("currency", DEFAULT_CURRENCY),
+        "currency_label": data.get("currency_label", DEFAULT_CURRENCY_LABEL),
         "payment_method": data.get("payment_method", ""),
         "payment_status": data.get("payment_status", "pending"),
         "map_info": data.get("map_info", {}),
@@ -482,6 +587,9 @@ def update_itinerary_route(itinerary_id: str):
         itinerary["end_date"] = data.get("end_date", itinerary.get("end_date", ""))
     if "notes" in data:
         itinerary["notes"] = data.get("notes", itinerary.get("notes", ""))
+    if "currency" in data:
+        itinerary["currency"] = data.get("currency") or DEFAULT_CURRENCY
+        itinerary["currency_label"] = data.get("currency_label") or DEFAULT_CURRENCY_LABEL
     if "payment_method" in data:
         itinerary["payment_method"] = data.get("payment_method", itinerary.get("payment_method", ""))
     if "map_info" in data:
@@ -846,6 +954,10 @@ def upload_media():
 
 @itineraries_bp.route("/uploads/<filename>", methods=["GET"])
 def uploaded_media_file(filename: str):
+    filepath = os.path.join(UPLOADS_DIR, filename)
+    if not os.path.exists(filepath):
+        placeholder_svg = """<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Media unavailable"><rect width="640" height="360" fill="#eef2f7"/><rect x="40" y="40" width="560" height="280" rx="20" fill="#d8e0ea"/><path d="M130 260l100-120 78 90 52-62 150 92H130z" fill="#9aa8ba"/><circle cx="456" cy="116" r="34" fill="#f8fafc"/><text x="320" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#475569">Media unavailable</text></svg>"""
+        return Response(placeholder_svg, mimetype="image/svg+xml")
     return send_from_directory(UPLOADS_DIR, filename)
 
 
@@ -1116,6 +1228,19 @@ def itinerary_map(itinerary_id: str):
         "map_info": itinerary.get("map_info", {}),
         "title": itinerary.get("title"),
         "location": itinerary.get("location"),
+        "provider": "google_maps",
+        "country_focus": "Cameroon" if itinerary.get("map_info", {}).get("cameroon_focus") else "World",
+        "available_google_maps_data": GOOGLE_MAPS_DATA_CATEGORIES,
+        "stages": [
+            {
+                "id": stage.get("id"),
+                "type": stage.get("type"),
+                "name": stage.get("name"),
+                "location": stage.get("location"),
+                "map_info": stage.get("map_info", {}),
+            }
+            for stage in itinerary.get("stages", [])
+        ],
     }), 200
 
 
@@ -1136,6 +1261,8 @@ def itinerary_budget(itinerary_id: str):
     commissions = round(sum(receipt.get("commission_amount", 0) or 0 for receipt in itinerary.get("receipts", [])), 2)
     return jsonify({
         "itinerary_id": itinerary_id,
+        "currency": itinerary.get("currency", DEFAULT_CURRENCY),
+        "currency_label": itinerary.get("currency_label", DEFAULT_CURRENCY_LABEL),
         "planned_total": planned,
         "paid_total": paid,
         "remaining_total": round(planned - paid, 2),
@@ -1279,15 +1406,16 @@ def itinerary_pdf(itinerary_id: str):
         return jsonify({"error": "itinerary not found"}), 404
     if not _can_access_itinerary(itinerary, username):
         return jsonify({"error": "you do not have access to this itinerary"}), 403
+    currency_label = itinerary.get("currency_label", DEFAULT_CURRENCY_LABEL)
     lines = [
         f"Location: {itinerary.get('location', '')}",
         f"Dates: {itinerary.get('start_date', '')} to {itinerary.get('end_date', '')}",
-        f"Budget: {itinerary.get('cost_breakdown', {}).get('total_budget', 0)}",
+        f"Budget: {_money_label(itinerary.get('cost_breakdown', {}).get('total_budget', 0), currency_label)}",
         f"Participants: {', '.join(itinerary.get('participants', []))}",
         f"Notes: {itinerary.get('notes', '')}",
     ]
     for stage in itinerary.get("stages", []):
-        lines.append(f"{stage.get('type')}: {stage.get('name')} - {stage.get('duration_hours')}h - ${stage.get('cost')}")
+        lines.append(f"{stage.get('type')}: {stage.get('name')} - {stage.get('duration_hours')}h - {_money_label(stage.get('cost'), currency_label)}")
     pdf_bytes = _simple_pdf(itinerary.get("title", "GlobeTrotter Itinerary"), lines)
     return Response(pdf_bytes, mimetype="application/pdf", headers={"Content-Disposition": f"attachment; filename=itinerary-{itinerary_id}.pdf"})
 

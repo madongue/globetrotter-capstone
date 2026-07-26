@@ -298,6 +298,8 @@ def test_invite_budget_exports_audit_and_checklist(client):
     itinerary = create_resp.get_json()
     itinerary_id = itinerary["id"]
     assert itinerary["map_info"]["google_map_url"].startswith("https://www.google.com/maps/search")
+    assert itinerary["currency"] == "XAF"
+    assert itinerary["cost_breakdown"]["currency_label"] == "FCFA"
 
     invite_resp = client.post(
         f"/api/itineraries/{itinerary_id}/invite",
@@ -330,7 +332,10 @@ def test_invite_budget_exports_audit_and_checklist(client):
 
     budget_resp = client.get(f"/api/itineraries/{itinerary_id}/budget", headers={"Authorization": f"Bearer {guest_token}"})
     assert budget_resp.status_code == 200
-    assert budget_resp.get_json()["paid_total"] == 50.0
+    budget = budget_resp.get_json()
+    assert budget["currency"] == "XAF"
+    assert budget["currency_label"] == "FCFA"
+    assert budget["paid_total"] == 50.0
 
     calendar_resp = client.get(f"/api/itineraries/{itinerary_id}/calendar.ics", headers={"Authorization": f"Bearer {guest_token}"})
     assert calendar_resp.status_code == 200
@@ -363,3 +368,36 @@ def test_media_file_upload(client):
     file_resp = client.get(media["url"])
     assert file_resp.status_code == 200
     assert file_resp.data == b"fake-image"
+
+
+def test_missing_uploaded_media_returns_placeholder(client):
+    response = client.get("/api/uploads/missing-photo.jpg")
+    assert response.status_code == 200
+    assert response.mimetype == "image/svg+xml"
+    assert b"Media unavailable" in response.data
+
+
+def test_cameroon_map_metadata_uses_google_maps_links(client):
+    token = register_and_login(client)
+    create_resp = client.post(
+        "/api/itineraries",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({
+            "title": "Douala Weekend",
+            "location": "Douala",
+            "hotel": {"name": "Akwa hotel", "cost_per_night": 65000},
+            "activities": [{"id": "food", "name": "Food tour", "cost": 18000}],
+        }),
+        content_type="application/json",
+    )
+    itinerary_id = create_resp.get_json()["id"]
+
+    response = client.get(f"/api/itineraries/{itinerary_id}/map", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["provider"] == "google_maps"
+    assert payload["country_focus"] == "Cameroon"
+    assert payload["map_info"]["cameroon_focus"] is True
+    assert "Cameroon" in payload["map_info"]["query"]
+    assert payload["map_info"]["google_maps_directions_url"].startswith("https://www.google.com/maps/dir/")
+    assert "restaurants" in payload["map_info"]["cameroon_searches"]
