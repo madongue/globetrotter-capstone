@@ -12,6 +12,10 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [selectedItinerary, setSelectedItinerary] = useState(null);
+  const [paymentAmount, setPaymentAmount] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('mobile');
+  const [paymentTargetType, setPaymentTargetType] = useState('total');
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [newItinerary, setNewItinerary] = useState({
@@ -302,6 +306,58 @@ function App() {
     }
   };
 
+  const handleSelectItinerary = (itinerary) => {
+    setSelectedItinerary(itinerary);
+    setPaymentAmount('');
+    setPaymentMethod('mobile');
+    setPaymentTargetType('total');
+    setPage('itinerary');
+  };
+
+  const handlePayItinerary = async (event) => {
+    event.preventDefault();
+    if (!token || !selectedItinerary) {
+      setAlert({ type: 'error', message: 'Please login to complete payment.' });
+      return;
+    }
+
+    const amount = Number(paymentAmount);
+    if (!amount || amount <= 0) {
+      setAlert({ type: 'error', message: 'Enter a valid payment amount.' });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/itineraries/${selectedItinerary.id}/pay`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          amount,
+          payment_method: paymentMethod,
+          target_type: paymentTargetType,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        setAlert({ type: 'error', message: result.error || 'Payment failed.' });
+        return;
+      }
+
+      setSelectedItinerary(result.itinerary);
+      setItineraries((current) => current.map((item) => (item.id === result.itinerary.id ? result.itinerary : item)));
+      setAlert({ type: 'success', message: 'Payment complete. Receipt generated.' });
+    } catch (error) {
+      setAlert({ type: 'error', message: 'Unable to process payment.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -431,9 +487,14 @@ function App() {
                 ) : (
                   <ul className="list-card">
                     {itineraries.map((itinerary) => (
-                      <li key={itinerary.id}>
-                        <strong>{itinerary.title}</strong>
-                        <p>{itinerary.location}</p>
+                      <li key={itinerary.id} className="itinerary-card">
+                        <div>
+                          <strong>{itinerary.title}</strong>
+                          <p>{itinerary.location}</p>
+                        </div>
+                        <button type="button" className="button button-secondary" onClick={() => handleSelectItinerary(itinerary)}>
+                          View
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -626,6 +687,101 @@ function App() {
           <div className="form-card">
             <h2>Please log in to view your dashboard.</h2>
           </div>
+        )}
+
+        {page === 'itinerary' && selectedItinerary && (
+          <section className="dashboard-section">
+            <div className="panel panel-primary">
+              <button type="button" className="link-button" onClick={() => setPage('dashboard')}>
+                ← Back to dashboard
+              </button>
+              <h2>{selectedItinerary.title}</h2>
+              <p>{selectedItinerary.location}</p>
+              <p>{selectedItinerary.notes}</p>
+              <div className="detail-grid">
+                <div>
+                  <strong>Participants</strong>
+                  <p>{selectedItinerary.participants?.join(', ') || 'None'}</p>
+                </div>
+                <div>
+                  <strong>Status</strong>
+                  <p>{selectedItinerary.payment_status}</p>
+                </div>
+                <div>
+                  <strong>Total budget</strong>
+                  <p>${selectedItinerary.cost_breakdown?.total_budget ?? 0}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid-2 mt-24">
+              <div className="panel">
+                <h3>Trip details</h3>
+                <p><strong>Hotel:</strong> {selectedItinerary.hotel?.name || 'None'}</p>
+                <p><strong>Activities:</strong></p>
+                <ul>
+                  {(selectedItinerary.activities || []).map((activity) => (
+                    <li key={activity.name}>{activity.name} — ${activity.cost}</li>
+                  ))}
+                </ul>
+                <p><strong>Places to visit:</strong></p>
+                <ul>
+                  {(selectedItinerary.places_to_visit || []).map((place) => (
+                    <li key={place.name}>{place.name} — ${place.cost}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="panel">
+                <h3>Payment receipt</h3>
+                {selectedItinerary.receipts?.length > 0 ? (
+                  <ul className="list-card">
+                    {selectedItinerary.receipts.map((receipt) => (
+                      <li key={receipt.id}>
+                        <strong>{receipt.note || receipt.target_type}</strong>
+                        <p>Amount: ${receipt.amount.toFixed(2)}</p>
+                        <p>Commission: ${receipt.commission_amount.toFixed(2)}</p>
+                        <p>Net: ${receipt.net_amount.toFixed(2)}</p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No payments recorded yet.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="panel mt-24">
+              <h3>Make a payment</h3>
+              <form onSubmit={handlePayItinerary} className="stacked-form">
+                <label>
+                  Amount
+                  <input
+                    type="number"
+                    value={paymentAmount}
+                    onChange={(event) => setPaymentAmount(event.target.value)}
+                    placeholder="150"
+                    required
+                  />
+                </label>
+                <label>
+                  Payment method
+                  <select value={paymentMethod} onChange={(event) => setPaymentMethod(event.target.value)}>
+                    <option value="mobile">Mobile</option>
+                    <option value="card">Card</option>
+                  </select>
+                </label>
+                <label>
+                  Target type
+                  <select value={paymentTargetType} onChange={(event) => setPaymentTargetType(event.target.value)}>
+                    <option value="total">Total</option>
+                    <option value="share">Share</option>
+                    <option value="event_ticket">Event ticket</option>
+                  </select>
+                </label>
+                <button type="submit" className="button button-primary">Submit payment</button>
+              </form>
+            </div>
+          </section>
         )}
       </main>
     </div>
