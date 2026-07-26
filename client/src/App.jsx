@@ -39,11 +39,14 @@ function App() {
 
     setLoading(true);
     try {
-      const [recoRes, itinRes] = await Promise.all([
+      const [recoRes, itinRes, groupsRes] = await Promise.all([
         fetch(`${API_BASE}/recommendations?limit=4`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(`${API_BASE}/itineraries`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`${API_BASE}/groups`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
