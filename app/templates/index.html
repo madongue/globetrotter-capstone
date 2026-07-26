@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero-banner">
+  <div class="container hero-inner">
+    <div>
+      <p class="eyebrow">Travel meets community</p>
+      <h1>Plan trips, sell event tickets, and connect with travel groups.</h1>
+      <p>GlobeTrotter is a polished travel platform for shared itineraries, payments, social media posts, and group discussions.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="{{ url_for('ui.register_page') }}">Get Started</a>
+        <a class="button button-secondary" href="{{ url_for('ui.login_page') }}">Sign In</a>
+      </div>
+    </div>
+    <div class="hero-cards">
+      <div class="feature-card">
+        <h3>Built for shared travel</h3>
+        <p>Create itineraries, invite friends, and track trip payments in one place.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Monetize events</h3>
+        <p>Sell tickets with commission tracking and digital receipts for every purchase.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Community hub</h3>
+        <p>Start group discussions, post travel media, and engage with other explorers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section container">
+  <div class="grid-3">
+    <article class="info-card">
+      <h2>Itinerary builder</h2>
+      <p>Plan hotels, activities, places, transport notes, and event listings from a single trip page.</p>
+    </article>
+    <article class="info-card">
+      <h2>Secure payments</h2>
+      <p>Accept mobile payments, record receipts, and apply commission logic for event ticket sales.</p>
+    </article>
+    <article class="info-card">
+      <h2>Social feeds</h2>
+      <p>Post photos or videos, like and comment, and share content with friends or groups.</p>
+    </article>
+  </div>
+</section>
+{% endblock %}

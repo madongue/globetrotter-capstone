@@ -1,20 +1,18 @@
-# Use an official lightweight Python runtime as the base image
-FROM python:3.9-slim
+# Build React frontend
+FROM node:20-alpine AS frontend
+WORKDIR /globetrotter/client
+COPY client/package.json client/package-lock.json* ./
+RUN npm install
+COPY client/ .
+RUN npm run build
 
-# Set a working directory inside the container
+# Build Python Flask backend
+FROM python:3.11-slim AS backend
 WORKDIR /globetrotter
-
-# Copy dependency file first to leverage Docker layer caching
 COPY requirements.txt .
-
-# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the application source code
 COPY . .
+COPY --from=frontend /globetrotter/client/dist ./client/dist
 
-# Expose the port the app runs on
 EXPOSE 5000
-
-# Run the application
 CMD ["python", "app/main.py"]

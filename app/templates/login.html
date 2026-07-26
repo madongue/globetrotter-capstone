@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section container form-shell">
+  <div class="form-card">
+    <h1>Sign in</h1>
+    <p>Use your GlobeTrotter account to access itineraries, groups, and payments.</p>
+    <div id="alert-container" class="alert-container"></div>
+    <form id="login-form" class="auth-form">
+      <label>Username<input type="text" name="username" required /></label>
+      <label>Password<input type="password" name="password" required /></label>
+      <button type="submit" class="button button-primary">Login</button>
+    </form>
+    <p class="small-note">New here? <a href="{{ url_for('ui.register_page') }}">Create an account</a>.</p>
+  </div>
+</section>
+{% endblock %}

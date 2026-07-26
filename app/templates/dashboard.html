@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section container dashboard-shell">
+  <div class="dashboard-grid">
+    <div class="dashboard-panel panel-primary">
+      <h2>Welcome back</h2>
+      <p>View your itineraries, manage payments, and join travel groups.</p>
+      <div class="dashboard-actions">
+        <a class="button button-secondary" href="#">Create itinerary</a>
+        <a class="button button-secondary" href="#">Join a group</a>
+      </div>
+    </div>
+    <div class="panel-card">
+      <h3>Recent activity</h3>
+      <ul class="activity-list">
+        <li>Payment receipt generated for Bali getaway.</li>
+        <li>New discussion started in the Bali Travelers group.</li>
+        <li>Photo shared from last weekend’s city tour.</li>
+      </ul>
+    </div>
+    <div class="panel-card">
+      <h3>Quick links</h3>
+      <ul class="quick-links">
+        <li><a href="#">My itineraries</a></li>
+        <li><a href="#">Media feed</a></li>
+        <li><a href="#">Group conversations</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section container form-shell">
+  <div class="form-card">
+    <h1>Create account</h1>
+    <p>Register to start planning trips and joining travel groups.</p>
+    <div id="alert-container" class="alert-container"></div>
+    <form id="register-form" class="auth-form">
+      <label>Username<input type="text" name="username" required /></label>
+      <label>Password<input type="password" name="password" required /></label>
+      <label>Interests (comma-separated)<input type="text" name="preferences" /></label>
+      <button type="submit" class="button button-primary">Register</button>
+    </form>
+    <p class="small-note">Already have an account? <a href="{{ url_for('ui.login_page') }}">Login</a>.</p>
+  </div>
+</section>
+{% endblock %}
