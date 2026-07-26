@@ -12,7 +12,7 @@
 - The JWT signing key shall be configurable through the `SECRET_KEY` environment variable.
 - The application shall not expose Flask debug mode in production.
 - Authorization shall protect user-specific data, trips, and itinerary access.
-- Google authentication shall be integrated securely using OAuth best practices.
+- Google authentication supports server-side ID-token validation for local/development use and `GOOGLE_CLIENT_ID` audience checking.
 
 ## Reliability
 - The application shall handle missing data files by initializing empty JSON arrays.
@@ -42,9 +42,8 @@
 - The architecture shall support future decomposition into independent services.
 
 ## Observability
-- The system shall support metrics, logging, and tracing in later phases.
-- API behavior shall be measurable and diagnosable.
-- Health checks shall be added when the application is deployed in distributed environments.
+- API behavior is measurable through `/metrics` and `/api/metrics`, including request counts, error counts, route counts, and average latency.
+- Health checks are available at `/health` and `/api/health` for local, Docker, and future orchestration probes.
 
 ## Portability
 - The system shall run on Python 3.9+.

@@ -19,10 +19,13 @@ from app.auth import get_current_user
 from app.models import (
     get_all_hotels,
     save_hotel,
+    update_hotel,
     get_all_activities,
     save_activity,
+    update_activity,
     get_all_places,
     save_place,
+    update_place,
     remove_hotel_by_id,
     remove_activity_by_id,
     remove_place_by_id,
@@ -30,6 +33,13 @@ from app.models import (
 )
 
 resources_bp = Blueprint("resources", __name__)
+
+
+RESOURCE_CONFIG = {
+    "hotels": (get_all_hotels, update_hotel),
+    "activities": (get_all_activities, update_activity),
+    "places": (get_all_places, update_place),
+}
 
 
 def _require_admin(request_obj):
@@ -176,3 +186,51 @@ def delete_place(place_id: str):
     if not remove_place_by_id(place_id):
         return jsonify({"error": "place not found"}), 404
     return jsonify({"message": "place removed"}), 200
+
+
+def _find_resource(resource_type: str, resource_id: str):
+    config = RESOURCE_CONFIG.get(resource_type)
+    if not config:
+        return None, None
+    get_all, update = config
+    for resource in get_all():
+        if resource.get("id") == resource_id:
+            return resource, update
+    return None, update
+
+
+@resources_bp.route("/resources/<resource_type>/<resource_id>/reviews", methods=["GET", "POST"])
+def resource_reviews(resource_type: str, resource_id: str):
+    """List or create reviews for hotels, activities, and places."""
+    resource, update_resource = _find_resource(resource_type, resource_id)
+    if update_resource is None:
+        return jsonify({"error": "resource_type must be hotels, activities, or places"}), 400
+    if not resource:
+        return jsonify({"error": "resource not found"}), 404
+
+    if request.method == "GET":
+        return jsonify(resource.get("reviews", [])), 200
+
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    data = request.get_json(silent=True) or {}
+    try:
+        rating = int(data.get("rating"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "rating must be an integer from 1 to 5"}), 400
+    if rating < 1 or rating > 5:
+        return jsonify({"error": "rating must be an integer from 1 to 5"}), 400
+
+    review = {
+        "id": str(uuid.uuid4()),
+        "username": username,
+        "rating": rating,
+        "comment": data.get("comment", "").strip(),
+    }
+    reviews = resource.setdefault("reviews", [])
+    reviews.append(review)
+    resource["rating"] = round(sum(item.get("rating", 0) for item in reviews) / len(reviews), 2)
+    update_resource(resource)
+    return jsonify({"message": "review added", "review": review, "resource": resource}), 201

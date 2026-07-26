@@ -24,7 +24,7 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
    - The system shall support onboarding via Google login and password-based registration.
    - The system shall provide a destination discovery experience similar to modern travel planners with tags, budget, and location filters.
    - The system shall enable shared trips and trip collaboration in later project phases.
-   - The system shall prepare for future features such as AI-assisted itinerary generation and place autocomplete.
+   - The system shall provide local AI-style itinerary generation and place autocomplete.
    - The system shall surface recommendations in a personalised, ranked order based on preferences and history.
 
 2. Login
@@ -75,10 +75,14 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 |---|---|---|---|
 | POST | `/register` | No | Register a new user |
 | POST | `/login` | No | Authenticate and receive a JWT |
-| POST | `/auth/google` | No | Authenticate or register via Google |
+| POST | `/auth/google` | No | Authenticate or register via Google ID or verified Google ID token |
+| GET/PATCH | `/profile` | Yes | Read or update profile preferences |
+| GET | `/admin/users` | Yes | List users for administrators |
+| PATCH | `/admin/users/{username}/role` | Yes | Update a user's role |
 | POST | `/forgot-password` | No | Request a password reset token |
 | POST | `/reset-password` | No | Reset a password using a token |
 | GET | `/destinations` | No | Search the destination catalogue |
+| GET | `/autocomplete` | No | Search local destination/resource suggestions |
 | GET | `/recommendations` | Yes | Get personalised destination recommendations |
 | POST | `/itineraries` | Yes | Create a new itinerary |
 | GET | `/itineraries/suggestions` | Yes | Get suggested resources based on budget and location |
@@ -86,11 +90,27 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 | POST | `/itineraries/{itinerary_id}/join` | Yes | Join an existing itinerary and optionally pay a share |
 | POST | `/itineraries/{itinerary_id}/pay` | Yes | Record a payment, generate a receipt, and track commission |
 | POST | `/itineraries/{itinerary_id}/share` | Yes | Share an itinerary with another user |
+| GET/PATCH/POST | `/itineraries/{itinerary_id}/progress` | Yes | Read or update itinerary stage progress |
+| POST | `/itineraries/{itinerary_id}/feedback` | Yes | Record feedback for an itinerary |
+| POST | `/itineraries/generate` | Yes | Generate a draft itinerary from local catalogue data |
+| GET | `/itineraries/{itinerary_id}/budget` | Yes | Return budget, payment, commission, and remaining totals |
+| GET | `/itineraries/{itinerary_id}/audit` | Yes | Return itinerary audit events |
+| POST | `/itineraries/{itinerary_id}/invite` | Yes | Create a limited-use invite link |
+| POST | `/invites/{token}/join` | Yes | Join an itinerary by invite token |
+| GET | `/itineraries/{itinerary_id}/calendar.ics` | Yes | Export calendar event |
+| GET | `/itineraries/{itinerary_id}/export.pdf` | Yes | Export PDF itinerary summary |
+| POST/PATCH | `/itineraries/{itinerary_id}/stages/{stage_id}/checklist` | Yes | Add or update stage checklist items |
+| Various | `/trips/*` | Yes | Trip aliases for itinerary endpoints |
+| GET | `/notifications` | Yes | List authenticated user's notifications |
+| POST | `/notifications/{notification_id}/read` | Yes | Mark a notification as read |
+| GET | `/health` / `/api/health` | No | Liveness/readiness check |
+| GET | `/metrics` / `/api/metrics` | No | In-process request metrics |
 | POST | `/groups` | Yes | Create a community group |
 | GET | `/groups` | Yes | List all community groups |
 | POST | `/groups/{group_id}/join` | Yes | Join a community group |
 | GET | `/media` | Yes | List shared media posts and group media |
 | POST | `/media` | Yes | Create a shared media post |
+| POST | `/media/upload` | Yes | Upload a media file and create a shared post |
 | POST | `/media/{media_id}/comment` | Yes | Comment on a media post |
 | POST | `/media/{media_id}/like` | Yes | Like a media post |
 | POST | `/media/{media_id}/share` | Yes | Share a media post with another user |
@@ -98,10 +118,13 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 | GET | `/itineraries` | Yes | List itineraries available to the user |
 | POST | `/resources/hotels` | Yes | Add a hotel resource |
 | DELETE | `/resources/hotels/{hotel_id}` | Yes | Remove a hotel resource |
+| GET/POST | `/resources/hotels/{hotel_id}/reviews` | Optional/Yes | List or create hotel reviews |
 | POST | `/resources/activities` | Yes | Add an activity resource |
 | DELETE | `/resources/activities/{activity_id}` | Yes | Remove an activity resource |
+| GET/POST | `/resources/activities/{activity_id}/reviews` | Optional/Yes | List or create activity reviews |
 | POST | `/resources/places` | Yes | Add a place resource |
 | DELETE | `/resources/places/{place_id}` | Yes | Remove a place resource |
+| GET/POST | `/resources/places/{place_id}/reviews` | Optional/Yes | List or create place reviews |
 
 ## Acceptance Criteria
 

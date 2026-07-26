@@ -38,7 +38,7 @@ Takeaway features for GlobeTrotter:
 - Provide a trip dashboard where users can build and share trips.
 - Use filterable destination search, budget planning, and continent-based discovery.
 - Build a recommendation service that ranks destinations by user preferences and travel history.
-- Plan for future AI-assisted trip generation and map-based place discovery.
+- Use local AI-style trip generation and catalogue autocomplete for place discovery workflows.
 
 ## User Account Management
 ### Register
@@ -60,6 +60,7 @@ Takeaway features for GlobeTrotter:
 - Uses JWT bearer tokens in the `Authorization` header.
 - The secret key is loaded from `SECRET_KEY` environment variable.
 - Protected routes validate the token and extract the current username.
+- Google login accepts either a local demo `google_id` or an `id_token` verified through Google's tokeninfo endpoint; `GOOGLE_CLIENT_ID` enables audience checks.
 
 ## Destination Discovery
 ### Destination Catalogue
@@ -83,8 +84,7 @@ Takeaway features for GlobeTrotter:
 - Sorts destinations by score descending and then by name.
 - Returns a limited result set (default 5) via an optional `limit` parameter.
 - Includes `match_score` in returned objects for transparency.
-- Future iterations may incorporate past trips and popular destination trends.
-- Recommendations will evolve to consider budget, feedback, location, and travel history.
+- Recommendations incorporate preferences, past trips, positive feedback tags, budget, and location criteria.
 
 ## Research and Discovery
 - Users shall be able to research travel locations and available trips by budget, location, user feedback, and other criteria.
@@ -127,12 +127,14 @@ Takeaway features for GlobeTrotter:
 - Users can purchase event tickets through itinerary payment flows.
 - The system generates receipts with commission and net payout details.
 - Seat availability is decremented when tickets are sold.
+- Budget dashboards compare planned totals, payments, commissions, net paid, and remaining balance.
 
 ### Community Groups and Media
 - Authenticated users can create and join community groups.
 - Groups maintain members, discussion threads, and shared media.
 - Users can post photos or videos, comment, like, and share media posts.
 - Media posts can be scoped to groups or itineraries, with share permissions and tagging.
+- Media can be URL-based or uploaded to local JSON-backed storage under `data/uploads`.
 
 ### List Trips and Itineraries
 - Requires an authenticated user.
@@ -148,9 +150,9 @@ Takeaway features for GlobeTrotter:
 - Administrators can manage resources through dedicated endpoints for hotels, activities, and places.
 
 ### Real-Time Tracking
-- Trip progress is tracked in real time by stage.
-- Each stage can report current status, location, and expected completion.
-- Real-time tracking feeds trip advancement and user notifications.
+- Trip progress is tracked by stage through `/itineraries/{id}/progress` and `/trips/{id}/progress`.
+- Each stage can report current status, location, completion state, and expected completion metadata.
+- The current monolith stores updates synchronously in JSON; future distributed phases can replace this with live push notifications.
 
 ### Trip Cost and Time Calculation
 - Each activity and stage is calculated for cost and duration.
@@ -160,12 +162,17 @@ Takeaway features for GlobeTrotter:
 ### Share Trips and Itineraries
 - Users can share trips and itineraries with other users.
 - Shared trips preserve ownership and access control.
-- Shared itinerary views provide a read-only or collaborative mode depending on permissions.
+- Shared itinerary views provide a read-only or collaborative edit mode depending on `view` or `edit` permissions.
+- The system records local notifications for sharing, joining, progress, payments, and feedback events.
+- Owners can create limited-use invite links with view/edit permissions.
+- Itinerary actions write audit log entries for review.
+- Itineraries can be exported as PDF summaries and calendar `.ics` files.
+- Each stage can maintain a checklist of tasks.
 
 ### Recommendations Evolution
-- The system recommends destinations and trips based on user preferences and history.
-- Recommendations may include budget, feedback, and location criteria.
-- Personalized suggestions improve over time as the user interacts with the app.
+- The system recommends destinations based on user preferences, trip history, budget/location criteria, and positive feedback tags.
+- Users can submit trip feedback through `/itineraries/{id}/feedback`.
+- Personalized suggestions improve as users create trips and record feedback.
 
 ## Data Persistence Rules
 - Users and itineraries are appended to JSON arrays stored in `data/users.json` and `data/itineraries.json`.

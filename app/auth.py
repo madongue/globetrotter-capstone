@@ -10,12 +10,18 @@ POST /login     – authenticate and return a JWT token
 """
 import uuid
 import datetime
+import json
+import os
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import jwt
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.models import (
+    get_all_users,
     get_user_by_username,
     save_user,
     update_user,
@@ -69,6 +75,30 @@ def _generate_password_reset_token() -> str:
 
 def _password_reset_expiry() -> str:
     return (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)).isoformat()
+
+
+def _verify_google_id_token(id_token: str) -> dict | None:
+    """Verify a Google ID token through Google's tokeninfo endpoint.
+
+    This keeps the capstone runnable without extra dependencies. Production
+    deployments should prefer Google's Python auth library or JWKS verification.
+    """
+    query = urllib.parse.urlencode({"id_token": id_token})
+    url = f"https://oauth2.googleapis.com/tokeninfo?{query}"
+    try:
+        with urllib.request.urlopen(url, timeout=5) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except (urllib.error.URLError, TimeoutError, ValueError):
+        return None
+
+    expected_client_id = os.environ.get("GOOGLE_CLIENT_ID")
+    if expected_client_id and payload.get("aud") != expected_client_id:
+        return None
+    if payload.get("iss") not in {"accounts.google.com", "https://accounts.google.com"}:
+        return None
+    if not payload.get("sub"):
+        return None
+    return payload
 
 
 # ---------------------------------------------------------------------------
@@ -143,12 +173,20 @@ def google_auth():
     Otherwise, creates a new user with `role: user`.
     """
     data = request.get_json(silent=True) or {}
+    id_token = data.get("id_token", "").strip()
     google_id = data.get("google_id", "").strip()
     username = data.get("username", "").strip()
     preferences = data.get("preferences", [])
 
+    if id_token:
+        google_payload = _verify_google_id_token(id_token)
+        if not google_payload:
+            return jsonify({"error": "invalid Google ID token"}), 401
+        google_id = google_payload["sub"]
+        username = username or google_payload.get("email", "").split("@")[0] or f"google-{google_id}"
+
     if not google_id or not username:
-        return jsonify({"error": "google_id and username are required"}), 400
+        return jsonify({"error": "google_id and username are required unless id_token is supplied"}), 400
 
     user = get_user_by_google_id(google_id)
     if not user:
@@ -226,3 +264,104 @@ def reset_password():
     update_user(user)
 
     return jsonify({"message": "password reset successful"}), 200
+
+
+@auth_bp.route("/profile", methods=["GET", "PATCH"])
+def profile():
+    """Read or update the authenticated user's profile/preferences."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    user = get_user_by_username(username)
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+
+    if request.method == "GET":
+        return jsonify({
+            "id": user.get("id"),
+            "username": user.get("username"),
+            "preferences": user.get("preferences", []),
+            "role": user.get("role", "user"),
+            "google_linked": bool(user.get("google_id")),
+        }), 200
+
+    data = request.get_json(silent=True) or {}
+    if "preferences" in data:
+        preferences = data.get("preferences")
+        if not isinstance(preferences, list):
+            return jsonify({"error": "preferences must be a list"}), 400
+        user["preferences"] = [str(item).strip() for item in preferences if str(item).strip()]
+
+    update_user(user)
+    return jsonify({
+        "message": "profile updated",
+        "profile": {
+            "id": user.get("id"),
+            "username": user.get("username"),
+            "preferences": user.get("preferences", []),
+            "role": user.get("role", "user"),
+            "google_linked": bool(user.get("google_id")),
+        },
+    }), 200
+
+
+def _require_admin_user(request_obj):
+    username = get_current_user(request_obj)
+    if not username:
+        return None, (jsonify({"error": "authentication required"}), 401)
+    user = get_user_by_username(username)
+    if not user:
+        return None, (jsonify({"error": "user not found"}), 404)
+    if user.get("role") != "admin":
+        return None, (jsonify({"error": "admin access required"}), 403)
+    return user, None
+
+
+@auth_bp.route("/admin/users", methods=["GET"])
+def list_users_admin():
+    """List users for administrators."""
+    admin_user, error = _require_admin_user(request)
+    if error:
+        return error
+
+    users = []
+    for user in get_all_users():
+        users.append({
+            "id": user.get("id"),
+            "username": user.get("username"),
+            "preferences": user.get("preferences", []),
+            "role": user.get("role", "user"),
+            "google_linked": bool(user.get("google_id")),
+        })
+    return jsonify(users), 200
+
+
+@auth_bp.route("/admin/users/<username>/role", methods=["PATCH"])
+def update_user_role_admin(username: str):
+    """Promote or demote a user role."""
+    admin_user, error = _require_admin_user(request)
+    if error:
+        return error
+
+    data = request.get_json(silent=True) or {}
+    role = data.get("role", "").strip().lower()
+    if role not in {"user", "admin"}:
+        return jsonify({"error": "role must be user or admin"}), 400
+
+    user = get_user_by_username(username)
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+    if user.get("username") == admin_user.get("username") and role != "admin":
+        return jsonify({"error": "administrators cannot demote themselves"}), 400
+
+    user["role"] = role
+    update_user(user)
+    return jsonify({
+        "message": "user role updated",
+        "user": {
+            "id": user.get("id"),
+            "username": user.get("username"),
+            "role": user.get("role", "user"),
+        },
+    }), 200

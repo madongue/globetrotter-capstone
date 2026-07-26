@@ -24,6 +24,10 @@ ACTIVITIES_FILE = os.path.join(DATA_DIR, "activities.json")
 PLACES_FILE = os.path.join(DATA_DIR, "places.json")
 GROUPS_FILE = os.path.join(DATA_DIR, "groups.json")
 MEDIA_FILE = os.path.join(DATA_DIR, "media.json")
+NOTIFICATIONS_FILE = os.path.join(DATA_DIR, "notifications.json")
+INVITES_FILE = os.path.join(DATA_DIR, "invites.json")
+AUDIT_LOG_FILE = os.path.join(DATA_DIR, "audit_log.json")
+UPLOADS_DIR = os.path.join(DATA_DIR, "uploads")
 
 
 # ---------------------------------------------------------------------------
@@ -150,6 +154,36 @@ def save_place(place: dict) -> None:
     _write_json(PLACES_FILE, places)
 
 
+def update_hotel(updated_hotel: dict) -> None:
+    hotels = get_all_hotels()
+    for index, hotel in enumerate(hotels):
+        if hotel.get("id") == updated_hotel.get("id"):
+            hotels[index] = updated_hotel
+            _write_json(HOTELS_FILE, hotels)
+            return
+    raise ValueError("Hotel not found")
+
+
+def update_activity(updated_activity: dict) -> None:
+    activities = get_all_activities()
+    for index, activity in enumerate(activities):
+        if activity.get("id") == updated_activity.get("id"):
+            activities[index] = updated_activity
+            _write_json(ACTIVITIES_FILE, activities)
+            return
+    raise ValueError("Activity not found")
+
+
+def update_place(updated_place: dict) -> None:
+    places = get_all_places()
+    for index, place in enumerate(places):
+        if place.get("id") == updated_place.get("id"):
+            places[index] = updated_place
+            _write_json(PLACES_FILE, places)
+            return
+    raise ValueError("Place not found")
+
+
 def get_all_groups() -> list:
     """Return all community groups."""
     return _read_json(GROUPS_FILE)
@@ -212,6 +246,86 @@ def update_media(updated_media: dict) -> None:
             _write_json(MEDIA_FILE, media_items)
             return
     raise ValueError("Media not found")
+
+
+def get_all_notifications() -> list:
+    """Return all user notifications."""
+    return _read_json(NOTIFICATIONS_FILE)
+
+
+def get_notifications_for_user(username: str, unread_only: bool = False) -> list:
+    """Return notifications addressed to *username*."""
+    notifications = [
+        item for item in get_all_notifications()
+        if item.get("username") == username
+    ]
+    if unread_only:
+        notifications = [item for item in notifications if not item.get("read")]
+    return notifications
+
+
+def save_notification(notification: dict) -> None:
+    """Append *notification* to the notifications store."""
+    notifications = get_all_notifications()
+    notifications.append(notification)
+    _write_json(NOTIFICATIONS_FILE, notifications)
+
+
+def update_notification(updated_notification: dict) -> None:
+    """Persist changes to an existing notification."""
+    notifications = get_all_notifications()
+    for index, notification in enumerate(notifications):
+        if notification.get("id") == updated_notification.get("id"):
+            notifications[index] = updated_notification
+            _write_json(NOTIFICATIONS_FILE, notifications)
+            return
+    raise ValueError("Notification not found")
+
+
+def get_all_invites() -> list:
+    """Return all trip invite records."""
+    return _read_json(INVITES_FILE)
+
+
+def get_invite_by_token(token: str) -> dict | None:
+    for invite in get_all_invites():
+        if invite.get("token") == token:
+            return invite
+    return None
+
+
+def save_invite(invite: dict) -> None:
+    invites = get_all_invites()
+    invites.append(invite)
+    _write_json(INVITES_FILE, invites)
+
+
+def update_invite(updated_invite: dict) -> None:
+    invites = get_all_invites()
+    for index, invite in enumerate(invites):
+        if invite.get("token") == updated_invite.get("token"):
+            invites[index] = updated_invite
+            _write_json(INVITES_FILE, invites)
+            return
+    raise ValueError("Invite not found")
+
+
+def get_all_audit_entries() -> list:
+    """Return all audit log entries."""
+    return _read_json(AUDIT_LOG_FILE)
+
+
+def get_audit_entries_for_itinerary(itinerary_id: str) -> list:
+    return [
+        entry for entry in get_all_audit_entries()
+        if entry.get("entity_type") == "itinerary" and entry.get("entity_id") == itinerary_id
+    ]
+
+
+def save_audit_entry(entry: dict) -> None:
+    entries = get_all_audit_entries()
+    entries.append(entry)
+    _write_json(AUDIT_LOG_FILE, entries)
 
 
 def remove_hotel_by_id(hotel_id: str) -> bool:

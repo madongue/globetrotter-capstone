@@ -39,7 +39,7 @@ This document captures competitor research and feature inspiration for GlobeTrot
 ### Recommendations and AI Assistance
 - Provide personalised recommendations based on user preferences and history.
 - Rank results by relevance score and user-specific criteria.
-- Plan for AI-assisted itinerary generation and smarter trip suggestions in later phases.
+- Provide local AI-style itinerary generation and smarter trip suggestions.
 
 ### User Experience
 - Build simple, mobile-friendly interfaces with responsive design.
@@ -50,7 +50,7 @@ This document captures competitor research and feature inspiration for GlobeTrot
 ### Platform Evolution
 - Begin with a monolithic Flask API and JSON storage for phase 1.
 - Design for future decomposition into microservices, API gateway, and cloud deployment.
-- Plan for future enhancements such as place autocomplete, image-rich destination cards, and notification support.
+- Include place autocomplete, richer destination/resource cards, and notification support.
 
 ## Recommendations for GlobeTrotter
 - Add a dedicated `/trips` API surface to support creating, updating, joining, and sharing itineraries.
@@ -59,20 +59,20 @@ This document captures competitor research and feature inspiration for GlobeTrot
 - Enhance recommendation logic with user history and trip feedback.
 - Introduce shareable trip boards and participant access controls.
 - Track trip cost and duration with detail per stage and overall itinerary.
-- Keep the app architecture modular so future phases can add AI features and cloud-native resilience.
+- Keep the app architecture modular so future phases can add cloud-native resilience.
 
 ## Feature Gap Analysis
 
 | Feature | Current Status | Target Direction |
 |---|---|---|
-| Username/password auth | Implemented | Keep and extend with Google login |
-| Google auth | Planned | Add in next phase |
-| Destination search | Implemented | Extend with more filters and richer metadata |
-| Recommendations | Basic score ranking | Expand to use history and budget signals |
-| Trip creation | Basic itineraries | Add hotels, activities, sharing, and participant management |
-| Shared trip boards | Not implemented | Build collaborative trip sharing and access roles |
-| AI itinerary generation | Not implemented | Plan as a future enhancement |
-| Mobile-friendly UI | Not implemented in API project | Plan for responsive frontend in later phase |
+| Username/password auth | Implemented | Maintain alongside Google login |
+| Google auth | Implemented with local Google ID and verified ID-token support | Use production Google auth libraries for cloud hardening |
+| Destination search | Implemented with filters and autocomplete | Continue enriching catalogue metadata |
+| Recommendations | Implemented with preferences, history, budget, location, and feedback signals | Continue improving ranking quality |
+| Trip creation | Implemented with hotels, activities, places, sharing, participants, costs, durations, and stages | Continue improving collaboration UX |
+| Shared trip boards | Implemented through shared itineraries, view/edit permissions, participants, groups, discussions, and media | Continue improving collaboration UX |
+| AI itinerary generation | Implemented as a local catalogue-based draft generator | Replace or augment with external AI later |
+| Mobile-friendly UI | Implemented in React with responsive dashboard panels | Continue visual polish and usability testing |
 
 ## Conclusion
-GlobeTrotter is aligned with modern travel planner expectations. The product should begin with reliable destination search, secure login, and itinerary creation, then evolve toward collaborative trip planning, shared trips, and AI-assisted recommendation flows.
+GlobeTrotter is aligned with modern travel planner expectations. The current monolith includes reliable destination search, secure login, itinerary creation, collaborative trip planning, shared trips, and AI-style recommendation/generation flows.

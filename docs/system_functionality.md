@@ -99,8 +99,12 @@ The current implementation is the Phase 1 monolith. Future phases include:
 |---|---|---|---|
 | `/register` | POST | No | Register a new user |
 | `/login` | POST | No | Authenticate and receive a JWT |
-| `/auth/google` | POST | No | Authenticate or register via Google |
+| `/auth/google` | POST | No | Authenticate or register via Google ID or verified Google ID token |
+| `/profile` | GET, PATCH | Yes | Read or update profile preferences |
+| `/admin/users` | GET | Yes | List users for administrators |
+| `/admin/users/{username}/role` | PATCH | Yes | Update a user's role |
 | `/destinations` | GET | No | Search the destination catalogue |
+| `/autocomplete` | GET | No | Search local destination/resource suggestions |
 | `/recommendations` | GET | Yes | Get personalised destination recommendations |
 | `/itineraries` | POST | Yes | Create a new itinerary |
 | `/itineraries/suggestions` | GET | Yes | Get hotel/activity/place suggestions based on location and budget |
@@ -109,28 +113,46 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | `/itineraries` | GET | Yes | List itineraries available to the user |
 | `/itineraries/{itinerary_id}/share` | POST | Yes | Share an itinerary with another user |
 | `/itineraries/{itinerary_id}/map` | GET | Yes | Get map metadata for an itinerary |
+| `/itineraries/{itinerary_id}/progress` | GET, PATCH, POST | Yes | Read or update stage progress and current location |
+| `/itineraries/{itinerary_id}/feedback` | POST | Yes | Record trip feedback for recommendation ranking |
+| `/itineraries/generate` | POST | Yes | Generate a draft itinerary from local catalogue/resource data |
+| `/itineraries/{itinerary_id}/budget` | GET | Yes | Return budget/payment totals |
+| `/itineraries/{itinerary_id}/audit` | GET | Yes | Return itinerary audit log |
+| `/itineraries/{itinerary_id}/invite` | POST | Yes | Create limited-use invite links |
+| `/invites/{token}/join` | POST | Yes | Join by invite token |
+| `/itineraries/{itinerary_id}/calendar.ics` | GET | Yes | Export calendar event |
+| `/itineraries/{itinerary_id}/export.pdf` | GET | Yes | Export PDF summary |
+| `/itineraries/{itinerary_id}/stages/{stage_id}/checklist` | POST, PATCH | Yes | Manage stage checklists |
+| `/trips/*` | Various | Yes | Compatibility aliases for itinerary lifecycle endpoints |
+| `/notifications` | GET | Yes | List user notifications |
+| `/notifications/{notification_id}/read` | POST | Yes | Mark a notification as read |
+| `/health` / `/api/health` | GET | No | Liveness/readiness check |
+| `/metrics` / `/api/metrics` | GET | No | In-process request metrics |
 | `/resources/hotels` | POST | Yes | Add a hotel resource |
 | `/resources/hotels/{hotel_id}` | DELETE | Yes | Remove a hotel resource |
+| `/resources/hotels/{hotel_id}/reviews` | GET, POST | Optional/Yes | List or create hotel reviews |
 | `/resources/activities` | POST | Yes | Add an activity resource |
 | `/resources/activities/{activity_id}` | DELETE | Yes | Remove an activity resource |
+| `/resources/activities/{activity_id}/reviews` | GET, POST | Optional/Yes | List or create activity reviews |
 | `/resources/places` | POST | Yes | Add a place resource |
 | `/resources/places/{place_id}` | DELETE | Yes | Remove a place resource |
+| `/resources/places/{place_id}/reviews` | GET, POST | Optional/Yes | List or create place reviews |
 
 ## Current Implementation Details
 - Stores users and itineraries in JSON files.
 - Stores destination catalogue in `data/destinations.json`.
-- Does not yet support itinerary sharing.
+- Supports itinerary sharing, joining, payments, media, community groups, trip progress, feedback, and generated itinerary drafts.
 - Uses a simple monolithic design for Phase 1.
 
 ## Future Functionality Expectations
-- The system should support sharing trips and itineraries with friends and family.
-- The system should allow users to create, join, and modify trips.
-- The system should allow hotels, activities, and places to be added, removed, and referenced.
-- The system should enable administrators to manage hotel, activity, and place resources for discovery.
-- The system should provide location- and budget-based suggestions when building an itinerary.
-- The system should track trip stage advancement and real-time progress.
-- Recommendations should consider user preferences, history, budgets, and feedback.
-- Cost and duration calculations should be visible for each trip stage and total itinerary.
+- The system supports sharing trips and itineraries with friends and family.
+- The system allows users to create, join, and modify trips.
+- The system allows hotels, activities, and places to be added, removed, and referenced.
+- The system enables administrators to manage hotel, activity, and place resources for discovery.
+- The system provides location- and budget-based suggestions when building an itinerary.
+- The system tracks trip stage advancement, current location, status, and progress percentage.
+- Recommendations consider user preferences, history, budgets, location filters, and trip feedback.
+- Cost and duration calculations are visible for each trip stage and total itinerary.
 - The system should scale to millions of users.
 - The deployment model should move from a single server to container orchestration in the cloud.
 

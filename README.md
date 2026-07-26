@@ -4,7 +4,7 @@ GlobeTrotter is a **monolithic Flask application** that serves as the starting p
 Students build the monolith first, then refactor it into microservices, and finally deploy it to the cloud with resilience patterns using Docker, Kubernetes, and cloud-native tooling.
 
 ## Product Vision
-GlobeTrotter is designed to help travellers discover destinations, build shared trips, and collaborate on itineraries. It combines destination search, personalised recommendations, and trip planning workflows with a future path toward Google authentication, shared trip boards, and AI-assisted itinerary generation.
+GlobeTrotter is designed to help travellers discover destinations, build shared trips, and collaborate on itineraries. It combines destination search, personalised recommendations, trip planning workflows, Google-style authentication, shared trip boards, and local AI-style itinerary draft generation.
 
 ### Inspiration and Benchmarking
 This project is informed by existing travel planning applications and open-source trip planners such as:
@@ -47,10 +47,14 @@ These examples reinforce the product direction: destination discovery, Google lo
 |--------|---------------------|---------------|------------------------------------------|
 | POST   | `/register`         | No            | Register a new user                      |
 | POST   | `/login`            | No            | Authenticate and receive a JWT token     |
-| POST   | `/auth/google`      | No            | Authenticate or register using Google ID |
+| POST   | `/auth/google`      | No            | Authenticate or register using Google ID or verified Google ID token |
+| GET/PATCH | `/profile`        | Yes (JWT)     | Read or update user profile preferences  |
+| GET    | `/admin/users`      | Yes (JWT / admin) | List users for role management |
+| PATCH  | `/admin/users/{username}/role` | Yes (JWT / admin) | Promote or demote a user |
 | POST   | `/forgot-password`  | No            | Request a password reset token           |
 | POST   | `/reset-password`   | No            | Reset password using a reset token       |
 | GET    | `/destinations`     | No            | Search the destination catalogue         |
+| GET    | `/autocomplete`     | No            | Search local destination/resource suggestions |
 | GET    | `/recommendations`  | Yes (JWT)     | Get personalised recommendations         |
 | POST   | `/itineraries`      | Yes (JWT)     | Create a new itinerary                   |
 | GET    | `/itineraries/suggestions` | Yes (JWT) | Get location/budget-based suggestions   |
@@ -59,11 +63,28 @@ These examples reinforce the product direction: destination discovery, Google lo
 | POST   | `/itineraries/{itinerary_id}/join`  | Yes (JWT) | Join an existing itinerary, pay a share, and receive a receipt |
 | POST   | `/itineraries/{itinerary_id}/pay`   | Yes (JWT) | Record a mobile payment, issue a receipt, and track commissions |
 | GET    | `/itineraries/{itinerary_id}/map`   | Yes (JWT) | Get map metadata for an itinerary     |
+| GET/PATCH/POST | `/itineraries/{itinerary_id}/progress` | Yes (JWT) | Read or update stage progress and current location |
+| POST   | `/itineraries/{itinerary_id}/feedback` | Yes (JWT) | Record trip feedback for recommendations |
+| POST   | `/itineraries/generate` | Yes (JWT) | Generate a draft itinerary from local data |
+| GET    | `/itineraries/{itinerary_id}/budget` | Yes (JWT) | Compare planned, paid, remaining, commission, and net totals |
+| GET    | `/itineraries/{itinerary_id}/audit` | Yes (JWT) | View itinerary audit history |
+| POST   | `/itineraries/{itinerary_id}/invite` | Yes (JWT / owner) | Create a limited-use invite link |
+| POST   | `/invites/{token}/join` | Yes (JWT) | Join a trip through an invite token |
+| GET    | `/itineraries/{itinerary_id}/calendar.ics` | Yes (JWT) | Export an itinerary calendar file |
+| GET    | `/itineraries/{itinerary_id}/export.pdf` | Yes (JWT) | Export an itinerary PDF |
+| POST/PATCH | `/itineraries/{itinerary_id}/stages/{stage_id}/checklist` | Yes (JWT / editor) | Add or update checklist items |
+| Various | `/trips/*` | Yes (JWT) | Compatibility aliases for itinerary endpoints |
+| GET    | `/notifications` | Yes (JWT) | List user notifications |
+| POST   | `/notifications/{notification_id}/read` | Yes (JWT) | Mark one notification as read |
+| GET    | `/health` / `/api/health` | No | Liveness/readiness check |
+| GET    | `/metrics` / `/api/metrics` | No | In-process request metrics |
 | POST   | `/groups`          | Yes (JWT)     | Create a community group             |
 | GET    | `/groups`          | Yes (JWT)     | List all community groups             |
 | POST   | `/groups/{group_id}/join` | Yes (JWT) | Join a community group         |
 | GET    | `/media`           | Yes (JWT)     | List shared media posts and group media |
 | POST   | `/media`           | Yes (JWT)     | Share a photo or video with the community |
+| POST   | `/media/upload`    | Yes (JWT)     | Upload a media file and create a post |
+| GET    | `/uploads/{filename}` | No          | Serve uploaded media files |
 | POST   | `/media/{media_id}/comment` | Yes (JWT) | Comment on a media post   |
 | POST   | `/media/{media_id}/like` | Yes (JWT) | Like a shared media post           |
 | POST   | `/media/{media_id}/share` | Yes (JWT) | Share a media post with another user |
@@ -73,10 +94,13 @@ These examples reinforce the product direction: destination discovery, Google lo
 | GET    | `/itineraries`      | Yes (JWT)     | List all itineraries available to the user |
 | POST   | `/resources/hotels` | Yes (JWT / admin) | Add a hotel resource                 |
 | DELETE | `/resources/hotels/{hotel_id}` | Yes (JWT / admin) | Remove a hotel resource |
+| GET/POST | `/resources/hotels/{hotel_id}/reviews` | Optional/Yes | List or create hotel reviews |
 | POST   | `/resources/activities` | Yes (JWT / admin) | Add an activity resource         |
 | DELETE | `/resources/activities/{activity_id}` | Yes (JWT / admin) | Remove an activity resource |
+| GET/POST | `/resources/activities/{activity_id}/reviews` | Optional/Yes | List or create activity reviews |
 | POST   | `/resources/places` | Yes (JWT / admin) | Add a place resource                 |
 | DELETE | `/resources/places/{place_id}` | Yes (JWT / admin) | Remove a place resource |
+| GET/POST | `/resources/places/{place_id}/reviews` | Optional/Yes | List or create place reviews |
 
 Protected routes expect the header:  
 `Authorization: Bearer <your-token>`
@@ -218,6 +242,10 @@ All data is persisted in plain JSON files inside the `data/` directory:
 | `data/places.json`      | Place resources created by administrators |
 | `data/groups.json`      | Community groups and membership data |
 | `data/media.json`       | Shared media posts, comments, likes, and shares |
+| `data/uploads/`         | Uploaded media files |
+| `data/invites.json`     | Trip invite tokens and usage counts |
+| `data/audit_log.json`   | Itinerary audit trail |
+| `data/notifications.json` | User notifications |
 
 ---
 
@@ -281,6 +309,7 @@ Then open `http://localhost:5000`.
 | `SECRET_KEY`         | `globetrotter-secret-change-in-prod` | JWT signing key – **must be overridden in production** |
 | `FLASK_DEBUG`        | `0`                                  | Set to `1` to enable Flask debug mode (development only) |
 | `PORT`               | `5000`                               | Port the app listens on |
+| `GOOGLE_CLIENT_ID`   | unset                                | Optional audience check for Google ID-token login |
 
 > **Important:** Always set `SECRET_KEY` to a long, random value in production (e.g. `python -c "import secrets; print(secrets.token_hex(32))"`).
 
@@ -289,9 +318,9 @@ GlobeTrotter is shaped by travel planning workflows found in modern trip planner
 
 Key platform features inspired by research:
 - Google-based registration and login for easier onboarding.
-- Destination discovery with tags, cost filters, and continent search.
-- Personalised recommendations based on user preferences and travel history.
-- Trip creation with dates, locations, hotels, activities, and notes.
-- Shared trips and participant collaboration in future phases.
-- AI-assisted itinerary generation and place autocomplete in later releases.
+- Destination discovery with tags, cost filters, continent search, and autocomplete.
+- Personalised recommendations based on user preferences, feedback, budget, and travel history.
+- Trip creation with dates, locations, hotels, activities, notes, stage progress, and receipts.
+- Shared trips with participant collaboration and view/edit permissions.
+- Local AI-style itinerary draft generation from catalogue and resource data.
 

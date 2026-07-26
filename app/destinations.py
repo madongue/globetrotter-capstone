@@ -11,7 +11,7 @@ GET /destinations?q=paris&tag=food&continent=Europe
 """
 from flask import Blueprint, request, jsonify
 
-from app.models import get_all_destinations
+from app.models import get_all_activities, get_all_destinations, get_all_hotels, get_all_places
 
 destinations_bp = Blueprint("destinations", __name__)
 
@@ -71,3 +71,50 @@ def search_destinations():
         results.append(dest)
 
     return jsonify(results), 200
+
+
+@destinations_bp.route("/autocomplete", methods=["GET"])
+def autocomplete():
+    """Return local catalogue suggestions for destinations and reusable resources."""
+    q = request.args.get("q", "").strip().lower()
+    limit_str = request.args.get("limit", "8")
+    try:
+        limit = int(limit_str)
+    except ValueError:
+        return jsonify({"error": "limit must be an integer"}), 400
+    limit = max(1, min(limit, 25))
+
+    if not q:
+        return jsonify([]), 200
+
+    candidates = []
+    sources = [
+        ("destination", get_all_destinations(), "avg_cost_per_day"),
+        ("hotel", get_all_hotels(), "cost_per_night"),
+        ("activity", get_all_activities(), "cost"),
+        ("place", get_all_places(), "cost"),
+    ]
+    for source_type, items, cost_field in sources:
+        for item in items:
+            searchable = " ".join([
+                item.get("name", ""),
+                item.get("country", ""),
+                item.get("continent", ""),
+                item.get("location", ""),
+                item.get("description", ""),
+                " ".join(item.get("tags", [])),
+            ]).lower()
+            if q not in searchable:
+                continue
+            candidates.append({
+                "type": source_type,
+                "id": item.get("id") or item.get("name"),
+                "name": item.get("name"),
+                "location": item.get("location") or item.get("country") or item.get("continent"),
+                "description": item.get("description", ""),
+                "tags": item.get("tags", []),
+                "cost": item.get(cost_field),
+            })
+
+    candidates.sort(key=lambda item: (item["type"], item.get("name") or ""))
+    return jsonify(candidates[:limit]), 200

@@ -12,7 +12,7 @@ GET /recommendations
 from flask import Blueprint, request, jsonify
 
 from app.auth import get_current_user
-from app.models import get_all_destinations, get_user_by_username
+from app.models import get_all_destinations, get_itineraries_for_user, get_user_by_username
 
 recommendations_bp = Blueprint("recommendations", __name__)
 
@@ -44,13 +44,52 @@ def get_recommendations():
     except ValueError:
         return jsonify({"error": "limit must be an integer"}), 400
 
+    max_budget = request.args.get("budget") or request.args.get("max_cost")
+    if max_budget:
+        try:
+            max_budget = float(max_budget)
+        except ValueError:
+            return jsonify({"error": "budget must be a number"}), 400
+    else:
+        max_budget = None
+
+    location = request.args.get("location", "").strip().lower()
+    past_itineraries = get_itineraries_for_user(username)
+    history_locations = [item.get("location", "").lower() for item in past_itineraries]
+    feedback_tags = []
+    positively_rated_locations = []
+    for itinerary in past_itineraries:
+        for feedback in itinerary.get("feedback", []):
+            if feedback.get("username") != username:
+                continue
+            if feedback.get("rating", 0) >= 4:
+                positively_rated_locations.append(itinerary.get("location", "").lower())
+                feedback_tags.extend(tag.lower() for tag in feedback.get("tags", []))
+
     destinations = get_all_destinations()
 
-    # Score each destination: +1 for every preference tag that matches
+    # Score each destination from preference tags, trip history, positive
+    # feedback, and optional budget/location intent.
     scored = []
     for dest in destinations:
         dest_tags = [t.lower() for t in dest.get("tags", [])]
-        score = sum(1 for pref in preferences if pref in dest_tags)
+        dest_text = " ".join([
+            dest.get("name", ""),
+            dest.get("country", ""),
+            dest.get("continent", ""),
+            dest.get("description", ""),
+        ]).lower()
+        if max_budget is not None and (dest.get("avg_cost_per_day") is None or dest.get("avg_cost_per_day") > max_budget):
+            continue
+        if location and location not in dest_text:
+            continue
+
+        preference_score = sum(2 for pref in preferences if pref in dest_tags)
+        feedback_score = sum(2 for tag in feedback_tags if tag in dest_tags)
+        history_score = 1 if any(history_location and history_location in dest_text for history_location in history_locations) else 0
+        positive_location_score = 2 if any(place and place in dest_text for place in positively_rated_locations) else 0
+        budget_score = 1 if max_budget is not None else 0
+        score = preference_score + feedback_score + history_score + positive_location_score + budget_score
         scored.append((score, dest))
 
     # Sort by score descending, then by name for stable ordering
@@ -61,6 +100,11 @@ def get_recommendations():
     for score, dest in scored[:limit]:
         entry = dict(dest)
         entry["match_score"] = score
+        entry["signals"] = {
+            "preference_matches": [pref for pref in preferences if pref in [tag.lower() for tag in dest.get("tags", [])]],
+            "feedback_matches": [tag for tag in feedback_tags if tag in [dest_tag.lower() for dest_tag in dest.get("tags", [])]],
+            "within_budget": max_budget is None or dest.get("avg_cost_per_day", 0) <= max_budget,
+        }
         results.append(entry)
 
     return jsonify(results), 200

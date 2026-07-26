@@ -4,7 +4,8 @@ app/__init__.py
 Flask application factory.
 """
 import os
-from flask import Flask, send_from_directory
+import time
+from flask import Flask, g, jsonify, request, send_from_directory
 
 
 def create_app():
@@ -21,6 +22,42 @@ def create_app():
     app.config["SECRET_KEY"] = os.environ.get(
         "SECRET_KEY", "globetrotter-secret-change-in-prod"
     )
+    app.config["METRICS"] = {
+        "request_count": 0,
+        "error_count": 0,
+        "total_latency_ms": 0.0,
+        "routes": {},
+    }
+
+    @app.before_request
+    def start_request_timer():
+        g.request_started_at = time.perf_counter()
+
+    @app.after_request
+    def record_request_metrics(response):
+        started_at = getattr(g, "request_started_at", None)
+        latency_ms = 0.0
+        if started_at is not None:
+            latency_ms = round((time.perf_counter() - started_at) * 1000, 2)
+
+        metrics = app.config["METRICS"]
+        metrics["request_count"] += 1
+        metrics["total_latency_ms"] = round(metrics["total_latency_ms"] + latency_ms, 2)
+        if response.status_code >= 400:
+            metrics["error_count"] += 1
+
+        route_key = f"{request.method} {request.path}"
+        route_metrics = metrics["routes"].setdefault(route_key, {
+            "count": 0,
+            "error_count": 0,
+            "total_latency_ms": 0.0,
+        })
+        route_metrics["count"] += 1
+        route_metrics["total_latency_ms"] = round(route_metrics["total_latency_ms"] + latency_ms, 2)
+        if response.status_code >= 400:
+            route_metrics["error_count"] += 1
+        response.headers["X-Response-Time-ms"] = str(latency_ms)
+        return response
 
     # Register all route blueprints under the API prefix so both development
     # proxy and production builds can use a unified /api contract.
@@ -37,7 +74,34 @@ def create_app():
     app.register_blueprint(recommendations_bp, url_prefix=api_prefix)
     app.register_blueprint(itineraries_bp, url_prefix=api_prefix)
     app.register_blueprint(resources_bp, url_prefix=api_prefix)
-    app.register_blueprint(ui_bp)
+
+    # Keep the server-rendered teaching UI available during local development,
+    # but let a production React build own non-API routes when client/dist exists.
+    if static_folder is None or os.environ.get("PYTEST_CURRENT_TEST"):
+        app.register_blueprint(ui_bp)
+
+    @app.route(f"{api_prefix}/health", methods=["GET"])
+    @app.route("/health", methods=["GET"])
+    def health_check():
+        """Basic liveness/readiness response for local and container probes."""
+        return jsonify({
+            "status": "ok",
+            "service": "globetrotter",
+            "mode": "monolith",
+        }), 200
+
+    @app.route(f"{api_prefix}/metrics", methods=["GET"])
+    @app.route("/metrics", methods=["GET"])
+    def metrics():
+        """Return lightweight in-process request metrics."""
+        current_metrics = app.config["METRICS"]
+        request_count = current_metrics["request_count"] or 1
+        return jsonify({
+            "request_count": current_metrics["request_count"],
+            "error_count": current_metrics["error_count"],
+            "average_latency_ms": round(current_metrics["total_latency_ms"] / request_count, 2),
+            "routes": current_metrics["routes"],
+        }), 200
 
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")
