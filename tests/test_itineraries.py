@@ -25,12 +25,12 @@ def client():
 
 def register_and_login(client, username="alice"):
     client.post(
-        "/register",
+        "/api/register",
         data=json.dumps({"username": username, "password": "password123"}),
         content_type="application/json",
     )
     response = client.post(
-        "/login",
+        "/api/login",
         data=json.dumps({"username": username, "password": "password123"}),
         content_type="application/json",
     )
@@ -39,7 +39,7 @@ def register_and_login(client, username="alice"):
 
 def test_create_itinerary_requires_auth(client):
     response = client.post(
-        "/itineraries",
+        "/api/itineraries",
         data=json.dumps({"title": "Trip", "location": "Bali"}),
         content_type="application/json",
     )
@@ -49,7 +49,7 @@ def test_create_itinerary_requires_auth(client):
 def test_create_itinerary_and_join(client):
     token = register_and_login(client)
     response = client.post(
-        "/itineraries",
+        "/api/itineraries",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps(
             {
@@ -71,7 +71,7 @@ def test_create_itinerary_and_join(client):
 
     itinerary_id = itinerary["id"]
     response = client.post(
-        f"/itineraries/{itinerary_id}/join",
+        f"/api/itineraries/{itinerary_id}/join",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"payment_amount": 75, "payment_method": "mobile"}),
         content_type="application/json",
@@ -84,7 +84,7 @@ def test_create_itinerary_and_join(client):
 def test_pay_itinerary_generates_receipt(client):
     token = register_and_login(client)
     create_resp = client.post(
-        "/itineraries",
+        "/api/itineraries",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"title": "Trip", "location": "Paris"}),
         content_type="application/json",
@@ -92,7 +92,7 @@ def test_pay_itinerary_generates_receipt(client):
     itinerary_id = create_resp.get_json()["id"]
 
     response = client.post(
-        f"/itineraries/{itinerary_id}/pay",
+        f"/api/itineraries/{itinerary_id}/pay",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"amount": 150, "payment_method": "mobile", "target_type": "total"}),
         content_type="application/json",

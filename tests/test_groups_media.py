@@ -30,12 +30,12 @@ def client():
 
 def register_and_login(client, username="alice"):
     client.post(
-        "/register",
+        "/api/register",
         data=json.dumps({"username": username, "password": "password123"}),
         content_type="application/json",
     )
     response = client.post(
-        "/login",
+        "/api/login",
         data=json.dumps({"username": username, "password": "password123"}),
         content_type="application/json",
     )
@@ -45,7 +45,7 @@ def register_and_login(client, username="alice"):
 def test_create_group_and_join(client):
     token = register_and_login(client)
     response = client.post(
-        "/groups",
+        "/api/groups",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"name": "Bali Travelers", "description": "Meet other Bali explorers."}),
         content_type="application/json",
@@ -57,7 +57,7 @@ def test_create_group_and_join(client):
 
     group_id = group["id"]
     response = client.post(
-        f"/groups/{group_id}/join",
+        f"/api/groups/{group_id}/join",
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
@@ -67,7 +67,7 @@ def test_create_group_and_join(client):
 def test_group_discussions_and_replies(client):
     token = register_and_login(client)
     create_resp = client.post(
-        "/groups",
+        "/api/groups",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"name": "Bali Travelers", "description": "Meet other Bali explorers."}),
         content_type="application/json",
@@ -75,7 +75,7 @@ def test_group_discussions_and_replies(client):
     group_id = create_resp.get_json()["id"]
 
     discussion_resp = client.post(
-        f"/groups/{group_id}/discussions",
+        f"/api/groups/{group_id}/discussions",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"title": "Best beaches", "message": "Which beach should we visit?"}),
         content_type="application/json",
@@ -87,7 +87,7 @@ def test_group_discussions_and_replies(client):
 
     discussion_id = discussion["id"]
     reply_resp = client.post(
-        f"/groups/{group_id}/discussions/{discussion_id}/reply",
+        f"/api/groups/{group_id}/discussions/{discussion_id}/reply",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"message": "I recommend Seminyak."}),
         content_type="application/json",
@@ -99,7 +99,7 @@ def test_group_discussions_and_replies(client):
 def test_media_comment_like_share(client):
     token = register_and_login(client)
     media_resp = client.post(
-        "/media",
+        "/api/media",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"type": "photo", "url": "https://example.com/pic.jpg", "caption": "Sunset", "shared_with": []}),
         content_type="application/json",
@@ -108,7 +108,7 @@ def test_media_comment_like_share(client):
     media_id = media_resp.get_json()["id"]
 
     comment_resp = client.post(
-        f"/media/{media_id}/comment",
+        f"/api/media/{media_id}/comment",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"comment": "Looks amazing!"}),
         content_type="application/json",
@@ -117,7 +117,7 @@ def test_media_comment_like_share(client):
     assert comment_resp.get_json()["comment"]["text"] == "Looks amazing!"
 
     like_resp = client.post(
-        f"/media/{media_id}/like",
+        f"/api/media/{media_id}/like",
         headers={"Authorization": f"Bearer {token}"},
     )
     assert like_resp.status_code == 200
@@ -125,7 +125,7 @@ def test_media_comment_like_share(client):
     assert like_resp.get_json()["media"]["likes"] == ["alice"]
 
     share_resp = client.post(
-        f"/media/{media_id}/share",
+        f"/api/media/{media_id}/share",
         headers={"Authorization": f"Bearer {token}"},
         data=json.dumps({"username": "bob"}),
         content_type="application/json",
