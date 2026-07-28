@@ -3,6 +3,7 @@ import json
 import pytest
 
 from app import create_app
+from app.cameroon_geo import enrich_cameroon_item, infer_cameroon_geo
 
 
 @pytest.fixture(autouse=True)
@@ -57,6 +58,29 @@ def test_cameroon_location_filters_are_available(client):
     payload = response.get_json()
     assert payload["country"] == "Cameroon"
     assert any(region["region"] == "Littoral" for region in payload["regions"])
+
+
+def test_cameroon_geo_prefers_south_west_over_partial_south_match():
+    geo = infer_cameroon_geo("Buea Mountain Lodge", "Buea", "South West", "Fako")
+
+    assert geo["region"] == "South West"
+    assert geo["division"] == "Fako"
+    assert geo["city"] == "Buea"
+    assert geo["subdivision"] == "Buea"
+
+
+def test_outdoor_cameroon_places_get_practical_travel_metadata():
+    place = enrich_cameroon_item({
+        "name": "Mount Cameroon",
+        "location": "Buea",
+        "region": "South West",
+        "tags": ["mountain", "hiking", "nature"],
+    })
+
+    assert place["difficulty"] == "hard"
+    assert place["guide_required"] is True
+    assert "Dry season" in place["best_season"]
+    assert place["safety_notes"]
 
 
 def test_destination_search_filters_by_cameroon_region(client):

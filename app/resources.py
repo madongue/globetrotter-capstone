@@ -25,6 +25,7 @@ from app.models import (
     save_activity,
     update_activity,
     get_all_places,
+    get_all_media,
     save_place,
     update_place,
     remove_hotel_by_id,
@@ -87,6 +88,55 @@ def _with_resource_metadata(resource: dict) -> dict:
     if not enriched.get("map_info"):
         enriched["map_info"] = _resource_map_info(enriched.get("name", ""), enriched.get("location", ""))
     return enriched
+
+
+def _matches_area(item: dict, place: dict) -> bool:
+    item = enrich_cameroon_item(item)
+    for field in ("city", "subdivision", "division", "region"):
+        if place.get(field) and item.get(field) == place.get(field):
+            return True
+    return False
+
+
+def _nearby_for_place(place: dict) -> dict:
+    hotels = [_with_resource_metadata(item) for item in get_all_hotels() if _matches_area(item, place)]
+    activities = [_with_resource_metadata(item) for item in get_all_activities() if _matches_area(item, place)]
+    sibling_places = [
+        _with_resource_metadata(item)
+        for item in get_all_places()
+        if item.get("id") != place.get("id") and _matches_area(item, place)
+    ]
+    hotels.sort(key=lambda item: (float(item.get("cost_per_night", 0) or 0), -float(item.get("rating", 0) or 0)))
+    activities.sort(key=lambda item: (float(item.get("cost", 0) or 0), item.get("name", "")))
+    sibling_places.sort(key=lambda item: (float(item.get("cost", 0) or 0), item.get("name", "")))
+    return {
+        "hotels": hotels[:5],
+        "activities": activities[:5],
+        "places": sibling_places[:5],
+    }
+
+
+def _place_photos(place_id: str) -> list:
+    return [
+        item for item in get_all_media()
+        if item.get("place_id") == place_id and item.get("type", "photo") == "photo"
+    ]
+
+
+def _offline_guide(place: dict, nearby: dict) -> dict:
+    return {
+        "title": f"{place.get('name')} travel guide",
+        "country_focus": "Cameroon",
+        "place": place,
+        "nearby": nearby,
+        "planning_notes": [
+            place.get("cost_note") or "Confirm current local entry and guide fees before travel.",
+            place.get("transport_note") or "Confirm local transport before departure.",
+            place.get("best_season") or "Check current local weather and road access.",
+        ],
+        "safety_notes": place.get("safety_notes", []),
+        "offline_ready": True,
+    }
 
 
 @resources_bp.route("/resources/hotels", methods=["POST"])
@@ -241,6 +291,33 @@ def list_activities():
 @resources_bp.route("/resources/places", methods=["GET"])
 def list_places():
     return jsonify([_with_resource_metadata(item) for item in get_all_places()]), 200
+
+
+@resources_bp.route("/resources/places/<place_id>", methods=["GET"])
+def get_place_detail(place_id: str):
+    """Return a full Cameroon place guide with nearby services and traveller photos."""
+    place = next((item for item in get_all_places() if item.get("id") == place_id), None)
+    if not place:
+        return jsonify({"error": "place not found"}), 404
+    enriched_place = _with_resource_metadata(place)
+    nearby = _nearby_for_place(enriched_place)
+    return jsonify({
+        "place": enriched_place,
+        "nearby": nearby,
+        "photos": _place_photos(place_id),
+        "guide": _offline_guide(enriched_place, nearby),
+    }), 200
+
+
+@resources_bp.route("/resources/places/<place_id>/guide", methods=["GET"])
+def get_place_guide(place_id: str):
+    """Return an offline-ready guide payload for a Cameroon place."""
+    place = next((item for item in get_all_places() if item.get("id") == place_id), None)
+    if not place:
+        return jsonify({"error": "place not found"}), 404
+    enriched_place = _with_resource_metadata(place)
+    nearby = _nearby_for_place(enriched_place)
+    return jsonify(_offline_guide(enriched_place, nearby)), 200
 
 
 @resources_bp.route("/resources/hotels/<hotel_id>", methods=["DELETE"])

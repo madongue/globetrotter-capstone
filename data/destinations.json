@@ -1,0 +1,448 @@
+[
+  {
+    "name": "Douala",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "Littoral",
+    "division": "Wouri",
+    "subdivision": "Douala I",
+    "city": "Douala",
+    "quarters": [
+      "Akwa",
+      "Bonanjo",
+      "Bonapriso",
+      "Deido",
+      "Bali",
+      "Makepe"
+    ],
+    "description": "Cameroon's economic capital with markets, restaurants, nightlife, business districts, airport access, and coastal routes.",
+    "tags": [
+      "city",
+      "business",
+      "food",
+      "nightlife",
+      "market",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 45000,
+    "image_url": "/images/destinations/douala.jpg",
+    "source_urls": [
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/9/99/Douala.JPG",
+    "local_image_url": "/images/destinations/douala.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Yaounde",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "Centre",
+    "division": "Mfoundi",
+    "subdivision": "Yaounde I",
+    "city": "Yaounde",
+    "quarters": [
+      "Bastos",
+      "Mokolo",
+      "Melen",
+      "Etoudi",
+      "Ngoa-Ekelle",
+      "Mvog-Ada"
+    ],
+    "description": "Cameroon's political capital with museums, administrative districts, hills, restaurants, embassies, and cultural sites.",
+    "tags": [
+      "city",
+      "culture",
+      "history",
+      "museum",
+      "administration",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 40000,
+    "image_url": "/images/destinations/yaounde.jpg",
+    "source_urls": [
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Views_of_Yaounde_Cameroon_02.jpg/1280px-Views_of_Yaounde_Cameroon_02.jpg",
+    "local_image_url": "/images/destinations/yaounde.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Kribi",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "South",
+    "division": "Ocean",
+    "subdivision": "Kribi I",
+    "city": "Kribi",
+    "quarters": [
+      "Centre Ville",
+      "Mboa Manga",
+      "Londji",
+      "Grand Batanga"
+    ],
+    "description": "A beach destination with oceanfront resorts, seafood, Lobe Falls, port access, and relaxed coastal tourism.",
+    "tags": [
+      "beach",
+      "seafood",
+      "relaxation",
+      "nature",
+      "waterfall",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 55000,
+    "image_url": "/images/destinations/kribi.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+      "https://www.cameroon-embassy.nl/holiday-ideas/"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lob%C3%A9%20beach%20kribi%20Cameroon.jpg",
+    "local_image_url": "/images/destinations/kribi.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Limbe",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "South West",
+    "division": "Fako",
+    "subdivision": "Buea",
+    "city": "Limbe",
+    "quarters": [
+      "Down Beach",
+      "Mile 4",
+      "Bota",
+      "Mokunda"
+    ],
+    "description": "A coastal city near Mount Cameroon with black-sand beaches, wildlife attractions, botanical gardens, and seafood.",
+    "tags": [
+      "beach",
+      "nature",
+      "wildlife",
+      "garden",
+      "seafood",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 50000,
+    "image_url": "/images/destinations/limbe.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+      "https://www.africatouroperators.org/cameroon/limbe-cameroon/"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Botanic_garden_limbe.jpg/1280px-Botanic_garden_limbe.jpg",
+    "local_image_url": "/images/destinations/limbe.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Buea",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "South West",
+    "division": "Fako",
+    "subdivision": "Buea",
+    "city": "Buea",
+    "quarters": [
+      "Molyko",
+      "Great Soppo",
+      "Bonduma",
+      "Mile 17"
+    ],
+    "description": "A mountain city at the foot of Mount Cameroon, popular for hiking, cooler weather, university life, and volcano routes.",
+    "tags": [
+      "mountain",
+      "hiking",
+      "nature",
+      "adventure",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 35000,
+    "image_url": "/images/destinations/buea.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+      "https://www.cameroon-embassy.nl/holiday-ideas/"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20from%20a%20work%20site.jpg",
+    "local_image_url": "/images/destinations/buea.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Bamenda",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "North West",
+    "division": "Mezam",
+    "subdivision": "Bamenda I",
+    "city": "Bamenda",
+    "quarters": [
+      "Commercial Avenue",
+      "Mankon",
+      "Nkwen",
+      "Up Station"
+    ],
+    "description": "Highland city with markets, cool climate, cultural routes, and gateway access to the North West grassfields.",
+    "tags": [
+      "highlands",
+      "culture",
+      "market",
+      "nature",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 32000,
+    "image_url": "/images/destinations/bamenda.jpg",
+    "source_urls": [
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Mount_Cameroon_forest_reserve_Buea.jpg/1280px-Mount_Cameroon_forest_reserve_Buea.jpg",
+    "local_image_url": "/images/destinations/bamenda.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20forest%20reserve%20Buea.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/bamenda.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20forest%20reserve%20Buea.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Bafoussam",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "West",
+    "division": "Mifi",
+    "subdivision": "Bafoussam I",
+    "city": "Bafoussam",
+    "quarters": [
+      "Tamja",
+      "Djeleng",
+      "Banengo"
+    ],
+    "description": "Western regional hub for culture, markets, road connections, cuisine, and access to nearby chiefdoms.",
+    "tags": [
+      "culture",
+      "market",
+      "food",
+      "highlands",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 33000,
+    "image_url": "/images/destinations/bafoussam.jpg",
+    "source_urls": [
+      "https://guide.en-vols.com/en/adresse/foumban-the-city-of-art/"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Rue_Bafoussam_%28Cameroun%29.jpg/1280px-Rue_Bafoussam_%28Cameroun%29.jpg",
+    "local_image_url": "/images/destinations/bafoussam.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Rue_Bafoussam_(Cameroun).jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/bafoussam.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Rue_Bafoussam_(Cameroun).jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Garoua",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "North",
+    "division": "Benoue",
+    "subdivision": "Garoua I",
+    "city": "Garoua",
+    "quarters": [
+      "Plateau",
+      "Roumde Adjia",
+      "Poumpoumre"
+    ],
+    "description": "Northern city on the Benoue River with Sahel culture, markets, sports venues, and access to wildlife tourism.",
+    "tags": [
+      "sahel",
+      "river",
+      "culture",
+      "wildlife",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 38000,
+    "image_url": "/images/destinations/garoua.jpg",
+    "source_urls": [
+      "https://www.cameroon-embassy.nl/holiday-ideas/"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Elephants_around_tree_in_Waza%2C_Cameroon.jpg/1280px-Elephants_around_tree_in_Waza%2C_Cameroon.jpg",
+    "local_image_url": "/images/destinations/garoua.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Elephants%20around%20tree%20in%20Waza%2C%20Cameroon.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/garoua.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Elephants%20around%20tree%20in%20Waza%2C%20Cameroon.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Maroua",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "Far North",
+    "division": "Diamare",
+    "subdivision": "Maroua I",
+    "city": "Maroua",
+    "quarters": [
+      "Domayo",
+      "Djarengol",
+      "Pitoare"
+    ],
+    "description": "Far North cultural centre with crafts, dry-season landscapes, markets, and routes toward Mandara mountain areas.",
+    "tags": [
+      "crafts",
+      "culture",
+      "sahel",
+      "market",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 36000,
+    "image_url": "/images/destinations/maroua.jpg",
+    "source_urls": [
+      "https://www.cameroon-embassy.nl/holiday-ideas/"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Elephants_around_tree_in_Waza%2C_Cameroon.jpg/1280px-Elephants_around_tree_in_Waza%2C_Cameroon.jpg",
+    "local_image_url": "/images/destinations/maroua.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Elephants%20around%20tree%20in%20Waza%2C%20Cameroon.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/maroua.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Elephants%20around%20tree%20in%20Waza%2C%20Cameroon.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Ngaoundere",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "Adamawa",
+    "division": "Vina",
+    "subdivision": "Ngaoundere I",
+    "city": "Ngaoundere",
+    "quarters": [
+      "Centre Commercial",
+      "Joli Soir",
+      "Sabongari"
+    ],
+    "description": "Adamawa highland city with rail access, cooler weather, traditional sites, cattle culture, and crater lake excursions.",
+    "tags": [
+      "highlands",
+      "rail",
+      "culture",
+      "nature",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 37000,
+    "image_url": "/images/destinations/ngaoundere.jpg",
+    "source_urls": [
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Earth_from_Space-_Waza_National_Park%2C_Cameroon_ESA507712.jpg/1280px-Earth_from_Space-_Waza_National_Park%2C_Cameroon_ESA507712.jpg",
+    "local_image_url": "/images/destinations/ngaoundere.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Earth%20from%20Space-%20Waza%20National%20Park%2C%20Cameroon%20ESA507712.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/ngaoundere.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Earth%20from%20Space-%20Waza%20National%20Park%2C%20Cameroon%20ESA507712.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "name": "Bertoua",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "region": "East",
+    "division": "Lom-et-Djerem",
+    "subdivision": "Bertoua I",
+    "city": "Bertoua",
+    "quarters": [
+      "Mokolo",
+      "Nkolbikon",
+      "Tigaza"
+    ],
+    "description": "Eastern regional hub for forest routes, culture, overland travel, and access to nature reserves.",
+    "tags": [
+      "forest",
+      "culture",
+      "nature",
+      "roadtrip",
+      "cameroon"
+    ],
+    "avg_cost_per_day": 34000,
+    "image_url": "/images/destinations/bertoua.jpg",
+    "source_urls": [
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Dja_Faunal_Reserve-109434.jpg/1280px-Dja_Faunal_Reserve-109434.jpg",
+    "local_image_url": "/images/destinations/bertoua.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Dja%20Faunal%20Reserve-109434.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/destinations/bertoua.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Dja%20Faunal%20Reserve-109434.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  }
+]

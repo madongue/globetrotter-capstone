@@ -1,5 +1,7 @@
 """Cameroon-focused geography and Google Maps location helpers."""
 
+import re
+
 CAMEROON_COUNTRY = "Cameroon"
 CAMEROON_COUNTRY_CODE = "CM"
 
@@ -83,6 +85,13 @@ def _normalize(value: str | None) -> str:
     return (value or "").strip().lower().replace("é", "e").replace("è", "e").replace("'", "")
 
 
+def _contains_location_value(text: str, value: str) -> bool:
+    normalized_value = _normalize(value)
+    if not normalized_value:
+        return False
+    return re.search(rf"(?<![a-z0-9]){re.escape(normalized_value)}(?![a-z0-9])", text) is not None
+
+
 def iter_location_units():
     for region in CAMEROON_GEOGRAPHY:
         for division in region["divisions"]:
@@ -108,9 +117,12 @@ def cameroon_location_payload() -> dict:
 def infer_cameroon_geo(*parts: str) -> dict:
     text = _normalize(" ".join(part for part in parts if part))
     best = {}
+    best_score = 0
     for unit in iter_location_units():
         values = [unit["region"], unit["division"], unit["subdivision"], unit["city"], *unit["quarters"]]
-        if any(_normalize(value) and _normalize(value) in text for value in values):
+        matched_values = [_normalize(value) for value in values if _contains_location_value(text, value)]
+        if matched_values and max(len(value) for value in matched_values) > best_score:
+            best_score = max(len(value) for value in matched_values)
             best = {
                 "country": CAMEROON_COUNTRY,
                 "country_code": CAMEROON_COUNTRY_CODE,
@@ -121,10 +133,11 @@ def infer_cameroon_geo(*parts: str) -> dict:
                 "quarters": unit["quarters"],
             }
             for quarter in unit["quarters"]:
-                if _normalize(quarter) in text:
+                if _contains_location_value(text, quarter):
                     best["quarter"] = quarter
                     break
-            return best
+    if best:
+        return best
     return {"country": CAMEROON_COUNTRY, "country_code": CAMEROON_COUNTRY_CODE}
 
 
@@ -173,7 +186,46 @@ def enrich_cameroon_item(item: dict) -> dict:
     enriched["country_code"] = CAMEROON_COUNTRY_CODE
     enriched["continent"] = "Africa"
     enriched["location"] = ensure_cameroon_location(enriched.get("location") or enriched.get("name", ""))
+    _attach_travel_metadata(enriched)
     return enriched
+
+
+def _attach_travel_metadata(item: dict) -> None:
+    tags = " ".join(item.get("tags", [])).lower()
+    text = _normalize(" ".join([
+        item.get("name", ""),
+        item.get("description", ""),
+        tags,
+    ]))
+    is_outdoor = any(term in text for term in ["hiking", "mountain", "waterfall", "national park", "wildlife", "lake", "rainforest", "nature"])
+    if not is_outdoor:
+        return
+
+    if any(term in text for term in ["mountain", "hiking", "manengouba"]):
+        difficulty = "hard"
+        guide_required = True
+        transport_note = "Use a local guide and confirm trail access, weather, and pickup transport before departure."
+    elif any(term in text for term in ["national park", "wildlife", "rainforest", "safari"]):
+        difficulty = "moderate"
+        guide_required = True
+        transport_note = "Plan with a licensed guide or park operator; road conditions and access points can change seasonally."
+    elif any(term in text for term in ["waterfall", "lake"]):
+        difficulty = "moderate"
+        guide_required = True
+        transport_note = "Use local transport or a verified guide for the last-mile access road and site entry."
+    else:
+        difficulty = "easy"
+        guide_required = False
+        transport_note = "Confirm local taxi, moto, or private-car access before travel."
+
+    item.setdefault("difficulty", difficulty)
+    item.setdefault("guide_required", guide_required)
+    item.setdefault("best_season", "Dry season is usually easier for road access; confirm current local conditions before travel.")
+    item.setdefault("transport_note", transport_note)
+    item.setdefault("safety_notes", [
+        "Confirm current security and weather conditions locally before departure.",
+        "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees.",
+    ])
 
 
 def matches_cameroon_filters(item: dict, filters: dict) -> bool:

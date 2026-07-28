@@ -24,8 +24,12 @@ build/
 # Docker
 .dockerignore
 
-# Data files (populated at runtime; keep only .gitkeep)
+# Runtime data files are populated locally; curated catalogue seeds are versioned.
 data/*.json
+!data/activities.json
+!data/destinations.json
+!data/hotels.json
+!data/places.json
 
 # IDE / editor
 .vscode/

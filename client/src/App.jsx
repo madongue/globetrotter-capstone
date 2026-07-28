@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 const API_BASE = '/api';
 const DEFAULT_CURRENCY = 'XAF';
+const CAMEROON_MAP_EMBED = 'https://www.google.com/maps?q=Cameroon&output=embed';
+const CAMEROON_MAP_URL = 'https://www.google.com/maps/search/?api=1&query=Cameroon';
 const CURRENCY_OPTIONS = [
   { code: 'XAF', label: 'FCFA', rateFromXaf: 1, fractionDigits: 0 },
   { code: 'EUR', label: 'EUR', rateFromXaf: 1 / 655.957, fractionDigits: 2 },
@@ -387,6 +389,7 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [suggestionFilters, setSuggestionFilters] = useState({ location: '', budget: '', region: '', division: '', subdivision: '', city: '', quarter: '' });
   const [tripSuggestions, setTripSuggestions] = useState(null);
+  const [itineraryAreaSuggestions, setItineraryAreaSuggestions] = useState(null);
   const [groups, setGroups] = useState([]);
   const [selectedItinerary, setSelectedItinerary] = useState(null);
   const [shareUsername, setShareUsername] = useState('');
@@ -396,9 +399,13 @@ function App() {
   const [trackingInfo, setTrackingInfo] = useState(null);
   const [budgetInfo, setBudgetInfo] = useState(null);
   const [auditEntries, setAuditEntries] = useState([]);
+  const [routePlan, setRoutePlan] = useState(null);
   const [inviteForm, setInviteForm] = useState({ permission: 'view', maxUses: '1' });
   const [inviteResult, setInviteResult] = useState(null);
   const [checklistText, setChecklistText] = useState({});
+  const [packingForm, setPackingForm] = useState({ category: 'General', text: '', assignedTo: '' });
+  const [expenseForm, setExpenseForm] = useState({ title: '', category: 'General', amount: '', paidBy: '', splitWith: '' });
+  const [documentForm, setDocumentForm] = useState({ title: '', type: 'confirmation', url: '' });
   const [generatedItinerary, setGeneratedItinerary] = useState(null);
   const [generateForm, setGenerateForm] = useState({ location: '', budget: '', durationDays: '3', startDate: '' });
   const [progressForm, setProgressForm] = useState({
@@ -442,6 +449,8 @@ function App() {
   const [mediaComments, setMediaComments] = useState({});
   const [mediaShareTargets, setMediaShareTargets] = useState({});
   const [savedPlaces, setSavedPlaces] = useState([]);
+  const [selectedPlaceGuide, setSelectedPlaceGuide] = useState(null);
+  const [placeGuideItineraryId, setPlaceGuideItineraryId] = useState('');
   const [resources, setResources] = useState({ hotels: [], activities: [], places: [] });
   const [hotelCompareFilters, setHotelCompareFilters] = useState({ location: '', city: '', maxPrice: '' });
   const [hotelComparison, setHotelComparison] = useState(null);
@@ -461,6 +470,11 @@ function App() {
   const [newItinerary, setNewItinerary] = useState({
     title: '',
     location: '',
+    region: '',
+    division: '',
+    subdivision: '',
+    city: '',
+    quarter: '',
     hotelName: '',
     hotelCost: '',
     activityName: '',
@@ -561,6 +575,29 @@ function App() {
     ['region', 'division', 'subdivision', 'city', 'quarter'].forEach((field) => {
       if (filters[field]?.trim()) params.set(field, filters[field].trim());
     });
+  };
+  const matchesGeoFilters = (item, filters) => (
+    ['region', 'division', 'subdivision', 'city', 'quarter'].every((field) => (
+      !filters[field]?.trim() || item[field]?.toLowerCase() === filters[field].trim().toLowerCase()
+    ))
+  );
+  const getPartitionedPlaces = () => {
+    const filteredPlaces = resources.places.filter((place) => matchesGeoFilters(place, searchFilters));
+    return filteredPlaces.reduce((groupsByRegion, place) => {
+      const region = place.region || 'Unassigned region';
+      groupsByRegion[region] = groupsByRegion[region] || [];
+      groupsByRegion[region].push(place);
+      return groupsByRegion;
+    }, {});
+  };
+  const getPlaceCountByRegion = () => resources.places.reduce((counts, place) => {
+    const region = place.region || 'Unassigned region';
+    counts[region] = (counts[region] || 0) + 1;
+    return counts;
+  }, {});
+  const getFeaturedDiscoveryPlaces = () => {
+    const filteredPlaces = resources.places.filter((place) => matchesGeoFilters(place, searchFilters));
+    return filteredPlaces.slice(0, searchFilters.region ? 12 : 6);
   };
   const updateGeoFilter = (setter, field, value) => {
     setter((prev) => {
@@ -781,6 +818,37 @@ function App() {
     }
   }, [page, token]);
 
+  useEffect(() => {
+    if (page === 'itinerary' && selectedItinerary && token && !mapInfo) {
+      handleLoadMapInfo();
+    }
+  }, [page, selectedItinerary?.id, token]);
+
+  useEffect(() => {
+    if (page !== 'dashboard' || dashboardView !== 'itineraries' || !token) {
+      return undefined;
+    }
+    const location = newItinerary.location.trim();
+    if (location.length < 2) {
+      setItineraryAreaSuggestions(null);
+      return undefined;
+    }
+    const timeoutId = window.setTimeout(() => {
+      fetchItineraryAreaSuggestions(location, newItinerary);
+    }, 500);
+    return () => window.clearTimeout(timeoutId);
+  }, [
+    newItinerary.location,
+    newItinerary.region,
+    newItinerary.division,
+    newItinerary.subdivision,
+    newItinerary.city,
+    newItinerary.quarter,
+    page,
+    dashboardView,
+    token,
+  ]);
+
   const handleLogin = async (event) => {
     event.preventDefault();
     const form = event.target;
@@ -998,6 +1066,59 @@ function App() {
     setSavedPlaces(result.saved_places || []);
     await Promise.all([fetchRecommendations(), fetchCityRecommendations()]);
     setAlert({ type: 'success', message: result.message || 'Place saved.' });
+  };
+
+  const handleViewPlaceGuide = async (placeId) => {
+    const response = await fetch(`${API_BASE}/resources/places/${placeId}`);
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to load place guide.' });
+      return;
+    }
+    setSelectedPlaceGuide(result);
+    setPlaceGuideItineraryId(itineraries[0]?.id || '');
+  };
+
+  const handleDownloadPlaceGuide = async () => {
+    if (!selectedPlaceGuide?.place?.id) return;
+    const response = await fetch(`${API_BASE}/resources/places/${selectedPlaceGuide.place.id}/guide`);
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to download guide.' });
+      return;
+    }
+    const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `${selectedPlaceGuide.place.id}-guide.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleAddGuidePlaceToItinerary = async () => {
+    if (!token || !selectedPlaceGuide?.place?.id || !placeGuideItineraryId) {
+      setAlert({ type: 'error', message: 'Select an itinerary first.' });
+      return;
+    }
+    const response = await fetch(`${API_BASE}/trips/${placeGuideItineraryId}/places`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ place_id: selectedPlaceGuide.place.id }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to add place to itinerary.' });
+      return;
+    }
+    setItineraries((current) => current.map((item) => (item.id === result.itinerary.id ? result.itinerary : item)));
+    if (selectedItinerary?.id === result.itinerary.id) {
+      refreshSelectedItinerary(result.itinerary);
+    }
+    setAlert({ type: 'success', message: result.message || 'Place added to itinerary.' });
   };
 
   const handleRemoveSavedPlace = async (placeId) => {
@@ -1444,7 +1565,11 @@ function App() {
     setTrackingInfo(null);
     setBudgetInfo(null);
     setAuditEntries([]);
+    setRoutePlan(itinerary.route_plan || null);
     setInviteResult(null);
+    setPackingForm({ category: 'General', text: '', assignedTo: '' });
+    setExpenseForm({ title: '', category: 'General', amount: '', paidBy: '', splitWith: '' });
+    setDocumentForm({ title: '', type: 'confirmation', url: '' });
     setProgressForm({
       status: itinerary.progress?.status || 'in_progress',
       currentStageId: itinerary.progress?.current_stage_id || '',
@@ -1467,6 +1592,57 @@ function App() {
       currentLocation: itinerary.progress?.current_location || itinerary.location || '',
     });
     setPage('itinerary');
+  };
+
+  const fetchItineraryAreaSuggestions = async (location, filters = newItinerary) => {
+    if (!token || !location.trim()) {
+      setItineraryAreaSuggestions(null);
+      return;
+    }
+
+    const params = new URLSearchParams({ location: location.trim() });
+    addCameroonGeoParams(params, filters);
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/itineraries/suggestions?${params.toString()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setAlert({ type: 'error', message: result.error || 'Unable to load area suggestions.' });
+        setItineraryAreaSuggestions(null);
+        return;
+      }
+      setItineraryAreaSuggestions(result);
+    } catch (error) {
+      setItineraryAreaSuggestions(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUseItinerarySuggestion = (type, item) => {
+    if (type === 'hotels') {
+      setNewItinerary((prev) => ({
+        ...prev,
+        hotelName: item.name || '',
+        hotelCost: item.cost_per_night !== undefined ? String(item.cost_per_night) : prev.hotelCost,
+      }));
+    }
+    if (type === 'activities') {
+      setNewItinerary((prev) => ({
+        ...prev,
+        activityName: item.name || '',
+        activityCost: item.cost !== undefined ? String(item.cost) : prev.activityCost,
+      }));
+    }
+    if (type === 'places') {
+      setNewItinerary((prev) => ({
+        ...prev,
+        placeName: item.name || '',
+        placeCost: item.cost !== undefined ? String(item.cost) : prev.placeCost,
+      }));
+    }
   };
 
   const refreshSelectedItinerary = (itinerary) => {
@@ -1743,6 +1919,140 @@ function App() {
     anchor.download = `itinerary-${selectedItinerary.id}.${kind === 'pdf' ? 'pdf' : 'ics'}`;
     anchor.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleLoadDayPlans = async () => {
+    if (!token || !selectedItinerary) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/day-plans`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to load day plans.' });
+      return;
+    }
+    setRoutePlan(result.route_plan);
+    setSelectedItinerary((current) => ({ ...current, day_plans: result.day_plans, route_plan: result.route_plan }));
+  };
+
+  const handleOptimizeRoute = async () => {
+    if (!token || !selectedItinerary) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/route`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ stage_ids: (selectedItinerary.stages || []).map((stage) => stage.id) }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to optimize route.' });
+      return;
+    }
+    setRoutePlan(result.route_plan);
+    refreshSelectedItinerary(result.itinerary);
+    setAlert({ type: 'success', message: 'Route ready for Google Maps.' });
+  };
+
+  const handleAddPackingItem = async (event) => {
+    event.preventDefault();
+    if (!token || !selectedItinerary || !packingForm.text.trim()) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/packing-list`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        category: packingForm.category,
+        text: packingForm.text,
+        assigned_to: packingForm.assignedTo,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to update packing list.' });
+      return;
+    }
+    refreshSelectedItinerary(result.itinerary);
+    setPackingForm({ category: 'General', text: '', assignedTo: '' });
+  };
+
+  const handleTogglePackingItem = async (item) => {
+    if (!token || !selectedItinerary) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/packing-list`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id: item.id, packed: !item.packed }),
+    });
+    const result = await response.json();
+    if (response.ok) {
+      refreshSelectedItinerary(result.itinerary);
+    }
+  };
+
+  const handleAddExpense = async (event) => {
+    event.preventDefault();
+    if (!token || !selectedItinerary) return;
+    const amount = toBaseMoney(expenseForm.amount);
+    if (!amount || amount <= 0) {
+      setAlert({ type: 'error', message: 'Enter a valid expense amount.' });
+      return;
+    }
+    const splitWith = expenseForm.splitWith
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/expenses`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title: expenseForm.title,
+        category: expenseForm.category,
+        amount,
+        paid_by: expenseForm.paidBy || profile?.username || '',
+        split_with: splitWith.length ? splitWith : selectedItinerary.participants,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to add expense.' });
+      return;
+    }
+    refreshSelectedItinerary(result.itinerary);
+    setBudgetInfo((current) => current);
+    setExpenseForm({ title: '', category: 'General', amount: '', paidBy: '', splitWith: '' });
+  };
+
+  const handleAttachDocument = async (event) => {
+    event.preventDefault();
+    if (!token || !selectedItinerary || !documentForm.url.trim()) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/documents`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title: documentForm.title,
+        type: documentForm.type,
+        url: documentForm.url,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to attach document.' });
+      return;
+    }
+    refreshSelectedItinerary(result.itinerary);
+    setDocumentForm({ title: '', type: 'confirmation', url: '' });
   };
 
   const handleAddChecklistItem = async (stageId) => {
@@ -2250,6 +2560,73 @@ function App() {
                 </ul>
               </div>
             </div>
+            {selectedPlaceGuide && (
+              <div className="panel mt-24">
+                <div className="section-heading">
+                  <div>
+                    <h3>{selectedPlaceGuide.place.name} guide</h3>
+                    <p className="small-text">{selectedPlaceGuide.place.region} • {selectedPlaceGuide.place.division} • {selectedPlaceGuide.place.city}</p>
+                  </div>
+                  <button type="button" className="link-button" onClick={() => setSelectedPlaceGuide(null)}>Close</button>
+                </div>
+                <div className="guide-layout">
+                  <div>
+                    {selectedPlaceGuide.place.image_url && (
+                      <img className="guide-image" src={selectedPlaceGuide.place.image_url} alt={selectedPlaceGuide.place.name} />
+                    )}
+                    <p>{selectedPlaceGuide.place.description}</p>
+                    <p><strong>Entry/activity budget:</strong> {formatMoney(selectedPlaceGuide.place.cost || 0)}</p>
+                    {selectedPlaceGuide.place.difficulty && (
+                      <p><strong>Outdoor info:</strong> {selectedPlaceGuide.place.difficulty} · Guide {selectedPlaceGuide.place.guide_required ? 'recommended' : 'optional'}</p>
+                    )}
+                    {selectedPlaceGuide.place.best_season && <p className="small-text">{selectedPlaceGuide.place.best_season}</p>}
+                    {selectedPlaceGuide.place.transport_note && <p className="small-text">{selectedPlaceGuide.place.transport_note}</p>}
+                    <div className="inline-actions wrap-actions">
+                      {selectedPlaceGuide.place.map_info?.google_map_url && (
+                        <a href={selectedPlaceGuide.place.map_info.google_map_url} target="_blank" rel="noreferrer">Open map</a>
+                      )}
+                      <button type="button" className="button button-secondary" onClick={handleDownloadPlaceGuide}>Download guide</button>
+                    </div>
+                  </div>
+                  <div>
+                    <h4>Add to itinerary</h4>
+                    <div className="inline-form">
+                      <select value={placeGuideItineraryId} onChange={(event) => setPlaceGuideItineraryId(event.target.value)}>
+                        <option value="">Select itinerary</option>
+                        {itineraries.map((itinerary) => (
+                          <option key={itinerary.id} value={itinerary.id}>{itinerary.title}</option>
+                        ))}
+                      </select>
+                      <button type="button" className="button button-primary" onClick={handleAddGuidePlaceToItinerary}>Add</button>
+                    </div>
+                    <h4 className="mt-16">Nearby hotels</h4>
+                    <ul className="plain-list">
+                      {selectedPlaceGuide.nearby.hotels.slice(0, 3).map((hotel) => (
+                        <li key={hotel.id}>
+                          <span>
+                            <strong>{hotel.name}</strong>
+                            <small>{formatMoney(hotel.cost_per_night || 0)} / night</small>
+                          </span>
+                          {hotel.map_info?.google_map_url && <a href={hotel.map_info.google_map_url} target="_blank" rel="noreferrer">Map</a>}
+                        </li>
+                      ))}
+                    </ul>
+                    <h4 className="mt-16">Nearby activities</h4>
+                    <ul className="plain-list">
+                      {selectedPlaceGuide.nearby.activities.slice(0, 3).map((activity) => (
+                        <li key={activity.id}>
+                          <span>
+                            <strong>{activity.name}</strong>
+                            <small>{formatMoney(activity.cost || 0)}</small>
+                          </span>
+                          {activity.map_info?.google_map_url && <a href={activity.map_info.google_map_url} target="_blank" rel="noreferrer">Map</a>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
             </>
             )}
 
@@ -2398,10 +2775,57 @@ function App() {
                     <input
                       value={newItinerary.location}
                       onChange={(event) => setNewItinerary((prev) => ({ ...prev, location: event.target.value }))}
-                      placeholder="Douala"
+                      placeholder="Choose a region below or type a Cameroon city"
                       required
                     />
                   </label>
+                  <div className="form-section">
+                    <strong>Area in Cameroon</strong>
+                    <p className="small-text">Choose the region first. Hotels and places will be proposed from this area.</p>
+                    <div className="search-form compact-form">
+                      {renderCameroonFilters(newItinerary, setNewItinerary)}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="button button-secondary"
+                    onClick={() => fetchItineraryAreaSuggestions(newItinerary.location, newItinerary)}
+                    disabled={!newItinerary.location.trim()}
+                  >
+                    Propose hotels and places
+                  </button>
+                  {itineraryAreaSuggestions && (
+                    <div className="callout">
+                      <strong>Suggested for {buildCameroonLocation(newItinerary) || itineraryAreaSuggestions.location}</strong>
+                      <div className="resource-columns mt-16">
+                        {Object.entries(itineraryAreaSuggestions.suggestions).map(([type, items]) => (
+                          <div key={type}>
+                            <h4>{type}</h4>
+                            {items.length === 0 ? (
+                              <p className="small-text">No matches yet.</p>
+                            ) : (
+                              <ul className="plain-list">
+                                {items.slice(0, 3).map((item) => (
+                                  <li key={item.id || item.name}>
+                                    <span>
+                                      {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} />}
+                                      <strong>{item.name}</strong>
+                                      {item.location && <small>{item.location}</small>}
+                                      {item.cost_per_night !== undefined && <small>{formatMoney(item.cost_per_night)} / night</small>}
+                                      {item.cost !== undefined && <small>{formatMoney(item.cost)}</small>}
+                                    </span>
+                                    <button type="button" className="link-button" onClick={() => handleUseItinerarySuggestion(type, item)}>
+                                      Use
+                                    </button>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <label>
                     Hotel name
                     <input
@@ -2564,6 +2988,69 @@ function App() {
                   </label>
                   <button type="submit" className="button button-primary">Search</button>
                 </form>
+                <div className="mt-16">
+                  <h4>Places to visit by region</h4>
+                  <div className="region-chip-grid">
+                    {Object.entries(getPlaceCountByRegion()).map(([region, count]) => (
+                      <button
+                        key={region}
+                        type="button"
+                        className={`region-chip ${searchFilters.region === region ? 'active' : ''}`}
+                        onClick={() => updateGeoFilter(setSearchFilters, 'region', searchFilters.region === region ? '' : region)}
+                      >
+                        <strong>{region}</strong>
+                        <span>{count} places</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-16">
+                  <h4>{searchFilters.region ? `${searchFilters.region} places to visit` : 'Featured places to visit'}</h4>
+                  <p className="small-text">
+                    {searchFilters.region
+                      ? 'These suggestions are filtered to your selected Cameroon region.'
+                      : 'A short preview is shown first. Select a region to see more focused places.'}
+                  </p>
+                  <ul className="list-card discovery-place-list">
+                    {getFeaturedDiscoveryPlaces().map((place) => (
+                      <li key={place.id}>
+                        {place.image_url && <img className="resource-thumb" src={place.image_url} alt={place.name} />}
+                        <strong>{place.name}</strong>
+                        <p>{place.region} • {place.division} • {place.city}</p>
+                        <p className="small-text">{place.description}</p>
+                        {place.difficulty && (
+                          <p className="small-text">
+                            Difficulty: {place.difficulty} · Guide {place.guide_required ? 'recommended' : 'optional'}
+                          </p>
+                        )}
+                        <div className="inline-actions wrap-actions">
+                          <button type="button" className="link-button" onClick={() => handleSavePlace(place)}>Save</button>
+                          <button type="button" className="link-button" onClick={() => handleViewPlaceGuide(place.id)}>Guide</button>
+                          <button
+                            type="button"
+                            className="link-button"
+                            onClick={() => {
+                              setDashboardView('itineraries');
+                              setNewItinerary((prev) => ({
+                                ...prev,
+                                location: buildCameroonLocation(place),
+                                region: place.region || '',
+                                division: place.division || '',
+                                subdivision: place.subdivision || '',
+                                city: place.city || '',
+                                quarter: place.quarter || '',
+                                placeName: place.name || '',
+                                placeCost: place.cost !== undefined ? String(place.cost) : prev.placeCost,
+                              }));
+                            }}
+                          >
+                            Plan here
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
                 {searchResults.length > 0 && (
                   <div className="search-results">
                     <h4>Results</h4>
@@ -2583,6 +3070,17 @@ function App() {
               </div>
               <div className="panel">
                 <h3>Personalised city suggestions</h3>
+                <div className="map-info map-panel">
+                  <strong>Google Map of Cameroon</strong>
+                  <p className="small-text">Use this map while filtering by region, city, subdivision, and quarter.</p>
+                  <a href={CAMEROON_MAP_URL} target="_blank" rel="noreferrer">Open Cameroon in Google Maps</a>
+                  <iframe
+                    className="map-embed map-embed-large"
+                    title="Google map of Cameroon"
+                    src={CAMEROON_MAP_EMBED}
+                    loading="lazy"
+                  />
+                </div>
                 {cityRecommendations.length === 0 ? (
                   <p>No city suggestions yet. Browse or save places to train your suggestions.</p>
                 ) : (
@@ -2710,6 +3208,7 @@ function App() {
                                   {item.location && <small>{item.location}</small>}
                                   {item.cost_per_night && <small>{formatMoney(item.cost_per_night)} / night</small>}
                                   {item.cost && <small>{formatMoney(item.cost)}</small>}
+                                  {item.difficulty && <small>Difficulty: {item.difficulty} · Guide {item.guide_required ? 'recommended' : 'optional'}</small>}
                                 </span>
                                 {item.map_info?.google_map_url && (
                                   <a href={item.map_info.google_map_url} target="_blank" rel="noreferrer" onClick={() => recordBrowsingEvent(item, 'map_open')}>Map</a>
@@ -2925,6 +3424,7 @@ function App() {
                             {type === 'places' && (
                               <>
                                 <button type="button" className="link-button" onClick={() => handleSavePlace(item)}>Save</button>
+                                <button type="button" className="link-button" onClick={() => handleViewPlaceGuide(item.id)}>Guide</button>
                                 <button
                                   type="button"
                                   className="link-button"
@@ -3451,6 +3951,148 @@ function App() {
                           </li>
                         ))}
                       </ul>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid-2 mt-24">
+                  <div className="panel">
+                    <h3>Day plan and route</h3>
+                    <div className="inline-actions">
+                      <button type="button" className="button button-secondary" onClick={handleLoadDayPlans}>Load day plan</button>
+                      <button type="button" className="button button-secondary" onClick={handleOptimizeRoute}>Optimize route</button>
+                    </div>
+                    {(selectedItinerary.day_plans || []).length > 0 ? (
+                      <ul className="list-card mt-16">
+                        {selectedItinerary.day_plans.map((day) => (
+                          <li key={day.id}>
+                            <strong>{day.title}</strong>
+                            <p className="small-text">{day.date || `Day ${day.day}`}</p>
+                            <p>{day.notes}</p>
+                            <p className="small-text">Stages: {day.stage_ids?.join(', ') || 'None'}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="small-text">Load the day plan to organize stages by travel day.</p>
+                    )}
+                    {(routePlan || selectedItinerary.route_plan)?.google_maps_directions_url && (
+                      <div className="map-info mt-16">
+                        <p><strong>Stops:</strong> {(routePlan || selectedItinerary.route_plan).estimated_stop_count}</p>
+                        <a href={(routePlan || selectedItinerary.route_plan).google_maps_directions_url} target="_blank" rel="noreferrer">Open optimized route in Google Maps</a>
+                      </div>
+                    )}
+                  </div>
+                  <div className="panel">
+                    <h3>Packing list</h3>
+                    <form onSubmit={handleAddPackingItem} className="stacked-form compact-form">
+                      <label>
+                        Category
+                        <input value={packingForm.category} onChange={(event) => setPackingForm((prev) => ({ ...prev, category: event.target.value }))} />
+                      </label>
+                      <label>
+                        Item
+                        <input value={packingForm.text} onChange={(event) => setPackingForm((prev) => ({ ...prev, text: event.target.value }))} placeholder="Mosquito repellent" />
+                      </label>
+                      <label>
+                        Assigned to
+                        <input value={packingForm.assignedTo} onChange={(event) => setPackingForm((prev) => ({ ...prev, assignedTo: event.target.value }))} placeholder="alice" />
+                      </label>
+                      <button type="submit" className="button button-secondary">Add packing item</button>
+                    </form>
+                    {(selectedItinerary.packing_list || []).length > 0 ? (
+                      <ul className="plain-list">
+                        {selectedItinerary.packing_list.map((item) => (
+                          <li key={item.id}>
+                            <span>
+                              <strong>{item.text}</strong>
+                              <small>{item.category}{item.assigned_to ? ` · ${item.assigned_to}` : ''}</small>
+                            </span>
+                            <label className="inline-check">
+                              <input type="checkbox" checked={item.packed} onChange={() => handleTogglePackingItem(item)} />
+                              Packed
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="small-text">Packing suggestions will appear here.</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid-2 mt-24">
+                  <div className="panel">
+                    <h3>Expense splitting</h3>
+                    <form onSubmit={handleAddExpense} className="stacked-form compact-form">
+                      <label>
+                        Title
+                        <input value={expenseForm.title} onChange={(event) => setExpenseForm((prev) => ({ ...prev, title: event.target.value }))} placeholder="Guide fee" />
+                      </label>
+                      <label>
+                        Amount ({currencyLabel})
+                        <input type="number" value={expenseForm.amount} onChange={(event) => setExpenseForm((prev) => ({ ...prev, amount: event.target.value }))} />
+                      </label>
+                      <label>
+                        Paid by
+                        <input value={expenseForm.paidBy} onChange={(event) => setExpenseForm((prev) => ({ ...prev, paidBy: event.target.value }))} placeholder="alice" />
+                      </label>
+                      <label>
+                        Split with
+                        <input value={expenseForm.splitWith} onChange={(event) => setExpenseForm((prev) => ({ ...prev, splitWith: event.target.value }))} placeholder="alice, bob" />
+                      </label>
+                      <button type="submit" className="button button-secondary">Add expense</button>
+                    </form>
+                    {(selectedItinerary.expenses || []).length > 0 ? (
+                      <ul className="list-card">
+                        {selectedItinerary.expenses.map((expense) => (
+                          <li key={expense.id}>
+                            <strong>{expense.title}</strong>
+                            <p>{formatMoney(expense.amount)} · paid by {expense.paid_by}</p>
+                            <p className="small-text">Split: {expense.split_with?.join(', ') || 'All participants'}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="small-text">No shared expenses yet.</p>
+                    )}
+                  </div>
+                  <div className="panel">
+                    <h3>Trip documents</h3>
+                    <form onSubmit={handleAttachDocument} className="stacked-form compact-form">
+                      <label>
+                        Title
+                        <input value={documentForm.title} onChange={(event) => setDocumentForm((prev) => ({ ...prev, title: event.target.value }))} placeholder="Hotel confirmation" />
+                      </label>
+                      <label>
+                        Type
+                        <select value={documentForm.type} onChange={(event) => setDocumentForm((prev) => ({ ...prev, type: event.target.value }))}>
+                          <option value="confirmation">Confirmation</option>
+                          <option value="receipt">Receipt</option>
+                          <option value="ticket">Ticket</option>
+                          <option value="document">Document</option>
+                        </select>
+                      </label>
+                      <label>
+                        URL
+                        <input value={documentForm.url} onChange={(event) => setDocumentForm((prev) => ({ ...prev, url: event.target.value }))} placeholder="https://example.com/booking.pdf" />
+                      </label>
+                      <button type="submit" className="button button-secondary">Attach document</button>
+                    </form>
+                    {(selectedItinerary.documents || []).length > 0 ? (
+                      <ul className="plain-list">
+                        {selectedItinerary.documents.map((document) => (
+                          <li key={document.id}>
+                            <span>
+                              <strong>{document.title}</strong>
+                              <small>{document.type} · {document.uploaded_by}</small>
+                            </span>
+                            <a href={document.url} target="_blank" rel="noreferrer">Open</a>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="small-text">Attach receipts, tickets, and hotel confirmations.</p>
                     )}
                   </div>
                 </div>

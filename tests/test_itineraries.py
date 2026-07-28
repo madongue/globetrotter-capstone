@@ -17,15 +17,76 @@ def temp_data_files(monkeypatch, tmp_path):
     activities_file = tmp_path / "activities.json"
     places_file = tmp_path / "places.json"
     hotels_file.write_text(
-        json.dumps([{"id": "hotel-1", "name": "Kribi Beach Stay", "location": "Kribi", "cost_per_night": 55000}]),
+        json.dumps([
+            {
+                "id": "hotel-1",
+                "name": "Kribi Beach Stay",
+                "location": "Kribi",
+                "region": "South",
+                "division": "Ocean",
+                "city": "Kribi",
+                "cost_per_night": 55000,
+            },
+            {
+                "id": "hotel-2",
+                "name": "Buea Mountain Lodge",
+                "location": "Buea",
+                "region": "South West",
+                "division": "Fako",
+                "city": "Buea",
+                "cost_per_night": 45000,
+            },
+        ]),
         encoding="utf-8",
     )
     activities_file.write_text(
-        json.dumps([{"id": "activity-1", "name": "Lobe Falls Tour", "location": "Kribi", "cost": 30000, "duration_hours": 2}]),
+        json.dumps([
+            {
+                "id": "activity-1",
+                "name": "Lobe Falls Tour",
+                "location": "Kribi",
+                "region": "South",
+                "division": "Ocean",
+                "city": "Kribi",
+                "cost": 30000,
+                "duration_hours": 2,
+            },
+            {
+                "id": "activity-2",
+                "name": "Mount Cameroon Hike",
+                "location": "Buea",
+                "region": "South West",
+                "division": "Fako",
+                "city": "Buea",
+                "cost": 40000,
+                "duration_hours": 6,
+            },
+        ]),
         encoding="utf-8",
     )
     places_file.write_text(
-        json.dumps([{"id": "place-1", "name": "Lobe Falls", "location": "Kribi", "cost": 10000, "duration_hours": 1.5}]),
+        json.dumps([
+            {
+                "id": "place-1",
+                "name": "Lobe Falls",
+                "location": "Kribi",
+                "region": "South",
+                "division": "Ocean",
+                "city": "Kribi",
+                "cost": 10000,
+                "duration_hours": 1.5,
+            },
+            {
+                "id": "place-2",
+                "name": "Mount Cameroon",
+                "location": "Buea",
+                "region": "South West",
+                "division": "Fako",
+                "city": "Buea",
+                "cost": 25000,
+                "duration_hours": 5,
+            },
+        ]),
         encoding="utf-8",
     )
     monkeypatch.setattr("app.models.HOTELS_FILE", str(hotels_file))
@@ -316,6 +377,57 @@ def test_trips_alias_generate_progress_and_feedback(client):
     assert feedback_resp.get_json()["feedback"]["rating"] == 5
 
 
+def test_trip_suggestions_without_budget_returns_area_hotels_activities_and_places(client):
+    token = register_and_login(client)
+    response = client.get(
+        "/api/itineraries/suggestions?location=Kribi",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["budget_filter_active"] is False
+    assert payload["suggestions"]["hotels"][0]["name"] == "Kribi Beach Stay"
+    assert payload["suggestions"]["activities"][0]["name"] == "Lobe Falls Tour"
+    assert payload["suggestions"]["places"][0]["name"] == "Lobe Falls"
+
+
+def test_trip_suggestions_can_be_filtered_by_region_only(client):
+    token = register_and_login(client)
+    response = client.get(
+        "/api/itineraries/suggestions?location=South%20West%2C%20Cameroon&region=South%20West",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    suggestions = response.get_json()["suggestions"]
+    assert [hotel["name"] for hotel in suggestions["hotels"]] == ["Buea Mountain Lodge"]
+    assert [activity["name"] for activity in suggestions["activities"]] == ["Mount Cameroon Hike"]
+    assert [place["name"] for place in suggestions["places"]] == ["Mount Cameroon"]
+
+
+def test_add_catalogue_place_to_existing_itinerary(client):
+    token = register_and_login(client)
+    create_resp = client.post(
+        "/api/itineraries",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"title": "Kribi Plan", "location": "Kribi"}),
+        content_type="application/json",
+    )
+    itinerary_id = create_resp.get_json()["id"]
+
+    add_resp = client.post(
+        f"/api/itineraries/{itinerary_id}/places",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"place_id": "place-1"}),
+        content_type="application/json",
+    )
+
+    assert add_resp.status_code == 201
+    itinerary = add_resp.get_json()["itinerary"]
+    assert itinerary["places_to_visit"][0]["name"] == "Lobe Falls"
+    assert any(stage["id"] == "place-1" for stage in itinerary["stages"])
+
+
 def test_shared_edit_permission_and_notifications(client):
     owner_token = register_and_login(client, "alice")
     editor_token = register_and_login(client, "bob")
@@ -431,6 +543,91 @@ def test_invite_budget_exports_audit_and_checklist(client):
     audit_resp = client.get(f"/api/itineraries/{itinerary_id}/audit", headers={"Authorization": f"Bearer {owner_token}"})
     assert audit_resp.status_code == 200
     assert {entry["action"] for entry in audit_resp.get_json()} >= {"created", "invite_created", "payment_recorded"}
+
+
+def test_day_plans_route_packing_expenses_and_documents(client):
+    token = register_and_login(client)
+    create_resp = client.post(
+        "/api/itineraries",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({
+            "title": "Kribi Planner",
+            "location": "Kribi",
+            "hotel": {"name": "Kribi Beach Stay", "cost_per_night": 55000},
+            "activities": [{"id": "activity-1", "name": "Lobe Falls Tour", "cost": 30000}],
+            "places_to_visit": [{"id": "place-1", "name": "Lobe Falls", "cost": 10000, "tags": ["waterfall"]}],
+            "start_date": "2026-08-01",
+            "end_date": "2026-08-02",
+        }),
+        content_type="application/json",
+    )
+    itinerary = create_resp.get_json()
+    itinerary_id = itinerary["id"]
+
+    plans_resp = client.get(f"/api/itineraries/{itinerary_id}/day-plans", headers={"Authorization": f"Bearer {token}"})
+    assert plans_resp.status_code == 200
+    assert len(plans_resp.get_json()["day_plans"]) == 2
+
+    update_plans_resp = client.patch(
+        f"/api/itineraries/{itinerary_id}/day-plans",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({
+            "day_plans": [
+                {"id": "day-1", "day": 1, "title": "Arrival", "stage_ids": ["hotel", "place-1"]},
+                {"id": "day-2", "day": 2, "title": "Falls", "stage_ids": ["activity-1"]},
+            ]
+        }),
+        content_type="application/json",
+    )
+    assert update_plans_resp.status_code == 200
+    assert update_plans_resp.get_json()["itinerary"]["route_plan"]["estimated_stop_count"] == 3
+
+    route_resp = client.post(
+        f"/api/itineraries/{itinerary_id}/route",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"stage_ids": ["hotel", "activity-1", "place-1"]}),
+        content_type="application/json",
+    )
+    assert route_resp.status_code == 200
+    assert route_resp.get_json()["route_plan"]["google_maps_directions_url"].startswith("https://www.google.com/maps/dir/")
+
+    packing_resp = client.post(
+        f"/api/itineraries/{itinerary_id}/packing-list",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"category": "Outdoor", "text": "Mosquito repellent", "assigned_to": "alice"}),
+        content_type="application/json",
+    )
+    assert packing_resp.status_code == 200
+    packing_item = packing_resp.get_json()["packing_list"][-1]
+    assert packing_item["text"] == "Mosquito repellent"
+
+    toggle_packing_resp = client.patch(
+        f"/api/itineraries/{itinerary_id}/packing-list",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"id": packing_item["id"], "packed": True}),
+        content_type="application/json",
+    )
+    assert toggle_packing_resp.status_code == 200
+    assert toggle_packing_resp.get_json()["packing_list"][-1]["packed"] is True
+
+    expense_resp = client.post(
+        f"/api/itineraries/{itinerary_id}/expenses",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"title": "Guide", "amount": 20000, "paid_by": "alice", "split_with": ["alice"]}),
+        content_type="application/json",
+    )
+    assert expense_resp.status_code == 200
+    assert expense_resp.get_json()["summary"]["expense_total"] == 20000
+    assert expense_resp.get_json()["summary"]["currency_label"] == "FCFA"
+
+    document_resp = client.post(
+        f"/api/itineraries/{itinerary_id}/documents",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"title": "Hotel confirmation", "url": "https://example.com/booking.pdf", "type": "confirmation"}),
+        content_type="application/json",
+    )
+    assert document_resp.status_code == 201
+    assert document_resp.get_json()["document"]["title"] == "Hotel confirmation"
 
 
 def test_media_file_upload(client):

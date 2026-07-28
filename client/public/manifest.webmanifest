@@ -1,0 +1,17 @@
+{
+  "name": "GlobeTrotter Cameroon",
+  "short_name": "GlobeTrotter",
+  "description": "Cameroon-focused trip planning, maps, budgets, bookings, and traveller collaboration.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f8fb",
+  "theme_color": "#3366ff",
+  "icons": [
+    {
+      "src": "/images/destinations/kribi.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

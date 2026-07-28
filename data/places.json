@@ -1,0 +1,736 @@
+[
+  {
+    "id": "place-kribi-lobe-falls",
+    "name": "Lobe Falls",
+    "location": "Kribi, Cameroon",
+    "region": "South",
+    "division": "Ocean",
+    "subdivision": "Kribi I",
+    "city": "Kribi",
+    "quarter": "Londji",
+    "description": "Coastal waterfall system where the Lobe River cascades directly toward the Atlantic Ocean, commonly visited with Kribi beach circuits and canoe trips.",
+    "tags": [
+      "waterfall",
+      "beach",
+      "nature",
+      "photography",
+      "family",
+      "cameroon"
+    ],
+    "cost": 10000,
+    "cost_note": "Indicative visitor/activity budget; confirm current local guide or canoe prices before travel.",
+    "related_services": [
+      "local guides",
+      "canoe rides",
+      "seafood restaurants",
+      "beach hotels",
+      "Google Maps directions"
+    ],
+    "image_url": "/images/places/place-kribi-lobe-falls.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Les_chutes_de_la_lob%C3%A9_kribi_Cameroon.jpg",
+      "https://www.cameroon-embassy.nl/holiday-ideas/",
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Les%20chutes%20de%20la%20lob%C3%A9%20kribi%20Cameroon.jpg",
+    "local_image_url": "/images/places/place-kribi-lobe-falls.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Les_chutes_de_la_lob%C3%A9_kribi_Cameroon.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-kribi-lobe-falls.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Les_chutes_de_la_lob%C3%A9_kribi_Cameroon.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-buea-mount-cameroon",
+    "name": "Mount Cameroon",
+    "location": "Buea, Cameroon",
+    "region": "South West",
+    "division": "Fako",
+    "subdivision": "Buea",
+    "city": "Buea",
+    "quarter": "Molyko",
+    "description": "Active volcanic mountain and major hiking destination, described by official tourism sources as one of Cameroon's strongest ecotourism and adventure assets.",
+    "tags": [
+      "mountain",
+      "hiking",
+      "nature",
+      "adventure",
+      "photography",
+      "cameroon"
+    ],
+    "cost": 45000,
+    "cost_note": "Indicative guided hike budget; official park, porter, guide, and route fees should be confirmed locally.",
+    "related_services": [
+      "hiking guides",
+      "porters",
+      "camping",
+      "Buea guesthouses",
+      "Race of Hope event"
+    ],
+    "image_url": "/images/places/place-buea-mount-cameroon.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+      "https://www.cameroon-embassy.nl/holiday-ideas/",
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20from%20a%20work%20site.jpg",
+    "local_image_url": "/images/places/place-buea-mount-cameroon.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-buea-mount-cameroon.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-limbe-botanic-garden",
+    "name": "Limbe Botanic Garden",
+    "location": "Limbe, Cameroon",
+    "region": "South West",
+    "division": "Fako",
+    "subdivision": "Buea",
+    "city": "Limbe",
+    "quarter": "Bota",
+    "description": "Historic botanic garden by the Atlantic coast, created in the colonial period and now used for recreation, education, and nature walks.",
+    "tags": [
+      "nature",
+      "garden",
+      "family",
+      "photography",
+      "history",
+      "cameroon"
+    ],
+    "cost": 5000,
+    "cost_note": "Indicative entry/guide budget; confirm current gate fee at the garden.",
+    "related_services": [
+      "local guides",
+      "botanical tours",
+      "nearby beaches",
+      "Limbe hotels",
+      "Google Maps directions"
+    ],
+    "image_url": "/images/places/place-limbe-botanic-garden.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Garden_Information_Center_-_Limbe_Botanic_Garden.jpg",
+      "https://www.africatouroperators.org/cameroon/limbe-cameroon/",
+      "https://www.cameroon-embassy.nl/holiday-ideas/"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Garden%20Information%20Center%20-%20Limbe%20Botanic%20Garden.jpg",
+    "local_image_url": "/images/places/place-limbe-botanic-garden.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Garden_Information_Center_-_Limbe_Botanic_Garden.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-limbe-botanic-garden.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Garden_Information_Center_-_Limbe_Botanic_Garden.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-limbe-wildlife-centre",
+    "name": "Limbe Wildlife Centre",
+    "location": "Limbe, Cameroon",
+    "region": "South West",
+    "division": "Fako",
+    "subdivision": "Buea",
+    "city": "Limbe",
+    "quarter": "Bota",
+    "description": "Wildlife conservation and visitor centre in Limbe, commonly paired with the botanic garden and beaches for family and nature visits.",
+    "tags": [
+      "wildlife",
+      "family",
+      "nature",
+      "conservation",
+      "cameroon"
+    ],
+    "cost": 5000,
+    "cost_note": "Indicative entry budget; confirm current conservation/visitor fees locally.",
+    "related_services": [
+      "guided visits",
+      "conservation education",
+      "nearby hotels",
+      "taxi access"
+    ],
+    "image_url": "/images/places/place-limbe-wildlife-centre.jpg",
+    "source_urls": [
+      "https://www.africatouroperators.org/cameroon/limbe-cameroon/",
+      "https://www.cameroon-embassy.nl/holiday-ideas/"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Botanic%20garden%20limbe.jpg",
+    "local_image_url": "/images/places/place-limbe-wildlife-centre.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Botanic%20garden%20limbe.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-limbe-wildlife-centre.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Botanic%20garden%20limbe.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-yaounde-national-museum",
+    "name": "National Museum of Cameroon",
+    "location": "Yaounde, Cameroon",
+    "region": "Centre",
+    "division": "Mfoundi",
+    "subdivision": "Yaounde I",
+    "city": "Yaounde",
+    "quarter": "Melen",
+    "description": "National heritage museum in Yaounde, located in the former presidential residence and used for history, culture, and guided city-tour visits.",
+    "tags": [
+      "museum",
+      "culture",
+      "history",
+      "family",
+      "cameroon"
+    ],
+    "cost": 5000,
+    "cost_note": "Indicative museum visit budget; confirm current entry and guide fees before travel.",
+    "related_services": [
+      "guided museum tours",
+      "Yaounde city tours",
+      "nearby restaurants",
+      "taxi access"
+    ],
+    "image_url": "/images/places/place-yaounde-national-museum.jpg",
+    "source_urls": [
+      "https://yengafrica.com/4-must-see-museums-in-yaounde-and-how-to-visit/",
+      "https://www.cameroon-embassy.nl/holiday-ideas/"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Mus%C3%A9e_National_du_Cameroun_03.JPG/1280px-Mus%C3%A9e_National_du_Cameroun_03.JPG",
+    "local_image_url": "/images/places/place-yaounde-national-museum.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mus%C3%A9e_National_du_Cameroun_03.JPG",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-yaounde-national-museum.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mus%C3%A9e_National_du_Cameroun_03.JPG",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-yaounde-reunification-monument",
+    "name": "Reunification Monument",
+    "location": "Yaounde, Cameroon",
+    "region": "Centre",
+    "division": "Mfoundi",
+    "subdivision": "Yaounde I",
+    "city": "Yaounde",
+    "quarter": "Ngoa-Ekelle",
+    "description": "Iconic Yaounde landmark commemorating Cameroon's reunification and frequently visited for national history, architecture, and city photography.",
+    "tags": [
+      "monuments",
+      "history",
+      "culture",
+      "photography",
+      "cameroon"
+    ],
+    "cost": 2000,
+    "cost_note": "Indicative access/guide budget; public exterior viewing may vary from guided interior/site fees.",
+    "related_services": [
+      "city tours",
+      "photography",
+      "nearby restaurants",
+      "Google Maps directions"
+    ],
+    "image_url": "/images/places/place-yaounde-reunification-monument.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Monument_de_la_R%C3%A9unification_02.jpg",
+      "https://www.facebook.com/MimiMefoInfo/posts/can-you-identify-these-different-historical-monuments-of-cameroon-buffly3yoctay/1071430244339746/",
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Quartier_general.jpg/1280px-Quartier_general.jpg",
+    "local_image_url": "/images/places/place-yaounde-reunification-monument.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Quartier_general.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-yaounde-reunification-monument.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Quartier_general.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-waza-national-park",
+    "name": "Waza National Park",
+    "location": "Waza, Cameroon",
+    "region": "Far North",
+    "division": "Logone-et-Chari",
+    "subdivision": "Waza",
+    "city": "Waza",
+    "description": "Northern safari park associated with elephants, giraffes, lions, birds, savanna landscapes, and classic Cameroon wildlife itineraries.",
+    "tags": [
+      "national parks",
+      "wildlife",
+      "safari",
+      "nature",
+      "photography",
+      "cameroon"
+    ],
+    "cost": 15000,
+    "cost_note": "Indicative park/guide budget; verify official park entrance, vehicle, and guide fees locally.",
+    "related_services": [
+      "park guides",
+      "4x4 transport",
+      "Maroua hotels",
+      "bird watching",
+      "Google Maps directions"
+    ],
+    "image_url": "/images/places/place-waza-national-park.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Elephants_around_tree_in_Waza,_Cameroon.jpg",
+      "https://www.cameroon-embassy.nl/holiday-ideas/",
+      "https://www.facebook.com/ntumbawtalentshow/posts/the-waza-national-park-in-the-far-north-region-of-cameroon-a-tourist-site-that-y/615812704302559/"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Elephants%20around%20tree%20in%20Waza%2C%20Cameroon.jpg",
+    "local_image_url": "/images/places/place-waza-national-park.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Elephants_around_tree_in_Waza,_Cameroon.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-waza-national-park.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Elephants_around_tree_in_Waza,_Cameroon.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-korup-national-park",
+    "name": "Korup National Park",
+    "location": "Mundemba, Cameroon",
+    "region": "South West",
+    "division": "Ndian",
+    "subdivision": "Mundemba",
+    "city": "Mundemba",
+    "description": "Rainforest national park in western Cameroon, highlighted by official tourism sources for biodiversity and ancient plant life.",
+    "tags": [
+      "national parks",
+      "rainforest",
+      "wildlife",
+      "nature",
+      "hiking",
+      "cameroon"
+    ],
+    "cost": 15000,
+    "cost_note": "Indicative park/guide budget; confirm current official park and guide fees in Mundemba.",
+    "related_services": [
+      "forest guides",
+      "eco-lodges",
+      "bird watching",
+      "hiking",
+      "research visits"
+    ],
+    "image_url": "/images/places/place-korup-national-park.jpg",
+    "source_urls": [
+      "https://www.cameroon-embassy.nl/holiday-ideas/",
+      "https://national-parks.org/cameroon/"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20forest%20reserve%20Buea.jpg",
+    "local_image_url": "/images/places/place-korup-national-park.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20forest%20reserve%20Buea.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-korup-national-park.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20forest%20reserve%20Buea.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-dja-faunal-reserve",
+    "name": "Dja Faunal Reserve",
+    "location": "Dja Reserve, Cameroon",
+    "region": "South",
+    "division": "Dja-et-Lobo",
+    "subdivision": "Djoum",
+    "city": "Djoum",
+    "description": "UNESCO-listed rainforest reserve and one of Cameroon's major ecotourism assets, known for dense forest, biodiversity, and conservation value.",
+    "tags": [
+      "national parks",
+      "rainforest",
+      "wildlife",
+      "nature",
+      "unesco",
+      "cameroon"
+    ],
+    "cost": 20000,
+    "cost_note": "Indicative guided reserve budget; verify access permits, guide fees, and seasonal access locally.",
+    "related_services": [
+      "eco-guides",
+      "research visits",
+      "forest treks",
+      "conservation tourism"
+    ],
+    "image_url": "/images/places/place-dja-faunal-reserve.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Dja_Faunal_Reserve-109434.jpg",
+      "https://www.cameroon-embassy.nl/holiday-ideas/",
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Dja%20Faunal%20Reserve-109434.jpg",
+    "local_image_url": "/images/places/place-dja-faunal-reserve.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Dja_Faunal_Reserve-109434.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-dja-faunal-reserve.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Dja_Faunal_Reserve-109434.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-campo-maan-national-park",
+    "name": "Campo Ma'an National Park",
+    "location": "Campo, Cameroon",
+    "region": "South",
+    "division": "Ocean",
+    "subdivision": "Campo",
+    "city": "Campo",
+    "description": "Coastal rainforest national park often paired with Kribi and Ebodje in ecotourism circuits.",
+    "tags": [
+      "national parks",
+      "rainforest",
+      "wildlife",
+      "nature",
+      "beach",
+      "cameroon"
+    ],
+    "cost": 15000,
+    "cost_note": "Indicative park/guide budget; confirm current park access, guide, and transport costs locally.",
+    "related_services": [
+      "eco-guides",
+      "Kribi hotels",
+      "coastal tours",
+      "wildlife observation"
+    ],
+    "image_url": "/images/places/place-campo-maan-national-park.jpg",
+    "source_urls": [
+      "https://www.cameroon-embassy.nl/holiday-ideas/",
+      "https://discover-cameroon.com/en/tours/",
+      "https://national-parks.org/cameroon/"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lob%C3%A9%20beach%20kribi%20Cameroon.jpg",
+    "local_image_url": "/images/places/place-campo-maan-national-park.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lob%C3%A9%20beach%20kribi%20Cameroon.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-campo-maan-national-park.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lob%C3%A9%20beach%20kribi%20Cameroon.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-foumban-royal-palace",
+    "name": "Foumban Royal Palace and Museum",
+    "location": "Foumban, Cameroon",
+    "region": "West",
+    "division": "Noun",
+    "subdivision": "Foumban",
+    "city": "Foumban",
+    "quarter": "Centre Ville",
+    "description": "Historic Bamoun royal palace and museum, central to Foumban's cultural tourism and traditional arts identity.",
+    "tags": [
+      "chiefdoms",
+      "museum",
+      "culture",
+      "history",
+      "crafts",
+      "cameroon"
+    ],
+    "cost": 5000,
+    "cost_note": "Indicative museum visit budget; confirm current palace museum entry and guide fees.",
+    "related_services": [
+      "museum guides",
+      "craft markets",
+      "cultural tours",
+      "local restaurants"
+    ],
+    "image_url": "/images/places/place-foumban-royal-palace.jpg",
+    "source_urls": [
+      "https://www.tripadvisor.com/Attraction_Review-g482838-d8501490-Reviews-Foumban_Royal_Palace_Museum-Foumban_West_Region.html",
+      "https://www.facebook.com/ntumbawtalentshow/posts/top-5-places-to-visit-in-the-west-region-of-cameroon1foumban-royal-palace-museum/722974930253002/",
+      "https://guide.en-vols.com/en/adresse/foumban-the-city-of-art/"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/The_Sultans_Palace%2C_Foumban.jpg/1280px-The_Sultans_Palace%2C_Foumban.jpg",
+    "local_image_url": "/images/places/place-foumban-royal-palace.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:The_Sultans_Palace,_Foumban.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-foumban-royal-palace.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:The_Sultans_Palace,_Foumban.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-bimbia-slave-port",
+    "name": "Bimbia Slave Trade Site",
+    "location": "Bimbia, Limbe, Cameroon",
+    "region": "South West",
+    "division": "Fako",
+    "subdivision": "Buea",
+    "city": "Limbe",
+    "quarter": "Mokunda",
+    "description": "Historic coastal slave trade site near Limbe, relevant for heritage tourism, memory work, and guided history visits.",
+    "tags": [
+      "history",
+      "heritage",
+      "culture",
+      "monuments",
+      "cameroon"
+    ],
+    "cost": 5000,
+    "cost_note": "Indicative guided visit budget; confirm site access and local guide fees.",
+    "related_services": [
+      "heritage guides",
+      "Limbe transport",
+      "coastal tours",
+      "history education"
+    ],
+    "image_url": "/images/places/place-bimbia-slave-port.jpg",
+    "source_urls": [
+      "https://commons.wikimedia.org/wiki/File:Bimbia_Slave_Post_(1).jpg",
+      "https://commons.wikimedia.org/wiki/File:Bimbia_Slave_Post_(2).jpg"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bimbia%20Slave%20Post%20%281%29.jpg",
+    "local_image_url": "/images/places/place-bimbia-slave-port.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Bimbia_Slave_Post_(1).jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-bimbia-slave-port.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Bimbia_Slave_Post_(1).jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-douala-marche-fleurs",
+    "name": "Marche des Fleurs",
+    "location": "Douala, Cameroon",
+    "region": "Littoral",
+    "division": "Wouri",
+    "subdivision": "Douala I",
+    "city": "Douala",
+    "quarter": "Bonapriso",
+    "description": "Popular Douala market area for flowers, crafts, local shopping, photography, and urban discovery.",
+    "tags": [
+      "markets",
+      "shopping",
+      "culture",
+      "photography",
+      "city",
+      "cameroon"
+    ],
+    "cost": 0,
+    "cost_note": "Open market visit; budget depends on purchases and transport.",
+    "related_services": [
+      "local vendors",
+      "craft shopping",
+      "restaurants",
+      "taxi access"
+    ],
+    "image_url": "/images/places/place-douala-marche-fleurs.jpg",
+    "source_urls": [
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fdestination-cameroon"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Palais_des_rois_Bell_-_Douala.jpg/1280px-Palais_des_rois_Bell_-_Douala.jpg",
+    "local_image_url": "/images/places/place-douala-marche-fleurs.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Palais_des_rois_Bell_-_Douala.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "image_context_note": "Contextual Douala city image; no reusable exact Marche des Fleurs photo was found.",
+    "images": [
+      {
+        "url": "/images/places/place-douala-marche-fleurs.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Palais_des_rois_Bell_-_Douala.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-ebogo-nyong-ecotourism",
+    "name": "Ebogo Ecotourism Site",
+    "location": "Ebogo, Mbalmayo, Cameroon",
+    "region": "Centre",
+    "division": "Nyong-et-So'o",
+    "subdivision": "Mbalmayo",
+    "city": "Mbalmayo",
+    "quarter": "Ebogo",
+    "description": "Nyong River ecotourism site known for canoe rides, forest walks, birdwatching, and nature day trips from Yaounde.",
+    "tags": [
+      "ecotourism",
+      "river",
+      "canoe",
+      "nature",
+      "family",
+      "cameroon"
+    ],
+    "cost": 15000,
+    "cost_note": "Indicative day-trip activity budget; confirm canoe, guide, and transport prices locally before booking.",
+    "related_services": [
+      "canoe guides",
+      "forest walks",
+      "Yaounde day trips",
+      "local restaurants",
+      "Google Maps directions"
+    ],
+    "image_url": "/images/places/place-ebogo-nyong-ecotourism.jpg",
+    "source_urls": [
+      "https://www.tripadvisor.com/Attractions-g293772-Activities-Cameroon.html",
+      "https://cvuc-uccc.com/national/images/CENTRE_Journal%20des%20Projets%202017_MINEPAT.PDF"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Balade_sur_le_Nyong%2C_Ebogo%2C_Cameroun.jpg/1280px-Balade_sur_le_Nyong%2C_Ebogo%2C_Cameroun.jpg",
+    "local_image_url": "/images/places/place-ebogo-nyong-ecotourism.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Balade_sur_le_Nyong,_Ebogo,_Cameroun.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-ebogo-nyong-ecotourism.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Balade_sur_le_Nyong,_Ebogo,_Cameroun.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-mefou-primate-park",
+    "name": "Mefou Primate Park",
+    "location": "Mefou, Mfou, Cameroon",
+    "region": "Centre",
+    "division": "Mefou-et-Afamba",
+    "subdivision": "Mfou",
+    "city": "Mfou",
+    "description": "Primate sanctuary near Yaounde visited for conservation education, forest walks, and guided wildlife observation.",
+    "tags": [
+      "wildlife",
+      "conservation",
+      "forest",
+      "family",
+      "education",
+      "cameroon"
+    ],
+    "cost": 10000,
+    "cost_note": "Indicative visit budget; confirm current sanctuary entry, guide, and transport costs.",
+    "related_services": [
+      "sanctuary guides",
+      "Yaounde hotels",
+      "family tours",
+      "conservation education"
+    ],
+    "image_url": "/images/places/place-mefou-primate-park.jpg",
+    "source_urls": [
+      "https://www.tripadvisor.com/Attractions-g293772-Activities-Cameroon.html",
+      "https://www.spm.gov.cm/site/?q=en%2Fcontent%2Fcameroon-striking-tourist-diversity"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Chimpanz%C3%A9.jpg",
+    "local_image_url": "/images/places/place-mefou-primate-park.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Chimpanz%C3%A9.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-mefou-primate-park.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Chimpanz%C3%A9.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-ekom-nkam-waterfalls",
+    "name": "Ekom Nkam Waterfalls",
+    "location": "Melong, Cameroon",
+    "region": "Littoral",
+    "division": "Moungo",
+    "subdivision": "Melong",
+    "city": "Melong",
+    "description": "Tall rainforest waterfalls near Melong, popular for guided nature visits, photography, and Douala or West-region circuits.",
+    "tags": [
+      "waterfall",
+      "nature",
+      "photography",
+      "hiking",
+      "rainforest",
+      "cameroon"
+    ],
+    "cost": 10000,
+    "cost_note": "Indicative entry/guide budget; confirm current local access and guide fees.",
+    "related_services": [
+      "local guides",
+      "Douala day trips",
+      "Melong hotels",
+      "photography tours"
+    ],
+    "image_url": "/images/places/place-ekom-nkam-waterfalls.jpg",
+    "source_urls": [
+      "https://www.tripadvisor.com/Attractions-g293772-Activities-Cameroon.html",
+      "https://www.cameroon-embassy.nl/holiday-ideas/"
+    ],
+    "original_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chutes%20d%27Ekom%20Nkam.jpg",
+    "local_image_url": "/images/places/place-ekom-nkam-waterfalls.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chutes%20d%27Ekom%20Nkam.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-ekom-nkam-waterfalls.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chutes%20d%27Ekom%20Nkam.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  },
+  {
+    "id": "place-bangem-manengouba-twin-lakes",
+    "name": "Mount Manengouba Twin Lakes",
+    "location": "Bangem, Cameroon",
+    "region": "South West",
+    "division": "Koupe-Manengouba",
+    "subdivision": "Bangem",
+    "city": "Bangem",
+    "description": "Highland crater-lake landscape near Bangem, valued for hiking, scenic viewpoints, and Bakossi-area nature tourism.",
+    "tags": [
+      "lakes",
+      "hiking",
+      "mountain",
+      "nature",
+      "photography",
+      "cameroon"
+    ],
+    "cost": 20000,
+    "cost_note": "Indicative guided hike/transport budget; confirm route condition, guide, and local access costs before travel.",
+    "related_services": [
+      "hiking guides",
+      "motorbike transport",
+      "local guesthouses",
+      "photography tours"
+    ],
+    "image_url": "/images/places/place-bangem-manengouba-twin-lakes.jpg",
+    "source_urls": [
+      "https://en.wikipedia.org/wiki/Bangem",
+      "https://www.cameroon-embassy.nl/holiday-ideas/"
+    ],
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Manegouba.jpg/1280px-Manegouba.jpg",
+    "local_image_url": "/images/places/place-bangem-manengouba-twin-lakes.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Manegouba.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-bangem-manengouba-twin-lakes.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Manegouba.jpg",
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
+      }
+    ]
+  }
+]

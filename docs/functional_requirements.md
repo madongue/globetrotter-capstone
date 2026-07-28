@@ -143,6 +143,8 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 | DELETE | `/resources/activities/{activity_id}` | Yes | Remove an activity resource |
 | GET/POST | `/resources/activities/{activity_id}/reviews` | Optional/Yes | List or create activity reviews |
 | POST | `/resources/places` | Yes | Add a place resource |
+| GET | `/resources/places/{place_id}` | No | Return a full place guide with nearby hotels, activities, related places, photos, and planning notes |
+| GET | `/resources/places/{place_id}/guide` | No | Return an offline-ready JSON guide for a Cameroon place |
 | DELETE | `/resources/places/{place_id}` | Yes | Remove a place resource |
 | GET/POST | `/resources/places/{place_id}/reviews` | Optional/Yes | List or create place reviews |
 
@@ -155,11 +157,15 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 - Destination, recommendation, itinerary suggestion, resource, and map workflows are scoped to Cameroon territory by default.
 - Registration and profile setup accept only predefined interest values.
 - Cameroon places, hotels, and activities include region metadata, costs or cost notes where known, related services, image URLs, source URLs, and Google Maps metadata.
+- Discovery groups visit places by Cameroon region and shows a short featured preview before the user narrows by region, division, subdivision, city, or quarter.
+- Place detail guides show nearby hotels, nearby activities, related places, traveller photos, safety notes, and offline guide export.
 - Recommendations return a sorted list of destinations or trips for an authenticated user.
 - City recommendations rank Cameroon cities from saved places, browsing history, preferences, and local catalogue matches.
 - Users can save and remove Cameroon places from a trip waitlist.
 - Users can upload traveller photos linked to a specific Cameroon place and filter media by that place.
 - Trip creation returns the created trip and persists it.
+- During trip creation, choosing a Cameroon region or local area proposes hotels, activities, and places to visit from that selected area.
+- Users can add a Cameroon catalogue place directly into an existing itinerary from a place guide.
 - Trip joining associates a user with an existing trip.
 - Trip modification updates the trip details and cost calculations.
 - Trip listing returns only trips that belong to or are shared with the current user.
@@ -170,7 +176,13 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 - Users can research trips by budget, location, feedback, and other criteria.
 - Trip progress and stage advancement are tracked and displayed.
 - Cost and duration are calculated for each trip stage and total itinerary.
+- Day-by-day trip plans can organize itinerary stages.
+- Routes can be generated from trip stages and opened in Google Maps.
+- Packing checklist items can be added, assigned, and marked packed.
+- Shared expenses are tracked in FCFA with participant split balances.
+- Trip documents such as receipts, tickets, and booking confirmations can be attached to an itinerary.
 - Hotel prices can be compared in FCFA before booking.
 - Booking confirmations create persistent reservation records and receipts.
 - Authorized users can cancel or modify reservations for hotels, activities, places, transport, or other trip items.
 - Live tracking updates the itinerary with current coordinates, a trail, and Google Maps links.
+- Outdoor Cameroon places receive practical metadata such as difficulty, guide requirement, best season, transport notes, and safety notes.

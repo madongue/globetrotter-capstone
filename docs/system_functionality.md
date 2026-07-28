@@ -173,6 +173,11 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | `/itineraries/{itinerary_id}/reservations/{reservation_id}` | PATCH, DELETE | Yes | Modify or cancel a trip reservation |
 | `/itineraries/{itinerary_id}/tracking` | GET, PATCH, POST | Yes | Read or update live map tracking coordinates |
 | `/itineraries/{itinerary_id}/progress` | GET, PATCH, POST | Yes | Read or update stage progress and current location |
+| `/itineraries/{itinerary_id}/day-plans` | GET, PATCH, POST | Yes | Read or update day-by-day itinerary stage plans |
+| `/itineraries/{itinerary_id}/route` | GET, POST | Yes | Build route metadata and a Google Maps directions link from itinerary stages |
+| `/itineraries/{itinerary_id}/packing-list` | GET, POST, PATCH | Yes | Manage trip-wide packing checklist items |
+| `/itineraries/{itinerary_id}/expenses` | GET, POST, PATCH | Yes | Track shared expenses and split balances in FCFA |
+| `/itineraries/{itinerary_id}/documents` | GET, POST | Yes | Attach or list trip receipts, tickets, confirmations, and document links |
 | `/itineraries/{itinerary_id}/feedback` | POST | Yes | Record trip feedback for recommendation ranking |
 | `/itineraries/generate` | POST | Yes | Generate a draft itinerary from local catalogue/resource data |
 | `/itineraries/{itinerary_id}/budget` | GET | Yes | Return budget/payment totals |
@@ -195,6 +200,8 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | `/resources/activities/{activity_id}` | DELETE | Yes | Remove an activity resource |
 | `/resources/activities/{activity_id}/reviews` | GET, POST | Optional/Yes | List or create activity reviews |
 | `/resources/places` | POST | Yes | Add a place resource |
+| `/resources/places/{place_id}` | GET | No | Return a full place guide with nearby services, traveller photos, and planning notes |
+| `/resources/places/{place_id}/guide` | GET | No | Return an offline-ready JSON place guide |
 | `/resources/places/{place_id}` | DELETE | Yes | Remove a place resource |
 | `/resources/places/{place_id}/reviews` | GET, POST | Optional/Yes | List or create place reviews |
 | `/media` | GET, POST | Yes | List shared media with optional group/place/city filters or create a place-linked post |
@@ -209,12 +216,18 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - Supports hotel price comparison in FCFA before booking.
 - Supports booking confirmations with receipts and modification/cancellation history for trip reservations.
 - Supports live trip tracking with latest coordinates, trail history, and Google Maps live-point links.
+- Supports day-by-day itinerary plans, route metadata with Google Maps directions export, packing lists, shared expense splitting in FCFA, and attached trip documents.
 - Supports traveller-uploaded photos linked to Cameroon places and exposes place photo feeds.
 - Supports a saved places waitlist/wishlist and browsing-history events for personalised suggestions.
 - City recommendations rank Cameroon cities using onboarding interests, browsing signals, saved places, and catalogue place density.
 - Registration and profile setup use a controlled interest list for recommendations instead of free-form interest text.
 - Location-facing workflows are scoped to Cameroon territory by default. Destination search, recommendations, trip suggestions, generated itineraries, and resources support region, division, subdivision, city, and quarter metadata.
-- Cameroon attraction/resource records may include image URLs, source URLs, related services, cost notes, and Google Maps metadata.
+- Discovery partitions places to visit by Cameroon region. The default Discovery view shows only a short featured preview, then expands focused places when a user selects a region or narrower local filter.
+- Discovery place guides expose nearby hotels, nearby activities, related places, traveller photos, offline guide export, and a direct action to add the place to an existing itinerary.
+- Itinerary creation includes Cameroon area selectors. Selecting a region/division/subdivision/city/quarter automatically sends those filters to `/itineraries/suggestions`, which proposes hotels, activities, and places for that area.
+- Cameroon attraction/resource records may include local cached image URLs, original/source image URLs, related services, cost notes, and Google Maps metadata. Cached catalogue images live under `client/public/images/` and are refreshed with `python tools/download_catalog_images.py places destinations`.
+- Outdoor Cameroon attractions are enriched with practical travel metadata including difficulty, guide requirement, best season, transport notes, and safety notes.
+- The catalogue image pipeline uses curated reusable/attributed sources and does not scrape protected social-media photos.
 - Money is stored and calculated in FCFA/XAF by default. The React UI can display and accept values in another supported currency, then converts them back to FCFA before API submission.
 - The React UI includes a persistent English/French language switcher. French mode translates navigation, forms, alerts, placeholders, dashboard panels, itinerary detail views, payment labels, map controls, groups, media, and resource-management text.
 - The authenticated dashboard is organized with an internal menu so each feature group has its own page: Overview, Itineraries, Discovery, Community, Media, Resources, and Settings.
@@ -225,8 +238,8 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | Page | Main workflows |
 |---|---|
 | Overview | Landing summary, shortcuts to itinerary creation and community groups |
-| Itineraries | List trips, create a trip, filter recommendations, generate and save itinerary drafts |
-| Discovery | Search Cameroon destinations, review personalised city suggestions, save place waitlist items, and find hotel/activity/place suggestions by region, division, subdivision, city, quarter, location, and budget |
+| Itineraries | List trips, create a trip with Cameroon area selectors, receive regional hotel/activity/place proposals, manage day plans, route export, packing lists, expenses, documents, filter recommendations, generate and save itinerary drafts |
+| Discovery | Search Cameroon destinations, browse a short featured place preview partitioned by region, open full place guides, download offline guide JSON, add places to itineraries, review personalised city suggestions, save place waitlist items, and find hotel/activity/place suggestions by region, division, subdivision, city, quarter, location, and budget |
 | Community | Create groups, join groups, and open group detail pages |
 | Media | View shared media, upload traveller photos linked to places, like posts, comment, and share existing media with another user |
 | Resources | Compare hotel prices, add/remove Cameroon hotels, activities, and places with geography metadata, submit reviews, save places to a waitlist, upload place photos, and manage user roles when admin data is available |

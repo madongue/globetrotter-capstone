@@ -83,3 +83,41 @@ def test_compare_hotels_orders_by_price_and_filters_budget(client, monkeypatch, 
     assert payload["count"] == 1
     assert payload["cheapest"]["name"] == "Budget Kribi"
     assert payload["hotels"][0]["price_rank"] == 1
+
+
+def test_place_detail_includes_nearby_services_and_offline_guide(client, monkeypatch, tmp_path):
+    hotels_file = tmp_path / "hotels.json"
+    activities_file = tmp_path / "activities.json"
+    places_file = tmp_path / "places.json"
+    media_file = tmp_path / "media.json"
+    hotels_file.write_text(json.dumps([
+        {"id": "hotel-1", "name": "Kribi Beach Stay", "location": "Kribi", "region": "South", "city": "Kribi", "cost_per_night": 35000},
+        {"id": "hotel-2", "name": "Douala Stay", "location": "Douala", "region": "Littoral", "city": "Douala", "cost_per_night": 30000},
+    ]), encoding="utf-8")
+    activities_file.write_text(json.dumps([
+        {"id": "activity-1", "name": "Lobe canoe tour", "location": "Kribi", "region": "South", "city": "Kribi", "cost": 10000},
+    ]), encoding="utf-8")
+    places_file.write_text(json.dumps([
+        {"id": "place-1", "name": "Lobe Falls", "location": "Kribi", "region": "South", "city": "Kribi", "cost": 10000, "tags": ["waterfall"]},
+        {"id": "place-2", "name": "Grand Batanga Beach", "location": "Kribi", "region": "South", "city": "Kribi", "cost": 0},
+    ]), encoding="utf-8")
+    media_file.write_text(json.dumps([
+        {"id": "media-1", "type": "photo", "url": "/api/uploads/lobe.jpg", "place_id": "place-1"},
+    ]), encoding="utf-8")
+    monkeypatch.setattr("app.models.HOTELS_FILE", str(hotels_file))
+    monkeypatch.setattr("app.models.ACTIVITIES_FILE", str(activities_file))
+    monkeypatch.setattr("app.models.PLACES_FILE", str(places_file))
+    monkeypatch.setattr("app.models.MEDIA_FILE", str(media_file))
+
+    response = client.get("/api/resources/places/place-1")
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["place"]["name"] == "Lobe Falls"
+    assert payload["nearby"]["hotels"][0]["name"] == "Kribi Beach Stay"
+    assert payload["nearby"]["activities"][0]["name"] == "Lobe canoe tour"
+    assert payload["photos"][0]["id"] == "media-1"
+    assert payload["guide"]["offline_ready"] is True
+
+    guide_resp = client.get("/api/resources/places/place-1/guide")
+    assert guide_resp.status_code == 200
+    assert guide_resp.get_json()["title"] == "Lobe Falls travel guide"

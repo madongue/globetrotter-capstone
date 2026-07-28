@@ -71,6 +71,11 @@ These examples reinforce the product direction: destination discovery, Google lo
 | PATCH/DELETE | `/itineraries/{itinerary_id}/reservations/{reservation_id}` | Yes (JWT) | Modify or cancel a booking |
 | GET/PATCH/POST | `/itineraries/{itinerary_id}/tracking` | Yes (JWT) | Read or update live map tracking coordinates |
 | GET/PATCH/POST | `/itineraries/{itinerary_id}/progress` | Yes (JWT) | Read or update stage progress and current location |
+| GET/PATCH/POST | `/itineraries/{itinerary_id}/day-plans` | Yes (JWT) | Read or update day-by-day stage plans |
+| GET/POST | `/itineraries/{itinerary_id}/route` | Yes (JWT) | Build a Cameroon-focused Google Maps route from trip stages |
+| GET/POST/PATCH | `/itineraries/{itinerary_id}/packing-list` | Yes (JWT) | Manage packing checklist items |
+| GET/POST/PATCH | `/itineraries/{itinerary_id}/expenses` | Yes (JWT) | Track shared expenses and split balances in FCFA |
+| GET/POST | `/itineraries/{itinerary_id}/documents` | Yes (JWT) | Attach receipts, tickets, confirmations, or document links |
 | POST   | `/itineraries/{itinerary_id}/feedback` | Yes (JWT) | Record trip feedback for recommendations |
 | POST   | `/itineraries/generate` | Yes (JWT) | Generate a draft itinerary from local data |
 | GET    | `/itineraries/{itinerary_id}/budget` | Yes (JWT) | Compare planned, paid, remaining, commission, and net totals |
@@ -108,6 +113,8 @@ These examples reinforce the product direction: destination discovery, Google lo
 | DELETE | `/resources/activities/{activity_id}` | Yes (JWT / admin) | Remove an activity resource |
 | GET/POST | `/resources/activities/{activity_id}/reviews` | Optional/Yes | List or create activity reviews |
 | POST   | `/resources/places` | Yes (JWT / admin) | Add a place resource                 |
+| GET    | `/resources/places/{place_id}` | No | View a full Cameroon place guide with nearby hotels, activities, photos, and planning notes |
+| GET    | `/resources/places/{place_id}/guide` | No | Download an offline-ready JSON guide for a Cameroon place |
 | DELETE | `/resources/places/{place_id}` | Yes (JWT / admin) | Remove a place resource |
 | GET/POST | `/resources/places/{place_id}/reviews` | Optional/Yes | List or create place reviews |
 
@@ -278,6 +285,16 @@ All data is persisted in plain JSON files inside the `data/` directory:
 | `data/audit_log.json`   | Itinerary audit trail |
 | `data/notifications.json` | User notifications |
 
+Curated catalogue files (`destinations`, `places`, `hotels`, and `activities`) are versioned seed data. Runtime/user files remain local-only.
+
+Catalogue photos are cached under `client/public/images/` and referenced by local `/images/...` paths in the JSON records. Each cached record keeps `image_source_url`, `original_image_url`, and `image_license_note` metadata for attribution review. To refresh the local assets from the curated source URLs, run:
+
+```bash
+python tools/download_catalog_images.py places destinations
+```
+
+The importer only uses curated source URLs, mainly Wikimedia Commons/compatible sources; it does not scrape or rehost protected social-media images.
+
 ---
 
 ## Local UI
@@ -353,7 +370,11 @@ Key platform features inspired by research:
 - Personalised recommendations based on user preferences, feedback, budget, and travel history.
 - Money defaults to FCFA/XAF across budgets, payments, receipts, and exports. The React UI includes a currency selector and converts selected-currency input back to FCFA for consistent API storage.
 - Map metadata is backed by Google Maps URLs for worldwide search, directions, and embeds. Cameroon-focused trips get extra Google Maps links for nearby hotels, restaurants, attractions, transport, hospitals, pharmacies, and banks.
-- Trip creation with dates, locations, hotels, activities, notes, stage progress, and receipts.
+- Discovery partitions Cameroon visit places by region, shows only a short featured preview by default, and expands focused places when a region/local filter is selected.
+- Place guides include nearby hotels, nearby activities, traveller photos, practical notes, safety information, map links, and an offline JSON export.
+- Trip creation with dates, Cameroon area selectors, regional hotel/activity/place proposals, day-by-day plans, route export, notes, stage progress, and receipts.
+- Trip operations include packing lists, expense splitting in FCFA, and attached booking documents.
+- The React frontend is installable as a lightweight PWA with an app manifest and service-worker shell cache.
 - Shared trips with participant collaboration and view/edit permissions.
 - Local AI-style itinerary draft generation from catalogue and resource data.
 

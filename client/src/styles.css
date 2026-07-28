@@ -211,7 +211,52 @@ button {
 }
 
 .hero-section .feature-card {
-  background: rgba(255, 255, 255, 0.9);
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.96);
+  color: #111827;
+  border-color: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.22);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.hero-section .feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--primary);
+  opacity: 0.85;
+  transform: scaleY(0.45);
+  transform-origin: center;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.hero-section .feature-card h3 {
+  color: #0f172a;
+}
+
+.hero-section .feature-card p {
+  color: #334155;
+  margin-bottom: 0;
+}
+
+.hero-section .feature-card:hover,
+.hero-section .feature-card:focus-within {
+  background: #fff;
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: 0 28px 65px rgba(15, 23, 42, 0.28);
+  transform: translateY(-6px);
+}
+
+.hero-section .feature-card:hover::before,
+.hero-section .feature-card:focus-within::before {
+  opacity: 1;
+  transform: scaleY(1);
 }
 
 .interest-grid {
@@ -316,6 +361,14 @@ button {
   justify-content: center;
 }
 
+.stacked-form .form-section {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  background: #fbfdff;
+}
+
 .form-card {
   width: min(540px, 100%);
 }
@@ -371,6 +424,70 @@ button {
   margin-bottom: 1.25rem;
   padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--border);
+}
+
+.stacked-form .compact-form {
+  margin: 1rem 0 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.region-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.region-chip {
+  display: grid;
+  gap: 0.25rem;
+  justify-items: start;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.85rem;
+  background: #fbfdff;
+  color: var(--text);
+  text-align: left;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.region-chip:hover,
+.region-chip.active {
+  transform: translateY(-1px);
+  border-color: var(--primary);
+  box-shadow: 0 14px 30px rgba(51, 102, 255, 0.12);
+}
+
+.region-chip span {
+  color: var(--muted);
+}
+
+.discovery-place-list > li {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.guide-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.guide-image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
 }
 
 .dashboard-actions,
@@ -515,6 +632,16 @@ button {
   border-radius: var(--radius);
 }
 
+.map-panel {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: var(--text);
+}
+
+.map-embed-large {
+  min-height: 320px;
+}
+
 .map-links {
   display: flex;
   flex-wrap: wrap;
@@ -583,7 +710,8 @@ button {
   .grid-3,
   .search-form,
   .resource-form,
-  .resource-columns {
+  .resource-columns,
+  .guide-layout {
     grid-template-columns: 1fr;
   }
 

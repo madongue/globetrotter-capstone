@@ -290,6 +290,145 @@ def _sync_itinerary_calculations(itinerary: dict) -> None:
         "completed_stage_ids": [],
         "updated_at": None,
     })
+    itinerary.setdefault("day_plans", _default_day_plans(itinerary, stages))
+    itinerary.setdefault("packing_list", _default_packing_list(itinerary))
+    itinerary.setdefault("expenses", [])
+    itinerary.setdefault("documents", [])
+
+
+def _default_day_plans(itinerary: dict, stages: list | None = None) -> list:
+    stages = stages or itinerary.get("stages", [])
+    duration_days = _calculate_duration_days(itinerary.get("start_date", ""), itinerary.get("end_date", "")) or 1
+    duration_days = max(1, min(duration_days, 21))
+    day_plans = []
+    for day_index in range(duration_days):
+        stage_slice = [
+            stage for index, stage in enumerate(stages)
+            if duration_days == 1 or index % duration_days == day_index
+        ]
+        day_plans.append({
+            "id": f"day-{day_index + 1}",
+            "day": day_index + 1,
+            "title": f"Day {day_index + 1}",
+            "date": _day_plan_date(itinerary.get("start_date", ""), day_index),
+            "notes": "",
+            "stage_ids": [stage.get("id") for stage in stage_slice if stage.get("id")],
+        })
+    return day_plans
+
+
+def _day_plan_date(start_date: str, offset_days: int) -> str:
+    parsed_start = _parse_date(start_date)
+    if not parsed_start:
+        return ""
+    return (parsed_start + datetime.timedelta(days=offset_days)).isoformat()
+
+
+def _default_packing_list(itinerary: dict) -> list:
+    region = itinerary.get("region", "")
+    tags = " ".join(
+        tag
+        for item in itinerary.get("activities", []) + itinerary.get("places_to_visit", [])
+        for tag in item.get("tags", [])
+    ).lower()
+    base_items = [
+        ("Documents", "National ID or passport"),
+        ("Documents", "Booking receipts and confirmation codes"),
+        ("Money", "FCFA cash for local transport and entry fees"),
+        ("Health", "Personal medication and first-aid basics"),
+        ("Power", "Phone charger and power bank"),
+    ]
+    if any(term in tags for term in ["hiking", "mountain", "nature", "waterfall"]) or region in {"North", "Far North", "South West", "West"}:
+        base_items.extend([
+            ("Outdoor", "Comfortable walking shoes"),
+            ("Outdoor", "Rain jacket or light waterproof layer"),
+            ("Outdoor", "Reusable water bottle"),
+        ])
+    if any(term in tags for term in ["beach", "waterfall"]) or "Kribi" in itinerary.get("location", ""):
+        base_items.extend([
+            ("Beach", "Swimwear and towel"),
+            ("Beach", "Sun protection"),
+        ])
+    return [
+        {"id": str(uuid.uuid4()), "category": category, "text": text, "packed": False, "assigned_to": ""}
+        for category, text in base_items
+    ]
+
+
+def _stage_lookup(itinerary: dict) -> dict:
+    return {stage.get("id"): stage for stage in itinerary.get("stages", []) if stage.get("id")}
+
+
+def _route_plan_for_itinerary(itinerary: dict, ordered_stage_ids: list | None = None) -> dict:
+    stages_by_id = _stage_lookup(itinerary)
+    stage_ids = ordered_stage_ids or [stage.get("id") for stage in itinerary.get("stages", []) if stage.get("id")]
+    ordered_stages = [stages_by_id[stage_id] for stage_id in stage_ids if stage_id in stages_by_id]
+    waypoints = [
+        {
+            "stage_id": stage.get("id"),
+            "name": stage.get("name"),
+            "type": stage.get("type"),
+            "location": ensure_cameroon_location(stage.get("location") or itinerary.get("location", "")),
+            "map_url": stage.get("map_info", {}).get("google_map_url") or _map_link(stage.get("location") or stage.get("name") or itinerary.get("location", "")),
+        }
+        for stage in ordered_stages
+    ]
+    locations = [point["location"] for point in waypoints]
+    if len(locations) >= 2:
+        directions_url = "https://www.google.com/maps/dir/?api=1&" + urllib.parse.urlencode({
+            "origin": locations[0],
+            "destination": locations[-1],
+            "waypoints": "|".join(locations[1:-1]),
+            "travelmode": "driving",
+        })
+    elif locations:
+        directions_url = _map_link(locations[0])
+    else:
+        directions_url = _map_link(itinerary.get("location", CAMEROON_COUNTRY))
+    return {
+        "strategy": "catalogue_order",
+        "country_focus": CAMEROON_COUNTRY,
+        "waypoints": waypoints,
+        "google_maps_directions_url": directions_url,
+        "estimated_stop_count": len(waypoints),
+        "note": "Route order follows the itinerary day/stage order and exports to Google Maps for live directions.",
+    }
+
+
+def _expense_summary(itinerary: dict) -> dict:
+    expenses = itinerary.get("expenses", [])
+    participants = itinerary.get("participants", []) or [itinerary.get("username")]
+    participants = [participant for participant in participants if participant]
+    paid_by = {}
+    owed_by = {participant: 0 for participant in participants}
+    total = 0.0
+    for expense in expenses:
+        amount = float(expense.get("amount", 0) or 0)
+        total += amount
+        payer = expense.get("paid_by") or itinerary.get("username")
+        paid_by[payer] = paid_by.get(payer, 0) + amount
+        split_with = expense.get("split_with") or participants
+        if not split_with:
+            split_with = participants
+        share = amount / len(split_with) if split_with else amount
+        for username in split_with:
+            owed_by[username] = owed_by.get(username, 0) + share
+    balances = [
+        {
+            "username": username,
+            "paid": round(paid_by.get(username, 0), 2),
+            "owes": round(owed_by.get(username, 0), 2),
+            "balance": round(paid_by.get(username, 0) - owed_by.get(username, 0), 2),
+        }
+        for username in sorted(set(participants + list(paid_by)))
+    ]
+    return {
+        "currency": DEFAULT_CURRENCY,
+        "currency_label": DEFAULT_CURRENCY_LABEL,
+        "expense_total": round(total, 2),
+        "participants": participants,
+        "balances": balances,
+    }
 
 
 def _parse_budget(data: dict, default: float) -> float:
@@ -302,33 +441,39 @@ def _parse_budget(data: dict, default: float) -> float:
         return default
 
 
-def _match_resources(resources: list, location: str, budget: float, cost_field: str, geo_filters: dict | None = None):
+def _match_resources(resources: list, location: str, budget: float | None, cost_field: str, geo_filters: dict | None = None):
     location_lower = location.lower()
+    location_terms = [
+        term.strip()
+        for term in location_lower.replace(",", " ").split()
+        if term.strip() and term.strip() not in {"cameroon", "cameroun"}
+    ]
     matches = []
     for resource in resources:
         resource = enrich_cameroon_item(resource)
         _ensure_map_info(resource, location)
         if not resource.get("location"):
             continue
-        if location_lower and location_lower not in " ".join([
+        searchable_location = " ".join([
             resource.get("location", ""),
             resource.get("region", ""),
             resource.get("division", ""),
             resource.get("subdivision", ""),
             resource.get("city", ""),
             resource.get("quarter", ""),
-        ]).lower():
+        ]).lower()
+        if location_terms and not any(term in searchable_location for term in location_terms):
             continue
         if geo_filters and not matches_cameroon_filters(resource, geo_filters):
             continue
         cost = resource.get(cost_field, 0) or 0
-        if cost > budget:
+        if budget is not None and cost > budget:
             continue
         matches.append(resource)
     return matches
 
 
-def _find_trip_suggestions(location: str, budget: float, geo_filters: dict | None = None) -> dict:
+def _find_trip_suggestions(location: str, budget: float | None, geo_filters: dict | None = None) -> dict:
     return {
         "hotels": _match_resources(get_all_hotels(), location, budget, "cost_per_night", geo_filters)[:3],
         "activities": _match_resources(get_all_activities(), location, budget, "cost", geo_filters)[:5],
@@ -730,6 +875,36 @@ def update_itinerary_route(itinerary_id: str):
     return jsonify(itinerary), 200
 
 
+@itineraries_bp.route("/itineraries/<itinerary_id>/places", methods=["POST"])
+@itineraries_bp.route("/trips/<itinerary_id>/places", methods=["POST"])
+def add_place_to_itinerary(itinerary_id: str):
+    """Add a Cameroon catalogue place to an existing itinerary."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to add places"}), 403
+
+    data = request.get_json(silent=True) or {}
+    place_id = data.get("place_id", "").strip()
+    place = _find_place(place_id)
+    if not place:
+        return jsonify({"error": "place not found"}), 404
+
+    places_to_visit = itinerary.setdefault("places_to_visit", [])
+    if any(item.get("id") == place_id for item in places_to_visit):
+        return jsonify({"message": "place already in itinerary", "itinerary": itinerary, "place": place}), 200
+
+    places_to_visit.append(place)
+    _sync_itinerary_calculations(itinerary)
+    update_itinerary(itinerary)
+    _audit(username, "place_added", itinerary_id, {"place_id": place_id})
+    return jsonify({"message": "place added", "itinerary": itinerary, "place": place}), 201
+
+
 @itineraries_bp.route("/itineraries/<itinerary_id>/share", methods=["POST"])
 @itineraries_bp.route("/trips/<itinerary_id>/share", methods=["POST"])
 def share_itinerary(itinerary_id: str):
@@ -787,7 +962,7 @@ def get_trip_suggestions():
         return jsonify({"error": "authentication required"}), 401
 
     location = ensure_cameroon_location(request.args.get("location", "").strip())
-    budget = _parse_budget({"budget": request.args.get("budget")}, 0)
+    budget = _parse_budget({"budget": request.args.get("budget")}, 0) if request.args.get("budget") is not None else None
     geo_filters = {
         "region": request.args.get("region", ""),
         "division": request.args.get("division", ""),
@@ -803,6 +978,7 @@ def get_trip_suggestions():
     return jsonify({
         "location": location,
         "budget": budget,
+        "budget_filter_active": budget is not None,
         "country_focus": CAMEROON_COUNTRY,
         "geography": infer_cameroon_geo(location, *geo_filters.values()),
         "suggestions": suggestions,
@@ -2018,6 +2194,261 @@ def itinerary_stage_checklist(itinerary_id: str, stage_id: str):
     update_itinerary(itinerary)
     _audit(username, "checklist_updated", itinerary_id, {"stage_id": stage_id})
     return jsonify({"message": "checklist updated", "stage": stage}), 200
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/day-plans", methods=["GET", "PATCH", "POST"])
+@itineraries_bp.route("/trips/<itinerary_id>/day-plans", methods=["GET", "PATCH", "POST"])
+def itinerary_day_plans(itinerary_id: str):
+    """Read or update day-by-day itinerary plans and stage ordering."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_access_itinerary(itinerary, username):
+        return jsonify({"error": "you do not have access to this itinerary"}), 403
+
+    if not itinerary.get("day_plans"):
+        itinerary["day_plans"] = _default_day_plans(itinerary)
+        update_itinerary(itinerary)
+
+    if request.method == "GET":
+        return jsonify({"day_plans": itinerary.get("day_plans", []), "route_plan": _route_plan_for_itinerary(itinerary)}), 200
+
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to update day plans"}), 403
+
+    data = request.get_json(silent=True) or {}
+    day_plans = data.get("day_plans")
+    if not isinstance(day_plans, list):
+        return jsonify({"error": "day_plans must be a list"}), 400
+
+    valid_stage_ids = set(_stage_lookup(itinerary))
+    normalized_plans = []
+    for index, plan in enumerate(day_plans, start=1):
+        stage_ids = plan.get("stage_ids", [])
+        if not isinstance(stage_ids, list):
+            return jsonify({"error": "stage_ids must be a list"}), 400
+        invalid_stage_ids = [stage_id for stage_id in stage_ids if stage_id not in valid_stage_ids]
+        if invalid_stage_ids:
+            return jsonify({"error": "stage_ids contains unknown stages", "stage_ids": invalid_stage_ids}), 400
+        normalized_plans.append({
+            "id": plan.get("id") or f"day-{index}",
+            "day": int(plan.get("day", index) or index),
+            "title": plan.get("title") or f"Day {index}",
+            "date": plan.get("date", ""),
+            "notes": plan.get("notes", ""),
+            "stage_ids": stage_ids,
+        })
+
+    itinerary["day_plans"] = normalized_plans
+    itinerary["route_plan"] = _route_plan_for_itinerary(
+        itinerary,
+        [stage_id for plan in normalized_plans for stage_id in plan.get("stage_ids", [])],
+    )
+    update_itinerary(itinerary)
+    _audit(username, "day_plans_updated", itinerary_id, {"day_count": len(normalized_plans)})
+    return jsonify({"message": "day plans updated", "itinerary": itinerary}), 200
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/route", methods=["GET", "POST"])
+@itineraries_bp.route("/trips/<itinerary_id>/route", methods=["GET", "POST"])
+def itinerary_route(itinerary_id: str):
+    """Return route optimization metadata and Google Maps directions export."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_access_itinerary(itinerary, username):
+        return jsonify({"error": "you do not have access to this itinerary"}), 403
+
+    ordered_stage_ids = None
+    if request.method == "POST":
+        if not _can_edit_itinerary(itinerary, username):
+            return jsonify({"error": "edit access is required to optimize routes"}), 403
+        data = request.get_json(silent=True) or {}
+        ordered_stage_ids = data.get("stage_ids")
+        if ordered_stage_ids is not None and not isinstance(ordered_stage_ids, list):
+            return jsonify({"error": "stage_ids must be a list"}), 400
+
+    route_plan = _route_plan_for_itinerary(itinerary, ordered_stage_ids)
+    itinerary["route_plan"] = route_plan
+    update_itinerary(itinerary)
+    _audit(username, "route_optimized", itinerary_id, {"stop_count": route_plan["estimated_stop_count"]})
+    return jsonify({"route_plan": route_plan, "itinerary": itinerary}), 200
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/packing-list", methods=["GET", "POST", "PATCH"])
+@itineraries_bp.route("/trips/<itinerary_id>/packing-list", methods=["GET", "POST", "PATCH"])
+def itinerary_packing_list(itinerary_id: str):
+    """Manage trip-level packing checklist items."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_access_itinerary(itinerary, username):
+        return jsonify({"error": "you do not have access to this itinerary"}), 403
+
+    packing_list = itinerary.setdefault("packing_list", _default_packing_list(itinerary))
+    if request.method == "GET":
+        return jsonify({"packing_list": packing_list}), 200
+
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to update packing list"}), 403
+
+    data = request.get_json(silent=True) or {}
+    if request.method == "POST":
+        text = data.get("text", "").strip()
+        if not text:
+            return jsonify({"error": "text is required"}), 400
+        item = {
+            "id": str(uuid.uuid4()),
+            "category": data.get("category", "General").strip() or "General",
+            "text": text,
+            "packed": bool(data.get("packed", False)),
+            "assigned_to": data.get("assigned_to", "").strip(),
+        }
+        packing_list.append(item)
+    else:
+        item_id = data.get("id", "").strip()
+        item = next((entry for entry in packing_list if entry.get("id") == item_id), None)
+        if not item:
+            return jsonify({"error": "packing item not found"}), 404
+        for field in ("category", "text", "assigned_to"):
+            if field in data:
+                item[field] = data.get(field, item.get(field, "")).strip()
+        if "packed" in data:
+            item["packed"] = bool(data.get("packed"))
+
+    update_itinerary(itinerary)
+    _audit(username, "packing_list_updated", itinerary_id, {"item_count": len(packing_list)})
+    return jsonify({"message": "packing list updated", "packing_list": packing_list, "itinerary": itinerary}), 200
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/expenses", methods=["GET", "POST", "PATCH"])
+@itineraries_bp.route("/trips/<itinerary_id>/expenses", methods=["GET", "POST", "PATCH"])
+def itinerary_expenses(itinerary_id: str):
+    """Manage group expenses and per-person split balances."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_access_itinerary(itinerary, username):
+        return jsonify({"error": "you do not have access to this itinerary"}), 403
+
+    expenses = itinerary.setdefault("expenses", [])
+    if request.method == "GET":
+        return jsonify({"expenses": expenses, "summary": _expense_summary(itinerary)}), 200
+
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to update expenses"}), 403
+
+    data = request.get_json(silent=True) or {}
+    if request.method == "POST":
+        try:
+            amount = float(data.get("amount", 0))
+        except (TypeError, ValueError):
+            return jsonify({"error": "amount must be a number"}), 400
+        if amount <= 0:
+            return jsonify({"error": "amount must be greater than zero"}), 400
+        split_with = data.get("split_with") or itinerary.get("participants", [])
+        if isinstance(split_with, str):
+            split_with = [item.strip() for item in split_with.split(",") if item.strip()]
+        if not isinstance(split_with, list):
+            return jsonify({"error": "split_with must be a list"}), 400
+        expense = {
+            "id": str(uuid.uuid4()),
+            "title": data.get("title", "").strip() or "Trip expense",
+            "category": data.get("category", "General").strip() or "General",
+            "amount": amount,
+            "currency": DEFAULT_CURRENCY,
+            "currency_label": DEFAULT_CURRENCY_LABEL,
+            "paid_by": data.get("paid_by", username).strip() or username,
+            "split_with": split_with,
+            "notes": data.get("notes", "").strip(),
+            "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        }
+        expenses.append(expense)
+    else:
+        expense_id = data.get("id", "").strip()
+        expense = next((entry for entry in expenses if entry.get("id") == expense_id), None)
+        if not expense:
+            return jsonify({"error": "expense not found"}), 404
+        for field in ("title", "category", "paid_by", "notes"):
+            if field in data:
+                expense[field] = data.get(field, expense.get(field, "")).strip()
+        if "amount" in data:
+            try:
+                expense["amount"] = float(data.get("amount"))
+            except (TypeError, ValueError):
+                return jsonify({"error": "amount must be a number"}), 400
+        if "split_with" in data:
+            split_with = data.get("split_with")
+            if isinstance(split_with, str):
+                split_with = [item.strip() for item in split_with.split(",") if item.strip()]
+            if not isinstance(split_with, list):
+                return jsonify({"error": "split_with must be a list"}), 400
+            expense["split_with"] = split_with
+
+    update_itinerary(itinerary)
+    _audit(username, "expenses_updated", itinerary_id, {"expense_count": len(expenses)})
+    return jsonify({"message": "expenses updated", "expenses": expenses, "summary": _expense_summary(itinerary), "itinerary": itinerary}), 200
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/documents", methods=["GET", "POST"])
+@itineraries_bp.route("/trips/<itinerary_id>/documents", methods=["GET", "POST"])
+def itinerary_documents(itinerary_id: str):
+    """List or attach trip documents such as receipts, tickets, and confirmations."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_access_itinerary(itinerary, username):
+        return jsonify({"error": "you do not have access to this itinerary"}), 403
+
+    documents = itinerary.setdefault("documents", [])
+    if request.method == "GET":
+        return jsonify({"documents": documents}), 200
+
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to attach documents"}), 403
+
+    title = request.form.get("title", "").strip() or (request.get_json(silent=True) or {}).get("title", "").strip()
+    doc_type = request.form.get("type", "").strip() or (request.get_json(silent=True) or {}).get("type", "document").strip()
+    external_url = request.form.get("url", "").strip() or (request.get_json(silent=True) or {}).get("url", "").strip()
+    uploaded_file = request.files.get("file")
+    url = external_url
+    filename = ""
+    if uploaded_file and uploaded_file.filename:
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        filename = f"{uuid.uuid4().hex}-{secure_filename(uploaded_file.filename)}"
+        filepath = os.path.join(UPLOADS_DIR, filename)
+        uploaded_file.save(filepath)
+        url = f"/api/uploads/{filename}"
+    if not url:
+        return jsonify({"error": "file or url is required"}), 400
+    document = {
+        "id": str(uuid.uuid4()),
+        "title": title or filename or "Trip document",
+        "type": doc_type or "document",
+        "url": url,
+        "filename": filename,
+        "uploaded_by": username,
+        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+    documents.append(document)
+    update_itinerary(itinerary)
+    _audit(username, "document_attached", itinerary_id, {"document_id": document["id"]})
+    return jsonify({"message": "document attached", "document": document, "documents": documents, "itinerary": itinerary}), 201
 
 
 @itineraries_bp.route("/itineraries/<itinerary_id>/progress", methods=["GET", "PATCH", "POST"])
