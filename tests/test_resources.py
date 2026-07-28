@@ -48,7 +48,7 @@ def register_and_login(client, username="alice"):
 def test_resource_reviews_update_average_rating(client, monkeypatch, tmp_path):
     token = register_and_login(client)
     hotels_file = tmp_path / "hotels.json"
-    hotels_file.write_text(json.dumps([{"id": "hotel-1", "name": "Bali Stay", "location": "Bali", "cost_per_night": 90}]), encoding="utf-8")
+    hotels_file.write_text(json.dumps([{"id": "hotel-1", "name": "Kribi Beach Stay", "location": "Kribi", "cost_per_night": 55000}]), encoding="utf-8")
     monkeypatch.setattr("app.models.HOTELS_FILE", str(hotels_file))
 
     response = client.post(
@@ -65,3 +65,21 @@ def test_resource_reviews_update_average_rating(client, monkeypatch, tmp_path):
     response = client.get("/api/resources/hotels/hotel-1/reviews")
     assert response.status_code == 200
     assert response.get_json()[0]["rating"] == 5
+
+
+def test_compare_hotels_orders_by_price_and_filters_budget(client, monkeypatch, tmp_path):
+    hotels_file = tmp_path / "hotels.json"
+    hotels_file.write_text(json.dumps([
+        {"id": "hotel-1", "name": "Premium Kribi", "location": "Kribi", "city": "Kribi", "cost_per_night": 85000, "rating": 4.7},
+        {"id": "hotel-2", "name": "Budget Kribi", "location": "Kribi", "city": "Kribi", "cost_per_night": 35000, "rating": 4.1},
+        {"id": "hotel-3", "name": "Douala Stay", "location": "Douala", "city": "Douala", "cost_per_night": 30000, "rating": 4.3},
+    ]), encoding="utf-8")
+    monkeypatch.setattr("app.models.HOTELS_FILE", str(hotels_file))
+
+    response = client.get("/api/resources/hotels/compare?city=Kribi&max_price=60000")
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["currency_label"] == "FCFA"
+    assert payload["count"] == 1
+    assert payload["cheapest"]["name"] == "Budget Kribi"
+    assert payload["hotels"][0]["price_rank"] == 1

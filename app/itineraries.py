@@ -20,7 +20,15 @@ from flask import Blueprint, Response, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
 from app.auth import get_current_user
+from app.cameroon_geo import (
+    CAMEROON_COUNTRY,
+    enrich_cameroon_item,
+    ensure_cameroon_location,
+    infer_cameroon_geo,
+    matches_cameroon_filters,
+)
 from app.models import (
+    get_all_destinations,
     get_all_hotels,
     get_all_activities,
     get_all_places,
@@ -45,6 +53,7 @@ from app.models import (
     update_media,
     save_itinerary,
     update_itinerary,
+    update_user,
     UPLOADS_DIR,
 )
 
@@ -52,27 +61,6 @@ itineraries_bp = Blueprint("itineraries", __name__)
 
 DEFAULT_CURRENCY = "XAF"
 DEFAULT_CURRENCY_LABEL = "FCFA"
-CAMEROON_TERMS = {
-    "cameroon",
-    "cameroun",
-    "douala",
-    "yaounde",
-    "yaoundé",
-    "buea",
-    "limbe",
-    "kribi",
-    "bamenda",
-    "bafoussam",
-    "garoua",
-    "maroua",
-    "ngaoundere",
-    "ngaoundéré",
-    "bertoua",
-    "edea",
-    "edéa",
-    "dschang",
-    "foumban",
-}
 GOOGLE_MAPS_DATA_CATEGORIES = [
     "place details",
     "photos",
@@ -101,8 +89,7 @@ def _embed_link(query: str) -> str:
 
 
 def _is_cameroon_context(query: str) -> bool:
-    normalized_query = (query or "").lower()
-    return any(term in normalized_query for term in CAMEROON_TERMS)
+    return True
 
 
 def _map_query(item: dict, fallback_location: str = "") -> str:
@@ -110,13 +97,12 @@ def _map_query(item: dict, fallback_location: str = "") -> str:
     location = item.get("location") or fallback_location
     query = ", ".join(part for part in [name, location] if part).strip()
     if not query:
-        return ""
-    if _is_cameroon_context(query) and "cameroon" not in query.lower() and "cameroun" not in query.lower():
-        query = f"{query}, Cameroon"
-    return query
+        return CAMEROON_COUNTRY
+    return ensure_cameroon_location(query)
 
 
 def _cameroon_map_searches(query: str) -> dict:
+    query = ensure_cameroon_location(query)
     return {
         "hotels": _map_link(f"hotels near {query}"),
         "restaurants": _map_link(f"restaurants near {query}"),
@@ -129,7 +115,8 @@ def _cameroon_map_searches(query: str) -> dict:
 
 
 def _google_maps_metadata(query: str) -> dict:
-    cameroon_focus = _is_cameroon_context(query)
+    query = ensure_cameroon_location(query)
+    geo = infer_cameroon_geo(query)
     metadata = {
         "provider": "google_maps",
         "query": query,
@@ -138,15 +125,22 @@ def _google_maps_metadata(query: str) -> dict:
         "google_maps_directions_url": _directions_link(query),
         "google_maps_embed_url": _embed_link(query),
         "available_google_maps_data": GOOGLE_MAPS_DATA_CATEGORIES,
-        "cameroon_focus": cameroon_focus,
+        "cameroon_focus": True,
+        "country_focus": CAMEROON_COUNTRY,
+        "country": CAMEROON_COUNTRY,
+        "country_code": "CM",
+        "region": geo.get("region", ""),
+        "division": geo.get("division", ""),
+        "subdivision": geo.get("subdivision", ""),
+        "city": geo.get("city", ""),
+        "quarter": geo.get("quarter", ""),
+        "cameroon_searches": _cameroon_map_searches(query),
     }
-    if cameroon_focus:
-        metadata["country_focus"] = "Cameroon"
-        metadata["cameroon_searches"] = _cameroon_map_searches(query)
     return metadata
 
 
 def _ensure_map_info(item: dict, fallback_location: str = "") -> None:
+    item.update(enrich_cameroon_item(item))
     query = _map_query(item, fallback_location)
     if not query:
         return
@@ -308,13 +302,24 @@ def _parse_budget(data: dict, default: float) -> float:
         return default
 
 
-def _match_resources(resources: list, location: str, budget: float, cost_field: str):
+def _match_resources(resources: list, location: str, budget: float, cost_field: str, geo_filters: dict | None = None):
     location_lower = location.lower()
     matches = []
     for resource in resources:
+        resource = enrich_cameroon_item(resource)
+        _ensure_map_info(resource, location)
         if not resource.get("location"):
             continue
-        if location_lower not in resource.get("location", "").lower():
+        if location_lower and location_lower not in " ".join([
+            resource.get("location", ""),
+            resource.get("region", ""),
+            resource.get("division", ""),
+            resource.get("subdivision", ""),
+            resource.get("city", ""),
+            resource.get("quarter", ""),
+        ]).lower():
+            continue
+        if geo_filters and not matches_cameroon_filters(resource, geo_filters):
             continue
         cost = resource.get(cost_field, 0) or 0
         if cost > budget:
@@ -323,12 +328,98 @@ def _match_resources(resources: list, location: str, budget: float, cost_field: 
     return matches
 
 
-def _find_trip_suggestions(location: str, budget: float) -> dict:
+def _find_trip_suggestions(location: str, budget: float, geo_filters: dict | None = None) -> dict:
     return {
-        "hotels": _match_resources(get_all_hotels(), location, budget, "cost_per_night")[:3],
-        "activities": _match_resources(get_all_activities(), location, budget, "cost")[:5],
-        "places": _match_resources(get_all_places(), location, budget, "cost")[:5],
+        "hotels": _match_resources(get_all_hotels(), location, budget, "cost_per_night", geo_filters)[:3],
+        "activities": _match_resources(get_all_activities(), location, budget, "cost", geo_filters)[:5],
+        "places": _match_resources(get_all_places(), location, budget, "cost", geo_filters)[:5],
     }
+
+
+def _find_place(place_id: str | None) -> dict | None:
+    if not place_id:
+        return None
+    for place in get_all_places():
+        if place.get("id") == place_id:
+            enriched = enrich_cameroon_item(dict(place))
+            _ensure_map_info(enriched, enriched.get("location", ""))
+            return enriched
+    return None
+
+
+def _place_summary(place: dict) -> dict:
+    return {
+        "id": place.get("id"),
+        "name": place.get("name", ""),
+        "location": place.get("location", ""),
+        "region": place.get("region", ""),
+        "division": place.get("division", ""),
+        "subdivision": place.get("subdivision", ""),
+        "city": place.get("city", ""),
+        "quarter": place.get("quarter", ""),
+        "tags": place.get("tags", []),
+        "cost": place.get("cost", 0),
+        "cost_notes": place.get("cost_notes", ""),
+        "image_url": place.get("image_url", ""),
+        "map_info": place.get("map_info", {}),
+    }
+
+
+def _attach_place_context(payload: dict, place_id: str | None) -> tuple[dict, dict | None, tuple | None]:
+    if not place_id:
+        return payload, None, None
+    place = _find_place(place_id)
+    if not place:
+        return payload, None, (jsonify({"error": "place not found"}), 404)
+    payload.update({
+        "place_id": place.get("id"),
+        "place_name": place.get("name", ""),
+        "location": place.get("location", ""),
+        "region": place.get("region", ""),
+        "division": place.get("division", ""),
+        "subdivision": place.get("subdivision", ""),
+        "city": place.get("city", ""),
+        "quarter": place.get("quarter", ""),
+        "place": _place_summary(place),
+    })
+    payload["tags"] = sorted(set((payload.get("tags") or []) + (place.get("tags") or [])))
+    return payload, place, None
+
+
+def _record_user_browsing_event(username: str, event_data: dict) -> dict | None:
+    user = get_user_by_username(username)
+    if not user:
+        return None
+    event = {
+        "id": str(uuid.uuid4()),
+        "event_type": event_data.get("event_type", "view"),
+        "place_id": event_data.get("place_id"),
+        "place_name": event_data.get("place_name", ""),
+        "resource_type": event_data.get("resource_type", "place"),
+        "city": event_data.get("city", ""),
+        "region": event_data.get("region", ""),
+        "division": event_data.get("division", ""),
+        "subdivision": event_data.get("subdivision", ""),
+        "quarter": event_data.get("quarter", ""),
+        "tags": event_data.get("tags", []),
+        "viewed_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+    place = _find_place(event["place_id"])
+    if place:
+        event.update({
+            "place_name": place.get("name", ""),
+            "city": place.get("city", ""),
+            "region": place.get("region", ""),
+            "division": place.get("division", ""),
+            "subdivision": place.get("subdivision", ""),
+            "quarter": place.get("quarter", ""),
+            "tags": sorted(set((event.get("tags") or []) + (place.get("tags") or []))),
+        })
+    history = user.setdefault("browsing_history", [])
+    history.append(event)
+    del history[:-75]
+    update_user(user)
+    return event
 
 
 def _parse_event_listing(data: dict) -> dict:
@@ -385,6 +476,36 @@ def _create_payment_receipt(itinerary: dict, username: str, amount: float, metho
     }
     itinerary.setdefault("receipts", []).append(receipt)
     return receipt
+
+
+def _find_stage(itinerary: dict, stage_id: str | None) -> dict | None:
+    if not stage_id:
+        return None
+    return next((stage for stage in itinerary.get("stages", []) if stage.get("id") == stage_id), None)
+
+
+def _find_reservation(itinerary: dict, reservation_id: str) -> dict | None:
+    return next((item for item in itinerary.get("reservations", []) if item.get("id") == reservation_id), None)
+
+
+def _reservation_amount(data: dict, stage: dict | None) -> float | None:
+    amount = data.get("amount")
+    if amount is None and stage:
+        amount = stage.get("cost", 0)
+    return _parse_positive_amount(amount)
+
+
+def _booking_receipt(itinerary: dict, username: str, amount: float, reservation_id: str, method: str, note: str) -> dict:
+    return _create_payment_receipt(
+        itinerary,
+        username,
+        amount,
+        method,
+        "reservation",
+        reservation_id,
+        0.0,
+        note=note,
+    )
 
 
 def _can_access_itinerary(itinerary: dict, username: str) -> bool:
@@ -482,14 +603,14 @@ def create_itinerary():
 
     Expected JSON body:
         {
-          "title": "Summer in Europe",
-          "location": "Europe",
-          "hotel": {"name": "Hotel X", "cost_per_night": 150, "paid": false},
+          "title": "Kribi weekend",
+          "location": "Kribi",
+          "hotel": {"name": "Beach hotel", "cost_per_night": 55000, "paid": false},
           "activities": [
-              {"name": "Wine tour", "cost": 80, "paid": false},
+              {"name": "Lobe Falls tour", "cost": 30000, "paid": false},
           ],
           "places_to_visit": [
-              {"name": "Louvre", "cost": 30, "paid": false}
+              {"name": "Lobe Falls", "cost": 10000, "paid": false}
           ],
           "start_date": "2025-06-01",
           "end_date": "2025-06-15",
@@ -507,7 +628,7 @@ def create_itinerary():
 
     data = request.get_json(silent=True) or {}
     title = data.get("title", "").strip()
-    location = data.get("location", "").strip()
+    location = ensure_cameroon_location(data.get("location", "").strip())
     hotel = data.get("hotel", {})
     activities = data.get("activities", [])
     places_to_visit = data.get("places_to_visit", [])
@@ -529,6 +650,7 @@ def create_itinerary():
         "owner_username": username,
         "title": title,
         "location": location,
+        **infer_cameroon_geo(location),
         "hotel": hotel,
         "activities": activities,
         "places_to_visit": places_to_visit,
@@ -574,7 +696,8 @@ def update_itinerary_route(itinerary_id: str):
     if "title" in data:
         itinerary["title"] = data.get("title", itinerary.get("title", "")).strip()
     if "location" in data:
-        itinerary["location"] = data.get("location", itinerary.get("location", "")).strip()
+        itinerary["location"] = ensure_cameroon_location(data.get("location", itinerary.get("location", "")).strip())
+        itinerary.update(infer_cameroon_geo(itinerary["location"]))
     if "hotel" in data:
         itinerary["hotel"] = data.get("hotel", itinerary.get("hotel", {}))
     if "activities" in data:
@@ -663,14 +786,27 @@ def get_trip_suggestions():
     if not username:
         return jsonify({"error": "authentication required"}), 401
 
-    location = request.args.get("location", "").strip()
+    location = ensure_cameroon_location(request.args.get("location", "").strip())
     budget = _parse_budget({"budget": request.args.get("budget")}, 0)
+    geo_filters = {
+        "region": request.args.get("region", ""),
+        "division": request.args.get("division", ""),
+        "subdivision": request.args.get("subdivision", ""),
+        "city": request.args.get("city", ""),
+        "quarter": request.args.get("quarter", ""),
+    }
 
     if not location:
         return jsonify({"error": "location is required"}), 400
 
-    suggestions = _find_trip_suggestions(location, budget)
-    return jsonify({"location": location, "budget": budget, "suggestions": suggestions}), 200
+    suggestions = _find_trip_suggestions(location, budget, geo_filters)
+    return jsonify({
+        "location": location,
+        "budget": budget,
+        "country_focus": CAMEROON_COUNTRY,
+        "geography": infer_cameroon_geo(location, *geo_filters.values()),
+        "suggestions": suggestions,
+    }), 200
 
 
 @itineraries_bp.route("/itineraries", methods=["GET"])
@@ -861,9 +997,15 @@ def list_media():
         return jsonify({"error": "authentication required"}), 401
 
     group_id = request.args.get("group_id")
+    place_id = request.args.get("place_id")
+    city = request.args.get("city", "").strip().lower()
     media_items = get_all_media()
     if group_id:
         media_items = [item for item in media_items if item.get("group_id") == group_id]
+    if place_id:
+        media_items = [item for item in media_items if item.get("place_id") == place_id]
+    if city:
+        media_items = [item for item in media_items if item.get("city", "").lower() == city]
     return jsonify(media_items), 200
 
 
@@ -879,6 +1021,7 @@ def create_media():
     url = data.get("url", "").strip()
     caption = data.get("caption", "")
     group_id = data.get("group_id")
+    place_id = data.get("place_id") or data.get("resource_id")
 
     if not url:
         return jsonify({"error": "media URL is required"}), 400
@@ -904,7 +1047,16 @@ def create_media():
         "shared_with": data.get("shared_with", []),
         "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
+    media_item, place, error = _attach_place_context(media_item, place_id)
+    if error:
+        return error
     save_media(media_item)
+    if place:
+        _record_user_browsing_event(username, {
+            "event_type": "photo_upload",
+            "place_id": place.get("id"),
+            "resource_type": "place",
+        })
     return jsonify(media_item), 201
 
 
@@ -922,6 +1074,7 @@ def upload_media():
     media_type = request.form.get("type", "photo").strip()
     caption = request.form.get("caption", "")
     group_id = request.form.get("group_id") or None
+    place_id = request.form.get("place_id") or request.form.get("resource_id") or None
     if group_id:
         group = get_group_by_id(group_id)
         if not group:
@@ -948,8 +1101,220 @@ def upload_media():
         "shared_with": [],
         "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
+    media_item, place, error = _attach_place_context(media_item, place_id)
+    if error:
+        return error
     save_media(media_item)
+    if place:
+        _record_user_browsing_event(username, {
+            "event_type": "photo_upload",
+            "place_id": place.get("id"),
+            "resource_type": "place",
+        })
     return jsonify(media_item), 201
+
+
+@itineraries_bp.route("/places/<place_id>/photos", methods=["GET"])
+def list_place_photos(place_id: str):
+    """Return traveller-uploaded photos for a place."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    place = _find_place(place_id)
+    if not place:
+        return jsonify({"error": "place not found"}), 404
+    photos = [
+        item for item in get_all_media()
+        if item.get("place_id") == place_id and item.get("type", "photo") == "photo"
+    ]
+    _record_user_browsing_event(username, {
+        "event_type": "view_photos",
+        "place_id": place_id,
+        "resource_type": "place",
+    })
+    return jsonify({"place": _place_summary(place), "photos": photos}), 200
+
+
+@itineraries_bp.route("/wishlist", methods=["GET"])
+def list_wishlist():
+    """List the authenticated user's saved places."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    user = get_user_by_username(username)
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+    return jsonify(user.get("saved_places", [])), 200
+
+
+@itineraries_bp.route("/wishlist", methods=["POST"])
+def save_place_to_wishlist():
+    """Save a Cameroon place to the user's trip waitlist."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    user = get_user_by_username(username)
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+    data = request.get_json(silent=True) or {}
+    place_id = data.get("place_id")
+    place = _find_place(place_id)
+    if not place:
+        return jsonify({"error": "place not found"}), 404
+
+    saved_places = user.setdefault("saved_places", [])
+    existing = next((item for item in saved_places if item.get("place_id") == place_id), None)
+    if existing:
+        existing["notes"] = data.get("notes", existing.get("notes", ""))
+        existing["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        update_user(user)
+        return jsonify({"message": "place already saved", "saved_place": existing, "saved_places": saved_places}), 200
+
+    saved_place = {
+        "id": str(uuid.uuid4()),
+        "place_id": place_id,
+        "notes": data.get("notes", ""),
+        "saved_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        **_place_summary(place),
+    }
+    saved_places.append(saved_place)
+    update_user(user)
+    _record_user_browsing_event(username, {
+        "event_type": "save",
+        "place_id": place_id,
+        "resource_type": "place",
+    })
+    return jsonify({"message": "place saved", "saved_place": saved_place, "saved_places": saved_places}), 201
+
+
+@itineraries_bp.route("/wishlist/<place_id>", methods=["DELETE"])
+def remove_place_from_wishlist(place_id: str):
+    """Remove a saved place from the user's waitlist."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    user = get_user_by_username(username)
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+    saved_places = user.setdefault("saved_places", [])
+    updated_places = [item for item in saved_places if item.get("place_id") != place_id]
+    if len(updated_places) == len(saved_places):
+        return jsonify({"error": "saved place not found"}), 404
+    user["saved_places"] = updated_places
+    update_user(user)
+    return jsonify({"message": "place removed", "saved_places": updated_places}), 200
+
+
+@itineraries_bp.route("/browsing-events", methods=["GET", "POST"])
+def browsing_events():
+    """Record or list place browsing signals for personalised suggestions."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    user = get_user_by_username(username)
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+    if request.method == "GET":
+        return jsonify(user.get("browsing_history", [])), 200
+
+    data = request.get_json(silent=True) or {}
+    event = _record_user_browsing_event(username, data)
+    if not event:
+        return jsonify({"error": "user not found"}), 404
+    return jsonify({"message": "browsing event recorded", "event": event}), 201
+
+
+@itineraries_bp.route("/recommendations/cities", methods=["GET"])
+def get_city_recommendations():
+    """Return personalised Cameroon city recommendations."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    user = get_user_by_username(username)
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+    try:
+        limit = int(request.args.get("limit", 6))
+    except ValueError:
+        return jsonify({"error": "limit must be an integer"}), 400
+
+    preferences = {item.lower() for item in user.get("preferences", [])}
+    browsing_history = user.get("browsing_history", [])
+    saved_places = user.get("saved_places", [])
+    browsed_cities = {item.get("city", "").lower() for item in browsing_history if item.get("city")}
+    browsed_tags = {
+        tag.lower()
+        for item in browsing_history
+        for tag in item.get("tags", [])
+    }
+    saved_cities = {item.get("city", "").lower() for item in saved_places if item.get("city")}
+    saved_tags = {
+        tag.lower()
+        for item in saved_places
+        for tag in item.get("tags", [])
+    }
+
+    city_index: dict[str, dict] = {}
+    for item_type, catalogue in [("destination", get_all_destinations()), ("place", get_all_places())]:
+        for raw_item in catalogue:
+            item = enrich_cameroon_item(dict(raw_item))
+            city = item.get("city") or item.get("location") or item.get("name")
+            if not city:
+                continue
+            key = city.lower()
+            entry = city_index.setdefault(key, {
+                "city": city,
+                "region": item.get("region", ""),
+                "division": item.get("division", ""),
+                "subdivision": item.get("subdivision", ""),
+                "country": CAMEROON_COUNTRY,
+                "match_score": 0,
+                "places_count": 0,
+                "top_places": [],
+                "image_url": item.get("image_url", ""),
+                "signals": {
+                    "preference_matches": [],
+                    "browsing_matches": [],
+                    "saved_matches": [],
+                },
+            })
+            tags = {tag.lower() for tag in item.get("tags", [])}
+            text = " ".join([
+                item.get("name", ""),
+                item.get("description", ""),
+                item.get("location", ""),
+                item.get("city", ""),
+            ]).lower()
+            preference_matches = sorted(tag for tag in preferences if tag in tags or tag in text)
+            browsing_matches = sorted(tag for tag in browsed_tags if tag in tags or tag in text)
+            saved_matches = sorted(tag for tag in saved_tags if tag in tags or tag in text)
+            score = 1
+            score += len(preference_matches) * 2
+            score += len(browsing_matches) * 2
+            score += len(saved_matches) * 3
+            if key in browsed_cities:
+                score += 4
+                entry["signals"]["browsing_matches"].append(city)
+            if key in saved_cities:
+                score += 5
+                entry["signals"]["saved_matches"].append(city)
+            entry["match_score"] += score
+            if item_type == "place":
+                entry["places_count"] += 1
+                if len(entry["top_places"]) < 3:
+                    _ensure_map_info(item, item.get("location", ""))
+                    entry["top_places"].append(_place_summary(item))
+            for target, matches in [
+                ("preference_matches", preference_matches),
+                ("browsing_matches", browsing_matches),
+                ("saved_matches", saved_matches),
+            ]:
+                entry["signals"][target] = sorted(set(entry["signals"][target] + matches))
+            if not entry.get("image_url") and item.get("image_url"):
+                entry["image_url"] = item.get("image_url")
+
+    recommendations = sorted(city_index.values(), key=lambda item: (-item["match_score"], item["city"]))[:limit]
+    return jsonify(recommendations), 200
 
 
 @itineraries_bp.route("/uploads/<filename>", methods=["GET"])
@@ -1227,9 +1592,9 @@ def itinerary_map(itinerary_id: str):
         "itinerary_id": itinerary_id,
         "map_info": itinerary.get("map_info", {}),
         "title": itinerary.get("title"),
-        "location": itinerary.get("location"),
+        "location": ensure_cameroon_location(itinerary.get("location")),
         "provider": "google_maps",
-        "country_focus": "Cameroon" if itinerary.get("map_info", {}).get("cameroon_focus") else "World",
+        "country_focus": CAMEROON_COUNTRY,
         "available_google_maps_data": GOOGLE_MAPS_DATA_CATEGORIES,
         "stages": [
             {
@@ -1242,6 +1607,203 @@ def itinerary_map(itinerary_id: str):
             for stage in itinerary.get("stages", [])
         ],
     }), 200
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/reservations", methods=["GET", "POST"])
+@itineraries_bp.route("/trips/<itinerary_id>/reservations", methods=["GET", "POST"])
+def itinerary_reservations(itinerary_id: str):
+    """List reservations or confirm a new hotel/activity/place booking."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_access_itinerary(itinerary, username):
+        return jsonify({"error": "you do not have access to this itinerary"}), 403
+
+    if request.method == "GET":
+        return jsonify(itinerary.get("reservations", [])), 200
+
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to reserve trip items"}), 403
+
+    data = request.get_json(silent=True) or {}
+    reservation_type = data.get("type", "place").strip().lower()
+    if reservation_type not in {"hotel", "activity", "place", "transport", "other"}:
+        return jsonify({"error": "type must be hotel, activity, place, transport, or other"}), 400
+    stage = _find_stage(itinerary, data.get("stage_id"))
+    amount = _reservation_amount(data, stage)
+    if amount is None:
+        return jsonify({"error": "amount must be a positive number"}), 400
+    item_name = data.get("item_name", "").strip() or (stage.get("name") if stage else "")
+    if not item_name:
+        return jsonify({"error": "item_name is required"}), 400
+
+    reservation_id = str(uuid.uuid4())
+    receipt = _booking_receipt(
+        itinerary,
+        username,
+        amount,
+        reservation_id,
+        data.get("payment_method", "mobile"),
+        data.get("note", "") or f"{reservation_type.title()} booking confirmation",
+    )
+    reservation = {
+        "id": reservation_id,
+        "type": reservation_type,
+        "status": "confirmed",
+        "stage_id": data.get("stage_id"),
+        "resource_id": data.get("resource_id"),
+        "item_name": item_name,
+        "provider": data.get("provider", ""),
+        "quantity": int(data.get("quantity", 1) or 1),
+        "amount": amount,
+        "currency": itinerary.get("currency", DEFAULT_CURRENCY),
+        "currency_label": itinerary.get("currency_label", DEFAULT_CURRENCY_LABEL),
+        "payment_method": data.get("payment_method", "mobile"),
+        "confirmation_code": f"GT-{reservation_id[:8].upper()}",
+        "receipt_id": receipt["id"],
+        "notes": data.get("notes", ""),
+        "history": [
+            {
+                "action": "confirmed",
+                "username": username,
+                "created_at": receipt["paid_at"],
+                "amount": amount,
+            }
+        ],
+        "created_at": receipt["paid_at"],
+        "updated_at": receipt["paid_at"],
+    }
+    itinerary.setdefault("reservations", []).append(reservation)
+    itinerary.setdefault("payments", []).append({
+        "username": username,
+        "target_type": "reservation",
+        "target_id": reservation_id,
+        "amount": amount,
+        "method": reservation["payment_method"],
+        "receipt_id": receipt["id"],
+        "paid_at": receipt["paid_at"],
+    })
+    update_itinerary(itinerary)
+    _audit(username, "reservation_confirmed", itinerary_id, {"reservation_id": reservation_id, "amount": amount})
+    return jsonify({"message": "booking confirmed", "reservation": reservation, "receipt": receipt, "itinerary": itinerary}), 201
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/reservations/<reservation_id>", methods=["PATCH", "DELETE"])
+@itineraries_bp.route("/trips/<itinerary_id>/reservations/<reservation_id>", methods=["PATCH", "DELETE"])
+def itinerary_reservation_detail(itinerary_id: str, reservation_id: str):
+    """Modify or cancel a confirmed reservation on a trip."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to modify reservations"}), 403
+    reservation = _find_reservation(itinerary, reservation_id)
+    if not reservation:
+        return jsonify({"error": "reservation not found"}), 404
+
+    data = request.get_json(silent=True) or {}
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    if request.method == "DELETE":
+        reservation["status"] = "cancelled"
+        reservation["cancelled_at"] = now
+        reservation["cancellation_reason"] = data.get("reason", "")
+        reservation["updated_at"] = now
+        reservation.setdefault("history", []).append({
+            "action": "cancelled",
+            "username": username,
+            "created_at": now,
+            "reason": data.get("reason", ""),
+        })
+        update_itinerary(itinerary)
+        _audit(username, "reservation_cancelled", itinerary_id, {"reservation_id": reservation_id})
+        return jsonify({"message": "reservation cancelled", "reservation": reservation, "itinerary": itinerary}), 200
+
+    editable_fields = ["item_name", "provider", "quantity", "notes", "stage_id", "resource_id"]
+    for field in editable_fields:
+        if field in data:
+            reservation[field] = data[field]
+    if "amount" in data:
+        amount = _parse_positive_amount(data.get("amount"))
+        if amount is None:
+            return jsonify({"error": "amount must be a positive number"}), 400
+        reservation["amount"] = amount
+    if "status" in data:
+        if data["status"] not in {"confirmed", "pending", "cancelled"}:
+            return jsonify({"error": "status must be confirmed, pending, or cancelled"}), 400
+        reservation["status"] = data["status"]
+    reservation["updated_at"] = now
+    reservation.setdefault("history", []).append({
+        "action": "modified",
+        "username": username,
+        "created_at": now,
+        "changes": list(data.keys()),
+    })
+    update_itinerary(itinerary)
+    _audit(username, "reservation_modified", itinerary_id, {"reservation_id": reservation_id, "fields": list(data.keys())})
+    return jsonify({"message": "reservation modified", "reservation": reservation, "itinerary": itinerary}), 200
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/tracking", methods=["GET", "PATCH", "POST"])
+@itineraries_bp.route("/trips/<itinerary_id>/tracking", methods=["GET", "PATCH", "POST"])
+def itinerary_tracking(itinerary_id: str):
+    """Read or update live trip tracking coordinates for the itinerary map."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_access_itinerary(itinerary, username):
+        return jsonify({"error": "you do not have access to this itinerary"}), 403
+    if request.method == "GET":
+        return jsonify({
+            "itinerary_id": itinerary_id,
+            "tracking": itinerary.get("live_tracking", {}),
+            "map_info": itinerary.get("map_info", {}),
+            "progress": itinerary.get("progress", {}),
+        }), 200
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to update tracking"}), 403
+
+    data = request.get_json(silent=True) or {}
+    try:
+        latitude = float(data.get("latitude"))
+        longitude = float(data.get("longitude"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "latitude and longitude must be numbers"}), 400
+    if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+        return jsonify({"error": "latitude or longitude is outside valid bounds"}), 400
+
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    query = ensure_cameroon_location(data.get("current_location", itinerary.get("location", "")))
+    tracking = itinerary.setdefault("live_tracking", {})
+    point = {
+        "latitude": latitude,
+        "longitude": longitude,
+        "current_location": query,
+        "current_stage_id": data.get("current_stage_id", itinerary.get("progress", {}).get("current_stage_id")),
+        "accuracy_meters": data.get("accuracy_meters"),
+        "updated_by": username,
+        "updated_at": now,
+        "google_map_url": _map_link(f"{latitude},{longitude}"),
+        "google_maps_directions_url": _directions_link(f"{latitude},{longitude}"),
+        "google_maps_embed_url": _embed_link(f"{latitude},{longitude}"),
+    }
+    tracking.update(point)
+    trail = tracking.setdefault("trail", [])
+    trail.append(point)
+    del trail[:-100]
+    itinerary.setdefault("progress", {})["current_location"] = query
+    itinerary["progress"]["updated_at"] = now
+    update_itinerary(itinerary)
+    _audit(username, "tracking_updated", itinerary_id, {"latitude": latitude, "longitude": longitude})
+    return jsonify({"message": "tracking updated", "tracking": tracking, "itinerary": itinerary}), 200
 
 
 @itineraries_bp.route("/itineraries/<itinerary_id>/budget", methods=["GET"])
@@ -1597,14 +2159,21 @@ def generate_itinerary():
         return jsonify({"error": "authentication required"}), 401
 
     data = request.get_json(silent=True) or {}
-    location = data.get("location", "").strip()
+    location = ensure_cameroon_location(data.get("location", "").strip())
     if not location:
         return jsonify({"error": "location is required"}), 400
 
     budget = _parse_budget(data, 500)
     duration_days = int(data.get("duration_days", 3) or 3)
     duration_days = max(1, min(duration_days, 21))
-    suggestions = _find_trip_suggestions(location, budget)
+    geo_filters = {
+        "region": data.get("region", ""),
+        "division": data.get("division", ""),
+        "subdivision": data.get("subdivision", ""),
+        "city": data.get("city", ""),
+        "quarter": data.get("quarter", ""),
+    }
+    suggestions = _find_trip_suggestions(location, budget, geo_filters)
 
     selected_hotel = suggestions["hotels"][0] if suggestions["hotels"] else {"name": f"{location} central stay", "location": location, "cost_per_night": 0}
     selected_activities = suggestions["activities"][: min(3, duration_days)]
@@ -1619,6 +2188,7 @@ def generate_itinerary():
     draft = {
         "title": data.get("title") or f"{duration_days}-day {location} trip",
         "location": location,
+        **infer_cameroon_geo(location, *geo_filters.values()),
         "hotel": selected_hotel,
         "activities": selected_activities,
         "places_to_visit": selected_places,

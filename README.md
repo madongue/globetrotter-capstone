@@ -56,6 +56,10 @@ These examples reinforce the product direction: destination discovery, Google lo
 | GET    | `/destinations`     | No            | Search the destination catalogue         |
 | GET    | `/autocomplete`     | No            | Search local destination/resource suggestions |
 | GET    | `/recommendations`  | Yes (JWT)     | Get personalised recommendations         |
+| GET    | `/recommendations/cities` | Yes (JWT) | Get personalised Cameroon city recommendations |
+| GET/POST | `/browsing-events` | Yes (JWT) | List or record place browsing signals |
+| GET/POST | `/wishlist` | Yes (JWT) | List or save Cameroon places to the user's waitlist |
+| DELETE | `/wishlist/{place_id}` | Yes (JWT) | Remove a saved place from the waitlist |
 | POST   | `/itineraries`      | Yes (JWT)     | Create a new itinerary                   |
 | GET    | `/itineraries/suggestions` | Yes (JWT) | Get location/budget-based suggestions   |
 | PUT    | `/itineraries/{itinerary_id}` | Yes (JWT) | Update an existing itinerary        |
@@ -63,6 +67,9 @@ These examples reinforce the product direction: destination discovery, Google lo
 | POST   | `/itineraries/{itinerary_id}/join`  | Yes (JWT) | Join an existing itinerary, pay a share, and receive a receipt |
 | POST   | `/itineraries/{itinerary_id}/pay`   | Yes (JWT) | Record a mobile payment, issue a receipt, and track commissions |
 | GET    | `/itineraries/{itinerary_id}/map`   | Yes (JWT) | Get map metadata for an itinerary     |
+| GET/POST | `/itineraries/{itinerary_id}/reservations` | Yes (JWT) | List or confirm trip bookings with receipts |
+| PATCH/DELETE | `/itineraries/{itinerary_id}/reservations/{reservation_id}` | Yes (JWT) | Modify or cancel a booking |
+| GET/PATCH/POST | `/itineraries/{itinerary_id}/tracking` | Yes (JWT) | Read or update live map tracking coordinates |
 | GET/PATCH/POST | `/itineraries/{itinerary_id}/progress` | Yes (JWT) | Read or update stage progress and current location |
 | POST   | `/itineraries/{itinerary_id}/feedback` | Yes (JWT) | Record trip feedback for recommendations |
 | POST   | `/itineraries/generate` | Yes (JWT) | Generate a draft itinerary from local data |
@@ -81,10 +88,11 @@ These examples reinforce the product direction: destination discovery, Google lo
 | POST   | `/groups`          | Yes (JWT)     | Create a community group             |
 | GET    | `/groups`          | Yes (JWT)     | List all community groups             |
 | POST   | `/groups/{group_id}/join` | Yes (JWT) | Join a community group         |
-| GET    | `/media`           | Yes (JWT)     | List shared media posts and group media |
-| POST   | `/media`           | Yes (JWT)     | Share a photo or video with the community |
-| POST   | `/media/upload`    | Yes (JWT)     | Upload a media file and create a post |
+| GET    | `/media`           | Yes (JWT)     | List shared media posts, with optional group/place/city filters |
+| POST   | `/media`           | Yes (JWT)     | Share a photo or video with the community, optionally linked to a place |
+| POST   | `/media/upload`    | Yes (JWT)     | Upload a media file and create a place-linked post |
 | GET    | `/uploads/{filename}` | No          | Serve uploaded media files |
+| GET    | `/places/{place_id}/photos` | Yes (JWT) | List traveller-uploaded photos for a Cameroon place |
 | POST   | `/media/{media_id}/comment` | Yes (JWT) | Comment on a media post   |
 | POST   | `/media/{media_id}/like` | Yes (JWT) | Like a shared media post           |
 | POST   | `/media/{media_id}/share` | Yes (JWT) | Share a media post with another user |
@@ -93,6 +101,7 @@ These examples reinforce the product direction: destination discovery, Google lo
 | POST   | `/groups/{group_id}/discussions/{discussion_id}/reply` | Yes (JWT) | Reply to a group discussion thread |
 | GET    | `/itineraries`      | Yes (JWT)     | List all itineraries available to the user |
 | POST   | `/resources/hotels` | Yes (JWT / admin) | Add a hotel resource                 |
+| GET    | `/resources/hotels/compare` | No | Compare hotel prices by Cameroon location, city, and budget |
 | DELETE | `/resources/hotels/{hotel_id}` | Yes (JWT / admin) | Remove a hotel resource |
 | GET/POST | `/resources/hotels/{hotel_id}/reviews` | Optional/Yes | List or create hotel reviews |
 | POST   | `/resources/activities` | Yes (JWT / admin) | Add an activity resource         |
@@ -125,6 +134,28 @@ curl "http://localhost:5000/destinations?tag=beach&max_cost=100"
 # Personalised recommendations
 curl http://localhost:5000/recommendations \
   -H "Authorization: Bearer $TOKEN"
+
+# Personalised city recommendations
+curl http://localhost:5000/recommendations/cities \
+  -H "Authorization: Bearer $TOKEN"
+
+# Save a Cameroon place to the trip waitlist
+curl -X POST http://localhost:5000/wishlist \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"place_id": "place-kribi-lobe-falls"}'
+
+# Record a browsing signal for personalisation
+curl -X POST http://localhost:5000/browsing-events \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"event_type": "view", "place_id": "place-kribi-lobe-falls"}'
+
+# Share a traveller photo linked to a Cameroon place
+curl -X POST http://localhost:5000/media \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"type": "photo", "url": "https://example.com/lobe.jpg", "caption": "Lobe Falls", "place_id": "place-kribi-lobe-falls"}'
 
 # Authenticate with Google
 curl -X POST http://localhost:5000/auth/google \

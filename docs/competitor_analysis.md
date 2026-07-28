@@ -27,7 +27,7 @@ This document captures competitor research and feature inspiration for GlobeTrot
 
 ### Destination Discovery
 - Provide a searchable destination catalogue with free-text and tag filters.
-- Support budget filtering and continent/region discovery.
+- Support budget filtering and Cameroon region/division/subdivision/city/quarter discovery.
 - Surface destination details, descriptions, and photos where available.
 
 ### Trip and Itinerary Management
@@ -55,7 +55,7 @@ This document captures competitor research and feature inspiration for GlobeTrot
 ## Recommendations for GlobeTrotter
 - Add a dedicated `/trips` API surface to support creating, updating, joining, and sharing itineraries.
 - Implement Google OAuth as a priority for user onboarding.
-- Expand destination search filters to include tags, budget, continent, and free-text.
+- Expand destination search filters to include tags, budget, Cameroon geography, and free-text.
 - Enhance recommendation logic with user history and trip feedback.
 - Introduce shareable trip boards and participant access controls.
 - Track trip cost and duration with detail per stage and overall itinerary.

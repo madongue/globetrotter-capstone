@@ -20,6 +20,7 @@ import jwt
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from app.interests import PREDEFINED_INTERESTS, normalize_interests
 from app.models import (
     get_all_users,
     get_user_by_username,
@@ -105,6 +106,12 @@ def _verify_google_id_token(id_token: str) -> dict | None:
 # Routes
 # ---------------------------------------------------------------------------
 
+@auth_bp.route("/interests", methods=["GET"])
+def interests():
+    """Return the controlled interest list used during onboarding."""
+    return jsonify({"interests": PREDEFINED_INTERESTS}), 200
+
+
 @auth_bp.route("/register", methods=["POST"])
 def register():
     """Register a new user.
@@ -118,7 +125,7 @@ def register():
     data = request.get_json(silent=True) or {}
     username = data.get("username", "").strip()
     password = data.get("password", "")
-    preferences = data.get("preferences", [])  # optional list of interest tags
+    preferences = normalize_interests(data.get("preferences", []))  # optional controlled interest tags
 
     if not username or not password:
         return jsonify({"error": "username and password are required"}), 400
@@ -176,7 +183,7 @@ def google_auth():
     id_token = data.get("id_token", "").strip()
     google_id = data.get("google_id", "").strip()
     username = data.get("username", "").strip()
-    preferences = data.get("preferences", [])
+    preferences = normalize_interests(data.get("preferences", []))
 
     if id_token:
         google_payload = _verify_google_id_token(id_token)
@@ -291,7 +298,7 @@ def profile():
         preferences = data.get("preferences")
         if not isinstance(preferences, list):
             return jsonify({"error": "preferences must be a list"}), 400
-        user["preferences"] = [str(item).strip() for item in preferences if str(item).strip()]
+        user["preferences"] = normalize_interests(preferences)
 
     update_user(user)
     return jsonify({

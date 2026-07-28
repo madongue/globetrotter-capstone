@@ -3,7 +3,7 @@
 ## Performance
 - The application shall start within 10 seconds in a local development environment.
 - API endpoints shall respond within 1 second under light load.
-- The system shall be designed to scale toward millions of users globally.
+- The system shall be designed to scale toward millions of users while keeping location discovery focused on Cameroon.
 - The architecture shall support both vertical and horizontal scaling in later phases.
 
 ## Security

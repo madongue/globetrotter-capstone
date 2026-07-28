@@ -54,7 +54,8 @@ For every feature group:
 - Recommendations page or dashboard cards
 
 **Backend work**
-- Ensure `/destinations` supports query filters: tag, continent, max_cost.
+- Ensure `/destinations` supports Cameroon query filters: tag, region, division, subdivision, city, quarter, and max_cost.
+- Expose `/cameroon-locations` for frontend filter options.
 - Ensure `/recommendations` requires auth and returns personalized results.
 - Add example query usage to API docs.
 

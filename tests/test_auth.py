@@ -45,6 +45,20 @@ def test_register_and_login(client):
     assert "token" in response.get_json()
 
 
+def test_register_recovers_from_null_user_store(client):
+    with open(models.USERS_FILE, "w", encoding="utf-8") as users_file:
+        users_file.write("null")
+
+    response = client.post(
+        "/api/register",
+        data=json.dumps({"username": "alice", "password": "password123"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 201
+    assert _read_json(models.USERS_FILE)[0]["username"] == "alice"
+
+
 def test_register_duplicate_username(client):
     client.post(
         "/api/register",
@@ -95,6 +109,27 @@ def test_profile_read_and_update_preferences(client):
     )
     assert response.status_code == 200
     assert response.get_json()["profile"]["preferences"] == ["culture", "food"]
+
+
+def test_interests_are_predefined_and_unknown_values_are_ignored(client):
+    response = client.get("/api/interests")
+    assert response.status_code == 200
+    assert "beach" in response.get_json()["interests"]
+
+    client.post(
+        "/api/register",
+        data=json.dumps({"username": "alice", "password": "password123", "preferences": ["beach", "made-up"]}),
+        content_type="application/json",
+    )
+    login_response = client.post(
+        "/api/login",
+        data=json.dumps({"username": "alice", "password": "password123"}),
+        content_type="application/json",
+    )
+    token = login_response.get_json()["token"]
+
+    response = client.get("/api/profile", headers={"Authorization": f"Bearer {token}"})
+    assert response.get_json()["preferences"] == ["beach"]
 
 
 class FakeGoogleResponse:

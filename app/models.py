@@ -45,7 +45,8 @@ def _read_json(filepath: str) -> list:
         content = fh.read().strip()
         if not content:
             return []
-        return json.loads(content)
+        data = json.loads(content)
+        return data if isinstance(data, list) else []
 
 
 def _write_json(filepath: str, data: list) -> None:

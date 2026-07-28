@@ -16,6 +16,7 @@ import uuid
 from flask import Blueprint, request, jsonify
 
 from app.auth import get_current_user
+from app.cameroon_geo import enrich_cameroon_item, ensure_cameroon_location, infer_cameroon_geo
 from app.models import (
     get_all_hotels,
     save_hotel,
@@ -57,6 +58,37 @@ def _require_admin(request_obj):
     return username, None
 
 
+def _map_link(query: str) -> str:
+    from urllib.parse import quote_plus
+    return f"https://www.google.com/maps/search/?api=1&query={quote_plus(ensure_cameroon_location(query))}"
+
+
+def _resource_map_info(name: str, location: str) -> dict:
+    query = ensure_cameroon_location(", ".join(part for part in [name, location] if part))
+    geo = infer_cameroon_geo(query)
+    return {
+        "provider": "google_maps",
+        "query": query,
+        "google_map_url": _map_link(query),
+        "google_maps_search_url": _map_link(query),
+        "google_maps_embed_url": f"https://www.google.com/maps?q={query.replace(' ', '+')}&output=embed",
+        "cameroon_focus": True,
+        "country_focus": "Cameroon",
+        "region": geo.get("region", ""),
+        "division": geo.get("division", ""),
+        "subdivision": geo.get("subdivision", ""),
+        "city": geo.get("city", ""),
+        "quarter": geo.get("quarter", ""),
+    }
+
+
+def _with_resource_metadata(resource: dict) -> dict:
+    enriched = enrich_cameroon_item(resource)
+    if not enriched.get("map_info"):
+        enriched["map_info"] = _resource_map_info(enriched.get("name", ""), enriched.get("location", ""))
+    return enriched
+
+
 @resources_bp.route("/resources/hotels", methods=["POST"])
 def add_hotel():
     username, error = _require_admin(request)
@@ -65,22 +97,23 @@ def add_hotel():
 
     data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
-    location = data.get("location", "").strip()
+    location = ensure_cameroon_location(data.get("location", "").strip())
     cost_per_night = data.get("cost_per_night")
 
     if not name or not location or cost_per_night is None:
         return jsonify({"error": "name, location, and cost_per_night are required"}), 400
 
-    hotel = {
+    hotel = enrich_cameroon_item({
         "id": str(uuid.uuid4()),
         "name": name,
         "location": location,
+        **infer_cameroon_geo(location),
         "rating": data.get("rating", 0),
         "cost_per_night": cost_per_night,
         "tags": data.get("tags", []),
         "description": data.get("description", ""),
-        "map_info": data.get("map_info", {}),
-    }
+        "map_info": data.get("map_info") or _resource_map_info(name, location),
+    })
     save_hotel(hotel)
     return jsonify(hotel), 201
 
@@ -93,22 +126,23 @@ def add_activity():
 
     data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
-    location = data.get("location", "").strip()
+    location = ensure_cameroon_location(data.get("location", "").strip())
     cost = data.get("cost")
 
     if not name or not location or cost is None:
         return jsonify({"error": "name, location, and cost are required"}), 400
 
-    activity = {
+    activity = enrich_cameroon_item({
         "id": str(uuid.uuid4()),
         "name": name,
         "location": location,
+        **infer_cameroon_geo(location),
         "duration_hours": data.get("duration_hours", 0),
         "cost": cost,
         "tags": data.get("tags", []),
         "description": data.get("description", ""),
-        "map_info": data.get("map_info", {}),
-    }
+        "map_info": data.get("map_info") or _resource_map_info(name, location),
+    })
     save_activity(activity)
     return jsonify(activity), 201
 
@@ -121,38 +155,92 @@ def add_place():
 
     data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
-    location = data.get("location", "").strip()
+    location = ensure_cameroon_location(data.get("location", "").strip())
     cost = data.get("cost")
 
     if not name or not location or cost is None:
         return jsonify({"error": "name, location, and cost are required"}), 400
 
-    place = {
+    place = enrich_cameroon_item({
         "id": str(uuid.uuid4()),
         "name": name,
         "location": location,
+        **infer_cameroon_geo(location),
         "description": data.get("description", ""),
         "tags": data.get("tags", []),
         "cost": cost,
-        "map_info": data.get("map_info", {}),
-    }
+        "map_info": data.get("map_info") or _resource_map_info(name, location),
+    })
     save_place(place)
     return jsonify(place), 201
 
 
 @resources_bp.route("/resources/hotels", methods=["GET"])
 def list_hotels():
-    return jsonify(get_all_hotels()), 200
+    return jsonify([_with_resource_metadata(item) for item in get_all_hotels()]), 200
+
+
+@resources_bp.route("/resources/hotels/compare", methods=["GET"])
+def compare_hotels():
+    """Compare hotel prices using Cameroon geography and optional budget filters."""
+    location = ensure_cameroon_location(request.args.get("location", "").strip())
+    region = request.args.get("region", "").strip().lower()
+    city = request.args.get("city", "").strip().lower()
+    max_price = request.args.get("max_price") or request.args.get("budget")
+    if max_price:
+        try:
+            max_price = float(max_price)
+        except ValueError:
+            return jsonify({"error": "max_price must be a number"}), 400
+    else:
+        max_price = None
+
+    hotels = [_with_resource_metadata(item) for item in get_all_hotels()]
+    filtered = []
+    for hotel in hotels:
+        searchable = " ".join([
+            hotel.get("name", ""),
+            hotel.get("location", ""),
+            hotel.get("region", ""),
+            hotel.get("division", ""),
+            hotel.get("city", ""),
+            hotel.get("quarter", ""),
+        ]).lower()
+        if location and location.lower() not in searchable:
+            continue
+        if region and hotel.get("region", "").lower() != region:
+            continue
+        if city and hotel.get("city", "").lower() != city:
+            continue
+        price = float(hotel.get("cost_per_night", 0) or 0)
+        if max_price is not None and price > max_price:
+            continue
+        item = dict(hotel)
+        item["price_rank"] = 0
+        filtered.append(item)
+
+    filtered.sort(key=lambda item: (float(item.get("cost_per_night", 0) or 0), -float(item.get("rating", 0) or 0), item.get("name", "")))
+    for index, hotel in enumerate(filtered, start=1):
+        hotel["price_rank"] = index
+        hotel["comparison_label"] = f"#{index} price: {hotel.get('cost_per_night', 0)} FCFA/night"
+    cheapest = filtered[0] if filtered else None
+    return jsonify({
+        "currency": "XAF",
+        "currency_label": "FCFA",
+        "count": len(filtered),
+        "cheapest": cheapest,
+        "hotels": filtered,
+    }), 200
 
 
 @resources_bp.route("/resources/activities", methods=["GET"])
 def list_activities():
-    return jsonify(get_all_activities()), 200
+    return jsonify([_with_resource_metadata(item) for item in get_all_activities()]), 200
 
 
 @resources_bp.route("/resources/places", methods=["GET"])
 def list_places():
-    return jsonify(get_all_places()), 200
+    return jsonify([_with_resource_metadata(item) for item in get_all_places()]), 200
 
 
 @resources_bp.route("/resources/hotels/<hotel_id>", methods=["DELETE"])

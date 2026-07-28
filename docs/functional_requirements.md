@@ -15,14 +15,15 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 1. Registration and Authentication
    - The system shall allow visitors to register using a username and password.
    - The system shall allow users to register and log in using Google authentication.
-   - The system shall allow users to supply preference tags during registration.
+   - The system shall allow users to choose preference tags from a predefined interest list during registration and profile setup.
    - The system shall prevent duplicate usernames.
    - The system shall store passwords securely using hashing.
    - The system shall issue JWTs for authenticated sessions.
+   - The system shall expose the predefined interest list through `/interests`.
 
 2. Market-Informed Planning
    - The system shall support onboarding via Google login and password-based registration.
-   - The system shall provide a destination discovery experience similar to modern travel planners with tags, budget, and location filters.
+   - The system shall provide a Cameroon-focused destination discovery experience with tags, budget, region, division, subdivision, city, and quarter filters.
    - The system shall enable shared trips and trip collaboration in later project phases.
    - The system shall provide local AI-style itinerary generation and place autocomplete.
    - The system shall surface recommendations in a personalised, ranked order based on preferences and history.
@@ -34,17 +35,20 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 
 3. Destination Search
    - The system shall allow visitors and users to search destinations without authentication.
-   - The system shall support free-text search across name, country, and description.
+   - The system shall support free-text search across Cameroon destination name, region, division, subdivision, city, quarter, and description.
    - The system shall allow filtering by tag.
-   - The system shall allow filtering by continent.
+   - The system shall allow filtering by Cameroon region, division, subdivision, city, and quarter.
    - The system shall allow filtering by maximum average daily cost.
+   - The system shall expose a Cameroon location hierarchy through `/cameroon-locations`.
 
 4. Personalised Recommendations
    - The system shall require authentication to retrieve recommendations.
-   - The system shall recommend destinations and trips based on user preference tags and history.
+   - The system shall recommend destinations, trips, and cities based on user preference tags, saved places, browsing history, and feedback.
    - The system shall order recommendation results by relevance score and user criteria.
    - The system shall support an optional `limit` parameter for result count.
    - The system shall support research by budget, location, and feedback.
+   - The system shall record place browsing events and use them to improve city and destination ranking.
+   - The system shall allow users to save Cameroon places to a trip waitlist/wishlist.
 
 5. Trip and Itinerary Creation
    - The system shall require authentication to create trips.
@@ -54,6 +58,11 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
    - The system shall calculate cost and duration per trip stage and for the whole trip.
    - The system shall allow hotels, activities, and places to be added, removed, or referenced.
    - The system shall provide trip suggestions for hotels, activities, and places when creating a trip based on budget and desired location.
+   - The system shall allow users to confirm hotel, activity, transport, and place reservations for a trip.
+   - The system shall generate a booking confirmation code and receipt for every confirmed reservation.
+   - The system shall allow authorized editors to modify or cancel reservations attached to a trip.
+   - The system shall allow users to compare hotel prices in FCFA by location, city, and maximum budget before booking.
+   - The system shall support live trip tracking coordinates and expose Google Maps links for the latest position.
 
 6. Trip and Itinerary Listing
    - The system shall require authentication to list trips and itineraries.
@@ -77,18 +86,27 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 | POST | `/login` | No | Authenticate and receive a JWT |
 | POST | `/auth/google` | No | Authenticate or register via Google ID or verified Google ID token |
 | GET/PATCH | `/profile` | Yes | Read or update profile preferences |
+| GET | `/interests` | No | Return the predefined onboarding/profile interest list |
 | GET | `/admin/users` | Yes | List users for administrators |
 | PATCH | `/admin/users/{username}/role` | Yes | Update a user's role |
 | POST | `/forgot-password` | No | Request a password reset token |
 | POST | `/reset-password` | No | Reset a password using a token |
 | GET | `/destinations` | No | Search the destination catalogue |
+| GET | `/cameroon-locations` | No | Return Cameroon regions, divisions, subdivisions, cities, and quarters for filters |
 | GET | `/autocomplete` | No | Search local destination/resource suggestions |
 | GET | `/recommendations` | Yes | Get personalised destination recommendations |
+| GET | `/recommendations/cities` | Yes | Get personalised Cameroon city recommendations from interests, browsing, and saved places |
+| GET/POST | `/browsing-events` | Yes | List or record place browsing signals for personalisation |
+| GET/POST | `/wishlist` | Yes | List or save Cameroon places to the user's waitlist |
+| DELETE | `/wishlist/{place_id}` | Yes | Remove a place from the user's waitlist |
 | POST | `/itineraries` | Yes | Create a new itinerary |
 | GET | `/itineraries/suggestions` | Yes | Get suggested resources based on budget and location |
 | PUT | `/itineraries/{itinerary_id}` | Yes | Modify an existing itinerary |
 | POST | `/itineraries/{itinerary_id}/join` | Yes | Join an existing itinerary and optionally pay a share |
 | POST | `/itineraries/{itinerary_id}/pay` | Yes | Record a payment, generate a receipt, and track commission |
+| GET/POST | `/itineraries/{itinerary_id}/reservations` | Yes | List or confirm trip bookings with receipts |
+| PATCH/DELETE | `/itineraries/{itinerary_id}/reservations/{reservation_id}` | Yes | Modify or cancel a trip reservation |
+| GET/PATCH/POST | `/itineraries/{itinerary_id}/tracking` | Yes | Read or update live map tracking coordinates |
 | POST | `/itineraries/{itinerary_id}/share` | Yes | Share an itinerary with another user |
 | GET/PATCH/POST | `/itineraries/{itinerary_id}/progress` | Yes | Read or update itinerary stage progress |
 | POST | `/itineraries/{itinerary_id}/feedback` | Yes | Record feedback for an itinerary |
@@ -108,15 +126,17 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 | POST | `/groups` | Yes | Create a community group |
 | GET | `/groups` | Yes | List all community groups |
 | POST | `/groups/{group_id}/join` | Yes | Join a community group |
-| GET | `/media` | Yes | List shared media posts and group media |
-| POST | `/media` | Yes | Create a shared media post |
-| POST | `/media/upload` | Yes | Upload a media file and create a shared post |
+| GET | `/media` | Yes | List shared media posts and filter by group, city, or place |
+| POST | `/media` | Yes | Create a shared media post, optionally linked to a Cameroon place |
+| POST | `/media/upload` | Yes | Upload a media file and create a shared place-linked post |
+| GET | `/places/{place_id}/photos` | Yes | List traveller-uploaded photos for a Cameroon place |
 | POST | `/media/{media_id}/comment` | Yes | Comment on a media post |
 | POST | `/media/{media_id}/like` | Yes | Like a media post |
 | POST | `/media/{media_id}/share` | Yes | Share a media post with another user |
 | GET | `/itineraries/{itinerary_id}/map` | Yes | Get itinerary map metadata |
 | GET | `/itineraries` | Yes | List itineraries available to the user |
 | POST | `/resources/hotels` | Yes | Add a hotel resource |
+| GET | `/resources/hotels/compare` | No | Compare hotel prices by Cameroon location, city, and budget |
 | DELETE | `/resources/hotels/{hotel_id}` | Yes | Remove a hotel resource |
 | GET/POST | `/resources/hotels/{hotel_id}/reviews` | Optional/Yes | List or create hotel reviews |
 | POST | `/resources/activities` | Yes | Add an activity resource |
@@ -132,7 +152,13 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 - A registered user can log in and obtain a JWT.
 - Users can authenticate using Google.
 - Destination search returns matching destination objects for valid inputs.
+- Destination, recommendation, itinerary suggestion, resource, and map workflows are scoped to Cameroon territory by default.
+- Registration and profile setup accept only predefined interest values.
+- Cameroon places, hotels, and activities include region metadata, costs or cost notes where known, related services, image URLs, source URLs, and Google Maps metadata.
 - Recommendations return a sorted list of destinations or trips for an authenticated user.
+- City recommendations rank Cameroon cities from saved places, browsing history, preferences, and local catalogue matches.
+- Users can save and remove Cameroon places from a trip waitlist.
+- Users can upload traveller photos linked to a specific Cameroon place and filter media by that place.
 - Trip creation returns the created trip and persists it.
 - Trip joining associates a user with an existing trip.
 - Trip modification updates the trip details and cost calculations.
@@ -144,3 +170,7 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 - Users can research trips by budget, location, feedback, and other criteria.
 - Trip progress and stage advancement are tracked and displayed.
 - Cost and duration are calculated for each trip stage and total itinerary.
+- Hotel prices can be compared in FCFA before booking.
+- Booking confirmations create persistent reservation records and receipts.
+- Authorized users can cancel or modify reservations for hotels, activities, places, transport, or other trip items.
+- Live tracking updates the itinerary with current coordinates, a trail, and Google Maps links.

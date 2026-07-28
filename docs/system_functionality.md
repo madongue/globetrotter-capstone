@@ -30,15 +30,26 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - `preferences`: list of strings
 - `google_id`: string (optional)
 - `role`: string (e.g. user, owner, admin)
+- `saved_places`: list of place snapshots saved to the user's trip waitlist
+- `browsing_history`: list of place view/save/photo-upload events used for personalisation
 
 ### Destination
 - `id`: UUID
 - `name`: string
 - `country`: string
+- `country_code`: string, `CM`
 - `continent`: string
+- `region`: string
+- `division`: string
+- `subdivision`: string
+- `city`: string
+- `quarter`: string (optional)
+- `quarters`: list of strings
 - `description`: string
 - `tags`: list of strings
 - `avg_cost_per_day`: number
+- `image_url`: string (optional)
+- `source_urls`: list of strings (optional)
 
 ### Hotel
 - `id`: UUID
@@ -47,6 +58,9 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - `rating`: number
 - `cost_per_night`: number
 - `tags`: list of strings
+- `cost_note`: string (optional)
+- `related_services`: list of strings
+- `map_info`: Google Maps metadata object
 
 ### Activity
 - `id`: UUID
@@ -55,6 +69,9 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - `duration_hours`: number
 - `cost`: number
 - `tags`: list of strings
+- `cost_note`: string (optional)
+- `related_services`: list of strings
+- `map_info`: Google Maps metadata object
 
 ### Place
 - `id`: UUID
@@ -63,6 +80,24 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - `description`: string
 - `tags`: list of strings
 - `cost`: number
+- `cost_note`: string (optional)
+- `related_services`: list of strings
+- `image_url`: string (optional)
+- `source_urls`: list of strings
+- `map_info`: Google Maps metadata object
+
+### Media
+- `id`: UUID
+- `username`: string
+- `type`: string, photo or video
+- `url`: string
+- `caption`: string
+- `place_id`: UUID/string (optional)
+- `place_name`: string (optional)
+- `city`, `region`, `division`, `subdivision`, `quarter`: Cameroon geography copied from the linked place
+- `likes`: list of usernames
+- `comments`: list of comment objects
+- `shared_with`: list of usernames
 
 ### Trip / Itinerary
 - `id`: UUID
@@ -82,6 +117,19 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - `currency_label`: string, defaults to `FCFA`
 - `duration_hours`: number
 - `created_at`: ISO 8601 timestamp
+- `reservations`: list of confirmed, modified, or cancelled booking records
+- `live_tracking`: latest coordinates, current location, Google Maps links, and recent trail points
+
+### Reservation
+- `id`: UUID
+- `type`: hotel, activity, place, transport, or other
+- `status`: confirmed, pending, or cancelled
+- `item_name`: string
+- `provider`: string
+- `amount`: number stored in XAF/FCFA
+- `confirmation_code`: user-facing booking code
+- `receipt_id`: linked receipt
+- `history`: modification and cancellation events
 
 ## Request Flow
 1. Client sends a request to the API endpoint.
@@ -103,11 +151,17 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | `/login` | POST | No | Authenticate and receive a JWT |
 | `/auth/google` | POST | No | Authenticate or register via Google ID or verified Google ID token |
 | `/profile` | GET, PATCH | Yes | Read or update profile preferences |
+| `/interests` | GET | No | Return the predefined user interest list |
 | `/admin/users` | GET | Yes | List users for administrators |
 | `/admin/users/{username}/role` | PATCH | Yes | Update a user's role |
-| `/destinations` | GET | No | Search the destination catalogue |
+| `/destinations` | GET | No | Search the Cameroon destination catalogue by text, tag, cost, region, division, subdivision, city, and quarter |
+| `/cameroon-locations` | GET | No | Return Cameroon regions, divisions, subdivisions, cities, and quarters for frontend filters |
 | `/autocomplete` | GET | No | Search local destination/resource suggestions |
-| `/recommendations` | GET | Yes | Get personalised destination recommendations |
+| `/recommendations` | GET | Yes | Get personalised Cameroon destination recommendations |
+| `/recommendations/cities` | GET | Yes | Get personalised Cameroon city recommendations using preferences, saved places, browsing events, and catalogue matches |
+| `/browsing-events` | GET, POST | Yes | List or record place browsing signals |
+| `/wishlist` | GET, POST | Yes | List or save Cameroon places to the user's waitlist |
+| `/wishlist/{place_id}` | DELETE | Yes | Remove a saved Cameroon place |
 | `/itineraries` | POST | Yes | Create a new itinerary |
 | `/itineraries/suggestions` | GET | Yes | Get hotel/activity/place suggestions based on location and budget |
 | `/itineraries/{itinerary_id}` | PUT | Yes | Modify an existing itinerary |
@@ -115,6 +169,9 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | `/itineraries` | GET | Yes | List itineraries available to the user |
 | `/itineraries/{itinerary_id}/share` | POST | Yes | Share an itinerary with another user |
 | `/itineraries/{itinerary_id}/map` | GET | Yes | Get Google Maps metadata, directions, embed links, stage map links, and Cameroon-focused nearby searches |
+| `/itineraries/{itinerary_id}/reservations` | GET, POST | Yes | List or confirm trip bookings with receipts |
+| `/itineraries/{itinerary_id}/reservations/{reservation_id}` | PATCH, DELETE | Yes | Modify or cancel a trip reservation |
+| `/itineraries/{itinerary_id}/tracking` | GET, PATCH, POST | Yes | Read or update live map tracking coordinates |
 | `/itineraries/{itinerary_id}/progress` | GET, PATCH, POST | Yes | Read or update stage progress and current location |
 | `/itineraries/{itinerary_id}/feedback` | POST | Yes | Record trip feedback for recommendation ranking |
 | `/itineraries/generate` | POST | Yes | Generate a draft itinerary from local catalogue/resource data |
@@ -131,6 +188,7 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | `/health` / `/api/health` | GET | No | Liveness/readiness check |
 | `/metrics` / `/api/metrics` | GET | No | In-process request metrics |
 | `/resources/hotels` | POST | Yes | Add a hotel resource |
+| `/resources/hotels/compare` | GET | No | Compare hotel prices by Cameroon location, city, and budget |
 | `/resources/hotels/{hotel_id}` | DELETE | Yes | Remove a hotel resource |
 | `/resources/hotels/{hotel_id}/reviews` | GET, POST | Optional/Yes | List or create hotel reviews |
 | `/resources/activities` | POST | Yes | Add an activity resource |
@@ -139,24 +197,49 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | `/resources/places` | POST | Yes | Add a place resource |
 | `/resources/places/{place_id}` | DELETE | Yes | Remove a place resource |
 | `/resources/places/{place_id}/reviews` | GET, POST | Optional/Yes | List or create place reviews |
+| `/media` | GET, POST | Yes | List shared media with optional group/place/city filters or create a place-linked post |
+| `/media/upload` | POST | Yes | Upload a place-linked traveller photo/video |
+| `/places/{place_id}/photos` | GET | Yes | List traveller-uploaded photos for a Cameroon place |
 
 ## Current Implementation Details
 - Stores users and itineraries in JSON files.
-- Stores destination catalogue in `data/destinations.json`.
+- Stores a Cameroon-only destination catalogue in `data/destinations.json`.
+- Stores enriched Cameroon attractions in `data/places.json`, hotels in `data/hotels.json`, and activities in `data/activities.json`.
 - Supports itinerary sharing, joining, payments, media, community groups, trip progress, feedback, and generated itinerary drafts.
+- Supports hotel price comparison in FCFA before booking.
+- Supports booking confirmations with receipts and modification/cancellation history for trip reservations.
+- Supports live trip tracking with latest coordinates, trail history, and Google Maps live-point links.
+- Supports traveller-uploaded photos linked to Cameroon places and exposes place photo feeds.
+- Supports a saved places waitlist/wishlist and browsing-history events for personalised suggestions.
+- City recommendations rank Cameroon cities using onboarding interests, browsing signals, saved places, and catalogue place density.
+- Registration and profile setup use a controlled interest list for recommendations instead of free-form interest text.
+- Location-facing workflows are scoped to Cameroon territory by default. Destination search, recommendations, trip suggestions, generated itineraries, and resources support region, division, subdivision, city, and quarter metadata.
+- Cameroon attraction/resource records may include image URLs, source URLs, related services, cost notes, and Google Maps metadata.
 - Money is stored and calculated in FCFA/XAF by default. The React UI can display and accept values in another supported currency, then converts them back to FCFA before API submission.
 - The React UI includes a persistent English/French language switcher. French mode translates navigation, forms, alerts, placeholders, dashboard panels, itinerary detail views, payment labels, map controls, groups, media, and resource-management text.
-- Map metadata uses Google Maps URLs for global search/directions/embed links without requiring an API key. Cameroon destinations receive extra Google Maps searches for hotels, restaurants, attractions, transport, hospitals, pharmacies, and banks.
+- The authenticated dashboard is organized with an internal menu so each feature group has its own page: Overview, Itineraries, Discovery, Community, Media, Resources, and Settings.
+- Map metadata uses Google Maps URLs for Cameroon-scoped search, directions, embed links, stage map links, and nearby searches for hotels, restaurants, attractions, transport, hospitals, pharmacies, and banks.
 - Uses a simple monolithic design for Phase 1.
+
+## Frontend Dashboard Pages
+| Page | Main workflows |
+|---|---|
+| Overview | Landing summary, shortcuts to itinerary creation and community groups |
+| Itineraries | List trips, create a trip, filter recommendations, generate and save itinerary drafts |
+| Discovery | Search Cameroon destinations, review personalised city suggestions, save place waitlist items, and find hotel/activity/place suggestions by region, division, subdivision, city, quarter, location, and budget |
+| Community | Create groups, join groups, and open group detail pages |
+| Media | View shared media, upload traveller photos linked to places, like posts, comment, and share existing media with another user |
+| Resources | Compare hotel prices, add/remove Cameroon hotels, activities, and places with geography metadata, submit reviews, save places to a waitlist, upload place photos, and manage user roles when admin data is available |
+| Settings | Edit profile preferences from predefined interests, review notifications, and use catalogue autocomplete |
 
 ## Future Functionality Expectations
 - The system supports sharing trips and itineraries with friends and family.
 - The system allows users to create, join, and modify trips.
 - The system allows hotels, activities, and places to be added, removed, and referenced.
 - The system enables administrators to manage hotel, activity, and place resources for discovery.
-- The system provides location- and budget-based suggestions when building an itinerary.
+- The system provides Cameroon location- and budget-based suggestions when building an itinerary.
 - The system tracks trip stage advancement, current location, status, and progress percentage.
-- Recommendations consider user preferences, history, budgets, location filters, and trip feedback.
+- Recommendations consider user preferences, history, budgets, Cameroon location filters, and trip feedback.
 - Cost and duration calculations are visible for each trip stage and total itinerary.
 - The system should scale to millions of users.
 - The deployment model should move from a single server to container orchestration in the cloud.
@@ -170,9 +253,15 @@ The current implementation is the Phase 1 monolith. Future phases include:
 ## E2E Verification
 - Production build smoke test: open the React app from Flask and confirm there are no browser console errors on first load.
 - Authentication flow: register a user, log in, and render the dashboard without unauthorized admin calls for non-admin users.
+- Cameroon geography flow: load `/cameroon-locations`, filter destinations by region/city/quarter, and verify map metadata stays focused on Cameroon.
+- Interest setup flow: register and update profile interests using the predefined checklist, then confirm unknown interest values are ignored by the API.
 - Itinerary flow: create an itinerary with hotel, activity, place, dates, and costs, then open its detail page.
 - Collaboration and finance flow: load budget, load audit log, create an invite token, submit payment, and confirm receipts plus budget totals update in the UI.
 - Media feed flow: stale upload references render a local placeholder instead of broken image requests.
+- Traveller photos flow: upload or post a media item with a `place_id`, then confirm `/media?place_id=...` and `/places/{place_id}/photos` return the linked photo.
+- Waitlist and personalisation flow: save a place, record a browsing event, then confirm `/recommendations/cities` ranks the matching city higher.
+- Booking flow: compare hotels, confirm a reservation on a trip, verify the receipt and confirmation code, modify quantity, then cancel the reservation.
+- Live tracking flow: submit coordinates for a trip and verify the map payload exposes the latest Google Maps links and trail.
 
 ## Deployment and Operations
 - Local run: `pip install -r requirements.txt` and `python app/main.py`

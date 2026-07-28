@@ -111,6 +111,15 @@ button {
   grid-template-columns: 1.2fr 1fr;
   gap: 2rem;
   align-items: start;
+  min-height: min(680px, calc(100vh - 150px));
+  padding: clamp(2rem, 7vw, 5rem);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(90deg, rgba(8, 15, 30, 0.82), rgba(8, 15, 30, 0.52), rgba(8, 15, 30, 0.2)),
+    url("https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20from%20a%20work%20site.jpg");
+  background-size: cover;
+  background-position: center;
+  color: #fff;
 }
 
 .eyebrow {
@@ -130,8 +139,12 @@ button {
 
 .hero-section p {
   max-width: 42rem;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.84);
   margin-bottom: 2rem;
+}
+
+.hero-section .eyebrow {
+  color: #bfdbfe;
 }
 
 .hero-actions {
@@ -197,6 +210,81 @@ button {
   grid-template-columns: 1.6fr 1fr;
 }
 
+.hero-section .feature-card {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.interest-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.interest-chip {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.45rem !important;
+  margin: 0 !important;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text) !important;
+  padding: 0.45rem 0.65rem;
+  cursor: pointer;
+}
+
+.interest-chip input {
+  width: auto;
+  margin: 0;
+}
+
+.app-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.app-menu {
+  position: sticky;
+  top: 6rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.05);
+}
+
+.app-menu h3 {
+  margin: 0 0 0.75rem;
+}
+
+.app-menu-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.app-menu-list button {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted);
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+}
+
+.app-menu-list button:hover,
+.app-menu-list button.active {
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-color: #bfdbfe;
+}
+
+.app-page {
+  min-width: 0;
+}
+
 .grid-3 {
   display: grid;
   gap: 1.5rem;
@@ -246,6 +334,7 @@ button {
 .stacked-form input,
 .stacked-form select,
 .search-form input,
+.search-form select,
 .resource-form input,
 .resource-form select,
 .inline-form input {
@@ -341,6 +430,26 @@ button {
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
+}
+
+.plain-list li > span {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.plain-list small {
+  color: var(--muted);
+}
+
+.resource-thumb {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
 }
 
 .itinerary-card,
@@ -469,6 +578,7 @@ button {
   }
 
   .hero-section,
+  .app-layout,
   .grid-2,
   .grid-3,
   .search-form,
@@ -490,6 +600,14 @@ button {
   .plain-list li {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .app-menu {
+    position: static;
+  }
+
+  .app-menu-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -588,6 +706,10 @@ button {
   .map-embed {
     min-height: 180px;
     aspect-ratio: 4 / 3;
+  }
+
+  .app-menu-list {
+    grid-template-columns: 1fr;
   }
 }
 

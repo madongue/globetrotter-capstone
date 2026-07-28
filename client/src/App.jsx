@@ -14,6 +14,26 @@ const LANGUAGE_OPTIONS = [
   { code: 'en', label: 'English' },
   { code: 'fr', label: 'Francais' },
 ];
+const PREDEFINED_INTERESTS = [
+  'beach',
+  'nature',
+  'waterfall',
+  'mountain',
+  'hiking',
+  'wildlife',
+  'national parks',
+  'culture',
+  'history',
+  'museum',
+  'monuments',
+  'chiefdoms',
+  'food',
+  'markets',
+  'nightlife',
+  'business',
+  'family',
+  'photography',
+];
 
 const FR_TEXT = {
   Home: 'Accueil',
@@ -49,6 +69,14 @@ const FR_TEXT = {
   'Create itinerary': 'Creer un itineraire',
   'Join a group': 'Rejoindre un groupe',
   'Quick links': 'Liens rapides',
+  Menu: 'Menu',
+  Overview: 'Vue d ensemble',
+  Itineraries: 'Itineraires',
+  Discovery: 'Decouverte',
+  Community: 'Communaute',
+  Media: 'Medias',
+  Resources: 'Ressources',
+  Settings: 'Parametres',
   'My itineraries': 'Mes itineraires',
   'Destination recommendations': 'Recommandations de destinations',
   'Profile preferences': 'Preferences du profil',
@@ -83,7 +111,16 @@ const FR_TEXT = {
   'Destination search': 'Recherche de destination',
   Search: 'Rechercher',
   Tag: 'Etiquette',
-  Continent: 'Continent',
+  Region: 'Region',
+  Division: 'Departement',
+  Subdivision: 'Arrondissement',
+  City: 'Ville',
+  Quarter: 'Quartier',
+  'All regions': 'Toutes les regions',
+  'All divisions': 'Tous les departements',
+  'All subdivisions': 'Tous les arrondissements',
+  'All cities': 'Toutes les villes',
+  'All quarters': 'Tous les quartiers',
   'Max daily cost': 'Cout journalier maximal',
   Results: 'Resultats',
   Groups: 'Groupes',
@@ -219,17 +256,13 @@ const FR_TEXT = {
 };
 
 const FR_PLACEHOLDERS = {
-  'beach, food, culture': 'plage, cuisine, culture',
-  'Bali, surf, hotel': 'Douala, plage, hotel',
-  Asia: 'Afrique',
+  'Douala, beach, hotel': 'Douala, plage, hotel',
   'Beach Escape': 'Escapade a Kribi',
-  Bali: 'Douala',
   'Seaside Hotel': 'Hotel a Akwa',
   'Surf Lesson': 'Visite culinaire',
   Uluwatu: 'Musee national',
-  'Paris, Bali, beach': 'Yaounde, Kribi, plage',
   food: 'cuisine',
-  'Bali Travelers': 'Voyageurs du Cameroun',
+  'Cameroon Travelers': 'Voyageurs du Cameroun',
   'Share tips and meet other travellers': 'Partager des conseils et rencontrer d autres voyageurs',
   'Add comment': 'Ajouter un commentaire',
   'Share with username': 'Partager avec un utilisateur',
@@ -286,7 +319,7 @@ function translateDynamicText(text, language) {
     if (amountLine) return `${FR_TEXT[amountLine[1]] || amountLine[1]} : ${amountLine[2]}`;
 
     const providerLine = core.match(/^Google Maps · (.+)$/);
-    if (providerLine) return `Google Maps · ${providerLine[1] === 'World' ? 'Monde' : providerLine[1]}`;
+    if (providerLine) return `Google Maps · ${providerLine[1]}`;
 
     const durationLine = core.replace(/\bdays\b/g, 'jours').replace(/\bhours\b/g, 'heures');
     if (durationLine !== core) return durationLine;
@@ -323,28 +356,36 @@ function translatePage(root, language) {
 
 function App() {
   const [page, setPage] = useState('home');
+  const [dashboardView, setDashboardView] = useState('overview');
   const [token, setToken] = useState(localStorage.getItem('gt_token') || '');
   const [currency, setCurrency] = useState(localStorage.getItem('gt_currency') || DEFAULT_CURRENCY);
   const [language, setLanguage] = useState(localStorage.getItem('gt_language') || DEFAULT_LANGUAGE);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState(null);
-  const [profilePreferences, setProfilePreferences] = useState('');
+  const [profilePreferences, setProfilePreferences] = useState([]);
+  const [registrationPreferences, setRegistrationPreferences] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [autocompleteQuery, setAutocompleteQuery] = useState('');
   const [autocompleteResults, setAutocompleteResults] = useState([]);
   const [adminUsers, setAdminUsers] = useState([]);
+  const [cameroonLocations, setCameroonLocations] = useState({ country: 'Cameroon', regions: [] });
   const [recommendations, setRecommendations] = useState([]);
-  const [recommendationFilters, setRecommendationFilters] = useState({ budget: '', location: '' });
+  const [cityRecommendations, setCityRecommendations] = useState([]);
+  const [recommendationFilters, setRecommendationFilters] = useState({ budget: '', location: '', region: '', division: '', subdivision: '', city: '', quarter: '' });
   const [itineraries, setItineraries] = useState([]);
   const [searchFilters, setSearchFilters] = useState({
     q: '',
     tag: '',
-    continent: '',
+    region: '',
+    division: '',
+    subdivision: '',
+    city: '',
+    quarter: '',
     maxCost: '',
   });
   const [searchResults, setSearchResults] = useState([]);
-  const [suggestionFilters, setSuggestionFilters] = useState({ location: '', budget: '' });
+  const [suggestionFilters, setSuggestionFilters] = useState({ location: '', budget: '', region: '', division: '', subdivision: '', city: '', quarter: '' });
   const [tripSuggestions, setTripSuggestions] = useState(null);
   const [groups, setGroups] = useState([]);
   const [selectedItinerary, setSelectedItinerary] = useState(null);
@@ -352,6 +393,7 @@ function App() {
   const [sharePermission, setSharePermission] = useState('view');
   const [joinPaymentAmount, setJoinPaymentAmount] = useState('');
   const [mapInfo, setMapInfo] = useState(null);
+  const [trackingInfo, setTrackingInfo] = useState(null);
   const [budgetInfo, setBudgetInfo] = useState(null);
   const [auditEntries, setAuditEntries] = useState([]);
   const [inviteForm, setInviteForm] = useState({ permission: 'view', maxUses: '1' });
@@ -370,6 +412,20 @@ function App() {
   const [paymentAmount, setPaymentAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('mobile');
   const [paymentTargetType, setPaymentTargetType] = useState('total');
+  const [reservationForm, setReservationForm] = useState({
+    type: 'hotel',
+    stageId: '',
+    itemName: '',
+    amount: '',
+    provider: '',
+    quantity: '1',
+    notes: '',
+  });
+  const [trackingForm, setTrackingForm] = useState({
+    latitude: '',
+    longitude: '',
+    currentLocation: '',
+  });
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -382,13 +438,22 @@ function App() {
   const [newMediaCaption, setNewMediaCaption] = useState('');
   const [newMediaType, setNewMediaType] = useState('photo');
   const [mediaGroupId, setMediaGroupId] = useState('');
+  const [newMediaPlaceId, setNewMediaPlaceId] = useState('');
   const [mediaComments, setMediaComments] = useState({});
   const [mediaShareTargets, setMediaShareTargets] = useState({});
+  const [savedPlaces, setSavedPlaces] = useState([]);
   const [resources, setResources] = useState({ hotels: [], activities: [], places: [] });
+  const [hotelCompareFilters, setHotelCompareFilters] = useState({ location: '', city: '', maxPrice: '' });
+  const [hotelComparison, setHotelComparison] = useState(null);
   const [newResource, setNewResource] = useState({
     type: 'hotels',
     name: '',
     location: '',
+    region: '',
+    division: '',
+    subdivision: '',
+    city: '',
+    quarter: '',
     cost: '',
     description: '',
   });
@@ -442,10 +507,158 @@ function App() {
     window.requestAnimationFrame(() => translatePage(document.querySelector('.app-shell'), language));
   });
 
+  useEffect(() => {
+    const fetchCameroonLocations = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/cameroon-locations`);
+        if (response.ok) {
+          setCameroonLocations(await response.json());
+        }
+      } catch (error) {
+        setCameroonLocations({ country: 'Cameroon', regions: [] });
+      }
+    };
+    fetchCameroonLocations();
+  }, []);
+
+  const dashboardMenuItems = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'itineraries', label: 'Itineraries' },
+    { id: 'discovery', label: 'Discovery' },
+    { id: 'community', label: 'Community' },
+    { id: 'media', label: 'Media' },
+    { id: 'resources', label: 'Resources' },
+    { id: 'settings', label: 'Settings' },
+  ];
+
   const navigate = (target) => {
     setAlert(null);
     setPage(target);
+    if (target === 'dashboard') {
+      setDashboardView('overview');
+    }
   };
+
+  const getRegionOptions = () => cameroonLocations.regions || [];
+  const getDivisionOptions = (regionName) => (
+    getRegionOptions().find((region) => region.region === regionName)?.divisions || []
+  );
+  const getSubdivisionOptions = (filters) => (
+    getDivisionOptions(filters.region).find((division) => division.name === filters.division)?.subdivisions || []
+  );
+  const getCityOptions = (filters) => (
+    getSubdivisionOptions(filters).find((subdivision) => subdivision.name === filters.subdivision)?.cities || []
+  );
+  const getQuarterOptions = (filters) => (
+    getCityOptions(filters).find((city) => city.name === filters.city)?.quarters || []
+  );
+  const buildCameroonLocation = (filters) => (
+    [filters.quarter, filters.city, filters.subdivision, filters.division, filters.region, 'Cameroon']
+      .filter(Boolean)
+      .join(', ')
+  );
+  const addCameroonGeoParams = (params, filters) => {
+    ['region', 'division', 'subdivision', 'city', 'quarter'].forEach((field) => {
+      if (filters[field]?.trim()) params.set(field, filters[field].trim());
+    });
+  };
+  const updateGeoFilter = (setter, field, value) => {
+    setter((prev) => {
+      const next = { ...prev, [field]: value };
+      if (field === 'region') {
+        next.division = '';
+        next.subdivision = '';
+        next.city = '';
+        next.quarter = '';
+      }
+      if (field === 'division') {
+        next.subdivision = '';
+        next.city = '';
+        next.quarter = '';
+      }
+      if (field === 'subdivision') {
+        next.city = '';
+        next.quarter = '';
+      }
+      if (field === 'city') {
+        next.quarter = '';
+      }
+      if (['region', 'division', 'subdivision', 'city', 'quarter'].includes(field)) {
+        next.location = buildCameroonLocation(next);
+      }
+      return next;
+    });
+  };
+  const renderCameroonFilters = (filters, setter) => (
+    <>
+      <label>
+        Region
+        <select value={filters.region} onChange={(event) => updateGeoFilter(setter, 'region', event.target.value)}>
+          <option value="">All regions</option>
+          {getRegionOptions().map((region) => (
+            <option key={region.region} value={region.region}>{region.region}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Division
+        <select value={filters.division} onChange={(event) => updateGeoFilter(setter, 'division', event.target.value)}>
+          <option value="">All divisions</option>
+          {getDivisionOptions(filters.region).map((division) => (
+            <option key={division.name} value={division.name}>{division.name}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Subdivision
+        <select value={filters.subdivision} onChange={(event) => updateGeoFilter(setter, 'subdivision', event.target.value)}>
+          <option value="">All subdivisions</option>
+          {getSubdivisionOptions(filters).map((subdivision) => (
+            <option key={subdivision.name} value={subdivision.name}>{subdivision.name}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        City
+        <select value={filters.city} onChange={(event) => updateGeoFilter(setter, 'city', event.target.value)}>
+          <option value="">All cities</option>
+          {getCityOptions(filters).map((city) => (
+            <option key={city.name} value={city.name}>{city.name}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Quarter
+        <select value={filters.quarter} onChange={(event) => updateGeoFilter(setter, 'quarter', event.target.value)}>
+          <option value="">All quarters</option>
+          {getQuarterOptions(filters).map((quarter) => (
+            <option key={quarter} value={quarter}>{quarter}</option>
+          ))}
+        </select>
+      </label>
+    </>
+  );
+  const toggleInterest = (setter, interest) => {
+    setter((current) => (
+      current.includes(interest)
+        ? current.filter((item) => item !== interest)
+        : [...current, interest]
+    ));
+  };
+  const renderInterestPicker = (selectedInterests, setter) => (
+    <div className="interest-grid" role="group" aria-label="Interests">
+      {PREDEFINED_INTERESTS.map((interest) => (
+        <label key={interest} className="interest-chip">
+          <input
+            type="checkbox"
+            checked={selectedInterests.includes(interest)}
+            onChange={() => toggleInterest(setter, interest)}
+          />
+          <span>{interest}</span>
+        </label>
+      ))}
+    </div>
+  );
 
   const fetchDashboardData = async () => {
     if (!token) {
@@ -454,8 +667,14 @@ function App() {
 
     setLoading(true);
     try {
-      const [recoRes, itinRes, groupsRes, profileRes, notificationsRes] = await Promise.all([
+      const [recoRes, cityRecoRes, wishlistRes, itinRes, groupsRes, profileRes, notificationsRes] = await Promise.all([
         fetch(`${API_BASE}/recommendations?limit=4`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`${API_BASE}/recommendations/cities?limit=6`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`${API_BASE}/wishlist`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(`${API_BASE}/itineraries`, {
@@ -478,6 +697,18 @@ function App() {
         setRecommendations([]);
       }
 
+      if (cityRecoRes.ok) {
+        setCityRecommendations(await cityRecoRes.json());
+      } else {
+        setCityRecommendations([]);
+      }
+
+      if (wishlistRes.ok) {
+        setSavedPlaces(await wishlistRes.json());
+      } else {
+        setSavedPlaces([]);
+      }
+
       if (itinRes.ok) {
         setItineraries(await itinRes.json());
       } else {
@@ -496,7 +727,7 @@ function App() {
         const profileData = await profileRes.json();
         currentProfile = profileData;
         setProfile(profileData);
-        setProfilePreferences((profileData.preferences || []).join(', '));
+        setProfilePreferences(profileData.preferences || []);
       }
 
       if (notificationsRes.ok) {
@@ -575,10 +806,7 @@ function App() {
   const handleRegister = async (event) => {
     event.preventDefault();
     const form = event.target;
-    const preferences = form.preferences.value
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean);
+    const preferences = registrationPreferences;
 
     const response = await fetch(`${API_BASE}/register`, {
       method: 'POST',
@@ -595,6 +823,7 @@ function App() {
       return;
     }
     setAlert({ type: 'success', message: 'Account created. You can now login.' });
+    setRegistrationPreferences([]);
     setPage('login');
   };
 
@@ -613,7 +842,7 @@ function App() {
     const params = new URLSearchParams();
     if (searchFilters.q.trim()) params.set('q', searchFilters.q.trim());
     if (searchFilters.tag.trim()) params.set('tag', searchFilters.tag.trim());
-    if (searchFilters.continent.trim()) params.set('continent', searchFilters.continent.trim());
+    addCameroonGeoParams(params, searchFilters);
     if (searchFilters.maxCost) params.set('max_cost', toBaseMoney(searchFilters.maxCost));
 
     setLoading(true);
@@ -656,10 +885,7 @@ function App() {
       return;
     }
 
-    const preferences = profilePreferences
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean);
+    const preferences = profilePreferences;
 
     const response = await fetch(`${API_BASE}/profile`, {
       method: 'PATCH',
@@ -700,6 +926,7 @@ function App() {
     const params = new URLSearchParams({ limit: '4' });
     if (filters.budget) params.set('budget', toBaseMoney(filters.budget));
     if (filters.location.trim()) params.set('location', filters.location.trim());
+    addCameroonGeoParams(params, filters);
 
     const response = await fetch(`${API_BASE}/recommendations?${params.toString()}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -711,21 +938,99 @@ function App() {
     }
   };
 
+  const fetchCityRecommendations = async () => {
+    if (!token) return;
+    const response = await fetch(`${API_BASE}/recommendations/cities?limit=6`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (response.ok) {
+      setCityRecommendations(await response.json());
+    } else {
+      setCityRecommendations([]);
+    }
+  };
+
+  const recordBrowsingEvent = async (place, eventType = 'view') => {
+    if (!token || !place?.id) return;
+    try {
+      await fetch(`${API_BASE}/browsing-events`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          event_type: eventType,
+          place_id: place.id,
+          resource_type: 'place',
+          city: place.city,
+          region: place.region,
+          tags: place.tags || [],
+        }),
+      });
+    } catch (error) {
+      // Browsing signals are helpful but should never block the main action.
+    }
+  };
+
+  const handleSavePlace = async (place) => {
+    if (!token) {
+      setAlert({ type: 'error', message: 'Please login to save places.' });
+      return;
+    }
+    if (!place?.id) {
+      setAlert({ type: 'error', message: 'This place cannot be saved yet.' });
+      return;
+    }
+    const response = await fetch(`${API_BASE}/wishlist`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ place_id: place.id }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to save place.' });
+      return;
+    }
+    setSavedPlaces(result.saved_places || []);
+    await Promise.all([fetchRecommendations(), fetchCityRecommendations()]);
+    setAlert({ type: 'success', message: result.message || 'Place saved.' });
+  };
+
+  const handleRemoveSavedPlace = async (placeId) => {
+    const response = await fetch(`${API_BASE}/wishlist/${placeId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to remove saved place.' });
+      return;
+    }
+    setSavedPlaces(result.saved_places || []);
+    await Promise.all([fetchRecommendations(), fetchCityRecommendations()]);
+    setAlert({ type: 'success', message: result.message || 'Place removed.' });
+  };
+
   const handleFindTripSuggestions = async (event) => {
     event.preventDefault();
     if (!token) {
       setAlert({ type: 'error', message: 'Please login to get trip suggestions.' });
       return;
     }
-    if (!suggestionFilters.location.trim()) {
+    if (!suggestionFilters.location.trim() && !buildCameroonLocation(suggestionFilters).trim()) {
       setAlert({ type: 'error', message: 'Location is required for suggestions.' });
       return;
     }
 
     const params = new URLSearchParams({
-      location: suggestionFilters.location.trim(),
+      location: suggestionFilters.location.trim() || buildCameroonLocation(suggestionFilters),
       budget: toBaseMoney(suggestionFilters.budget || '0'),
     });
+    addCameroonGeoParams(params, suggestionFilters);
 
     setLoading(true);
     try {
@@ -1050,6 +1355,7 @@ function App() {
         formData.append('type', newMediaType);
         formData.append('caption', newMediaCaption.trim());
         if (mediaGroupId) formData.append('group_id', mediaGroupId);
+        if (newMediaPlaceId.trim()) formData.append('place_id', newMediaPlaceId.trim());
         response = await fetch(`${API_BASE}/media/upload`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -1067,6 +1373,7 @@ function App() {
             url,
             caption: newMediaCaption.trim(),
             group_id: mediaGroupId || undefined,
+            place_id: newMediaPlaceId.trim() || undefined,
           }),
         });
       }
@@ -1083,6 +1390,8 @@ function App() {
       setNewMediaCaption('');
       setNewMediaType('photo');
       setMediaGroupId('');
+      setNewMediaPlaceId('');
+      await fetchCityRecommendations();
       setAlert({ type: 'success', message: 'Media shared successfully.' });
     } catch (error) {
       setAlert({ type: 'error', message: 'Unable to share media.' });
@@ -1132,6 +1441,7 @@ function App() {
     setShareUsername('');
     setJoinPaymentAmount('');
     setMapInfo(null);
+    setTrackingInfo(null);
     setBudgetInfo(null);
     setAuditEntries([]);
     setInviteResult(null);
@@ -1141,6 +1451,20 @@ function App() {
       completedStageIds: itinerary.progress?.completed_stage_ids?.join(', ') || '',
       currentLocation: itinerary.progress?.current_location || itinerary.location || '',
       progressPercent: itinerary.progress?.progress_percent?.toString() || '',
+    });
+    setReservationForm({
+      type: 'hotel',
+      stageId: '',
+      itemName: itinerary.hotel?.name || '',
+      amount: itinerary.hotel?.cost_per_night ? String(itinerary.hotel.cost_per_night) : '',
+      provider: itinerary.hotel?.name || '',
+      quantity: '1',
+      notes: '',
+    });
+    setTrackingForm({
+      latitude: itinerary.live_tracking?.latitude?.toString() || '',
+      longitude: itinerary.live_tracking?.longitude?.toString() || '',
+      currentLocation: itinerary.progress?.current_location || itinerary.location || '',
     });
     setPage('itinerary');
   };
@@ -1242,6 +1566,121 @@ function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCompareHotels = async (event) => {
+    event.preventDefault();
+    const params = new URLSearchParams();
+    if (hotelCompareFilters.location.trim()) params.set('location', hotelCompareFilters.location.trim());
+    if (hotelCompareFilters.city.trim()) params.set('city', hotelCompareFilters.city.trim());
+    if (hotelCompareFilters.maxPrice) params.set('max_price', toBaseMoney(hotelCompareFilters.maxPrice));
+    const response = await fetch(`${API_BASE}/resources/hotels/compare?${params.toString()}`);
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to compare hotel prices.' });
+      return;
+    }
+    setHotelComparison(result);
+  };
+
+  const handleCreateReservation = async (event) => {
+    event.preventDefault();
+    if (!token || !selectedItinerary) return;
+    const amount = toBaseMoney(reservationForm.amount);
+    if (!amount || amount <= 0) {
+      setAlert({ type: 'error', message: 'Enter a valid booking amount.' });
+      return;
+    }
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/reservations`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        type: reservationForm.type,
+        stage_id: reservationForm.stageId || undefined,
+        item_name: reservationForm.itemName,
+        amount,
+        provider: reservationForm.provider,
+        quantity: Number(reservationForm.quantity) || 1,
+        notes: reservationForm.notes,
+        payment_method: paymentMethod,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to confirm booking.' });
+      return;
+    }
+    refreshSelectedItinerary(result.itinerary);
+    await handleLoadBudget();
+    setReservationForm((current) => ({ ...current, notes: '' }));
+    setAlert({ type: 'success', message: `${result.message}: ${result.reservation.confirmation_code}` });
+  };
+
+  const handleModifyReservation = async (reservationId, changes) => {
+    if (!selectedItinerary) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/reservations/${reservationId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(changes),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to modify reservation.' });
+      return;
+    }
+    refreshSelectedItinerary(result.itinerary);
+    setAlert({ type: 'success', message: 'Reservation modified.' });
+  };
+
+  const handleCancelReservation = async (reservationId) => {
+    if (!selectedItinerary) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/reservations/${reservationId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ reason: 'Cancelled by traveller' }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to cancel reservation.' });
+      return;
+    }
+    refreshSelectedItinerary(result.itinerary);
+    setAlert({ type: 'success', message: 'Reservation cancelled.' });
+  };
+
+  const handleUpdateTracking = async (event) => {
+    event.preventDefault();
+    if (!selectedItinerary) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/tracking`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        latitude: Number(trackingForm.latitude),
+        longitude: Number(trackingForm.longitude),
+        current_location: trackingForm.currentLocation,
+        current_stage_id: progressForm.currentStageId || undefined,
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to update live tracking.' });
+      return;
+    }
+    setTrackingInfo(result.tracking);
+    refreshSelectedItinerary(result.itinerary);
+    setAlert({ type: 'success', message: 'Live tracking updated.' });
   };
 
   const handleLoadBudget = async () => {
@@ -1552,7 +1991,7 @@ function App() {
     }
 
     const name = newResource.name.trim();
-    const location = newResource.location.trim();
+    const location = newResource.location.trim() || buildCameroonLocation(newResource);
     const cost = toBaseMoney(newResource.cost);
     if (!name || !location || Number.isNaN(cost)) {
       setAlert({ type: 'error', message: 'Name, location, and cost are required.' });
@@ -1563,6 +2002,11 @@ function App() {
     const payload = {
       name,
       location,
+      region: newResource.region,
+      division: newResource.division,
+      subdivision: newResource.subdivision,
+      city: newResource.city,
+      quarter: newResource.quarter,
       description: newResource.description.trim(),
       [isHotel ? 'cost_per_night' : 'cost']: cost,
     };
@@ -1584,7 +2028,7 @@ function App() {
       ...current,
       [newResource.type]: [result, ...current[newResource.type]],
     }));
-    setNewResource({ type: newResource.type, name: '', location: '', cost: '', description: '' });
+    setNewResource({ type: newResource.type, name: '', location: '', region: '', division: '', subdivision: '', city: '', quarter: '', cost: '', description: '' });
     setAlert({ type: 'success', message: 'Resource created.' });
   };
 
@@ -1752,7 +2196,7 @@ function App() {
                 </label>
                 <label>
                   Interests
-                  <input name="preferences" type="text" placeholder="beach, food, culture" />
+                  {renderInterestPicker(registrationPreferences, setRegistrationPreferences)}
                 </label>
                 <button type="submit" className="button button-primary">Register</button>
               </form>
@@ -1765,15 +2209,34 @@ function App() {
 
         {page === 'dashboard' && token && (
           <section className="dashboard-section">
+            <div className="app-layout">
+              <aside className="app-menu">
+                <h3>Menu</h3>
+                <div className="app-menu-list">
+                  {dashboardMenuItems.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={dashboardView === item.id ? 'active' : ''}
+                      onClick={() => setDashboardView(item.id)}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </aside>
+              <div className="app-page">
+            {dashboardView === 'overview' && (
+            <>
             <div className="grid-2">
               <div className="panel panel-primary">
                 <h2>Welcome back</h2>
                 <p>Access your itineraries, event receipts, and community groups in one place.</p>
                 <div className="dashboard-actions">
-                  <button type="button" className="button button-secondary" onClick={() => document.getElementById('create-itinerary')?.scrollIntoView({ behavior: 'smooth' })}>
+                  <button type="button" className="button button-secondary" onClick={() => setDashboardView('itineraries')}>
                     Create itinerary
                   </button>
-                  <button type="button" className="button button-secondary" onClick={() => document.getElementById('groups-panel')?.scrollIntoView({ behavior: 'smooth' })}>
+                  <button type="button" className="button button-secondary" onClick={() => setDashboardView('community')}>
                     Join a group
                   </button>
                 </div>
@@ -1787,7 +2250,10 @@ function App() {
                 </ul>
               </div>
             </div>
+            </>
+            )}
 
+            {dashboardView === 'settings' && (
             <div className="grid-3 mt-24">
               <div className="panel">
                 <h3>Profile preferences</h3>
@@ -1795,11 +2261,7 @@ function App() {
                 <form onSubmit={handleUpdateProfile} className="stacked-form">
                   <label>
                     Interests
-                    <input
-                      value={profilePreferences}
-                      onChange={(event) => setProfilePreferences(event.target.value)}
-                      placeholder="beach, food, culture"
-                    />
+                    {renderInterestPicker(profilePreferences, setProfilePreferences)}
                   </label>
                   <button type="submit" className="button button-secondary">Save preferences</button>
                 </form>
@@ -1833,7 +2295,7 @@ function App() {
                     <input
                       value={autocompleteQuery}
                       onChange={(event) => setAutocompleteQuery(event.target.value)}
-                      placeholder="Bali, surf, hotel"
+                      placeholder="Douala, beach, hotel"
                     />
                   </label>
                   <button type="submit" className="button button-secondary">Suggest</button>
@@ -1850,8 +2312,11 @@ function App() {
                 )}
               </div>
             </div>
+            )}
 
-            <div className="grid-3 mt-24">
+            {dashboardView === 'itineraries' && (
+            <>
+            <div className="grid-2 mt-24">
               <div className="panel">
                 <h3>Recent itineraries</h3>
                 {loading ? (
@@ -1891,9 +2356,10 @@ function App() {
                     <input
                       value={recommendationFilters.location}
                       onChange={(event) => setRecommendationFilters((prev) => ({ ...prev, location: event.target.value }))}
-                      placeholder="Asia"
+                      placeholder="Douala, Kribi, Bastos"
                     />
                   </label>
+                  {renderCameroonFilters(recommendationFilters, setRecommendationFilters)}
                   <button type="submit" className="button button-secondary">Filter</button>
                 </form>
                 {loading ? (
@@ -1932,7 +2398,7 @@ function App() {
                     <input
                       value={newItinerary.location}
                       onChange={(event) => setNewItinerary((prev) => ({ ...prev, location: event.target.value }))}
-                      placeholder="Bali"
+                      placeholder="Douala"
                       required
                     />
                   </label>
@@ -2015,7 +2481,7 @@ function App() {
                   <input
                     value={generateForm.location}
                     onChange={(event) => setGenerateForm((prev) => ({ ...prev, location: event.target.value }))}
-                    placeholder="Bali"
+                    placeholder="Kribi"
                     required
                   />
                 </label>
@@ -2061,6 +2527,11 @@ function App() {
                 </div>
               )}
             </div>
+            </>
+            )}
+
+            {dashboardView === 'discovery' && (
+            <>
             <div className="grid-2 mt-24">
               <div className="panel">
                 <h3>Destination search</h3>
@@ -2070,7 +2541,7 @@ function App() {
                     <input
                       value={searchFilters.q}
                       onChange={(event) => setSearchFilters((prev) => ({ ...prev, q: event.target.value }))}
-                      placeholder="Paris, Bali, beach"
+                      placeholder="Douala, Kribi, beach"
                     />
                   </label>
                   <label>
@@ -2081,14 +2552,7 @@ function App() {
                       placeholder="food"
                     />
                   </label>
-                  <label>
-                    Continent
-                    <input
-                      value={searchFilters.continent}
-                      onChange={(event) => setSearchFilters((prev) => ({ ...prev, continent: event.target.value }))}
-                      placeholder="Asia"
-                    />
-                  </label>
+                  {renderCameroonFilters(searchFilters, setSearchFilters)}
                   <label>
                     Max daily cost ({currencyLabel})
                     <input
@@ -2106,14 +2570,57 @@ function App() {
                     <ul className="list-card">
                       {searchResults.map((dest) => (
                         <li key={dest.name}>
+                          {dest.image_url && <img className="resource-thumb" src={dest.image_url} alt={dest.name} />}
                           <strong>{dest.name}</strong>
-                          <p>{dest.country} • {dest.continent}</p>
+                          <p>{dest.region} • {dest.division} • {dest.city}</p>
+                          {dest.quarter && <p className="small-text">{dest.quarter}</p>}
+                          <p>{dest.description}</p>
                         </li>
                       ))}
                     </ul>
                   </div>
                 )}
               </div>
+              <div className="panel">
+                <h3>Personalised city suggestions</h3>
+                {cityRecommendations.length === 0 ? (
+                  <p>No city suggestions yet. Browse or save places to train your suggestions.</p>
+                ) : (
+                  <ul className="list-card">
+                    {cityRecommendations.map((city) => (
+                      <li key={city.city}>
+                        {city.image_url && <img className="resource-thumb" src={city.image_url} alt={city.city} />}
+                        <strong>{city.city}</strong>
+                        <p>{city.region} • {city.division}</p>
+                        <p className="small-text">Match score: {city.match_score} · {city.places_count} places</p>
+                        {city.signals?.preference_matches?.length > 0 && (
+                          <p className="small-text">Interests: {city.signals.preference_matches.join(', ')}</p>
+                        )}
+                        {city.top_places?.length > 0 && (
+                          <div className="inline-actions wrap-actions">
+                            {city.top_places.map((place) => (
+                              <button
+                                key={place.id}
+                                type="button"
+                                className="button button-secondary"
+                                onClick={() => handleSavePlace(place)}
+                              >
+                                Save {place.name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+            </>
+            )}
+
+            {dashboardView === 'community' && (
+            <div className="grid-2 mt-24">
               <div className="panel" id="groups-panel">
                 <h3>Groups</h3>
                 <form onSubmit={handleCreateGroup} className="stacked-form">
@@ -2122,7 +2629,7 @@ function App() {
                     <input
                       value={newGroupName}
                       onChange={(event) => setNewGroupName(event.target.value)}
-                      placeholder="Bali Travelers"
+                      placeholder="Cameroon Travelers"
                       required
                     />
                   </label>
@@ -2160,6 +2667,8 @@ function App() {
                 )}
               </div>
             </div>
+            )}
+            {dashboardView === 'discovery' && (
             <div className="grid-2 mt-24">
               <div className="panel">
                 <h3>Trip suggestions</h3>
@@ -2169,10 +2678,10 @@ function App() {
                     <input
                       value={suggestionFilters.location}
                       onChange={(event) => setSuggestionFilters((prev) => ({ ...prev, location: event.target.value }))}
-                      placeholder="Bali"
-                      required
+                      placeholder="Douala, Akwa"
                     />
                   </label>
+                  {renderCameroonFilters(suggestionFilters, setSuggestionFilters)}
                   <label>
                     Budget ({currencyLabel})
                     <input
@@ -2194,7 +2703,21 @@ function App() {
                         ) : (
                           <ul className="plain-list">
                             {items.map((item) => (
-                              <li key={item.id || item.name}>{item.name}</li>
+                              <li key={item.id || item.name}>
+                                <span>
+                                  {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} />}
+                                  <strong>{item.name}</strong>
+                                  {item.location && <small>{item.location}</small>}
+                                  {item.cost_per_night && <small>{formatMoney(item.cost_per_night)} / night</small>}
+                                  {item.cost && <small>{formatMoney(item.cost)}</small>}
+                                </span>
+                                {item.map_info?.google_map_url && (
+                                  <a href={item.map_info.google_map_url} target="_blank" rel="noreferrer" onClick={() => recordBrowsingEvent(item, 'map_open')}>Map</a>
+                                )}
+                                {type === 'places' && (
+                                  <button type="button" className="link-button" onClick={() => handleSavePlace(item)}>Save</button>
+                                )}
+                              </li>
                             ))}
                           </ul>
                         )}
@@ -2203,6 +2726,10 @@ function App() {
                   </div>
                 )}
               </div>
+            </div>
+            )}
+            {dashboardView === 'media' && (
+            <div className="grid-2 mt-24">
               <div className="panel">
                 <h3>Shared media feed</h3>
                 {media.length === 0 ? (
@@ -2212,7 +2739,11 @@ function App() {
                     {media.slice(0, 5).map((item) => (
                       <li key={item.id}>
                         <strong>{item.caption || item.url}</strong>
-                        <p className="small-text">By {item.username} · {item.likes?.length || 0} likes · {item.comments?.length || 0} comments</p>
+                        <p className="small-text">
+                          By {item.username} · {item.likes?.length || 0} likes · {item.comments?.length || 0} comments
+                          {item.place_name ? ` · ${item.place_name}` : ''}
+                          {item.city ? `, ${item.city}` : ''}
+                        </p>
                         {item.type === 'photo' && <img src={item.url} alt={item.caption || 'Shared travel media'} />}
                         <div className="inline-actions">
                           <button type="button" className="button button-secondary" onClick={() => handleLikeMedia(item.id)}>Like</button>
@@ -2238,7 +2769,64 @@ function App() {
                   </ul>
                 )}
               </div>
+              <div className="panel">
+                <h3>Upload traveller photo</h3>
+                <form onSubmit={handleShareMedia} className="stacked-form">
+                  <label>
+                    Photo URL
+                    <input
+                      value={newMediaUrl}
+                      onChange={(event) => setNewMediaUrl(event.target.value)}
+                      placeholder="https://example.com/photo.jpg"
+                    />
+                  </label>
+                  <label>
+                    Upload file
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      onChange={(event) => setNewMediaFile(event.target.files?.[0] || null)}
+                    />
+                  </label>
+                  <label>
+                    Caption
+                    <input
+                      value={newMediaCaption}
+                      onChange={(event) => setNewMediaCaption(event.target.value)}
+                      placeholder="Lobe Falls from the beach"
+                    />
+                  </label>
+                  <label>
+                    Place
+                    <select value={newMediaPlaceId} onChange={(event) => setNewMediaPlaceId(event.target.value)}>
+                      <option value="">No linked place</option>
+                      {resources.places.map((place) => (
+                        <option key={place.id} value={place.id}>{place.name} · {place.city || place.region}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Type
+                    <select value={newMediaType} onChange={(event) => setNewMediaType(event.target.value)}>
+                      <option value="photo">Photo</option>
+                      <option value="video">Video</option>
+                    </select>
+                  </label>
+                  <label>
+                    Group
+                    <select value={mediaGroupId} onChange={(event) => setMediaGroupId(event.target.value)}>
+                      <option value="">Public</option>
+                      {groups.map((group) => (
+                        <option key={group.id} value={group.id}>{group.name}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <button type="submit" className="button button-primary">Share media</button>
+                </form>
+              </div>
             </div>
+            )}
+            {dashboardView === 'resources' && (
             <div className="panel mt-24">
               <h3>Resource management</h3>
               <form onSubmit={handleCreateResource} className="resource-form">
@@ -2256,8 +2844,9 @@ function App() {
                 </label>
                 <label>
                   Location
-                  <input value={newResource.location} onChange={(event) => setNewResource((prev) => ({ ...prev, location: event.target.value }))} required />
+                  <input value={newResource.location} onChange={(event) => setNewResource((prev) => ({ ...prev, location: event.target.value }))} placeholder="Akwa, Douala" />
                 </label>
+                {renderCameroonFilters(newResource, setNewResource)}
                 <label>
                   Cost ({currencyLabel})
                   <input type="number" value={newResource.cost} onChange={(event) => setNewResource((prev) => ({ ...prev, cost: event.target.value }))} required />
@@ -2268,6 +2857,51 @@ function App() {
                 </label>
                 <button type="submit" className="button button-primary">Add resource</button>
               </form>
+              <div className="panel panel-nested mt-16">
+                <h4>Compare hotel prices</h4>
+                <form onSubmit={handleCompareHotels} className="resource-form">
+                  <label>
+                    Location
+                    <input
+                      value={hotelCompareFilters.location}
+                      onChange={(event) => setHotelCompareFilters((prev) => ({ ...prev, location: event.target.value }))}
+                      placeholder="Kribi"
+                    />
+                  </label>
+                  <label>
+                    City
+                    <input
+                      value={hotelCompareFilters.city}
+                      onChange={(event) => setHotelCompareFilters((prev) => ({ ...prev, city: event.target.value }))}
+                      placeholder="Kribi"
+                    />
+                  </label>
+                  <label>
+                    Max price ({currencyLabel})
+                    <input
+                      type="number"
+                      value={hotelCompareFilters.maxPrice}
+                      onChange={(event) => setHotelCompareFilters((prev) => ({ ...prev, maxPrice: event.target.value }))}
+                      placeholder="60000"
+                    />
+                  </label>
+                  <button type="submit" className="button button-secondary">Compare</button>
+                </form>
+                {hotelComparison && (
+                  <ul className="plain-list mt-16">
+                    {hotelComparison.hotels.map((hotel) => (
+                      <li key={hotel.id}>
+                        <span>
+                          <strong>#{hotel.price_rank} {hotel.name}</strong>
+                          <small>{hotel.location}</small>
+                          <small>{formatMoney(hotel.cost_per_night)} / night</small>
+                        </span>
+                        {hotel.map_info?.google_map_url && <a href={hotel.map_info.google_map_url} target="_blank" rel="noreferrer">Map</a>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
               <div className="resource-columns mt-16">
                 {Object.entries(resources).map(([type, items]) => (
                   <div key={type}>
@@ -2278,7 +2912,31 @@ function App() {
                       <ul className="plain-list">
                         {items.slice(0, 6).map((item) => (
                           <li key={item.id}>
-                            <span>{item.name}</span>
+                            <span>
+                              {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} />}
+                              <strong>{item.name}</strong>
+                              {item.location && <small>{item.location}</small>}
+                              {item.id && <small>ID: {item.id}</small>}
+                              {item.cost_per_night && <small>{formatMoney(item.cost_per_night)} / night</small>}
+                              {item.cost !== undefined && <small>{formatMoney(item.cost)}</small>}
+                              {item.related_services?.length > 0 && <small>{item.related_services.join(' • ')}</small>}
+                            </span>
+                            {item.map_info?.google_map_url && <a href={item.map_info.google_map_url} target="_blank" rel="noreferrer" onClick={() => type === 'places' && recordBrowsingEvent(item, 'map_open')}>Map</a>}
+                            {type === 'places' && (
+                              <>
+                                <button type="button" className="link-button" onClick={() => handleSavePlace(item)}>Save</button>
+                                <button
+                                  type="button"
+                                  className="link-button"
+                                  onClick={() => {
+                                    setNewMediaPlaceId(item.id);
+                                    setDashboardView('media');
+                                  }}
+                                >
+                                  Add photo
+                                </button>
+                              </>
+                            )}
                             <button type="button" className="link-button" onClick={() => handleDeleteResource(type, item.id)}>Remove</button>
                           </li>
                         ))}
@@ -2332,6 +2990,29 @@ function App() {
                   </ul>
                 </div>
               )}
+              <div className="mt-16">
+                <h4>Saved places waitlist</h4>
+                {savedPlaces.length === 0 ? (
+                  <p className="small-text">No saved places yet.</p>
+                ) : (
+                  <ul className="plain-list">
+                    {savedPlaces.map((place) => (
+                      <li key={place.place_id}>
+                        <span>
+                          <strong>{place.name}</strong>
+                          <small>{place.city || place.location} · {place.region}</small>
+                          {place.cost !== undefined && <small>{formatMoney(place.cost)}</small>}
+                        </span>
+                        {place.map_info?.google_map_url && <a href={place.map_info.google_map_url} target="_blank" rel="noreferrer">Map</a>}
+                        <button type="button" className="link-button" onClick={() => handleRemoveSavedPlace(place.place_id)}>Remove</button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+            )}
+              </div>
             </div>
           </section>
         )}
@@ -2412,6 +3093,100 @@ function App() {
                       </ul>
                     ) : (
                       <p>No payments recorded yet.</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid-2 mt-24">
+                  <div className="panel">
+                    <h3>Booking confirmation</h3>
+                    <form onSubmit={handleCreateReservation} className="stacked-form">
+                      <label>
+                        Type
+                        <select value={reservationForm.type} onChange={(event) => setReservationForm((prev) => ({ ...prev, type: event.target.value }))}>
+                          <option value="hotel">Hotel</option>
+                          <option value="activity">Activity</option>
+                          <option value="place">Place</option>
+                          <option value="transport">Transport</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </label>
+                      <label>
+                        Trip stage
+                        <select
+                          value={reservationForm.stageId}
+                          onChange={(event) => {
+                            const stage = selectedItinerary.stages?.find((item) => item.id === event.target.value);
+                            setReservationForm((prev) => ({
+                              ...prev,
+                              stageId: event.target.value,
+                              itemName: stage?.name || prev.itemName,
+                              amount: stage?.cost !== undefined ? String(stage.cost) : prev.amount,
+                              type: stage?.type || prev.type,
+                            }));
+                          }}
+                        >
+                          <option value="">Manual booking</option>
+                          {(selectedItinerary.stages || []).map((stage) => (
+                            <option key={stage.id} value={stage.id}>{stage.name}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Name
+                        <input value={reservationForm.itemName} onChange={(event) => setReservationForm((prev) => ({ ...prev, itemName: event.target.value }))} required />
+                      </label>
+                      <label>
+                        Provider
+                        <input value={reservationForm.provider} onChange={(event) => setReservationForm((prev) => ({ ...prev, provider: event.target.value }))} placeholder="Hotel, guide, agency" />
+                      </label>
+                      <label>
+                        Amount ({currencyLabel})
+                        <input type="number" value={reservationForm.amount} onChange={(event) => setReservationForm((prev) => ({ ...prev, amount: event.target.value }))} required />
+                      </label>
+                      <label>
+                        Quantity
+                        <input type="number" min="1" value={reservationForm.quantity} onChange={(event) => setReservationForm((prev) => ({ ...prev, quantity: event.target.value }))} />
+                      </label>
+                      <label>
+                        Notes
+                        <input value={reservationForm.notes} onChange={(event) => setReservationForm((prev) => ({ ...prev, notes: event.target.value }))} />
+                      </label>
+                      <button type="submit" className="button button-primary">Confirm booking</button>
+                    </form>
+                  </div>
+                  <div className="panel">
+                    <h3>Reserved places</h3>
+                    {selectedItinerary.reservations?.length > 0 ? (
+                      <ul className="list-card">
+                        {selectedItinerary.reservations.map((reservation) => (
+                          <li key={reservation.id}>
+                            <strong>{reservation.item_name}</strong>
+                            <p>{reservation.type} · {reservation.status} · {formatMoney(reservation.amount)}</p>
+                            <p className="small-text">{reservation.confirmation_code} · Receipt {reservation.receipt_id}</p>
+                            <div className="inline-actions">
+                              <button
+                                type="button"
+                                className="button button-secondary"
+                                onClick={() => handleModifyReservation(reservation.id, { quantity: Number(reservation.quantity || 1) + 1 })}
+                                disabled={reservation.status === 'cancelled'}
+                              >
+                                Add one
+                              </button>
+                              <button
+                                type="button"
+                                className="button button-tertiary"
+                                onClick={() => handleCancelReservation(reservation.id)}
+                                disabled={reservation.status === 'cancelled'}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No reservations confirmed yet.</p>
                     )}
                   </div>
                 </div>
@@ -2547,6 +3322,54 @@ function App() {
                   <div className="panel">
                     <h3>Map metadata</h3>
                     <button type="button" className="button button-secondary" onClick={handleLoadMapInfo}>Load map</button>
+                    <form onSubmit={handleUpdateTracking} className="stacked-form mt-16">
+                      <label>
+                        Latitude
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={trackingForm.latitude}
+                          onChange={(event) => setTrackingForm((prev) => ({ ...prev, latitude: event.target.value }))}
+                          placeholder="4.051100"
+                        />
+                      </label>
+                      <label>
+                        Longitude
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={trackingForm.longitude}
+                          onChange={(event) => setTrackingForm((prev) => ({ ...prev, longitude: event.target.value }))}
+                          placeholder="9.767900"
+                        />
+                      </label>
+                      <label>
+                        Current location
+                        <input
+                          value={trackingForm.currentLocation}
+                          onChange={(event) => setTrackingForm((prev) => ({ ...prev, currentLocation: event.target.value }))}
+                          placeholder="Akwa, Douala"
+                        />
+                      </label>
+                      <button type="submit" className="button button-primary">Update live tracking</button>
+                    </form>
+                    {(trackingInfo || selectedItinerary.live_tracking) && (
+                      <div className="map-info mt-16">
+                        <p><strong>Live position:</strong> {(trackingInfo || selectedItinerary.live_tracking).current_location}</p>
+                        <p>{(trackingInfo || selectedItinerary.live_tracking).latitude}, {(trackingInfo || selectedItinerary.live_tracking).longitude}</p>
+                        {(trackingInfo || selectedItinerary.live_tracking).google_map_url && (
+                          <a href={(trackingInfo || selectedItinerary.live_tracking).google_map_url} target="_blank" rel="noreferrer">Open live point</a>
+                        )}
+                        {(trackingInfo || selectedItinerary.live_tracking).google_maps_embed_url && (
+                          <iframe
+                            className="map-embed"
+                            title="Live trip tracking map"
+                            src={(trackingInfo || selectedItinerary.live_tracking).google_maps_embed_url}
+                            loading="lazy"
+                          />
+                        )}
+                      </div>
+                    )}
                     {mapInfo && (
                       <div className="map-info">
                         <p><strong>Location:</strong> {mapInfo.location}</p>
@@ -2808,6 +3631,15 @@ function App() {
                           ))}
                         </select>
                       </label>
+                      <label>
+                        Place
+                        <select value={newMediaPlaceId} onChange={(event) => setNewMediaPlaceId(event.target.value)}>
+                          <option value="">No linked place</option>
+                          {resources.places.map((place) => (
+                            <option key={place.id} value={place.id}>{place.name} · {place.city || place.region}</option>
+                          ))}
+                        </select>
+                      </label>
                       <button type="submit" className="button button-primary">Share media</button>
                     </form>
                   </div>
@@ -2822,4 +3654,5 @@ function App() {
 }
 
 export default App;
+
 

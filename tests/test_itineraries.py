@@ -17,15 +17,15 @@ def temp_data_files(monkeypatch, tmp_path):
     activities_file = tmp_path / "activities.json"
     places_file = tmp_path / "places.json"
     hotels_file.write_text(
-        json.dumps([{"id": "hotel-1", "name": "Bali Stay", "location": "Bali", "cost_per_night": 90}]),
+        json.dumps([{"id": "hotel-1", "name": "Kribi Beach Stay", "location": "Kribi", "cost_per_night": 55000}]),
         encoding="utf-8",
     )
     activities_file.write_text(
-        json.dumps([{"id": "activity-1", "name": "Surf Lesson", "location": "Bali", "cost": 40, "duration_hours": 2}]),
+        json.dumps([{"id": "activity-1", "name": "Lobe Falls Tour", "location": "Kribi", "cost": 30000, "duration_hours": 2}]),
         encoding="utf-8",
     )
     places_file.write_text(
-        json.dumps([{"id": "place-1", "name": "Uluwatu", "location": "Bali", "cost": 10, "duration_hours": 1.5}]),
+        json.dumps([{"id": "place-1", "name": "Lobe Falls", "location": "Kribi", "cost": 10000, "duration_hours": 1.5}]),
         encoding="utf-8",
     )
     monkeypatch.setattr("app.models.HOTELS_FILE", str(hotels_file))
@@ -71,7 +71,7 @@ def register_and_login(client, username="alice"):
 def test_create_itinerary_requires_auth(client):
     response = client.post(
         "/api/itineraries",
-        data=json.dumps({"title": "Trip", "location": "Bali"}),
+        data=json.dumps({"title": "Trip", "location": "Kribi"}),
         content_type="application/json",
     )
     assert response.status_code == 401
@@ -85,10 +85,10 @@ def test_create_itinerary_and_join(client):
         data=json.dumps(
             {
                 "title": "Beach Escape",
-                "location": "Bali",
+                "location": "Kribi",
                 "hotel": {"name": "Seaside Hotel", "cost_per_night": 120},
-                "activities": [{"name": "Surf Lesson", "cost": 50}],
-                "places_to_visit": [{"name": "Uluwatu", "cost": 0}],
+                "activities": [{"name": "Lobe Falls Tour", "cost": 50}],
+                "places_to_visit": [{"name": "Lobe Falls", "cost": 0}],
             }
         ),
         content_type="application/json",
@@ -96,7 +96,8 @@ def test_create_itinerary_and_join(client):
     assert response.status_code == 201
     itinerary = response.get_json()
     assert itinerary["title"] == "Beach Escape"
-    assert itinerary["location"] == "Bali"
+    assert itinerary["location"] == "Kribi, Cameroon"
+    assert itinerary["country"] == "Cameroon"
     assert itinerary["payment_status"] == "pending"
     assert itinerary["participants"] == ["alice"]
     assert itinerary["duration_hours"] > 0
@@ -119,7 +120,7 @@ def test_pay_itinerary_generates_receipt(client):
     create_resp = client.post(
         "/api/itineraries",
         headers={"Authorization": f"Bearer {token}"},
-        data=json.dumps({"title": "Trip", "location": "Paris"}),
+        data=json.dumps({"title": "Trip", "location": "Yaounde"}),
         content_type="application/json",
     )
     itinerary_id = create_resp.get_json()["id"]
@@ -139,6 +140,88 @@ def test_pay_itinerary_generates_receipt(client):
     assert receipt["net_amount"] == 142.5
 
 
+def test_booking_reservation_generates_receipt_and_can_be_modified_or_cancelled(client):
+    token = register_and_login(client)
+    create_resp = client.post(
+        "/api/itineraries",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({
+            "title": "Kribi Plan",
+            "location": "Kribi",
+            "hotel": {"name": "Kribi Beach Stay", "cost_per_night": 55000},
+            "places_to_visit": [{"id": "place-1", "name": "Lobe Falls", "cost": 10000}],
+        }),
+        content_type="application/json",
+    )
+    itinerary = create_resp.get_json()
+
+    reserve_resp = client.post(
+        f"/api/itineraries/{itinerary['id']}/reservations",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({
+            "type": "hotel",
+            "stage_id": "hotel",
+            "item_name": "Kribi Beach Stay",
+            "amount": 55000,
+            "payment_method": "mobile",
+        }),
+        content_type="application/json",
+    )
+    assert reserve_resp.status_code == 201
+    reservation = reserve_resp.get_json()["reservation"]
+    receipt = reserve_resp.get_json()["receipt"]
+    assert reservation["status"] == "confirmed"
+    assert reservation["receipt_id"] == receipt["id"]
+    assert reservation["confirmation_code"].startswith("GT-")
+    assert receipt["amount"] == 55000.0
+
+    patch_resp = client.patch(
+        f"/api/itineraries/{itinerary['id']}/reservations/{reservation['id']}",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"quantity": 2, "notes": "Two rooms"}),
+        content_type="application/json",
+    )
+    assert patch_resp.status_code == 200
+    assert patch_resp.get_json()["reservation"]["quantity"] == 2
+    assert patch_resp.get_json()["reservation"]["history"][-1]["action"] == "modified"
+
+    cancel_resp = client.delete(
+        f"/api/itineraries/{itinerary['id']}/reservations/{reservation['id']}",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"reason": "Changed dates"}),
+        content_type="application/json",
+    )
+    assert cancel_resp.status_code == 200
+    assert cancel_resp.get_json()["reservation"]["status"] == "cancelled"
+    assert cancel_resp.get_json()["reservation"]["cancellation_reason"] == "Changed dates"
+
+
+def test_live_tracking_updates_map_position(client):
+    token = register_and_login(client)
+    create_resp = client.post(
+        "/api/itineraries",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"title": "Douala Live", "location": "Douala"}),
+        content_type="application/json",
+    )
+    itinerary_id = create_resp.get_json()["id"]
+    tracking_resp = client.patch(
+        f"/api/itineraries/{itinerary_id}/tracking",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"latitude": 4.0511, "longitude": 9.7679, "current_location": "Akwa, Douala"}),
+        content_type="application/json",
+    )
+    assert tracking_resp.status_code == 200
+    tracking = tracking_resp.get_json()["tracking"]
+    assert tracking["latitude"] == 4.0511
+    assert tracking["longitude"] == 9.7679
+    assert tracking["trail"][0]["google_map_url"].startswith("https://www.google.com/maps/search")
+
+    get_resp = client.get(f"/api/itineraries/{itinerary_id}/tracking", headers={"Authorization": f"Bearer {token}"})
+    assert get_resp.status_code == 200
+    assert get_resp.get_json()["tracking"]["current_location"] == "Akwa, Douala, Cameroon"
+
+
 def test_itinerary_pay_requires_access_and_positive_amount(client):
     owner_token = register_and_login(client, "alice")
     other_token = register_and_login(client, "bob")
@@ -146,7 +229,7 @@ def test_itinerary_pay_requires_access_and_positive_amount(client):
     create_resp = client.post(
         "/api/itineraries",
         headers={"Authorization": f"Bearer {owner_token}"},
-        data=json.dumps({"title": "Trip", "location": "Paris"}),
+        data=json.dumps({"title": "Trip", "location": "Yaounde"}),
         content_type="application/json",
     )
     itinerary_id = create_resp.get_json()["id"]
@@ -189,12 +272,12 @@ def test_trips_alias_generate_progress_and_feedback(client):
     generate_resp = client.post(
         "/api/trips/generate",
         headers={"Authorization": f"Bearer {token}"},
-        data=json.dumps({"location": "Bali", "budget": 200, "duration_days": 3, "start_date": "2026-08-01"}),
+        data=json.dumps({"location": "Kribi", "budget": 100000, "duration_days": 3, "start_date": "2026-08-01"}),
         content_type="application/json",
     )
     assert generate_resp.status_code == 200
     generated = generate_resp.get_json()["generated_itinerary"]
-    assert generated["hotel"]["name"] == "Bali Stay"
+    assert generated["hotel"]["name"] == "Kribi Beach Stay"
     assert generated["stage_summary"]["stage_count"] == 3
 
     create_resp = client.post(
@@ -213,7 +296,7 @@ def test_trips_alias_generate_progress_and_feedback(client):
             "status": "in_progress",
             "current_stage_id": "activity-1",
             "completed_stage_ids": ["hotel"],
-            "current_location": "Bali beach",
+            "current_location": "Kribi beach",
             "progress_percent": 50,
         }),
         content_type="application/json",
@@ -240,7 +323,7 @@ def test_shared_edit_permission_and_notifications(client):
     create_resp = client.post(
         "/api/itineraries",
         headers={"Authorization": f"Bearer {owner_token}"},
-        data=json.dumps({"title": "Original", "location": "Bali"}),
+        data=json.dumps({"title": "Original", "location": "Kribi"}),
         content_type="application/json",
     )
     itinerary_id = create_resp.get_json()["id"]
@@ -286,10 +369,10 @@ def test_invite_budget_exports_audit_and_checklist(client):
         "/api/itineraries",
         headers={"Authorization": f"Bearer {owner_token}"},
         data=json.dumps({
-            "title": "Bali Plan",
-            "location": "Bali",
-            "hotel": {"name": "Bali Stay", "cost_per_night": 90},
-            "activities": [{"id": "surf", "name": "Surf", "cost": 40}],
+            "title": "Kribi Plan",
+            "location": "Kribi",
+            "hotel": {"name": "Kribi Beach Stay", "cost_per_night": 55000},
+            "activities": [{"id": "lobe", "name": "Lobe Falls Tour", "cost": 30000}],
             "start_date": "2026-08-01",
             "end_date": "2026-08-03",
         }),
@@ -314,7 +397,7 @@ def test_invite_budget_exports_audit_and_checklist(client):
     assert join_resp.get_json()["itinerary"]["shared_permissions"]["bob"] == "edit"
 
     checklist_resp = client.post(
-        f"/api/itineraries/{itinerary_id}/stages/surf/checklist",
+        f"/api/itineraries/{itinerary_id}/stages/lobe/checklist",
         headers={"Authorization": f"Bearer {guest_token}"},
         data=json.dumps({"text": "Book instructor"}),
         content_type="application/json",

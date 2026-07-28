@@ -15,20 +15,26 @@ def temp_data_files(monkeypatch, tmp_path):
     destinations_file.write_text(
         json.dumps([
             {
-                "name": "Bali",
-                "country": "Indonesia",
-                "continent": "Asia",
-                "description": "Beaches and food markets",
+                "name": "Kribi",
+                "country": "Cameroon",
+                "continent": "Africa",
+                "region": "South",
+                "division": "Ocean",
+                "city": "Kribi",
+                "description": "Beaches, seafood, and Lobe Falls",
                 "tags": ["beach", "food"],
-                "avg_cost_per_day": 80,
+                "avg_cost_per_day": 55000,
             },
             {
-                "name": "Paris",
-                "country": "France",
-                "continent": "Europe",
-                "description": "Museums and fine dining",
+                "name": "Yaounde",
+                "country": "Cameroon",
+                "continent": "Africa",
+                "region": "Centre",
+                "division": "Mfoundi",
+                "city": "Yaounde",
+                "description": "Museums and restaurants",
                 "tags": ["culture", "food"],
-                "avg_cost_per_day": 220,
+                "avg_cost_per_day": 40000,
             },
         ]),
         encoding="utf-8",
@@ -87,7 +93,7 @@ def test_recommendations_use_budget_and_feedback_signals(client):
     create_resp = client.post(
         "/api/itineraries",
         headers={"Authorization": f"Bearer {token}"},
-        data=json.dumps({"title": "Bali Trip", "location": "Bali"}),
+        data=json.dumps({"title": "Kribi Trip", "location": "Kribi"}),
         content_type="application/json",
     )
     itinerary_id = create_resp.get_json()["id"]
@@ -99,10 +105,11 @@ def test_recommendations_use_budget_and_feedback_signals(client):
     )
 
     response = client.get(
-        "/api/recommendations?budget=100&limit=2",
+        "/api/recommendations?budget=60000&region=South&limit=2",
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
     recommendations = response.get_json()
-    assert [item["name"] for item in recommendations] == ["Bali"]
+    assert [item["name"] for item in recommendations] == ["Kribi"]
     assert recommendations[0]["signals"]["feedback_matches"] == ["beach"]
+    assert recommendations[0]["country"] == "Cameroon"

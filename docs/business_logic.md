@@ -13,16 +13,16 @@ The core business logic is organized around:
 - Shareable travel itineraries (future phase)
 
 ## Business Goals
-- Allow users to search travel destinations and get personalised recommendations.
+- Allow users to search Cameroon travel destinations and get personalised recommendations.
 - Allow users to register, log in, and authenticate via Google.
 - Allow users to create, join, view, and modify trips.
 - Allow hotels, activities, and places to be added, removed, and referenced within a trip.
 - Support real-time tracking and trip stage advancement.
 - Calculate trip cost and duration per stage and overall.
 - Support trip and itinerary sharing with other users.
-- Support research by budget, feedback, location, and other criteria.
+- Support research by budget, feedback, Cameroon region/division/subdivision/city/quarter, and other criteria.
 - Support multiple user roles for different access levels.
-- Deliver a system that can scale to millions of users globally.
+- Deliver a system that can scale to millions of users while keeping the product geography focused on Cameroon.
 - Keep the system available 24/7 with minimal downtime.
 - Make recommendations based on user preferences, history, and trip feedback.
 
@@ -36,18 +36,19 @@ Benchmarks include:
 Takeaway features for GlobeTrotter:
 - Offer both username/password and Google authentication.
 - Provide a trip dashboard where users can build and share trips.
-- Use filterable destination search, budget planning, and continent-based discovery.
+- Use filterable Cameroon destination search, budget planning, and region/division/subdivision/city/quarter discovery.
 - Build a recommendation service that ranks destinations by user preferences and travel history.
 - Use local AI-style trip generation and catalogue autocomplete for place discovery workflows.
 
 ## User Account Management
 ### Register
-- Accepts `username`, `password`, and optional `preferences`.
+- Accepts `username`, `password`, and optional predefined `preferences`.
 - Supports registration through Google OAuth as an alternate login path.
 - Validates required fields.
 - Ensures the username is unique.
 - Hashes passwords using Werkzeug before saving.
 - Persists new users into `data/users.json`.
+- Interest values are controlled by `app/interests.py`; unknown free-form values are ignored.
 
 ### Login
 - Accepts `username` and `password`.
@@ -65,13 +66,19 @@ Takeaway features for GlobeTrotter:
 ## Destination Discovery
 ### Destination Catalogue
 - The catalogue is loaded from `data/destinations.json`.
-- Each destination record includes name, country, continent, tags, description, and average cost.
+- Each destination record includes name, country, region, division, subdivision, city, quarters, tags, description, and average cost.
+- Cameroon is the required country focus for location-facing records. Locations are normalized to include `Cameroon` and enriched with inferred administrative metadata when possible.
+- Destination, place, hotel, and activity resources can include image URLs, source URLs, related services, cost notes, and Google Maps metadata.
 
 ### Search Logic
 - Supports optional filters:
-  - `q`: free-text search against name, country, and description
+  - `q`: free-text search against name, Cameroon geography, and description
   - `tag`: filter by interest tag
-  - `continent`: filter by continent
+  - `region`: filter by Cameroon region
+  - `division`: filter by Cameroon division/department
+  - `subdivision`: filter by subdivision/arrondissement
+  - `city`: filter by city or town
+  - `quarter`: filter by quarter or neighbourhood
   - `max_cost`: filter by maximum average daily cost
 - A destination matches only if it satisfies all supplied filters.
 - Search returns all matching destination objects.
@@ -84,7 +91,7 @@ Takeaway features for GlobeTrotter:
 - Sorts destinations by score descending and then by name.
 - Returns a limited result set (default 5) via an optional `limit` parameter.
 - Includes `match_score` in returned objects for transparency.
-- Recommendations incorporate preferences, past trips, positive feedback tags, budget, and location criteria.
+- Recommendations incorporate preferences, past trips, positive feedback tags, budget, and Cameroon geography criteria.
 
 ## Research and Discovery
 - Users shall be able to research travel locations and available trips by budget, location, user feedback, and other criteria.
@@ -147,6 +154,7 @@ Takeaway features for GlobeTrotter:
 - Administrators can add hotels, activities, and places so that all users can discover them.
 - Costs and durations are attached to each item.
 - Users can view resources through map metadata and suggested resources when building a trip.
+- Seed resources include researched Cameroon attractions across natural sites, parks, monuments, museums, beaches, palaces, hotels, and guided activities.
 - Administrators can manage resources through dedicated endpoints for hotels, activities, and places.
 
 ### Real-Time Tracking
