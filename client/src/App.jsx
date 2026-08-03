@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const API_BASE = '/api';
 const DEFAULT_CURRENCY = 'XAF';
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 const CAMEROON_MAP_EMBED = 'https://www.google.com/maps?q=Cameroon&output=embed';
 const CAMEROON_MAP_URL = 'https://www.google.com/maps/search/?api=1&query=Cameroon';
 const CURRENCY_OPTIONS = [
@@ -36,6 +37,188 @@ const PREDEFINED_INTERESTS = [
   'family',
   'photography',
 ];
+
+let googleMapsLoadPromise;
+
+function loadGoogleMaps(apiKey) {
+  if (!apiKey) {
+    return Promise.reject(new Error('Google Maps API key is missing.'));
+  }
+  if (window.google?.maps) {
+    return Promise.resolve(window.google);
+  }
+  if (!googleMapsLoadPromise) {
+    googleMapsLoadPromise = new Promise((resolve, reject) => {
+      const existing = document.querySelector('script[data-globetrotter-google-maps]');
+      if (existing) {
+        existing.addEventListener('load', () => resolve(window.google));
+        existing.addEventListener('error', reject);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async`;
+      script.async = true;
+      script.defer = true;
+      script.dataset.globetrotterGoogleMaps = 'true';
+      script.onload = () => resolve(window.google);
+      script.onerror = () => reject(new Error('Unable to load Google Maps.'));
+      document.head.appendChild(script);
+    });
+  }
+  return googleMapsLoadPromise;
+}
+
+function AdminGoogleMapPicker({ place, onChange }) {
+  const mapElementRef = useRef(null);
+  const mapRef = useRef(null);
+  const markerRef = useRef(null);
+  const geocoderRef = useRef(null);
+  const [mapStatus, setMapStatus] = useState(GOOGLE_MAPS_API_KEY ? 'loading' : 'fallback');
+  const [searchText, setSearchText] = useState(place.mapQuery || place.location || 'Cameroon');
+
+  const fallbackQuery = place.latitude && place.longitude
+    ? `${place.latitude},${place.longitude}`
+    : (place.mapQuery || place.location || 'Cameroon');
+
+  useEffect(() => {
+    setSearchText(place.mapQuery || place.location || 'Cameroon');
+  }, [place.mapQuery, place.location]);
+
+  useEffect(() => {
+    if (!GOOGLE_MAPS_API_KEY) return undefined;
+    let cancelled = false;
+    loadGoogleMaps(GOOGLE_MAPS_API_KEY)
+      .then((google) => {
+        if (cancelled || !mapElementRef.current) return;
+        const initialPosition = {
+          lat: Number(place.latitude) || 5.9631,
+          lng: Number(place.longitude) || 12.5029,
+        };
+        mapRef.current = new google.maps.Map(mapElementRef.current, {
+          center: initialPosition,
+          zoom: place.latitude && place.longitude ? 13 : 6,
+          mapTypeControl: false,
+          streetViewControl: true,
+          fullscreenControl: true,
+        });
+        markerRef.current = new google.maps.Marker({
+          position: initialPosition,
+          map: mapRef.current,
+          draggable: true,
+          title: place.name || 'Selected place',
+        });
+        geocoderRef.current = new google.maps.Geocoder();
+        markerRef.current.addListener('dragend', (event) => {
+          onChange({
+            latitude: event.latLng.lat().toFixed(6),
+            longitude: event.latLng.lng().toFixed(6),
+          });
+        });
+        mapRef.current.addListener('click', (event) => {
+          markerRef.current.setPosition(event.latLng);
+          onChange({
+            latitude: event.latLng.lat().toFixed(6),
+            longitude: event.latLng.lng().toFixed(6),
+          });
+        });
+        setMapStatus('ready');
+      })
+      .catch(() => setMapStatus('fallback'));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mapRef.current || !markerRef.current || !place.latitude || !place.longitude || !window.google?.maps) return;
+    const position = {
+      lat: Number(place.latitude),
+      lng: Number(place.longitude),
+    };
+    markerRef.current.setPosition(position);
+    mapRef.current.panTo(position);
+  }, [place.latitude, place.longitude]);
+
+  const handleSearch = () => {
+    const query = searchText.trim() || place.mapQuery || place.location || 'Cameroon';
+    if (!geocoderRef.current || !mapRef.current || !markerRef.current) {
+      onChange({ mapQuery: query, location: query });
+      return;
+    }
+    geocoderRef.current.geocode(
+      {
+        address: query,
+        componentRestrictions: { country: 'CM' },
+      },
+      (results, status) => {
+        if (status !== 'OK' || !results?.[0]) {
+          setMapStatus('search-error');
+          return;
+        }
+        const result = results[0];
+        const position = result.geometry.location;
+        markerRef.current.setPosition(position);
+        mapRef.current.panTo(position);
+        mapRef.current.setZoom(14);
+        setMapStatus('ready');
+        onChange({
+          mapQuery: result.formatted_address || query,
+          location: result.formatted_address || query,
+          latitude: position.lat().toFixed(6),
+          longitude: position.lng().toFixed(6),
+        });
+      },
+    );
+  };
+
+  return (
+    <div className="map-info map-panel">
+      <strong>{place.mapQuery || place.location || 'Cameroon'}</strong>
+      <div className="map-search-row">
+        <input
+          value={searchText}
+          onChange={(event) => setSearchText(event.target.value)}
+          placeholder="Search a Cameroon place on Google Maps"
+        />
+        <button type="button" className="button button-secondary" onClick={handleSearch}>Search map</button>
+      </div>
+      {mapStatus === 'fallback' ? (
+        <>
+          <p className="small-text">Set VITE_GOOGLE_MAPS_API_KEY to enable click-to-select and draggable marker editing.</p>
+          <iframe
+            className="map-embed map-embed-large"
+            title="Admin Google map picker"
+            src={`https://www.google.com/maps?q=${encodeURIComponent(fallbackQuery)}&output=embed`}
+            loading="lazy"
+          />
+        </>
+      ) : (
+        <div ref={mapElementRef} className="google-map-canvas" aria-label="Interactive Google map picker" />
+      )}
+      {mapStatus === 'search-error' && (
+        <p className="small-text alert-text">No Cameroon Google Maps result was found for that search.</p>
+      )}
+      <div className="map-links">
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapQuery || place.location || 'Cameroon')}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Search in Google Maps
+        </a>
+        {place.latitude && place.longitude && (
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.latitude},${place.longitude}`)}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open coordinates
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
 
 const FR_TEXT = {
   Home: 'Accueil',
@@ -458,14 +641,24 @@ function App() {
     type: 'hotels',
     name: '',
     location: '',
+    mapQuery: '',
+    latitude: '',
+    longitude: '',
     region: '',
     division: '',
     subdivision: '',
     city: '',
     quarter: '',
     cost: '',
+    costNote: '',
     description: '',
+    imageUrls: '',
+    videoUrls: '',
+    tags: '',
+    relatedServices: '',
+    sourceUrls: '',
   });
+  const [newResourceFiles, setNewResourceFiles] = useState([]);
   const [resourceReview, setResourceReview] = useState({ type: 'hotels', id: '', rating: '5', comment: '' });
   const [newItinerary, setNewItinerary] = useState({
     title: '',
@@ -542,6 +735,7 @@ function App() {
     { id: 'community', label: 'Community' },
     { id: 'media', label: 'Media' },
     { id: 'resources', label: 'Resources' },
+    ...(profile?.role === 'admin' ? [{ id: 'admin', label: 'Admin' }] : []),
     { id: 'settings', label: 'Settings' },
   ];
 
@@ -2318,17 +2512,42 @@ function App() {
       city: newResource.city,
       quarter: newResource.quarter,
       description: newResource.description.trim(),
+      tags: newResource.tags,
+      cost_note: newResource.costNote,
       [isHotel ? 'cost_per_night' : 'cost']: cost,
     };
 
-    const response = await fetch(`${API_BASE}/resources/${newResource.type}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    let response;
+    if (newResource.type === 'places') {
+      const formData = new FormData();
+      Object.entries({
+        ...payload,
+        map_query: newResource.mapQuery || location,
+        latitude: newResource.latitude,
+        longitude: newResource.longitude,
+        image_urls: newResource.imageUrls,
+        video_urls: newResource.videoUrls,
+        related_services: newResource.relatedServices,
+        source_urls: newResource.sourceUrls,
+      }).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) formData.append(key, value);
+      });
+      newResourceFiles.forEach((file) => formData.append('media_files', file));
+      response = await fetch(`${API_BASE}/resources/${newResource.type}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+    } else {
+      response = await fetch(`${API_BASE}/resources/${newResource.type}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+    }
     const result = await response.json();
     if (!response.ok) {
       setAlert({ type: 'error', message: result.error || 'Unable to create resource.' });
@@ -2338,7 +2557,28 @@ function App() {
       ...current,
       [newResource.type]: [result, ...current[newResource.type]],
     }));
-    setNewResource({ type: newResource.type, name: '', location: '', region: '', division: '', subdivision: '', city: '', quarter: '', cost: '', description: '' });
+    setNewResource({
+      type: newResource.type,
+      name: '',
+      location: '',
+      mapQuery: '',
+      latitude: '',
+      longitude: '',
+      region: '',
+      division: '',
+      subdivision: '',
+      city: '',
+      quarter: '',
+      cost: '',
+      costNote: '',
+      description: '',
+      imageUrls: '',
+      videoUrls: '',
+      tags: '',
+      relatedServices: '',
+      sourceUrls: '',
+    });
+    setNewResourceFiles([]);
     setAlert({ type: 'success', message: 'Resource created.' });
   };
 
@@ -3323,6 +3563,164 @@ function App() {
                   <button type="submit" className="button button-primary">Share media</button>
                 </form>
               </div>
+            </div>
+            )}
+            {dashboardView === 'admin' && (
+            <div className="grid-2 mt-24">
+              {profile?.role !== 'admin' ? (
+                <div className="panel">
+                  <h3>Admin dashboard</h3>
+                  <p>Admin access is required.</p>
+                </div>
+              ) : (
+                <>
+                <div className="panel">
+                  <h3>Add place to visit</h3>
+                  <form onSubmit={handleCreateResource} className="stacked-form">
+                    <label>
+                      Place name
+                      <input
+                        value={newResource.name}
+                        onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', name: event.target.value }))}
+                        placeholder="Lobe Falls"
+                        required
+                      />
+                    </label>
+                    <label>
+                      Description
+                      <textarea
+                        value={newResource.description}
+                        onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', description: event.target.value }))}
+                        placeholder="Describe why travellers should visit this place."
+                        rows="4"
+                        required
+                      />
+                    </label>
+                    <label>
+                      Entry/activity cost ({currencyLabel})
+                      <input
+                        type="number"
+                        value={newResource.cost}
+                        onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', cost: event.target.value }))}
+                        placeholder="5000"
+                        required
+                      />
+                    </label>
+                    <label>
+                      Cost note
+                      <input
+                        value={newResource.costNote}
+                        onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', costNote: event.target.value }))}
+                        placeholder="Confirm guide and entry prices locally."
+                      />
+                    </label>
+                    <label>
+                      Tags
+                      <input
+                        value={newResource.tags}
+                        onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', tags: event.target.value }))}
+                        placeholder="waterfall, nature, family"
+                      />
+                    </label>
+                    {renderCameroonFilters(newResource, setNewResource)}
+                    <label>
+                      Localisation / Google Maps search
+                      <input
+                        value={newResource.mapQuery}
+                        onChange={(event) => setNewResource((prev) => ({
+                          ...prev,
+                          type: 'places',
+                          mapQuery: event.target.value,
+                          location: event.target.value || prev.location,
+                        }))}
+                        placeholder="Search e.g. Lobe Falls Kribi Cameroon"
+                      />
+                    </label>
+                    <div className="inline-actions wrap-actions">
+                      <label>
+                        Latitude
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={newResource.latitude}
+                          onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', latitude: event.target.value }))}
+                          placeholder="2.940600"
+                        />
+                      </label>
+                      <label>
+                        Longitude
+                        <input
+                          type="number"
+                          step="0.000001"
+                          value={newResource.longitude}
+                          onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', longitude: event.target.value }))}
+                          placeholder="9.910200"
+                        />
+                      </label>
+                    </div>
+                    <label>
+                      Pictures
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        multiple
+                        onChange={(event) => setNewResourceFiles(Array.from(event.target.files || []))}
+                      />
+                    </label>
+                    <label>
+                      Image URLs
+                      <textarea
+                        value={newResource.imageUrls}
+                        onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', imageUrls: event.target.value }))}
+                        placeholder="One image URL per line"
+                        rows="3"
+                      />
+                    </label>
+                    <label>
+                      Video URLs
+                      <textarea
+                        value={newResource.videoUrls}
+                        onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', videoUrls: event.target.value }))}
+                        placeholder="One video URL per line"
+                        rows="3"
+                      />
+                    </label>
+                    <label>
+                      Related services
+                      <textarea
+                        value={newResource.relatedServices}
+                        onChange={(event) => setNewResource((prev) => ({ ...prev, type: 'places', relatedServices: event.target.value }))}
+                        placeholder={"local guides\ncanoe rides\nnearby hotels"}
+                        rows="3"
+                      />
+                    </label>
+                    <button type="submit" className="button button-primary">Create place</button>
+                  </form>
+                </div>
+                <div className="panel">
+                  <h3>Google Maps localisation</h3>
+                  <p className="small-text">Search the place name or paste coordinates, then confirm the location before creating the place.</p>
+                  <AdminGoogleMapPicker
+                    place={newResource}
+                    onChange={(changes) => setNewResource((prev) => ({ ...prev, type: 'places', ...changes }))}
+                  />
+                  <div className="mt-16">
+                    <h4>Recently added places</h4>
+                    <ul className="plain-list">
+                      {resources.places.slice(0, 6).map((place) => (
+                        <li key={place.id}>
+                          <span>
+                            <strong>{place.name}</strong>
+                            <small>{place.city || place.location} · {place.region}</small>
+                          </span>
+                          <button type="button" className="link-button" onClick={() => handleViewPlaceGuide(place.id)}>Preview</button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                </>
+              )}
             </div>
             )}
             {dashboardView === 'resources' && (

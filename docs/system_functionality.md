@@ -231,6 +231,8 @@ The current implementation is the Phase 1 monolith. Future phases include:
 - Money is stored and calculated in FCFA/XAF by default. The React UI can display and accept values in another supported currency, then converts them back to FCFA before API submission.
 - The React UI includes a persistent English/French language switcher. French mode translates navigation, forms, alerts, placeholders, dashboard panels, itinerary detail views, payment labels, map controls, groups, media, and resource-management text.
 - The authenticated dashboard is organized with an internal menu so each feature group has its own page: Overview, Itineraries, Discovery, Community, Media, Resources, and Settings.
+- Administrators also see an Admin page for creating Cameroon places to visit with pictures, videos, descriptions, Google Maps search/preview, optional latitude/longitude coordinates, and region/division/subdivision/city/quarter metadata.
+- The Admin page uses `VITE_GOOGLE_MAPS_API_KEY` for an interactive Google Maps JavaScript picker. Without the key, it falls back to Google Maps embeds and external Google Maps links.
 - Map metadata uses Google Maps URLs for Cameroon-scoped search, directions, embed links, stage map links, and nearby searches for hotels, restaurants, attractions, transport, hospitals, pharmacies, and banks.
 - Uses a simple monolithic design for Phase 1.
 
@@ -243,6 +245,7 @@ The current implementation is the Phase 1 monolith. Future phases include:
 | Community | Create groups, join groups, and open group detail pages |
 | Media | View shared media, upload traveller photos linked to places, like posts, comment, and share existing media with another user |
 | Resources | Compare hotel prices, add/remove Cameroon hotels, activities, and places with geography metadata, submit reviews, save places to a waitlist, upload place photos, and manage user roles when admin data is available |
+| Admin | Admin-only place creation with uploaded images/videos, external media URLs, descriptions, costs, Google Maps search/preview, coordinates, and Cameroon regional partitioning |
 | Settings | Edit profile preferences from predefined interests, review notifications, and use catalogue autocomplete |
 
 ## Future Functionality Expectations

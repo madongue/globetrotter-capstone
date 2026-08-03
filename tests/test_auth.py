@@ -45,6 +45,36 @@ def test_register_and_login(client):
     assert "token" in response.get_json()
 
 
+def test_first_registered_user_becomes_admin(client):
+    response = client.post(
+        "/api/register",
+        data=json.dumps({"username": "owner", "password": "password123"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 201
+    assert _read_json(models.USERS_FILE)[0]["role"] == "admin"
+
+
+def test_configured_admin_username_becomes_admin(client, monkeypatch):
+    client.post(
+        "/api/register",
+        data=json.dumps({"username": "alice", "password": "password123"}),
+        content_type="application/json",
+    )
+    monkeypatch.setenv("ADMIN_USERNAMES", "operator, adminuser")
+
+    response = client.post(
+        "/api/register",
+        data=json.dumps({"username": "adminuser", "password": "password123"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 201
+    users = {user["username"]: user for user in _read_json(models.USERS_FILE)}
+    assert users["adminuser"]["role"] == "admin"
+
+
 def test_register_recovers_from_null_user_store(client):
     with open(models.USERS_FILE, "w", encoding="utf-8") as users_file:
         users_file.write("null")

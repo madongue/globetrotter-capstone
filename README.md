@@ -358,6 +358,8 @@ Then open `http://localhost:5000`.
 | `FLASK_DEBUG`        | `0`                                  | Set to `1` to enable Flask debug mode (development only) |
 | `PORT`               | `5000`                               | Port the app listens on |
 | `GOOGLE_CLIENT_ID`   | unset                                | Optional audience check for Google ID-token login |
+| `ADMIN_USERNAMES`    | unset                                | Comma-separated usernames that become admins when they register; the first registered account is also promoted for bootstrap setup |
+| `VITE_GOOGLE_MAPS_API_KEY` | unset                         | Enables the interactive Google Maps picker in the admin dashboard. Without it, the app falls back to Google Maps embeds and external links. |
 
 > **Important:** Always set `SECRET_KEY` to a long, random value in production (e.g. `python -c "import secrets; print(secrets.token_hex(32))"`).
 
@@ -372,6 +374,7 @@ Key platform features inspired by research:
 - Map metadata is backed by Google Maps URLs for worldwide search, directions, and embeds. Cameroon-focused trips get extra Google Maps links for nearby hotels, restaurants, attractions, transport, hospitals, pharmacies, and banks.
 - Discovery partitions Cameroon visit places by region, shows only a short featured preview by default, and expands focused places when a region/local filter is selected.
 - Place guides include nearby hotels, nearby activities, traveller photos, practical notes, safety information, map links, and an offline JSON export.
+- Admin users have a dedicated dashboard for adding Cameroon places to visit with descriptions, uploaded pictures/videos, external media URLs, Google Maps search/preview, optional coordinates, and regional metadata. When `VITE_GOOGLE_MAPS_API_KEY` is set, admins can search Cameroon locations, click the map, and drag the marker to capture coordinates.
 - Trip creation with dates, Cameroon area selectors, regional hotel/activity/place proposals, day-by-day plans, route export, notes, stage progress, and receipts.
 - Trip operations include packing lists, expense splitting in FCFA, and attached booking documents.
 - The React frontend is installable as a lightweight PWA with an app manifest and service-worker shell cache.

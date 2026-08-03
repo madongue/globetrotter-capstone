@@ -173,6 +173,9 @@ Specify the features and user journeys that GlobeTrotter must support as it evol
 - Invalid JWT or missing authorization returns `401 Unauthorized`.
 - Invalid payloads return `400 Bad Request` with a clear error message.
 - Administrators can manage hotels, activities, and places.
+- Administrators have a dedicated dashboard for creating Cameroon places to visit with descriptions, costs, images, videos, Google Maps search/preview, optional coordinates, and regional metadata.
+- When a Google Maps browser API key is configured, administrators can search Cameroon locations, click the Google map, drag a marker, and save the selected coordinates with the place.
+- The first registered account is promoted to administrator for deployment bootstrap, and configured `ADMIN_USERNAMES` can promote named operator accounts during registration.
 - Users can research trips by budget, location, feedback, and other criteria.
 - Trip progress and stage advancement are tracked and displayed.
 - Cost and duration are calculated for each trip stage and total itinerary.

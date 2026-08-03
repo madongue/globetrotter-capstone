@@ -102,6 +102,25 @@ def _verify_google_id_token(id_token: str) -> dict | None:
     return payload
 
 
+def _bootstrap_role_for(username: str) -> str:
+    """Return the initial role for a newly registered account.
+
+    This lets a deployed instance create its first administrator without
+    editing the JSON data store by hand. Set ADMIN_USERNAMES to a comma-separated
+    list on Render to make matching new registrations admins.
+    """
+    configured_admins = {
+        item.strip().lower()
+        for item in os.environ.get("ADMIN_USERNAMES", "").split(",")
+        if item.strip()
+    }
+    if username.lower() in configured_admins:
+        return "admin"
+    if not get_all_users():
+        return "admin"
+    return "user"
+
+
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
@@ -139,7 +158,7 @@ def register():
         # Store a Werkzeug password hash – never store plain-text passwords.
         "password_hash": generate_password_hash(password),
         "preferences": preferences,
-        "role": "user",
+        "role": _bootstrap_role_for(username),
     }
     save_user(user)
     return jsonify({"message": "user registered successfully", "username": username}), 201
@@ -205,7 +224,7 @@ def google_auth():
             "username": username,
             "password_hash": generate_password_hash(str(uuid.uuid4())),
             "preferences": preferences,
-            "role": "user",
+            "role": _bootstrap_role_for(username),
             "google_id": google_id,
         }
         save_user(user)

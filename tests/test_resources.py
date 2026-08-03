@@ -1,4 +1,5 @@
 import json
+from io import BytesIO
 
 import pytest
 
@@ -16,10 +17,13 @@ def temp_data_files(monkeypatch, tmp_path):
     hotels_file.write_text("[]", encoding="utf-8")
     activities_file.write_text("[]", encoding="utf-8")
     places_file.write_text("[]", encoding="utf-8")
+    uploads_dir = tmp_path / "uploads"
     monkeypatch.setattr("app.models.USERS_FILE", str(users_file))
     monkeypatch.setattr("app.models.HOTELS_FILE", str(hotels_file))
     monkeypatch.setattr("app.models.ACTIVITIES_FILE", str(activities_file))
     monkeypatch.setattr("app.models.PLACES_FILE", str(places_file))
+    monkeypatch.setattr("app.models.UPLOADS_DIR", str(uploads_dir))
+    monkeypatch.setattr("app.resources.UPLOADS_DIR", str(uploads_dir))
     yield
 
 
@@ -121,3 +125,37 @@ def test_place_detail_includes_nearby_services_and_offline_guide(client, monkeyp
     guide_resp = client.get("/api/resources/places/place-1/guide")
     assert guide_resp.status_code == 200
     assert guide_resp.get_json()["title"] == "Lobe Falls travel guide"
+
+
+def test_admin_can_create_place_with_uploaded_media_and_map_coordinates(client):
+    token = register_and_login(client, "admin")
+    users = _read_json(__import__("app.models").models.USERS_FILE)
+    users[0]["role"] = "admin"
+    _write_json(__import__("app.models").models.USERS_FILE, users)
+
+    response = client.post(
+        "/api/resources/places",
+        headers={"Authorization": f"Bearer {token}"},
+        data={
+            "name": "Test Waterfall",
+            "location": "Kribi",
+            "region": "South",
+            "city": "Kribi",
+            "description": "A beautiful admin-created place.",
+            "cost": "5000",
+            "latitude": "2.9406",
+            "longitude": "9.9102",
+            "image_urls": "https://example.com/place.jpg",
+            "video_urls": "https://example.com/place.mp4",
+            "media_files": (BytesIO(b"fake-image"), "place.jpg"),
+        },
+        content_type="multipart/form-data",
+    )
+
+    assert response.status_code == 201
+    place = response.get_json()
+    assert place["name"] == "Test Waterfall"
+    assert place["map_info"]["latitude"] == 2.9406
+    assert place["image_url"].startswith("/api/uploads/")
+    assert len(place["images"]) == 2
+    assert len(place["videos"]) == 1

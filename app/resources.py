@@ -13,7 +13,9 @@ GET    /resources/activities
 GET    /resources/places
 """
 import uuid
+import os
 from flask import Blueprint, request, jsonify
+from werkzeug.utils import secure_filename
 
 from app.auth import get_current_user
 from app.cameroon_geo import enrich_cameroon_item, ensure_cameroon_location, infer_cameroon_geo
@@ -26,6 +28,7 @@ from app.models import (
     update_activity,
     get_all_places,
     get_all_media,
+    UPLOADS_DIR,
     save_place,
     update_place,
     remove_hotel_by_id,
@@ -81,6 +84,78 @@ def _resource_map_info(name: str, location: str) -> dict:
         "city": geo.get("city", ""),
         "quarter": geo.get("quarter", ""),
     }
+
+
+def _request_data() -> dict:
+    if request.content_type and request.content_type.startswith("multipart/form-data"):
+        return request.form.to_dict(flat=True)
+    return request.get_json(silent=True) or {}
+
+
+def _list_value(data: dict, key: str) -> list:
+    value = data.get(key)
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [item for item in value if item]
+    if isinstance(value, str):
+        normalized = value.replace(",", "\n")
+        return [item.strip() for item in normalized.splitlines() if item.strip()]
+    return []
+
+
+def _number_value(value, field_name: str):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"{field_name} must be a number")
+
+
+def _save_uploaded_place_media(place_id: str) -> list:
+    media_items = []
+    if not request.files:
+        return media_items
+    os.makedirs(UPLOADS_DIR, exist_ok=True)
+    files = request.files.getlist("media_files") + request.files.getlist("images") + request.files.getlist("videos")
+    for uploaded_file in files:
+        if not uploaded_file or not uploaded_file.filename:
+            continue
+        filename = f"{uuid.uuid4().hex}-{secure_filename(uploaded_file.filename)}"
+        filepath = os.path.join(UPLOADS_DIR, filename)
+        uploaded_file.save(filepath)
+        mimetype = uploaded_file.mimetype or ""
+        media_type = "video" if mimetype.startswith("video/") else "photo"
+        media_items.append({
+            "id": str(uuid.uuid4()),
+            "type": media_type,
+            "url": f"/api/uploads/{filename}",
+            "filename": filename,
+            "place_id": place_id,
+            "caption": "",
+            "source": "admin_upload",
+        })
+    return media_items
+
+
+def _place_media_from_request(place_id: str, data: dict) -> list:
+    media_items = _save_uploaded_place_media(place_id)
+    for url in _list_value(data, "image_urls"):
+        media_items.append({
+            "id": str(uuid.uuid4()),
+            "type": "photo",
+            "url": url,
+            "place_id": place_id,
+            "source": "admin_url",
+        })
+    for url in _list_value(data, "video_urls"):
+        media_items.append({
+            "id": str(uuid.uuid4()),
+            "type": "video",
+            "url": url,
+            "place_id": place_id,
+            "source": "admin_url",
+        })
+    return media_items
 
 
 def _with_resource_metadata(resource: dict) -> dict:
@@ -145,13 +220,17 @@ def add_hotel():
     if error:
         return error
 
-    data = request.get_json(silent=True) or {}
+    data = _request_data()
     name = data.get("name", "").strip()
     location = ensure_cameroon_location(data.get("location", "").strip())
     cost_per_night = data.get("cost_per_night")
 
     if not name or not location or cost_per_night is None:
         return jsonify({"error": "name, location, and cost_per_night are required"}), 400
+    try:
+        cost_per_night = _number_value(cost_per_night, "cost_per_night")
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
 
     hotel = enrich_cameroon_item({
         "id": str(uuid.uuid4()),
@@ -174,13 +253,17 @@ def add_activity():
     if error:
         return error
 
-    data = request.get_json(silent=True) or {}
+    data = _request_data()
     name = data.get("name", "").strip()
     location = ensure_cameroon_location(data.get("location", "").strip())
     cost = data.get("cost")
 
     if not name or not location or cost is None:
         return jsonify({"error": "name, location, and cost are required"}), 400
+    try:
+        cost = _number_value(cost, "cost")
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
 
     activity = enrich_cameroon_item({
         "id": str(uuid.uuid4()),
@@ -203,23 +286,48 @@ def add_place():
     if error:
         return error
 
-    data = request.get_json(silent=True) or {}
+    data = _request_data()
     name = data.get("name", "").strip()
     location = ensure_cameroon_location(data.get("location", "").strip())
     cost = data.get("cost")
 
     if not name or not location or cost is None:
         return jsonify({"error": "name, location, and cost are required"}), 400
+    try:
+        cost = _number_value(cost, "cost")
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
 
+    place_id = str(uuid.uuid4())
+    map_query = data.get("map_query", "").strip() or ", ".join(part for part in [name, location] if part)
+    map_info = data.get("map_info") or _resource_map_info(name, map_query)
+    if data.get("latitude") and data.get("longitude"):
+        try:
+            map_info["latitude"] = float(data.get("latitude"))
+            map_info["longitude"] = float(data.get("longitude"))
+            map_info["google_map_url"] = _map_link(f"{data.get('latitude')},{data.get('longitude')}")
+            map_info["google_maps_embed_url"] = f"https://www.google.com/maps?q={data.get('latitude')},{data.get('longitude')}&output=embed"
+        except ValueError:
+            return jsonify({"error": "latitude and longitude must be numbers"}), 400
+    media_items = _place_media_from_request(place_id, data)
+    image_url = data.get("image_url", "").strip() or next((item["url"] for item in media_items if item["type"] == "photo"), "")
     place = enrich_cameroon_item({
-        "id": str(uuid.uuid4()),
+        "id": place_id,
         "name": name,
         "location": location,
         **infer_cameroon_geo(location),
         "description": data.get("description", ""),
-        "tags": data.get("tags", []),
+        "tags": _list_value(data, "tags") or data.get("tags", []),
         "cost": cost,
-        "map_info": data.get("map_info") or _resource_map_info(name, location),
+        "image_url": image_url,
+        "media": media_items,
+        "images": [item for item in media_items if item["type"] == "photo"],
+        "videos": [item for item in media_items if item["type"] == "video"],
+        "source_urls": _list_value(data, "source_urls"),
+        "related_services": _list_value(data, "related_services"),
+        "cost_note": data.get("cost_note", ""),
+        "map_query": map_query,
+        "map_info": map_info,
     })
     save_place(place)
     return jsonify(place), 201
