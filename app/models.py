@@ -74,6 +74,24 @@ def get_user_by_username(username: str) -> dict | None:
     return None
 
 
+def get_user_by_email(email: str) -> dict | None:
+    """Return the user dict for *email*, or None if not found."""
+    users = get_all_users()
+    for user in users:
+        if user.get("email") == email:
+            return user
+    return None
+
+
+def get_user_by_google_id(google_id: str) -> dict | None:
+    """Return the user dict for *google_id*, or None if not found."""
+    users = get_all_users()
+    for user in users:
+        if user.get("google_id") == google_id:
+            return user
+    return None
+
+
 def save_user(user: dict) -> None:
     """Append *user* to the users store."""
     users = get_all_users()

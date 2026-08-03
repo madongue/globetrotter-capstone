@@ -28,6 +28,7 @@ def create_app():
         "total_latency_ms": 0.0,
         "routes": {},
     }
+    app.config["GOOGLE_CLIENT_ID"] = os.environ.get("GOOGLE_CLIENT_ID", "")
 
     @app.before_request
     def start_request_timer():

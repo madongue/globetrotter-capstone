@@ -8,26 +8,29 @@ Routes
 POST /register  – create a new user account
 POST /login     – authenticate and return a JWT token
 """
+import os
+import re
 import uuid
 import datetime
 import json
-import os
 import urllib.error
 import urllib.parse
 import urllib.request
 
 import jwt
+import requests
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.interests import PREDEFINED_INTERESTS, normalize_interests
 from app.models import (
     get_all_users,
+    get_user_by_email,
+    get_user_by_google_id,
+    get_user_by_reset_token,
     get_user_by_username,
     save_user,
     update_user,
-    get_user_by_reset_token,
-    get_user_by_google_id,
 )
 
 auth_bp = Blueprint("auth", __name__)
@@ -131,6 +134,25 @@ def interests():
     return jsonify({"interests": PREDEFINED_INTERESTS}), 200
 
 
+def _make_unique_username(base_username: str) -> str:
+    """Return a username that is not already taken."""
+    candidate = base_username
+    index = 2
+    while get_user_by_username(candidate):
+        candidate = f"{base_username}{index}"
+        index += 1
+    return candidate
+
+
+def _normalize_username(name: str, email: str | None = None) -> str:
+    """Convert a Google display name/email to a safe username."""
+    base = (name or email or "google-user").strip().lower()
+    if "@" in base:
+        base = base.split("@", 1)[0]
+    base = re.sub(r"[^a-z0-9._-]+", "-", base).strip("-._")
+    return base or "google-user"
+
+
 @auth_bp.route("/register", methods=["POST"])
 def register():
     """Register a new user.
@@ -164,6 +186,90 @@ def register():
     return jsonify({"message": "user registered successfully", "username": username}), 201
 
 
+@auth_bp.route("/auth/google", methods=["POST"])
+@auth_bp.route("/google-auth", methods=["POST"])
+def google_auth():
+    """Authenticate or create a user from a Google ID token."""
+    data = request.get_json(silent=True) or {}
+    id_token = (data.get("id_token") or data.get("token") or "").strip()
+    if not id_token:
+        return jsonify({"error": "id_token is required"}), 400
+
+    try:
+        response = requests.get(
+            "https://oauth2.googleapis.com/tokeninfo",
+            params={"id_token": id_token},
+            timeout=5,
+        )
+        response.raise_for_status()
+        profile = response.json()
+    except requests.RequestException:
+        return jsonify({"error": "google authentication failed"}), 502
+
+    email = (profile.get("email") or "").strip().lower()
+    google_id = str(profile.get("sub") or "").strip()
+    if not email or not google_id:
+        return jsonify({"error": "google token is missing profile information"}), 401
+
+    if not profile.get("email_verified"):
+        return jsonify({"error": "google email is not verified"}), 401
+
+    expected_client_id = current_app.config.get("GOOGLE_CLIENT_ID") or os.environ.get(
+        "GOOGLE_CLIENT_ID"
+    )
+    if expected_client_id and profile.get("aud") != expected_client_id:
+        return jsonify({"error": "invalid google client id"}), 401
+
+    existing_user = get_user_by_google_id(google_id) or get_user_by_email(email)
+    if existing_user:
+        username = existing_user.get("username")
+        token = create_token(username, current_app.config["SECRET_KEY"])
+        return jsonify(
+            {
+                "token": token,
+                "user": {
+                    "username": username,
+                    "email": existing_user.get("email"),
+                    "auth_provider": existing_user.get("auth_provider", "google"),
+                },
+                "is_new_user": False,
+            }
+        ), 200
+
+    requested_username = (data.get("username") or "").strip()
+    preferred_username = _normalize_username(profile.get("name") or email, email)
+    username = requested_username or preferred_username
+    if get_user_by_username(username):
+        username = _make_unique_username(username)
+    else:
+        username = _make_unique_username(username)
+
+    user = {
+        "id": str(uuid.uuid4()),
+        "username": username,
+        "email": email,
+        "auth_provider": "google",
+        "google_id": google_id,
+        "password_hash": None,
+        "preferences": data.get("preferences", []),
+        "name": (profile.get("name") or "").strip(),
+    }
+    save_user(user)
+
+    token = create_token(username, current_app.config["SECRET_KEY"])
+    return jsonify(
+        {
+            "token": token,
+            "user": {
+                "username": username,
+                "email": email,
+                "auth_provider": "google",
+            },
+            "is_new_user": True,
+        }
+    ), 200
+
+
 @auth_bp.route("/login", methods=["POST"])
 def login():
     """Authenticate a user and return a JWT.
@@ -181,56 +287,16 @@ def login():
         return jsonify({"error": "username and password are required"}), 400
 
     user = get_user_by_username(username)
-    if not user or not check_password_hash(user["password_hash"], password):
+    if (
+        not user
+        or user.get("auth_provider") == "google"
+        or not user.get("password_hash")
+        or not check_password_hash(user["password_hash"], password)
+    ):
         return jsonify({"error": "invalid credentials"}), 401
 
     token = create_token(username, current_app.config["SECRET_KEY"])
     return jsonify({"token": token}), 200
-
-
-@auth_bp.route("/auth/google", methods=["POST"])
-def google_auth():
-    """Authenticate or register a user via Google ID.
-
-    Expected JSON body:
-        { "google_id": "12345", "username": "alice", "preferences": ["beach"] }
-
-    If the Google account already exists, returns a token for that user.
-    Otherwise, creates a new user with `role: user`.
-    """
-    data = request.get_json(silent=True) or {}
-    id_token = data.get("id_token", "").strip()
-    google_id = data.get("google_id", "").strip()
-    username = data.get("username", "").strip()
-    preferences = normalize_interests(data.get("preferences", []))
-
-    if id_token:
-        google_payload = _verify_google_id_token(id_token)
-        if not google_payload:
-            return jsonify({"error": "invalid Google ID token"}), 401
-        google_id = google_payload["sub"]
-        username = username or google_payload.get("email", "").split("@")[0] or f"google-{google_id}"
-
-    if not google_id or not username:
-        return jsonify({"error": "google_id and username are required unless id_token is supplied"}), 400
-
-    user = get_user_by_google_id(google_id)
-    if not user:
-        if get_user_by_username(username):
-            return jsonify({"error": "username already exists"}), 409
-
-        user = {
-            "id": str(uuid.uuid4()),
-            "username": username,
-            "password_hash": generate_password_hash(str(uuid.uuid4())),
-            "preferences": preferences,
-            "role": _bootstrap_role_for(username),
-            "google_id": google_id,
-        }
-        save_user(user)
-
-    token = create_token(user["username"], current_app.config["SECRET_KEY"])
-    return jsonify({"token": token, "username": user["username"]}), 200
 
 
 @auth_bp.route("/forgot-password", methods=["POST"])

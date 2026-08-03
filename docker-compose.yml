@@ -1,13 +1,61 @@
 version: "3.9"
 
 services:
-  globetrotter:
-    build: .
-    container_name: globetrotter_app
+  user-service:
+    build:
+      context: .
+      dockerfile: services/user_service/Dockerfile
+    container_name: user-service
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - SECRET_KEY=dev-secret
+
+  itinerary-service:
+    build:
+      context: .
+      dockerfile: services/itinerary_service/Dockerfile
+    container_name: itinerary-service
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - SECRET_KEY=dev-secret
+
+  recommendation-service:
+    build:
+      context: .
+      dockerfile: services/recommendation_service/Dockerfile
+    container_name: recommendation-service
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - SECRET_KEY=dev-secret
+
+  destination-service:
+    build:
+      context: .
+      dockerfile: services/destination_service/Dockerfile
+    container_name: destination-service
+    ports:
+      - "8004:8004"
+    environment:
+      - PORT=8004
+      - SECRET_KEY=dev-secret
+
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile
+    container_name: gateway
     ports:
       - "5000:5000"
-    # Mount local code so changes are reflected without rebuilding the image
-    volumes:
-      - .:/globetrotter
     environment:
       - PORT=5000
+      - SECRET_KEY=dev-secret
+      - USER_SERVICE_URL=http://user-service:8001
+      - DESTINATION_SERVICE_URL=http://destination-service:8004
+      - RECOMMENDATION_SERVICE_URL=http://recommendation-service:8003
+      - ITINERARY_SERVICE_URL=http://itinerary-service:8002
