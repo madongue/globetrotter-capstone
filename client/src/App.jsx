@@ -68,6 +68,84 @@ function loadGoogleMaps(apiKey) {
   return googleMapsLoadPromise;
 }
 
+const GOOGLE_IDENTITY_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+let googleIdentityLoadPromise;
+
+function loadGoogleIdentity() {
+  if (!GOOGLE_IDENTITY_CLIENT_ID) {
+    return Promise.reject(new Error('Google Identity client id is missing.'));
+  }
+  if (window.google?.accounts?.id) {
+    return Promise.resolve(window.google.accounts.id);
+  }
+  if (!googleIdentityLoadPromise) {
+    googleIdentityLoadPromise = new Promise((resolve, reject) => {
+      const existing = document.querySelector('script[data-globetrotter-google-identity]');
+      if (existing) {
+        existing.addEventListener('load', () => resolve(window.google.accounts.id));
+        existing.addEventListener('error', reject);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.dataset.globetrotterGoogleIdentity = 'true';
+      script.onload = () => {
+        if (window.google?.accounts?.id) {
+          resolve(window.google.accounts.id);
+        } else {
+          reject(new Error('Google Identity script loaded without accounts.id.'));
+        }
+      };
+      script.onerror = () => reject(new Error('Unable to load Google Identity Services.'));
+      document.head.appendChild(script);
+    });
+  }
+  return googleIdentityLoadPromise;
+}
+
+function GoogleSignInButton({ onSuccess, onError }) {
+  const buttonRef = useRef(null);
+
+  useEffect(() => {
+    if (!GOOGLE_IDENTITY_CLIENT_ID || !buttonRef.current) {
+      return undefined;
+    }
+    let cancelled = false;
+    loadGoogleIdentity()
+      .then((accounts) => {
+        if (cancelled || !buttonRef.current) {
+          return;
+        }
+        accounts.initialize({
+          client_id: GOOGLE_IDENTITY_CLIENT_ID,
+          callback: async (response) => {
+            if (!response?.credential) {
+              onError?.('Google authentication failed.');
+              return;
+            }
+            onSuccess(response.credential);
+          },
+          ux_mode: 'popup',
+        });
+        accounts.renderButton(buttonRef.current, {
+          theme: 'outline',
+          size: 'large',
+          width: 280,
+        });
+      })
+      .catch((error) => {
+        onError?.(error.message || 'Unable to load Google sign-in.');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [onSuccess, onError]);
+
+  return <div ref={buttonRef} className="google-signin-button" />;
+}
+
 function AdminGoogleMapPicker({ place, onChange }) {
   const mapElementRef = useRef(null);
   const mapRef = useRef(null);
@@ -1087,6 +1165,30 @@ function App() {
     setAlert({ type: 'success', message: 'Account created. You can now login.' });
     setRegistrationPreferences([]);
     setPage('login');
+  };
+
+  const handleGoogleCredential = async (credential) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Google authentication failed.');
+      }
+      localStorage.setItem('gt_token', result.token);
+      setToken(result.token);
+      setAlert({ type: 'success', message: 'Signed in with Google.' });
+      setPage('dashboard');
+    } catch (error) {
+      setAlert({ type: 'error', message: error.message || 'Google login failed.' });
+    }
+  };
+
+  const handleGoogleError = (message) => {
+    setAlert({ type: 'error', message: message || 'Google login failed.' });
   };
 
   const handleLogout = () => {
@@ -2691,6 +2793,12 @@ function App() {
                 <button type="button" className="button button-primary" onClick={() => navigate('register')}>Get Started</button>
                 <button type="button" className="button button-secondary" onClick={() => navigate('login')}>Sign In</button>
               </div>
+              {GOOGLE_IDENTITY_CLIENT_ID && (
+                <div className="hero-google-signin">
+                  <p>Or sign in directly with Google:</p>
+                  <GoogleSignInButton onSuccess={handleGoogleCredential} onError={handleGoogleError} />
+                </div>
+              )}
             </div>
             <div className="hero-cards">
               <article className="feature-card">
@@ -2724,6 +2832,12 @@ function App() {
                 </label>
                 <button type="submit" className="button button-primary">Login</button>
               </form>
+              {GOOGLE_IDENTITY_CLIENT_ID && (
+                <div className="google-signin-section">
+                  <p>Or continue with Google:</p>
+                  <GoogleSignInButton onSuccess={handleGoogleCredential} onError={handleGoogleError} />
+                </div>
+              )}
               <p className="form-footnote">
                 New here? <button type="button" className="link-button" onClick={() => navigate('register')}>Create an account</button>
               </p>
