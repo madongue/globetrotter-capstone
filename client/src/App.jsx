@@ -2906,6 +2906,16 @@ function App() {
                 </label>
                 <button type="submit" className="button button-primary">Register</button>
               </form>
+              {googleClientId ? (
+                <div className="google-signin-section">
+                  <p>Or sign up with Google:</p>
+                  <GoogleSignInButton clientId={googleClientId} onSuccess={handleGoogleCredential} onError={handleGoogleError} />
+                </div>
+              ) : (
+                <div className="google-signin-section">
+                  <p className="muted-note">Google sign-in is unavailable until the app is configured.</p>
+                </div>
+              )}
               <p className="form-footnote">
                 Already have an account? <button type="button" className="link-button" onClick={() => navigate('login')}>Login</button>
               </p>
