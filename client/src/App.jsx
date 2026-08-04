@@ -71,8 +71,12 @@ function loadGoogleMaps(apiKey) {
 const GOOGLE_IDENTITY_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 let googleIdentityLoadPromise;
 
-function loadGoogleIdentity() {
-  if (!GOOGLE_IDENTITY_CLIENT_ID) {
+function getGoogleIdentityClientId(runtimeClientId = '') {
+  return GOOGLE_IDENTITY_CLIENT_ID || runtimeClientId || '';
+}
+
+function loadGoogleIdentity(clientId) {
+  if (!clientId) {
     return Promise.reject(new Error('Google Identity client id is missing.'));
   }
   if (window.google?.accounts?.id) {
@@ -105,21 +109,21 @@ function loadGoogleIdentity() {
   return googleIdentityLoadPromise;
 }
 
-function GoogleSignInButton({ onSuccess, onError }) {
+function GoogleSignInButton({ clientId, onSuccess, onError }) {
   const buttonRef = useRef(null);
 
   useEffect(() => {
-    if (!GOOGLE_IDENTITY_CLIENT_ID || !buttonRef.current) {
+    if (!clientId || !buttonRef.current) {
       return undefined;
     }
     let cancelled = false;
-    loadGoogleIdentity()
+    loadGoogleIdentity(clientId)
       .then((accounts) => {
         if (cancelled || !buttonRef.current) {
           return;
         }
         accounts.initialize({
-          client_id: GOOGLE_IDENTITY_CLIENT_ID,
+          client_id: clientId,
           callback: async (response) => {
             if (!response?.credential) {
               onError?.('Google authentication failed.');
@@ -680,6 +684,8 @@ function App() {
   const [paymentAmount, setPaymentAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('mobile');
   const [paymentTargetType, setPaymentTargetType] = useState('total');
+  const [runtimeGoogleClientId, setRuntimeGoogleClientId] = useState('');
+  const [googleClientIdLoadingError, setGoogleClientIdLoadingError] = useState(null);
   const [reservationForm, setReservationForm] = useState({
     type: 'hotel',
     stageId: '',
@@ -697,6 +703,34 @@ function App() {
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [selectedGroup, setSelectedGroup] = useState(null);
+  const googleClientId = getGoogleIdentityClientId(runtimeGoogleClientId);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/config`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Unable to load runtime configuration.');
+        }
+        return response.json();
+      })
+      .then((config) => {
+        if (cancelled) {
+          return;
+        }
+        if (typeof config.googleClientId === 'string') {
+          setRuntimeGoogleClientId(config.googleClientId);
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setGoogleClientIdLoadingError(error.message);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const [newDiscussionTitle, setNewDiscussionTitle] = useState('');
   const [newDiscussionMessage, setNewDiscussionMessage] = useState('');
   const [discussionReplies, setDiscussionReplies] = useState({});
@@ -2793,10 +2827,14 @@ function App() {
                 <button type="button" className="button button-primary" onClick={() => navigate('register')}>Get Started</button>
                 <button type="button" className="button button-secondary" onClick={() => navigate('login')}>Sign In</button>
               </div>
-              {GOOGLE_IDENTITY_CLIENT_ID && (
+              {googleClientId ? (
                 <div className="hero-google-signin">
                   <p>Or sign in directly with Google:</p>
-                  <GoogleSignInButton onSuccess={handleGoogleCredential} onError={handleGoogleError} />
+                  <GoogleSignInButton clientId={googleClientId} onSuccess={handleGoogleCredential} onError={handleGoogleError} />
+                </div>
+              ) : (
+                <div className="hero-google-signin">
+                  <p className="muted-note">Google sign-in is unavailable until the app is configured.</p>
                 </div>
               )}
             </div>
@@ -2832,10 +2870,14 @@ function App() {
                 </label>
                 <button type="submit" className="button button-primary">Login</button>
               </form>
-              {GOOGLE_IDENTITY_CLIENT_ID && (
+              {googleClientId ? (
                 <div className="google-signin-section">
                   <p>Or continue with Google:</p>
-                  <GoogleSignInButton onSuccess={handleGoogleCredential} onError={handleGoogleError} />
+                  <GoogleSignInButton clientId={googleClientId} onSuccess={handleGoogleCredential} onError={handleGoogleError} />
+                </div>
+              ) : (
+                <div className="google-signin-section">
+                  <p className="muted-note">Google sign-in is unavailable until the app is configured.</p>
                 </div>
               )}
               <p className="form-footnote">

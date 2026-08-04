@@ -81,6 +81,12 @@ def create_app():
     app.add_url_rule("/auth/google", view_func=app.view_functions["auth.google_auth"], methods=["POST"])
     app.add_url_rule("/google-auth", view_func=app.view_functions["auth.google_auth"], methods=["POST"])
 
+    @app.route(f"{api_prefix}/config", methods=["GET"])
+    def api_config():
+        return jsonify({
+            "googleClientId": app.config.get("GOOGLE_CLIENT_ID", "") or "",
+        }), 200
+
     # Keep the server-rendered teaching UI available during local development,
     # but let a production React build own non-API routes when client/dist exists.
     if static_folder is None or os.environ.get("PYTEST_CURRENT_TEST"):
