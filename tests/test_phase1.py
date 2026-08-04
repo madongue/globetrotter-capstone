@@ -96,6 +96,45 @@ def test_google_signup_creates_user_and_returns_token(client, monkeypatch):
     assert payload["user"]["email"] == "google.user@example.com"
 
 
+def test_google_signup_accepts_credential_payload(client, monkeypatch):
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "test-client-id")
+
+    def fake_get(url, params=None, timeout=5):
+        class FakeResponse:
+            def __init__(self, payload):
+                self._payload = payload
+
+            def raise_for_status(self):
+                return None
+
+            def json(self):
+                return self._payload
+
+        assert url == "https://oauth2.googleapis.com/tokeninfo"
+        assert params["id_token"] == "fake-google-id-token"
+        return FakeResponse(
+            {
+                "sub": "google-user-456",
+                "email": "credential.user@example.com",
+                "email_verified": True,
+                "name": "Credential User",
+                "aud": "test-client-id",
+            }
+        )
+
+    monkeypatch.setattr("app.auth.requests.get", fake_get)
+
+    response = client.post(
+        "/auth/google",
+        json={"credential": "fake-google-id-token"},
+    )
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["token"]
+    assert payload["user"]["email"] == "credential.user@example.com"
+
+
 def test_register_login_recommend_and_itinerary_flow(client):
     register_resp = client.post(
         "/register",

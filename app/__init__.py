@@ -76,6 +76,11 @@ def create_app():
     app.register_blueprint(itineraries_bp, url_prefix=api_prefix)
     app.register_blueprint(resources_bp, url_prefix=api_prefix)
 
+    app.add_url_rule("/register", view_func=app.view_functions["auth.register"], methods=["POST"])
+    app.add_url_rule("/login", view_func=app.view_functions["auth.login"], methods=["POST"])
+    app.add_url_rule("/auth/google", view_func=app.view_functions["auth.google_auth"], methods=["POST"])
+    app.add_url_rule("/google-auth", view_func=app.view_functions["auth.google_auth"], methods=["POST"])
+
     # Keep the server-rendered teaching UI available during local development,
     # but let a production React build own non-API routes when client/dist exists.
     if static_folder is None or os.environ.get("PYTEST_CURRENT_TEST"):

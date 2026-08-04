@@ -191,7 +191,12 @@ def register():
 def google_auth():
     """Authenticate or create a user from a Google ID token."""
     data = request.get_json(silent=True) or {}
-    id_token = (data.get("id_token") or data.get("token") or "").strip()
+    id_token = (
+        data.get("id_token")
+        or data.get("token")
+        or data.get("credential")
+        or ""
+    ).strip()
     if not id_token:
         return jsonify({"error": "id_token is required"}), 400
 

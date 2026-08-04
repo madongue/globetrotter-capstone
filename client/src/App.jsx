@@ -1172,7 +1172,7 @@ function App() {
       const response = await fetch(`${API_BASE}/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ credential }),
+        body: JSON.stringify({ id_token: credential }),
       });
       const result = await response.json();
       if (!response.ok) {
