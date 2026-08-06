@@ -180,7 +180,30 @@ class FakeGoogleResponse:
 
 def test_google_auth_with_verified_id_token(client, monkeypatch):
     monkeypatch.setenv("GOOGLE_CLIENT_ID", "client-123")
-    monkeypatch.setattr("urllib.request.urlopen", lambda url, timeout=5: FakeGoogleResponse())
+
+    def fake_get(url, params=None, timeout=5):
+        class FakeResponse:
+            def __init__(self, payload):
+                self._payload = payload
+
+            def raise_for_status(self):
+                return None
+
+            def json(self):
+                return self._payload
+
+        assert url == "https://oauth2.googleapis.com/tokeninfo"
+        assert params["id_token"] == "valid-token"
+        return FakeResponse(
+            {
+                "sub": "google-123",
+                "email": "alice@example.com",
+                "aud": "client-123",
+                "email_verified": True,
+            }
+        )
+
+    monkeypatch.setattr("app.auth.requests.get", fake_get)
 
     response = client.post(
         "/api/auth/google",
@@ -189,7 +212,7 @@ def test_google_auth_with_verified_id_token(client, monkeypatch):
     )
     assert response.status_code == 200
     payload = response.get_json()
-    assert payload["username"] == "alice"
+    assert payload["user"]["email"] == "alice@example.com"
     assert "token" in payload
 
 

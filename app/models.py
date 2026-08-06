@@ -83,6 +83,26 @@ def get_user_by_email(email: str) -> dict | None:
     return None
 
 
+def normalize_phone(phone: str) -> str:
+    """Normalize a phone number for safe storage and lookup."""
+    if not phone:
+        return ""
+    return "".join(ch for ch in phone.strip() if ch.isdigit() or ch == "+")
+
+
+def get_user_by_phone(phone: str) -> dict | None:
+    """Return the user dict for *phone*, or None if not found."""
+    normalized_phone = normalize_phone(phone)
+    if not normalized_phone:
+        return None
+
+    users = get_all_users()
+    for user in users:
+        if normalize_phone(user.get("phone", "")) == normalized_phone:
+            return user
+    return None
+
+
 def get_user_by_google_id(google_id: str) -> dict | None:
     """Return the user dict for *google_id*, or None if not found."""
     users = get_all_users()

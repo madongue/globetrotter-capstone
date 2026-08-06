@@ -27,8 +27,10 @@ from app.models import (
     get_all_users,
     get_user_by_email,
     get_user_by_google_id,
+    get_user_by_phone,
     get_user_by_reset_token,
     get_user_by_username,
+    normalize_phone,
     save_user,
     update_user,
 )
@@ -166,6 +168,7 @@ def register():
     data = request.get_json(silent=True) or {}
     username = data.get("username", "").strip()
     password = data.get("password", "")
+    phone = normalize_phone(data.get("phone", ""))
     preferences = normalize_interests(data.get("preferences", []))  # optional controlled interest tags
 
     if not username or not password:
@@ -173,6 +176,9 @@ def register():
 
     if get_user_by_username(username):
         return jsonify({"error": "username already exists"}), 409
+
+    if phone and get_user_by_phone(phone):
+        return jsonify({"error": "phone already registered"}), 409
 
     user = {
         "id": str(uuid.uuid4()),
@@ -182,6 +188,8 @@ def register():
         "preferences": preferences,
         "role": _bootstrap_role_for(username),
     }
+    if phone:
+        user["phone"] = phone
     save_user(user)
     return jsonify({"message": "user registered successfully", "username": username}), 201
 
@@ -286,12 +294,18 @@ def login():
     """
     data = request.get_json(silent=True) or {}
     username = data.get("username", "").strip()
+    phone = normalize_phone(data.get("phone", ""))
     password = data.get("password", "")
 
-    if not username or not password:
-        return jsonify({"error": "username and password are required"}), 400
+    if not password or (not username and not phone):
+        return jsonify({"error": "username or phone and password are required"}), 400
 
-    user = get_user_by_username(username)
+    user = None
+    if phone:
+        user = get_user_by_phone(phone)
+    if user is None and username:
+        user = get_user_by_username(username)
+
     if (
         not user
         or user.get("auth_provider") == "google"
@@ -300,6 +314,7 @@ def login():
     ):
         return jsonify({"error": "invalid credentials"}), 401
 
+    username = user.get("username")
     token = create_token(username, current_app.config["SECRET_KEY"])
     return jsonify({"token": token}), 200
 

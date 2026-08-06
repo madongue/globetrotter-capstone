@@ -1163,6 +1163,7 @@ function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username: form.username.value,
+        phone: form.phone ? form.phone.value : undefined,
         password: form.password.value,
       }),
     });
@@ -1187,6 +1188,7 @@ function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username: form.username.value,
+        phone: form.phone ? form.phone.value : undefined,
         password: form.password.value,
         preferences,
       }),
@@ -2865,6 +2867,10 @@ function App() {
                   <input name="username" type="text" autoComplete="username" required />
                 </label>
                 <label>
+                  Phone
+                  <input name="phone" type="tel" autoComplete="tel" />
+                </label>
+                <label>
                   Password
                   <input name="password" type="password" autoComplete="current-password" required />
                 </label>
@@ -2895,6 +2901,10 @@ function App() {
                 <label>
                   Username
                   <input name="username" type="text" autoComplete="username" required />
+                </label>
+                <label>
+                  Phone
+                  <input name="phone" type="tel" autoComplete="tel" />
                 </label>
                 <label>
                   Password

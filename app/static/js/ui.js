@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData(loginForm);
       const payload = {
         username: formData.get("username"),
+        phone: formData.get("phone"),
         password: formData.get("password"),
       };
       try {
@@ -42,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData(registerForm);
       const payload = {
         username: formData.get("username"),
+        phone: formData.get("phone"),
         password: formData.get("password"),
         preferences: formData.get("preferences")
           ? formData.get("preferences").split(",").map((item) => item.trim())

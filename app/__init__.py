@@ -12,9 +12,16 @@ def create_app():
     """Create and configure the Flask application."""
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     react_dist = os.path.join(base_dir, "client", "dist")
-    static_folder = react_dist if os.path.exists(react_dist) else None
+    local_static = os.path.join(os.path.dirname(__file__), "static")
+    react_build = os.path.exists(react_dist)
+    if react_build:
+        static_folder = react_dist
+        static_url_path = "/"
+    else:
+        static_folder = local_static
+        static_url_path = "/static"
 
-    app = Flask(__name__, static_folder=static_folder, static_url_path="/")
+    app = Flask(__name__, static_folder=static_folder, static_url_path=static_url_path)
 
     # Secret key used for JWT signing.  Set the SECRET_KEY environment variable
     # in production.  The fallback is intentionally weak and must never be used
@@ -89,8 +96,39 @@ def create_app():
 
     # Keep the server-rendered teaching UI available during local development,
     # but let a production React build own non-API routes when client/dist exists.
-    if static_folder is None or os.environ.get("PYTEST_CURRENT_TEST"):
+    if not react_build or os.environ.get("PYTEST_CURRENT_TEST"):
         app.register_blueprint(ui_bp)
+
+    app.add_url_rule(
+        "/destinations",
+        view_func=app.view_functions["destinations.search_destinations"],
+        methods=["GET"],
+    )
+    app.add_url_rule(
+        "/cameroon-locations",
+        view_func=app.view_functions["destinations.cameroon_locations"],
+        methods=["GET"],
+    )
+    app.add_url_rule(
+        "/autocomplete",
+        view_func=app.view_functions["destinations.autocomplete"],
+        methods=["GET"],
+    )
+    app.add_url_rule(
+        "/recommendations",
+        view_func=app.view_functions["recommendations.get_recommendations"],
+        methods=["GET"],
+    )
+    app.add_url_rule(
+        "/itineraries",
+        view_func=app.view_functions["itineraries.list_itineraries"],
+        methods=["GET"],
+    )
+    app.add_url_rule(
+        "/itineraries",
+        view_func=app.view_functions["itineraries.create_itinerary"],
+        methods=["POST"],
+    )
 
     @app.route(f"{api_prefix}/health", methods=["GET"])
     @app.route("/health", methods=["GET"])
