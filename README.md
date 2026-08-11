@@ -295,6 +295,22 @@ python tools/download_catalog_images.py places destinations
 
 The importer only uses curated source URLs, mainly Wikimedia Commons/compatible sources; it does not scrape or rehost protected social-media images.
 
+### Import Cameroon tourism catalogue data
+
+The project includes an OpenStreetMap importer for hotels, restaurants, natural sites, man-made attractions, monuments, museums, and parks in Cameroon:
+
+```bash
+python tools/import_cameroon_places.py --max-items 600 --no-media
+```
+
+To make best-effort Wikimedia Commons photo/video lookups for existing catalogue records:
+
+```bash
+python tools/import_cameroon_places.py --media-only 25
+```
+
+The importer stores OpenStreetMap source URLs, coordinates, categories, estimated costs, and reusable-media attribution metadata when media is found. It does not scrape TikTok, Instagram, Tripadvisor, or other protected sites; add those only through official APIs, embeds, or creator-approved uploads.
+
 ---
 
 ## Local UI

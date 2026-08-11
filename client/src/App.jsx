@@ -519,6 +519,7 @@ function App() {
   const [searchFilters, setSearchFilters] = useState({
     q: '',
     tag: '',
+    category: '',
     region: '',
     division: '',
     subdivision: '',
@@ -762,8 +763,38 @@ function App() {
       !filters[field]?.trim() || item[field]?.toLowerCase() === filters[field].trim().toLowerCase()
     ))
   );
+  const getDiscoveryCatalogue = () => [
+    ...resources.places,
+    ...resources.hotels.map((hotel) => ({
+      ...hotel,
+      category: hotel.category || 'hotel',
+      cost: hotel.cost_per_night,
+    })),
+  ];
+  const matchesDiscoveryFilters = (item) => {
+    if (!matchesGeoFilters(item, searchFilters)) return false;
+    if (searchFilters.category && (item.category || '').toLowerCase() !== searchFilters.category) return false;
+    const searchable = [
+      item.name,
+      item.location,
+      item.category,
+      item.description,
+      item.region,
+      item.city,
+      ...(item.tags || []),
+    ].filter(Boolean).join(' ').toLowerCase();
+    if (searchFilters.q.trim() && !searchable.includes(searchFilters.q.trim().toLowerCase())) return false;
+    if (searchFilters.tag.trim() && !(item.tags || []).some((tag) => tag.toLowerCase().includes(searchFilters.tag.trim().toLowerCase()))) return false;
+    if (searchFilters.maxCost.trim()) {
+      const maxCost = toBaseMoney(searchFilters.maxCost);
+      const itemCost = Number(item.cost ?? item.cost_per_night ?? 0);
+      if (Number.isFinite(maxCost) && itemCost > maxCost) return false;
+    }
+    return true;
+  };
+  const getFilteredDiscoveryCatalogue = () => getDiscoveryCatalogue().filter(matchesDiscoveryFilters);
   const getPartitionedPlaces = () => {
-    const filteredPlaces = resources.places.filter((place) => matchesGeoFilters(place, searchFilters));
+    const filteredPlaces = getFilteredDiscoveryCatalogue();
     return filteredPlaces.reduce((groupsByRegion, place) => {
       const region = place.region || 'Unassigned region';
       groupsByRegion[region] = groupsByRegion[region] || [];
@@ -771,14 +802,14 @@ function App() {
       return groupsByRegion;
     }, {});
   };
-  const getPlaceCountByRegion = () => resources.places.reduce((counts, place) => {
+  const getPlaceCountByRegion = () => getDiscoveryCatalogue().reduce((counts, place) => {
     const region = place.region || 'Unassigned region';
     counts[region] = (counts[region] || 0) + 1;
     return counts;
   }, {});
   const getFeaturedDiscoveryPlaces = () => {
-    const filteredPlaces = resources.places.filter((place) => matchesGeoFilters(place, searchFilters));
-    return filteredPlaces.slice(0, searchFilters.region ? 12 : 6);
+    const filteredPlaces = getFilteredDiscoveryCatalogue();
+    return filteredPlaces.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   };
   const buildMapMarker = (item, type = 'place') => {
     const position = getItemCoordinates(item);
@@ -794,7 +825,7 @@ function App() {
   const buildMapMarkers = (items = [], type = 'place') => items
     .map((item) => buildMapMarker(item, type))
     .filter(Boolean);
-  const getDiscoveryMapMarkers = () => buildMapMarkers(getFeaturedDiscoveryPlaces(), 'place');
+  const getDiscoveryMapMarkers = () => buildMapMarkers(getFilteredDiscoveryCatalogue(), 'place');
   const getItineraryMapMarkers = () => buildMapMarkers([
     ...(selectedItinerary?.stages || []),
     ...(selectedItinerary?.places_to_visit || []),
@@ -3308,6 +3339,21 @@ function App() {
                       placeholder="food"
                     />
                   </label>
+                  <label>
+                    Category
+                    <select
+                      value={searchFilters.category}
+                      onChange={(event) => setSearchFilters((prev) => ({ ...prev, category: event.target.value }))}
+                    >
+                      <option value="">All categories</option>
+                      <option value="hotel">Hotels</option>
+                      <option value="restaurant">Restaurants</option>
+                      <option value="natural_site">Natural sites</option>
+                      <option value="man_made_site">Man-made sites</option>
+                      <option value="monument">Monuments and heritage</option>
+                      <option value="museum">Museums</option>
+                    </select>
+                  </label>
                   {renderCameroonFilters(searchFilters, setSearchFilters)}
                   <label>
                     Max daily cost ({currencyLabel})
@@ -3321,7 +3367,7 @@ function App() {
                   <button type="submit" className="button button-primary">Search</button>
                 </form>
                 <div className="mt-16">
-                  <h4>Places to visit by region</h4>
+                  <h4>Tourism catalogue by region</h4>
                   <div className="region-chip-grid">
                     {Object.entries(getPlaceCountByRegion()).map(([region, count]) => (
                       <button
@@ -3331,33 +3377,39 @@ function App() {
                         onClick={() => updateGeoFilter(setSearchFilters, 'region', searchFilters.region === region ? '' : region)}
                       >
                         <strong>{region}</strong>
-                        <span>{count} places</span>
+                        <span>{count} entries</span>
                       </button>
                     ))}
                   </div>
                 </div>
                 <div className="mt-16">
-                  <h4>{searchFilters.region ? `${searchFilters.region} places to visit` : 'Featured places to visit'}</h4>
+                  <h4>{searchFilters.region ? `${searchFilters.region} tourism catalogue` : 'Cameroon tourism catalogue'}</h4>
                   <p className="small-text">
                     {searchFilters.region
-                      ? 'These suggestions are filtered to your selected Cameroon region.'
-                      : 'A short preview is shown first. Select a region to see more focused places.'}
+                      ? 'These entries are filtered to your selected Cameroon region.'
+                      : 'Hotels, restaurants, natural sites, monuments, museums, and other attractions imported from open data.'}
                   </p>
                   <ul className="list-card discovery-place-list">
                     {getFeaturedDiscoveryPlaces().map((place) => (
                       <li key={place.id}>
                         {place.image_url && <img className="resource-thumb" src={place.image_url} alt={place.name} />}
                         <strong>{place.name}</strong>
-                        <p>{place.region} • {place.division} • {place.city}</p>
+                        <p>{(place.category || 'place').replace('_', ' ')} • {place.region || 'Cameroon'} • {place.city || place.location}</p>
                         <p className="small-text">{place.description}</p>
+                        {(place.cost !== undefined || place.cost_per_night !== undefined) && (
+                          <p className="small-text">
+                            Estimated cost: {formatMoney(place.cost ?? place.cost_per_night)}
+                            {place.category === 'hotel' ? ' / night' : ''}
+                          </p>
+                        )}
                         {place.difficulty && (
                           <p className="small-text">
                             Difficulty: {place.difficulty} · Guide {place.guide_required ? 'recommended' : 'optional'}
                           </p>
                         )}
                         <div className="inline-actions wrap-actions">
-                          <button type="button" className="link-button" onClick={() => handleSavePlace(place)}>Save</button>
-                          <button type="button" className="link-button" onClick={() => handleViewPlaceGuide(place.id)}>Guide</button>
+                          {place.category !== 'hotel' && <button type="button" className="link-button" onClick={() => handleSavePlace(place)}>Save</button>}
+                          {place.category !== 'hotel' && <button type="button" className="link-button" onClick={() => handleViewPlaceGuide(place.id)}>Guide</button>}
                           <button
                             type="button"
                             className="link-button"
@@ -3898,7 +3950,7 @@ function App() {
                       <p className="small-text">No entries.</p>
                     ) : (
                       <ul className="plain-list">
-                        {items.slice(0, 6).map((item) => (
+                        {items.map((item) => (
                           <li key={item.id}>
                             <span>
                               {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} />}
