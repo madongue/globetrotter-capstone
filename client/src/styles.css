@@ -1,27 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
-  --bg: #f6f8fb;
+  --bg: #f4f2ee;
   --surface: #ffffff;
-  --surface-soft: #eff4ff;
-  --text: #0f172a;
-  --muted: #475569;
-  --primary: #3366ff;
-  --primary-soft: #dbeafe;
-  --accent: #0f766e;
-  --border: #d1d5db;
-  --radius: 8px;
+  --surface-soft: #f2f4fb;
+  --text: #14171f;
+  --muted: #616b7c;
+  --primary: #3f5eff;
+  --primary-dark: #1f2f8f;
+  --primary-soft: #e4e9ff;
+  --accent: #ff7a59;
+  --accent-soft: #ffe4da;
+  --teal: #0f9b8e;
+  --border: #e3e5ee;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-lg: 26px;
+  --shadow-sm: 0 8px 24px rgba(20, 23, 41, 0.06);
+  --shadow-md: 0 20px 45px rgba(20, 23, 41, 0.08);
+  --shadow-lg: 0 30px 70px rgba(20, 23, 41, 0.16);
+  --font-display: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
 }
 
 * {
   box-sizing: border-box;
 }
 
+::selection {
+  background: var(--primary);
+  color: #fff;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: Inter, system-ui, sans-serif;
+  font-family: var(--font-body);
   background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 8% -10%, rgba(63, 94, 255, 0.10), transparent 42%),
+    radial-gradient(circle at 100% 0%, rgba(255, 122, 89, 0.10), transparent 40%);
+  background-attachment: fixed;
   color: var(--text);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .brand {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 button,
@@ -42,9 +75,11 @@ button {
 }
 
 .app-header {
-  padding: 1rem 0;
-  background-color: rgba(255, 255, 255, 0.92);
-  border-bottom: 1px solid var(--border);
+  padding: 0.85rem 0;
+  background-color: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid rgba(227, 229, 238, 0.7);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -59,14 +94,18 @@ button {
 }
 
 .brand {
-  font-weight: 700;
-  font-size: 1.15rem;
+  font-weight: 800;
+  font-size: 1.3rem;
   min-width: max-content;
+  background: linear-gradient(120deg, var(--primary), var(--teal));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .nav-bar {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.4rem;
   flex-wrap: wrap;
   justify-content: flex-end;
   align-items: center;
@@ -76,12 +115,16 @@ button {
   border: none;
   background: transparent;
   color: var(--muted);
-  padding: 0.5rem 0.85rem;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
   border-radius: 999px;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
 .nav-bar button:hover {
-  background: var(--surface-soft);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  transform: translateY(-1px);
 }
 
 .currency-picker,
@@ -90,23 +133,22 @@ button {
   align-items: center;
   gap: 0.4rem;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.86rem;
 }
 
 .currency-picker select,
 .language-picker select {
   min-height: 36px;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 999px;
   background: var(--surface);
   color: var(--text);
-  padding: 0.35rem 0.5rem;
+  padding: 0.35rem 0.75rem;
 }
 
 .main-content {
   padding: clamp(1.25rem, 4vw, 3rem) 0;
 }
-
 .hero-section {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
@@ -114,25 +156,34 @@ button {
   align-items: start;
   min-height: min(680px, calc(100vh - 150px));
   padding: clamp(2rem, 7vw, 5rem);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   background:
-    linear-gradient(90deg, rgba(8, 15, 30, 0.82), rgba(8, 15, 30, 0.52), rgba(8, 15, 30, 0.2)),
+    linear-gradient(115deg, rgba(6, 12, 28, 0.88) 10%, rgba(10, 20, 45, 0.55) 55%, rgba(63, 94, 255, 0.28) 100%),
     url("https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20from%20a%20work%20site.jpg");
   background-size: cover;
   background-position: center;
+  box-shadow: var(--shadow-lg);
   color: #fff;
+  position: relative;
+  overflow: hidden;
 }
 
 .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
+  font-size: 0.78rem;
   color: var(--primary);
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: 1.1rem;
 }
 
 .hero-section h1 {
-  font-size: clamp(2rem, 7vw, 4rem);
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 7vw, 4.2rem);
+  font-weight: 800;
   line-height: 1.02;
   margin: 0 0 1rem;
   overflow-wrap: anywhere;
@@ -140,12 +191,13 @@ button {
 
 .hero-section p {
   max-width: 42rem;
-  color: rgba(255, 255, 255, 0.84);
+  font-size: 1.08rem;
+  color: rgba(255, 255, 255, 0.86);
   margin-bottom: 2rem;
 }
 
 .hero-section .eyebrow {
-  color: #bfdbfe;
+  color: #ffd7c9;
 }
 
 .hero-actions {
@@ -156,53 +208,63 @@ button {
 
 .button {
   border: 1px solid transparent;
-  border-radius: var(--radius);
-  padding: 0.85rem 1.25rem;
-  min-height: 44px;
+  border-radius: 999px;
+  padding: 0.9rem 1.4rem;
+  min-height: 46px;
   font-weight: 700;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   text-align: center;
   white-space: normal;
 }
 
 .button:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .button-primary {
-  background-color: var(--primary);
+  background: linear-gradient(120deg, var(--primary), #6d4bff);
   color: #fff;
+  box-shadow: 0 14px 30px rgba(63, 94, 255, 0.35);
+}
+
+.button-primary:hover {
+  box-shadow: 0 18px 38px rgba(63, 94, 255, 0.45);
 }
 
 .button-secondary {
-  background-color: var(--surface);
+  background-color: rgba(255, 255, 255, 0.95);
   color: var(--text);
-  border-color: var(--border);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
 }
 
 .button-tertiary {
   background-color: var(--primary-soft);
-  color: var(--primary);
+  color: var(--primary-dark);
 }
 
 .hero-cards {
   display: grid;
   gap: 1rem;
 }
-
 .feature-card,
 .panel,
 .form-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: clamp(1rem, 3vw, 2rem);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.05);
+  padding: clamp(1.1rem, 3vw, 2rem);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .panel {
   overflow: hidden;
   min-width: 0;
+}
+
+.panel:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .grid-2 {
@@ -214,14 +276,14 @@ button {
 .hero-section .feature-card {
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(255, 255, 255, 0.97);
   color: #111827;
-  border-color: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.22);
+  border-color: transparent;
+  border-radius: var(--radius);
+  box-shadow: 0 22px 55px rgba(6, 12, 28, 0.28);
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease,
-    border-color 0.22s ease,
     background-color 0.22s ease;
 }
 
@@ -230,8 +292,8 @@ button {
   position: absolute;
   inset: 0 auto 0 0;
   width: 4px;
-  background: var(--primary);
-  opacity: 0.85;
+  background: linear-gradient(180deg, var(--primary), var(--accent));
+  opacity: 0.9;
   transform: scaleY(0.45);
   transform-origin: center;
   transition: transform 0.22s ease, opacity 0.22s ease;
@@ -239,6 +301,7 @@ button {
 
 .hero-section .feature-card h3 {
   color: #0f172a;
+  font-family: var(--font-display);
 }
 
 .hero-section .feature-card p {
@@ -249,8 +312,7 @@ button {
 .hero-section .feature-card:hover,
 .hero-section .feature-card:focus-within {
   background: #fff;
-  border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: 0 28px 65px rgba(15, 23, 42, 0.28);
+  box-shadow: 0 28px 65px rgba(6, 12, 28, 0.32);
   transform: translateY(-6px);
 }
 
@@ -275,19 +337,25 @@ button {
   border-radius: 999px;
   background: var(--surface);
   color: var(--text) !important;
-  padding: 0.45rem 0.65rem;
+  padding: 0.5rem 0.85rem;
   cursor: pointer;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.interest-chip:has(input:checked) {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-dark) !important;
 }
 
 .interest-chip input {
   width: auto;
   margin: 0;
 }
-
 .app-layout {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: 252px minmax(0, 1fr);
+  gap: 1.75rem;
   align-items: start;
 }
 
@@ -296,35 +364,47 @@ button {
   top: 6rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.05);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .app-menu h3 {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.85rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
 }
 
 .app-menu-list {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .app-menu-list button {
   width: 100%;
   border: 1px solid transparent;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--muted);
-  padding: 0.75rem 0.85rem;
+  font-weight: 600;
+  padding: 0.75rem 0.9rem;
   text-align: left;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
-.app-menu-list button:hover,
+.app-menu-list button:hover {
+  background: var(--surface-soft);
+  color: var(--text);
+  transform: translateX(2px);
+}
+
 .app-menu-list button.active {
-  background: var(--primary-soft);
-  color: var(--primary);
-  border-color: #bfdbfe;
+  background: linear-gradient(120deg, var(--primary), #6d4bff);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 12px 26px rgba(63, 94, 255, 0.28);
 }
 
 .app-page {
@@ -356,7 +436,6 @@ button {
 .form-card h2 {
   margin-top: 0;
 }
-
 .form-section {
   display: flex;
   justify-content: center;
@@ -366,12 +445,13 @@ button {
   display: block;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1rem;
-  background: #fbfdff;
+  padding: 1.1rem;
+  background: var(--surface-soft);
 }
 
 .form-card {
   width: min(540px, 100%);
+  border-radius: var(--radius-lg);
 }
 
 .form-card label,
@@ -382,6 +462,8 @@ button {
   gap: 0.6rem;
   margin-bottom: 1rem;
   color: var(--muted);
+  font-weight: 600;
+  font-size: 0.92rem;
 }
 
 .form-card input,
@@ -397,10 +479,28 @@ button {
 .inline-form input {
   width: 100%;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.95rem 1rem;
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1rem;
   background: var(--surface-soft);
   min-width: 0;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.form-card input:focus,
+.stacked-form input:focus,
+.stacked-form select:focus,
+.search-form input:focus,
+.search-form select:focus,
+.resource-form input:focus,
+.resource-form select:focus,
+.stacked-form textarea:focus,
+.search-form textarea:focus,
+.resource-form textarea:focus,
+.inline-form input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+  outline: none;
+  background: var(--surface);
 }
 
 textarea {
@@ -439,7 +539,6 @@ textarea {
   padding-bottom: 0;
   border-bottom: 0;
 }
-
 .region-chip-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -451,9 +550,9 @@ textarea {
   gap: 0.25rem;
   justify-items: start;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.85rem;
-  background: #fbfdff;
+  border-radius: var(--radius-sm);
+  padding: 0.9rem;
+  background: var(--surface-soft);
   color: var(--text);
   text-align: left;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -461,9 +560,10 @@ textarea {
 
 .region-chip:hover,
 .region-chip.active {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   border-color: var(--primary);
-  box-shadow: 0 14px 30px rgba(51, 102, 255, 0.12);
+  box-shadow: 0 14px 30px rgba(63, 94, 255, 0.14);
+  background: var(--surface);
 }
 
 .region-chip span {
@@ -484,18 +584,19 @@ textarea {
 
 .guide-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
   gap: 1.5rem;
   align-items: start;
 }
 
 .guide-image {
   width: 100%;
-  max-height: 320px;
+  max-height: 340px;
   object-fit: cover;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--surface-soft);
+  box-shadow: var(--shadow-sm);
 }
 
 .dashboard-actions,
@@ -527,7 +628,6 @@ textarea {
 .inline-check input {
   width: auto;
 }
-
 .list-card,
 .plain-list {
   list-style: none;
@@ -544,10 +644,18 @@ textarea {
 .plain-list li {
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1rem;
-  background: #fbfdff;
+  padding: 1.1rem;
+  background: var(--surface);
   min-width: 0;
   overflow-wrap: anywhere;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.list-card > li:hover,
+.plain-list li:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .plain-list li {
@@ -572,7 +680,7 @@ textarea {
   max-width: 220px;
   aspect-ratio: 16 / 10;
   object-fit: cover;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--surface-soft);
 }
@@ -613,62 +721,71 @@ textarea {
   margin: 0.75rem 0;
   background: var(--surface-soft);
 }
-
 .callout,
 .map-info {
   margin-top: 1rem;
-  padding: 1rem;
+  padding: 1.1rem;
   border-radius: var(--radius);
-  background: #ecfeff;
-  border: 1px solid #99f6e4;
-  color: #134e4a;
+  background: linear-gradient(135deg, #ecfeff, #f0fdf9);
+  border: 1px solid #b7ede4;
+  color: #0f4a44;
 }
 
 .map-info a {
   display: inline-flex;
-  margin: 0.25rem 0.75rem 0.25rem 0;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.3rem 0.75rem 0.3rem 0;
+  font-weight: 600;
+  color: var(--teal);
 }
 
 .map-embed {
   display: block;
   width: 100%;
   max-width: 100%;
-  min-height: 220px;
+  min-height: 240px;
   aspect-ratio: 16 / 10;
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
 }
 
 .map-panel {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: linear-gradient(160deg, #ffffff, #f4f7ff);
+  border-color: var(--border);
   color: var(--text);
+  border-radius: var(--radius-lg);
 }
 
 .map-embed-large {
-  min-height: 320px;
+  min-height: 360px;
 }
 
 .google-map-canvas {
   width: 100%;
-  min-height: 360px;
+  min-height: 380px;
   aspect-ratio: 16 / 10;
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .leaflet-map-canvas {
   width: 100%;
-  min-height: 320px;
+  min-height: 360px;
   aspect-ratio: 16 / 10;
-  margin-top: 0.75rem;
-  border: 1px solid var(--border);
+  margin-top: 0.85rem;
+  border: 2px solid #fff;
+  outline: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--surface-soft);
+  box-shadow: var(--shadow-md);
+  position: relative;
 }
 
 .leaflet-map-canvas-clickable .leaflet-container {
@@ -685,8 +802,8 @@ textarea {
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: rgba(15, 118, 110, 0.18);
-  border: 1px solid rgba(15, 118, 110, 0.35);
+  background: rgba(15, 155, 142, 0.2);
+  border: 1px solid rgba(15, 155, 142, 0.4);
 }
 
 .travel-map-marker span {
@@ -694,14 +811,14 @@ textarea {
   width: 12px;
   height: 12px;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--teal);
   border: 2px solid #fff;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.22);
 }
 
 .travel-map-marker-selected {
-  background: rgba(51, 102, 255, 0.18);
-  border-color: rgba(51, 102, 255, 0.35);
+  background: rgba(63, 94, 255, 0.2);
+  border-color: rgba(63, 94, 255, 0.4);
 }
 
 .travel-map-marker-selected span {
@@ -720,10 +837,9 @@ textarea {
 .map-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 0.75rem;
-  margin-top: 0.75rem;
+  gap: 0.3rem 0.85rem;
+  margin-top: 0.85rem;
 }
-
 .alert-text {
   color: #991b1b;
 }
@@ -738,13 +854,15 @@ textarea {
   padding: 0;
   background: none;
   color: var(--primary);
+  font-weight: 600;
   cursor: pointer;
 }
 
 .alert {
   padding: 1rem 1.25rem;
-  border-radius: 18px;
+  border-radius: var(--radius);
   margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .alert-success {
@@ -759,6 +877,22 @@ textarea {
   border: 1px solid #fecaca;
 }
 
+@media (min-width: 1100px) {
+  .map-embed,
+  .google-map-canvas,
+  .leaflet-map-canvas {
+    min-height: 440px;
+  }
+
+  .map-embed-large {
+    min-height: 480px;
+  }
+
+  .map-panel .leaflet-map-canvas {
+    min-height: 500px;
+  }
+}
+
 @media (max-width: 1100px) {
   .grid-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -768,7 +902,6 @@ textarea {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-
 @media (max-width: 900px) {
   .app-header {
     position: static;
@@ -817,7 +950,6 @@ textarea {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-
 @media (max-width: 640px) {
   .container {
     width: min(100% - 1.25rem, 1140px);
@@ -877,14 +1009,13 @@ textarea {
     padding: 0.45rem 0.65rem;
     background: #fff;
   }
-
   .hero-section {
     gap: 0;
     min-height: auto;
     padding: clamp(1.6rem, 7vw, 2.4rem);
-    border-radius: 12px;
+    border-radius: 18px;
     background:
-      linear-gradient(180deg, rgba(8, 15, 30, 0.72), rgba(8, 15, 30, 0.5)),
+      linear-gradient(180deg, rgba(6, 12, 28, 0.78), rgba(6, 12, 28, 0.55)),
       url("https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Cameroon%20from%20a%20work%20site.jpg");
     background-size: cover;
     background-position: center;
@@ -937,12 +1068,12 @@ textarea {
 
   .list-card > li,
   .plain-list li {
-    padding: 0.85rem;
+    padding: 0.9rem;
   }
 
   .map-info,
   .callout {
-    padding: 0.85rem;
+    padding: 0.9rem;
   }
 
   .map-info a,
@@ -950,8 +1081,10 @@ textarea {
     width: 100%;
   }
 
-  .map-embed {
-    min-height: 180px;
+  .map-embed,
+  .leaflet-map-canvas,
+  .google-map-canvas {
+    min-height: 220px;
     aspect-ratio: 4 / 3;
   }
 
@@ -959,7 +1092,6 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
-
 @media (max-width: 420px) {
   .nav-bar {
     grid-template-columns: 1fr;
@@ -972,7 +1104,7 @@ textarea {
   .feature-card,
   .panel,
   .form-card {
-    padding: 0.9rem;
+    padding: 0.95rem;
   }
 
   .form-card input,
