@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import TravelMap from './TravelMap';
+import { CAMEROON_CENTER, getItemCoordinates } from './mapCoordinates';
 
 const API_BASE = '/api';
 const DEFAULT_CURRENCY = 'XAF';
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
-const CAMEROON_MAP_EMBED = 'https://www.google.com/maps?q=Cameroon&output=embed';
-const CAMEROON_MAP_URL = 'https://www.google.com/maps/search/?api=1&query=Cameroon';
+const OPENSTREETMAP_CAMEROON_URL = 'https://www.openstreetmap.org/search?query=Cameroon';
 const CURRENCY_OPTIONS = [
   { code: 'XAF', label: 'FCFA', rateFromXaf: 1, fractionDigits: 0 },
   { code: 'EUR', label: 'EUR', rateFromXaf: 1 / 655.957, fractionDigits: 2 },
@@ -37,36 +37,6 @@ const PREDEFINED_INTERESTS = [
   'family',
   'photography',
 ];
-
-let googleMapsLoadPromise;
-
-function loadGoogleMaps(apiKey) {
-  if (!apiKey) {
-    return Promise.reject(new Error('Google Maps API key is missing.'));
-  }
-  if (window.google?.maps) {
-    return Promise.resolve(window.google);
-  }
-  if (!googleMapsLoadPromise) {
-    googleMapsLoadPromise = new Promise((resolve, reject) => {
-      const existing = document.querySelector('script[data-globetrotter-google-maps]');
-      if (existing) {
-        existing.addEventListener('load', () => resolve(window.google));
-        existing.addEventListener('error', reject);
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async`;
-      script.async = true;
-      script.defer = true;
-      script.dataset.globetrotterGoogleMaps = 'true';
-      script.onload = () => resolve(window.google);
-      script.onerror = () => reject(new Error('Unable to load Google Maps.'));
-      document.head.appendChild(script);
-    });
-  }
-  return googleMapsLoadPromise;
-}
 
 const GOOGLE_IDENTITY_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 let googleIdentityLoadPromise;
@@ -150,107 +120,22 @@ function GoogleSignInButton({ clientId, onSuccess, onError }) {
   return <div ref={buttonRef} className="google-signin-button" />;
 }
 
-function AdminGoogleMapPicker({ place, onChange }) {
-  const mapElementRef = useRef(null);
-  const mapRef = useRef(null);
-  const markerRef = useRef(null);
-  const geocoderRef = useRef(null);
-  const [mapStatus, setMapStatus] = useState(GOOGLE_MAPS_API_KEY ? 'loading' : 'fallback');
+function AdminLeafletMapPicker({ place, onChange }) {
   const [searchText, setSearchText] = useState(place.mapQuery || place.location || 'Cameroon');
-
-  const fallbackQuery = place.latitude && place.longitude
-    ? `${place.latitude},${place.longitude}`
-    : (place.mapQuery || place.location || 'Cameroon');
+  const selectedPosition = getItemCoordinates({
+    ...place,
+    latitude: place.latitude,
+    longitude: place.longitude,
+    map_query: place.mapQuery,
+  });
 
   useEffect(() => {
     setSearchText(place.mapQuery || place.location || 'Cameroon');
   }, [place.mapQuery, place.location]);
 
-  useEffect(() => {
-    if (!GOOGLE_MAPS_API_KEY) return undefined;
-    let cancelled = false;
-    loadGoogleMaps(GOOGLE_MAPS_API_KEY)
-      .then((google) => {
-        if (cancelled || !mapElementRef.current) return;
-        const initialPosition = {
-          lat: Number(place.latitude) || 5.9631,
-          lng: Number(place.longitude) || 12.5029,
-        };
-        mapRef.current = new google.maps.Map(mapElementRef.current, {
-          center: initialPosition,
-          zoom: place.latitude && place.longitude ? 13 : 6,
-          mapTypeControl: false,
-          streetViewControl: true,
-          fullscreenControl: true,
-        });
-        markerRef.current = new google.maps.Marker({
-          position: initialPosition,
-          map: mapRef.current,
-          draggable: true,
-          title: place.name || 'Selected place',
-        });
-        geocoderRef.current = new google.maps.Geocoder();
-        markerRef.current.addListener('dragend', (event) => {
-          onChange({
-            latitude: event.latLng.lat().toFixed(6),
-            longitude: event.latLng.lng().toFixed(6),
-          });
-        });
-        mapRef.current.addListener('click', (event) => {
-          markerRef.current.setPosition(event.latLng);
-          onChange({
-            latitude: event.latLng.lat().toFixed(6),
-            longitude: event.latLng.lng().toFixed(6),
-          });
-        });
-        setMapStatus('ready');
-      })
-      .catch(() => setMapStatus('fallback'));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!mapRef.current || !markerRef.current || !place.latitude || !place.longitude || !window.google?.maps) return;
-    const position = {
-      lat: Number(place.latitude),
-      lng: Number(place.longitude),
-    };
-    markerRef.current.setPosition(position);
-    mapRef.current.panTo(position);
-  }, [place.latitude, place.longitude]);
-
   const handleSearch = () => {
     const query = searchText.trim() || place.mapQuery || place.location || 'Cameroon';
-    if (!geocoderRef.current || !mapRef.current || !markerRef.current) {
-      onChange({ mapQuery: query, location: query });
-      return;
-    }
-    geocoderRef.current.geocode(
-      {
-        address: query,
-        componentRestrictions: { country: 'CM' },
-      },
-      (results, status) => {
-        if (status !== 'OK' || !results?.[0]) {
-          setMapStatus('search-error');
-          return;
-        }
-        const result = results[0];
-        const position = result.geometry.location;
-        markerRef.current.setPosition(position);
-        mapRef.current.panTo(position);
-        mapRef.current.setZoom(14);
-        setMapStatus('ready');
-        onChange({
-          mapQuery: result.formatted_address || query,
-          location: result.formatted_address || query,
-          latitude: position.lat().toFixed(6),
-          longitude: position.lng().toFixed(6),
-        });
-      },
-    );
+    onChange({ mapQuery: query, location: query });
   };
 
   return (
@@ -260,37 +145,27 @@ function AdminGoogleMapPicker({ place, onChange }) {
         <input
           value={searchText}
           onChange={(event) => setSearchText(event.target.value)}
-          placeholder="Search a Cameroon place on Google Maps"
+          placeholder="Search or name a Cameroon place"
         />
         <button type="button" className="button button-secondary" onClick={handleSearch}>Search map</button>
       </div>
-      {mapStatus === 'fallback' ? (
-        <>
-          <p className="small-text">Set VITE_GOOGLE_MAPS_API_KEY to enable click-to-select and draggable marker editing.</p>
-          <iframe
-            className="map-embed map-embed-large"
-            title="Admin Google map picker"
-            src={`https://www.google.com/maps?q=${encodeURIComponent(fallbackQuery)}&output=embed`}
-            loading="lazy"
-          />
-        </>
-      ) : (
-        <div ref={mapElementRef} className="google-map-canvas" aria-label="Interactive Google map picker" />
-      )}
-      {mapStatus === 'search-error' && (
-        <p className="small-text alert-text">No Cameroon Google Maps result was found for that search.</p>
-      )}
+      <p className="small-text">Click the OpenStreetMap map to set exact coordinates for this place.</p>
+      <TravelMap
+        selectedPosition={selectedPosition}
+        center={selectedPosition || CAMEROON_CENTER}
+        zoom={selectedPosition ? 12 : 6}
+        className="map-embed-large"
+        ariaLabel="Interactive OpenStreetMap place picker"
+        onMapClick={({ latitude, longitude }) => onChange({
+          latitude: latitude.toFixed(6),
+          longitude: longitude.toFixed(6),
+        })}
+      />
       <div className="map-links">
-        <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapQuery || place.location || 'Cameroon')}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Search in Google Maps
-        </a>
+        <a href={OPENSTREETMAP_CAMEROON_URL} target="_blank" rel="noreferrer">Open Cameroon in OpenStreetMap</a>
         {place.latitude && place.longitude && (
           <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.latitude},${place.longitude}`)}`}
+            href={`https://www.openstreetmap.org/?mlat=${encodeURIComponent(place.latitude)}&mlon=${encodeURIComponent(place.longitude)}#map=14/${encodeURIComponent(place.latitude)}/${encodeURIComponent(place.longitude)}`}
             target="_blank"
             rel="noreferrer"
           >
@@ -904,6 +779,47 @@ function App() {
   const getFeaturedDiscoveryPlaces = () => {
     const filteredPlaces = resources.places.filter((place) => matchesGeoFilters(place, searchFilters));
     return filteredPlaces.slice(0, searchFilters.region ? 12 : 6);
+  };
+  const buildMapMarker = (item, type = 'place') => {
+    const position = getItemCoordinates(item);
+    if (!position) return null;
+    return {
+      id: item.id || `${type}-${item.name}`,
+      name: item.name || item.location || 'Cameroon stop',
+      location: item.location || buildCameroonLocation(item),
+      description: item.description || item.notes || '',
+      position,
+    };
+  };
+  const buildMapMarkers = (items = [], type = 'place') => items
+    .map((item) => buildMapMarker(item, type))
+    .filter(Boolean);
+  const getDiscoveryMapMarkers = () => buildMapMarkers(getFeaturedDiscoveryPlaces(), 'place');
+  const getItineraryMapMarkers = () => buildMapMarkers([
+    ...(selectedItinerary?.stages || []),
+    ...(selectedItinerary?.places_to_visit || []),
+    selectedItinerary?.hotel,
+  ].filter(Boolean), 'itinerary');
+  const getTrackingPosition = () => {
+    const tracking = trackingInfo || selectedItinerary?.live_tracking;
+    const latitude = Number(tracking?.latitude);
+    const longitude = Number(tracking?.longitude);
+    if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+      return [latitude, longitude];
+    }
+    return null;
+  };
+  const getMapInfoPosition = () => {
+    const latitude = Number(mapInfo?.map_info?.latitude);
+    const longitude = Number(mapInfo?.map_info?.longitude);
+    if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+      return [latitude, longitude];
+    }
+    return getItemCoordinates({
+      name: mapInfo?.location,
+      location: mapInfo?.location,
+      map_info: mapInfo?.map_info,
+    });
   };
   const updateGeoFilter = (setter, field, value) => {
     setter((prev) => {
@@ -3487,14 +3403,13 @@ function App() {
               <div className="panel">
                 <h3>Personalised city suggestions</h3>
                 <div className="map-info map-panel">
-                  <strong>Google Map of Cameroon</strong>
+                  <strong>OpenStreetMap of Cameroon</strong>
                   <p className="small-text">Use this map while filtering by region, city, subdivision, and quarter.</p>
-                  <a href={CAMEROON_MAP_URL} target="_blank" rel="noreferrer">Open Cameroon in Google Maps</a>
-                  <iframe
-                    className="map-embed map-embed-large"
-                    title="Google map of Cameroon"
-                    src={CAMEROON_MAP_EMBED}
-                    loading="lazy"
+                  <a href={OPENSTREETMAP_CAMEROON_URL} target="_blank" rel="noreferrer">Open Cameroon in OpenStreetMap</a>
+                  <TravelMap
+                    markers={getDiscoveryMapMarkers()}
+                    className="map-embed-large"
+                    ariaLabel="OpenStreetMap map of Cameroon places"
                   />
                 </div>
                 {cityRecommendations.length === 0 ? (
@@ -3800,7 +3715,7 @@ function App() {
                     </label>
                     {renderCameroonFilters(newResource, setNewResource)}
                     <label>
-                      Localisation / Google Maps search
+                      Localisation / map search
                       <input
                         value={newResource.mapQuery}
                         onChange={(event) => setNewResource((prev) => ({
@@ -3874,9 +3789,9 @@ function App() {
                   </form>
                 </div>
                 <div className="panel">
-                  <h3>Google Maps localisation</h3>
+                  <h3>OpenStreetMap localisation</h3>
                   <p className="small-text">Search the place name or paste coordinates, then confirm the location before creating the place.</p>
-                  <AdminGoogleMapPicker
+                  <AdminLeafletMapPicker
                     place={newResource}
                     onChange={(changes) => setNewResource((prev) => ({ ...prev, type: 'places', ...changes }))}
                   />
@@ -4268,6 +4183,13 @@ function App() {
                 <div className="grid-2 mt-24">
                   <div className="panel">
                     <h3>Trip stages</h3>
+                    {getItineraryMapMarkers().length > 0 && (
+                      <TravelMap
+                        markers={getItineraryMapMarkers()}
+                        className="map-embed-large"
+                        ariaLabel="OpenStreetMap map of itinerary stages"
+                      />
+                    )}
                     {selectedItinerary.stages?.length > 0 ? (
                       <ul className="list-card">
                         {selectedItinerary.stages.map((stage) => (
@@ -4434,12 +4356,12 @@ function App() {
                         {(trackingInfo || selectedItinerary.live_tracking).google_map_url && (
                           <a href={(trackingInfo || selectedItinerary.live_tracking).google_map_url} target="_blank" rel="noreferrer">Open live point</a>
                         )}
-                        {(trackingInfo || selectedItinerary.live_tracking).google_maps_embed_url && (
-                          <iframe
-                            className="map-embed"
-                            title="Live trip tracking map"
-                            src={(trackingInfo || selectedItinerary.live_tracking).google_maps_embed_url}
-                            loading="lazy"
+                        {getTrackingPosition() && (
+                          <TravelMap
+                            selectedPosition={getTrackingPosition()}
+                            center={getTrackingPosition()}
+                            zoom={13}
+                            ariaLabel="OpenStreetMap live trip tracking map"
                           />
                         )}
                       </div>
@@ -4447,19 +4369,19 @@ function App() {
                     {mapInfo && (
                       <div className="map-info">
                         <p><strong>Location:</strong> {mapInfo.location}</p>
-                        <p><strong>Provider:</strong> Google Maps · {mapInfo.country_focus}</p>
+                        <p><strong>Provider:</strong> OpenStreetMap · {mapInfo.country_focus}</p>
                         {mapInfo.map_info?.google_map_url && (
                           <a href={mapInfo.map_info.google_map_url} target="_blank" rel="noreferrer">Open in Google Maps</a>
                         )}
                         {mapInfo.map_info?.google_maps_directions_url && (
                           <a href={mapInfo.map_info.google_maps_directions_url} target="_blank" rel="noreferrer">Directions</a>
                         )}
-                        {mapInfo.map_info?.google_maps_embed_url && (
-                          <iframe
-                            className="map-embed"
-                            title={`Google map for ${mapInfo.location}`}
-                            src={mapInfo.map_info.google_maps_embed_url}
-                            loading="lazy"
+                        {getMapInfoPosition() && (
+                          <TravelMap
+                            selectedPosition={getMapInfoPosition()}
+                            center={getMapInfoPosition()}
+                            zoom={12}
+                            ariaLabel={`OpenStreetMap map for ${mapInfo.location}`}
                           />
                         )}
                         {mapInfo.map_info?.latitude && (
