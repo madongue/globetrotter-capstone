@@ -933,8 +933,16 @@ textarea {
 
   .itinerary-card,
   .group-card {
-    align-items: stretch;
-    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .itinerary-card > button,
+  .group-card-actions {
+    width: 100%;
+  }
+
+  .group-card-actions {
+    justify-content: flex-start;
   }
 
   .plain-list li {
@@ -1116,4 +1124,416 @@ textarea {
   .inline-form input {
     padding: 0.8rem;
   }
+}
+
+/* Map-first discovery layout */
+.discovery-layout {
+  grid-template-columns: 1fr 1.15fr;
+  align-items: start;
+}
+
+.discovery-layout > .panel:first-child {
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.discovery-layout > .panel:last-child {
+  position: sticky;
+  top: 6.5rem;
+}
+
+.discovery-layout .map-panel {
+  padding: 1.25rem;
+}
+
+.discovery-layout .map-embed-large {
+  min-height: 420px;
+}
+
+@media (min-width: 1100px) {
+  .discovery-layout .map-embed-large {
+    min-height: 560px;
+  }
+}
+
+@media (max-width: 900px) {
+  .discovery-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .discovery-layout > .panel:first-child,
+  .discovery-layout > .panel:last-child {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* Icon-based sidebar */
+.app-menu-list button {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.app-menu-list button svg {
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: color 0.18s ease;
+}
+
+.app-menu-list button:hover svg,
+.app-menu-list button.active svg {
+  color: currentColor;
+}
+
+.app-menu-list button.active svg {
+  color: #fff;
+}
+
+/* Discovery card grid */
+.discovery-place-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
+}
+
+.discovery-card {
+  padding: 0 !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.discovery-card-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, var(--primary-soft), #fde9e0);
+  overflow: hidden;
+}
+
+.discovery-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.discovery-card:hover .discovery-card-media img {
+  transform: scale(1.06);
+}
+
+.discovery-card-media-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: var(--primary-dark);
+  font-weight: 700;
+  text-transform: capitalize;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+.discovery-card-badge {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+}
+
+.discovery-card-body {
+  padding: 1rem 1.1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.discovery-card-body strong {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+}
+
+.discovery-card-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.discovery-card-body .inline-actions {
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+/* Dashboard summary stat tiles */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  right: -20%;
+  width: 90px;
+  height: 90px;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--primary-soft), transparent 70%);
+}
+
+.stat-card svg {
+  color: var(--primary);
+  margin-bottom: 0.2rem;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Itinerary & group cards */
+.itinerary-card,
+.group-card {
+  gap: 0.9rem;
+}
+
+.itinerary-card-icon,
+.group-card-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+.itinerary-card-info,
+.group-card-info {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.itinerary-card-info p,
+.group-card-info p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Group discussion threads */
+.discussion-thread {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.discussion-posts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.discussion-post {
+  background: var(--surface-soft);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+}
+
+.discussion-post p {
+  margin: 0.2rem 0 0;
+}
+
+.discussion-post-author {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--primary-dark);
+}
+
+.reply-box {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.reply-box input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.8rem;
+  background: var(--surface-soft);
+}
+
+.reply-box input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+  outline: none;
+  background: var(--surface);
+}
+
+/* Resources page tab navigation */
+.tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-nav button {
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-weight: 600;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.tab-nav button:hover {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.tab-nav button.active {
+  background: linear-gradient(120deg, var(--primary), #6d4bff);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(63, 94, 255, 0.25);
+}
+
+/* Trip progress bar & stage checklist */
+.progress-track {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(120deg, var(--teal), var(--primary));
+  transition: width 0.4s ease;
+}
+
+.stage-checklist {
+  list-style: none;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.stage-checklist li {
+  background: var(--surface-soft);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+}
+
+.stage-checklist .inline-check {
+  margin-top: 0;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.stage-active-badge {
+  margin-left: auto;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+/* Inline place edit form */
+.place-edit-form {
+  width: 100%;
+  display: grid;
+  gap: 0.6rem;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem;
+}
+
+.place-edit-form label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.place-edit-form input,
+.place-edit-form textarea {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.7rem;
+  background: var(--surface);
 }

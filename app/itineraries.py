@@ -34,6 +34,7 @@ from app.models import (
     get_all_places,
     get_itineraries_for_user,
     get_itinerary_by_id,
+    get_all_itineraries,
     get_user_by_username,
     get_all_groups,
     get_group_by_id,
@@ -807,6 +808,7 @@ def create_itinerary():
         "payment_method": data.get("payment_method", ""),
         "payment_status": data.get("payment_status", "pending"),
         "map_info": data.get("map_info", {}),
+        "visibility": data.get("visibility", "private") if data.get("visibility") in ("public", "private") else "private",
         "participants": [username],
         "cost_breakdown": cost_breakdown,
         "event_listing": event_listing,
@@ -838,6 +840,8 @@ def update_itinerary_route(itinerary_id: str):
         return jsonify({"error": "edit access is required to modify this itinerary"}), 403
 
     data = request.get_json(silent=True) or {}
+    if "visibility" in data and data.get("visibility") in ("public", "private"):
+        itinerary["visibility"] = data.get("visibility")
     if "title" in data:
         itinerary["title"] = data.get("title", itinerary.get("title", "")).strip()
     if "location" in data:
@@ -999,6 +1003,76 @@ def list_itineraries():
 
     itineraries = get_itineraries_for_user(username)
     return jsonify(itineraries), 200
+
+
+@itineraries_bp.route("/itineraries/community", methods=["GET"])
+def list_community_itineraries():
+    """List public itineraries shared by the community, newest first."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    all_itineraries = get_all_itineraries()
+    public_itineraries = [
+        item for item in all_itineraries
+        if item.get("visibility") == "public"
+    ]
+    public_itineraries.sort(key=lambda item: item.get("created_at", ""), reverse=True)
+    return jsonify(public_itineraries[:100]), 200
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/copy", methods=["POST"])
+def copy_itinerary(itinerary_id: str):
+    """Duplicate a public (or shared-with-you) itinerary into your own account."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    source = get_itinerary_by_id(itinerary_id)
+    if not source:
+        return jsonify({"error": "itinerary not found"}), 404
+
+    is_owner = source.get("owner_username") == username or source.get("username") == username
+    is_shared = username in (source.get("shared_with") or [])
+    is_public = source.get("visibility") == "public"
+    if not (is_owner or is_shared or is_public):
+        return jsonify({"error": "you do not have access to copy this itinerary"}), 403
+
+    copy_data = {
+        "id": str(uuid.uuid4()),
+        "username": username,
+        "owner_username": username,
+        "title": f"{source.get('title', 'Trip')} (copy)",
+        "location": source.get("location", ""),
+        "region": source.get("region", ""),
+        "division": source.get("division", ""),
+        "subdivision": source.get("subdivision", ""),
+        "city": source.get("city", ""),
+        "quarter": source.get("quarter", ""),
+        "hotel": source.get("hotel", {}),
+        "activities": source.get("activities", []),
+        "places_to_visit": source.get("places_to_visit", []),
+        "start_date": "",
+        "end_date": "",
+        "notes": source.get("notes", ""),
+        "currency": source.get("currency", DEFAULT_CURRENCY),
+        "currency_label": source.get("currency_label", DEFAULT_CURRENCY_LABEL),
+        "payment_method": "",
+        "payment_status": "pending",
+        "map_info": source.get("map_info", {}),
+        "visibility": "private",
+        "participants": [username],
+        "shared_with": [],
+        "shared_permissions": {},
+        "copied_from": itinerary_id,
+        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+    copy_data["cost_breakdown"] = _calculate_cost_breakdown(copy_data)
+    _ensure_map_info(copy_data, copy_data["location"])
+    _sync_itinerary_calculations(copy_data)
+    save_itinerary(copy_data)
+    _audit(username, "copied", copy_data["id"], {"copied_from": itinerary_id})
+    return jsonify(copy_data), 201
 
 
 @itineraries_bp.route("/groups", methods=["GET"])

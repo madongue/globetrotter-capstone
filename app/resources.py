@@ -14,6 +14,7 @@ GET    /resources/places
 """
 import uuid
 import os
+import datetime
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
 
@@ -35,6 +36,11 @@ from app.models import (
     remove_activity_by_id,
     remove_place_by_id,
     get_user_by_username,
+    get_all_place_requests,
+    get_place_request_by_id,
+    get_place_requests_for_user,
+    save_place_request,
+    update_place_request,
 )
 
 resources_bp = Blueprint("resources", __name__)
@@ -417,6 +423,45 @@ def get_place_detail(place_id: str):
     }), 200
 
 
+@resources_bp.route("/resources/places/<place_id>", methods=["PATCH"])
+def update_place_detail(place_id: str):
+    """Admin: edit a place's info and location."""
+    username, error = _require_admin(request)
+    if error:
+        return error
+
+    place = next((item for item in get_all_places() if item.get("id") == place_id), None)
+    if not place:
+        return jsonify({"error": "place not found"}), 404
+
+    data = _request_data()
+    for field in ("name", "description", "cost_note", "map_query"):
+        if data.get(field) is not None:
+            place[field] = data.get(field)
+    if data.get("cost") is not None:
+        try:
+            place["cost"] = _number_value(data.get("cost"), "cost")
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+    if data.get("tags") is not None:
+        place["tags"] = _list_value(data, "tags")
+    if data.get("location"):
+        place["location"] = ensure_cameroon_location(data.get("location"))
+        place.update(infer_cameroon_geo(place["location"]))
+    for field in ("region", "division", "subdivision", "city", "quarter"):
+        if data.get(field) is not None:
+            place[field] = data.get(field)
+    if data.get("latitude") is not None and data.get("longitude") is not None:
+        try:
+            place["latitude"] = float(data.get("latitude"))
+            place["longitude"] = float(data.get("longitude"))
+        except (TypeError, ValueError):
+            return jsonify({"error": "latitude and longitude must be numbers"}), 400
+        place["map_info"] = _resource_map_info(place.get("name", ""), place.get("map_query") or place.get("location", ""))
+    update_place(place)
+    return jsonify({"message": "place updated", "place": place}), 200
+
+
 @resources_bp.route("/resources/places/<place_id>/guide", methods=["GET"])
 def get_place_guide(place_id: str):
     """Return an offline-ready guide payload for a Cameroon place."""
@@ -426,6 +471,36 @@ def get_place_guide(place_id: str):
     enriched_place = _with_resource_metadata(place)
     nearby = _nearby_for_place(enriched_place)
     return jsonify(_offline_guide(enriched_place, nearby)), 200
+
+
+@resources_bp.route("/resources/places/<place_id>/comment", methods=["GET", "POST"])
+def place_comments(place_id: str):
+    """Add a comment to a place, or list its comments."""
+    place = next((item for item in get_all_places() if item.get("id") == place_id), None)
+    if not place:
+        return jsonify({"error": "place not found"}), 404
+
+    if request.method == "GET":
+        return jsonify(place.get("comments", [])), 200
+
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    data = request.get_json(silent=True) or {}
+    comment_text = data.get("comment", "").strip()
+    if not comment_text:
+        return jsonify({"error": "comment text is required"}), 400
+
+    comment = {
+        "id": str(uuid.uuid4()),
+        "username": username,
+        "text": comment_text,
+        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+    place.setdefault("comments", []).append(comment)
+    update_place(place)
+    return jsonify({"message": "comment added", "comment": comment, "place": place}), 201
 
 
 @resources_bp.route("/resources/hotels/<hotel_id>", methods=["DELETE"])
@@ -507,3 +582,140 @@ def resource_reviews(resource_type: str, resource_id: str):
     resource["rating"] = round(sum(item.get("rating", 0) for item in reviews) / len(reviews), 2)
     update_resource(resource)
     return jsonify({"message": "review added", "review": review, "resource": resource}), 201
+
+
+@resources_bp.route("/resources/requests", methods=["GET", "POST"])
+def resource_requests():
+    """Submit a place/hotel/activity suggestion, or list submissions."""
+    if request.method == "POST":
+        username = get_current_user(request)
+        if not username:
+            return jsonify({"error": "authentication required"}), 401
+
+        data = _request_data()
+        resource_type = data.get("type", "places").strip().lower()
+        if resource_type not in RESOURCE_CONFIG:
+            return jsonify({"error": "type must be hotels, activities, or places"}), 400
+
+        name = data.get("name", "").strip()
+        location = ensure_cameroon_location(data.get("location", "").strip())
+        cost_field = "cost_per_night" if resource_type == "hotels" else "cost"
+        cost = data.get(cost_field)
+        if cost is None:
+            cost = data.get("cost")
+
+        if not name or not location or cost is None:
+            return jsonify({"error": "name, location, and cost are required"}), 400
+        try:
+            cost = _number_value(cost, cost_field)
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+
+        request_id = str(uuid.uuid4())
+        map_query = data.get("map_query", "").strip() or ", ".join(part for part in [name, location] if part)
+        media_items = _place_media_from_request(request_id, data) if resource_type == "places" else []
+
+        submission = {
+            "id": request_id,
+            "type": resource_type,
+            "name": name,
+            "location": location,
+            **infer_cameroon_geo(location),
+            "description": data.get("description", ""),
+            "tags": _list_value(data, "tags") or data.get("tags", []),
+            cost_field: cost,
+            "cost_note": data.get("cost_note", ""),
+            "map_query": map_query,
+            "media": media_items,
+            "submitted_by": username,
+            "status": "pending",
+            "submitted_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "review_note": "",
+        }
+        save_place_request(submission)
+        return jsonify(submission), 201
+
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    user = get_user_by_username(username)
+    if user and user.get("role") == "admin":
+        status_filter = request.args.get("status", "").strip().lower()
+        items = get_all_place_requests()
+        if status_filter:
+            items = [item for item in items if item.get("status") == status_filter]
+    else:
+        items = get_place_requests_for_user(username)
+    items.sort(key=lambda item: item.get("submitted_at", ""), reverse=True)
+    return jsonify(items), 200
+
+
+def _apply_request_decision(request_id, approve, review_note=""):
+    submission = get_place_request_by_id(request_id)
+    if not submission:
+        return None, (jsonify({"error": "request not found"}), 404)
+    if submission.get("status") != "pending":
+        return None, (jsonify({"error": "request already reviewed"}), 400)
+
+    if approve:
+        resource_type = submission.get("type", "places")
+        cost_field = "cost_per_night" if resource_type == "hotels" else "cost"
+        resource = enrich_cameroon_item({
+            "id": str(uuid.uuid4()),
+            "name": submission.get("name"),
+            "location": submission.get("location"),
+            "region": submission.get("region", ""),
+            "division": submission.get("division", ""),
+            "subdivision": submission.get("subdivision", ""),
+            "city": submission.get("city", ""),
+            "quarter": submission.get("quarter", ""),
+            "description": submission.get("description", ""),
+            "tags": submission.get("tags", []),
+            cost_field: submission.get(cost_field, 0),
+            "cost_note": submission.get("cost_note", ""),
+            "map_query": submission.get("map_query", ""),
+            "map_info": _resource_map_info(submission.get("name", ""), submission.get("map_query") or submission.get("location", "")),
+            "media": submission.get("media", []),
+            "images": [item for item in submission.get("media", []) if item.get("type") == "photo"],
+            "videos": [item for item in submission.get("media", []) if item.get("type") == "video"],
+            "submitted_by": submission.get("submitted_by"),
+        })
+        if resource_type == "hotels":
+            save_hotel(resource)
+        elif resource_type == "activities":
+            save_activity(resource)
+        else:
+            save_place(resource)
+        submission["resource_id"] = resource.get("id")
+        submission["status"] = "approved"
+    else:
+        submission["status"] = "rejected"
+
+    submission["review_note"] = review_note
+    submission["reviewed_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    update_place_request(submission)
+    return submission, None
+
+
+@resources_bp.route("/resources/requests/<request_id>/approve", methods=["POST"])
+def approve_resource_request(request_id: str):
+    username, error = _require_admin(request)
+    if error:
+        return error
+    data = request.get_json(silent=True) or {}
+    submission, error = _apply_request_decision(request_id, True, data.get("note", ""))
+    if error:
+        return error
+    return jsonify({"message": "request approved", "request": submission}), 200
+
+
+@resources_bp.route("/resources/requests/<request_id>/reject", methods=["POST"])
+def reject_resource_request(request_id: str):
+    username, error = _require_admin(request)
+    if error:
+        return error
+    data = request.get_json(silent=True) or {}
+    submission, error = _apply_request_decision(request_id, False, data.get("note", ""))
+    if error:
+        return error
+    return jsonify({"message": "request rejected", "request": submission}), 200
