@@ -677,6 +677,8 @@ function App() {
   const [newResourceFiles, setNewResourceFiles] = useState([]);
   const [placeRequests, setPlaceRequests] = useState([]);
   const [resourcesTab, setResourcesTab] = useState('catalogue');
+  const [catalogueQuery, setCatalogueQuery] = useState('');
+  const [catalogueVisibleCount, setCatalogueVisibleCount] = useState({ hotels: 20, activities: 20, places: 20 });
   const [communityItineraries, setCommunityItineraries] = useState([]);
   const [itinerariesTab, setItinerariesTab] = useState('mine');
   const [requestForm, setRequestForm] = useState({
@@ -3314,7 +3316,7 @@ function App() {
                       key={item.id}
                       type="button"
                       className={dashboardView === item.id ? 'active' : ''}
-                      onClick={() => setDashboardView(item.id)}
+                      onClick={() => { setAlert(null); setDashboardView(item.id); }}
                     >
                       {ItemIcon && <ItemIcon size={18} strokeWidth={2} aria-hidden="true" />}
                       <span>{item.label}</span>
@@ -3353,10 +3355,10 @@ function App() {
                 <h2>Welcome back</h2>
                 <p>Access your itineraries, event receipts, and community groups in one place.</p>
                 <div className="dashboard-actions">
-                  <button type="button" className="button button-secondary" onClick={() => setDashboardView('itineraries')}>
+                  <button type="button" className="button button-secondary" onClick={() => { setAlert(null); setDashboardView('itineraries'); }}>
                     Create itinerary
                   </button>
-                  <button type="button" className="button button-secondary" onClick={() => setDashboardView('community')}>
+                  <button type="button" className="button button-secondary" onClick={() => { setAlert(null); setDashboardView('community'); }}>
                     Join a group
                   </button>
                 </div>
@@ -4718,15 +4720,29 @@ function App() {
               </div>
               )}
               {resourcesTab === 'catalogue' && (
-              <div className="resource-columns mt-16">
-                {Object.entries(resources).map(([type, items]) => (
+              <>
+              <div className="compact-form mt-16">
+                <label>
+                  Search catalogue
+                  <input value={catalogueQuery} onChange={(event) => setCatalogueQuery(event.target.value)} placeholder="Search by name or location" />
+                </label>
+              </div>
+              <div className="resource-columns">
+                {Object.entries(resources).map(([type, allItems]) => {
+                  const q = catalogueQuery.trim().toLowerCase();
+                  const items = q
+                    ? allItems.filter((item) => (item.name || '').toLowerCase().includes(q) || (item.location || '').toLowerCase().includes(q))
+                    : allItems;
+                  const visibleCount = catalogueVisibleCount[type] || 20;
+                  const visibleItems = items.slice(0, visibleCount);
+                  return (
                   <div key={type}>
-                    <h4>{type}</h4>
-                    {items.length === 0 ? (
+                    <h4>{type} <span className="small-text">({items.length})</span></h4>
+                    {visibleItems.length === 0 ? (
                       <p className="small-text">No entries.</p>
                     ) : (
                       <ul className="plain-list">
-                        {items.map((item) => (
+                        {visibleItems.map((item) => (
                           <li key={item.id}>
                           {type === 'places' && editingPlaceId === item.id ? (
                             <div className="place-edit-form">
@@ -4795,9 +4811,20 @@ function App() {
                         ))}
                       </ul>
                     )}
+                    {items.length > visibleItems.length && (
+                      <button
+                        type="button"
+                        className="link-button"
+                        onClick={() => setCatalogueVisibleCount((prev) => ({ ...prev, [type]: (prev[type] || 20) + 20 }))}
+                      >
+                        Show more ({items.length - visibleItems.length} remaining)
+                      </button>
+                    )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
+              </>
               )}
               {resourcesTab === 'reviews' && (
               <form onSubmit={handleAddResourceReview} className="resource-form mt-16">
