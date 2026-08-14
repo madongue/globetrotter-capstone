@@ -204,6 +204,13 @@ def _place_photos(place_id: str) -> list:
     ]
 
 
+def _place_videos(place_id: str) -> list:
+    return [
+        item for item in get_all_media()
+        if item.get("place_id") == place_id and item.get("type") == "video"
+    ]
+
+
 def _offline_guide(place: dict, nearby: dict) -> dict:
     return {
         "title": f"{place.get('name')} travel guide",
@@ -419,6 +426,7 @@ def get_place_detail(place_id: str):
         "place": enriched_place,
         "nearby": nearby,
         "photos": _place_photos(place_id),
+        "videos": _place_videos(place_id),
         "guide": _offline_guide(enriched_place, nearby),
     }), 200
 

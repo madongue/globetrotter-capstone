@@ -646,6 +646,10 @@ function App() {
   const [editingPlaceId, setEditingPlaceId] = useState(null);
   const [adminStats, setAdminStats] = useState(null);
   const [editPlaceForm, setEditPlaceForm] = useState({ name: '', description: '', cost: '', location: '', latitude: '', longitude: '' });
+  const [userLocation, setUserLocation] = useState(null);
+  const [nearMeActive, setNearMeActive] = useState(false);
+  const [nearMeError, setNearMeError] = useState(null);
+  const [locatingUser, setLocatingUser] = useState(false);
   const [resources, setResources] = useState({ hotels: [], activities: [], places: [] });
   const [hotelCompareFilters, setHotelCompareFilters] = useState({ location: '', city: '', maxPrice: '' });
   const [hotelComparison, setHotelComparison] = useState(null);
@@ -859,8 +863,53 @@ function App() {
   }, {});
   const DISCOVERY_PAGE_SIZE = 60;
   const DISCOVERY_MAP_MAX_MARKERS = 150;
+  const EARTH_RADIUS_KM = 6371;
+  const getDistanceKm = (from, to) => {
+    if (!from || !to) return null;
+    const toRad = (value) => (value * Math.PI) / 180;
+    const dLat = toRad(to[0] - from[0]);
+    const dLng = toRad(to[1] - from[1]);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(from[0])) * Math.cos(toRad(to[0])) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return EARTH_RADIUS_KM * c;
+  };
+  const getItemDistanceFromUser = (item) => {
+    if (!userLocation) return null;
+    const position = getItemCoordinates(item);
+    if (!position) return null;
+    return getDistanceKm([userLocation.latitude, userLocation.longitude], position);
+  };
+  const handleUseMyLocationDiscovery = () => {
+    if (!navigator.geolocation) {
+      setNearMeError('Geolocation is not supported on this device.');
+      return;
+    }
+    setLocatingUser(true);
+    setNearMeError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+        setNearMeActive(true);
+        setLocatingUser(false);
+      },
+      (error) => {
+        setNearMeError(error.message || 'Unable to get your location.');
+        setLocatingUser(false);
+      },
+      { enableHighAccuracy: true, timeout: 12000 }
+    );
+  };
   const getSortedDiscoveryCatalogue = () => {
     const filteredPlaces = getFilteredDiscoveryCatalogue();
+    if (nearMeActive && userLocation) {
+      return filteredPlaces
+        .map((item) => ({ item, distance: getItemDistanceFromUser(item) }))
+        .filter((entry) => entry.distance !== null)
+        .sort((a, b) => a.distance - b.distance)
+        .map((entry) => ({ ...entry.item, distance_km: entry.distance }));
+    }
     return filteredPlaces.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
   };
   const getFeaturedDiscoveryPlaces = () => getSortedDiscoveryCatalogue().slice(0, DISCOVERY_PAGE_SIZE);
@@ -1890,6 +1939,7 @@ function App() {
         formData.append('caption', newMediaCaption.trim());
         if (mediaGroupId) formData.append('group_id', mediaGroupId);
         if (newMediaPlaceId.trim()) formData.append('place_id', newMediaPlaceId.trim());
+        if (newMediaItineraryId) formData.append('itinerary_id', newMediaItineraryId);
         response = await fetch(`${API_BASE}/media/upload`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -1908,6 +1958,7 @@ function App() {
             caption: newMediaCaption.trim(),
             group_id: mediaGroupId || undefined,
             place_id: newMediaPlaceId.trim() || undefined,
+            itinerary_id: newMediaItineraryId || undefined,
           }),
         });
       }
@@ -3333,7 +3384,49 @@ function App() {
                     {selectedPlaceGuide.place.image_url && (
                       <img className="guide-image" src={selectedPlaceGuide.place.image_url} alt={selectedPlaceGuide.place.name} loading="lazy" decoding="async" />
                     )}
+                    {(() => {
+                      const allPhotos = [
+                        ...(selectedPlaceGuide.place.images || []),
+                        ...(selectedPlaceGuide.photos || []),
+                      ];
+                      return allPhotos.length > 0 && (
+                        <div className="guide-gallery">
+                          {allPhotos.map((photo, index) => (
+                            <img
+                              key={photo.id || index}
+                              src={photo.url}
+                              alt={photo.caption || selectedPlaceGuide.place.name}
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          ))}
+                        </div>
+                      );
+                    })()}
+                    {(() => {
+                      const allVideos = [
+                        ...(selectedPlaceGuide.place.videos || []),
+                        ...(selectedPlaceGuide.videos || []),
+                      ];
+                      return allVideos.length > 0 && (
+                        <div className="guide-video-list">
+                          {allVideos.map((video, index) => (
+                            <video key={video.id || index} src={video.url} controls preload="metadata" />
+                          ))}
+                        </div>
+                      );
+                    })()}
                     <p>{selectedPlaceGuide.place.description}</p>
+                    <p className="small-text">
+                      {selectedPlaceGuide.place.quarter || ''} {selectedPlaceGuide.place.city || ''} 
+·
+ {selectedPlaceGuide.place.region}
+                    </p>
+                    <TravelMap
+                      markers={[buildMapMarker(selectedPlaceGuide.place, 'place')].filter(Boolean)}
+                      className="map-embed"
+                      ariaLabel={`Map showing ${selectedPlaceGuide.place.name}`}
+                    />
                     <p><strong>Entry/activity budget:</strong> {formatMoney(selectedPlaceGuide.place.cost || 0)}</p>
                     {selectedPlaceGuide.place.difficulty && (
                       <p><strong>Outdoor info:</strong> {selectedPlaceGuide.place.difficulty} · Guide {selectedPlaceGuide.place.guide_required ? 'recommended' : 'optional'}</p>
@@ -3794,6 +3887,26 @@ function App() {
             <div className="grid-2 discovery-layout mt-24">
               <div className="panel">
                 <h3>Destination search</h3>
+                <div className="inline-actions wrap-actions">
+                  <button
+                    type="button"
+                    className={nearMeActive ? 'button button-primary' : 'button button-secondary'}
+                    onClick={() => {
+                      if (nearMeActive) {
+                        setNearMeActive(false);
+                      } else if (userLocation) {
+                        setNearMeActive(true);
+                      } else {
+                        handleUseMyLocationDiscovery();
+                      }
+                    }}
+                    disabled={locatingUser}
+                  >
+                    {locatingUser ? 'Locating...' : nearMeActive ? 'Near me: on' : 'Show places near me'}
+                  </button>
+                  {nearMeActive && <span className="small-text">Sorted by distance from your location</span>}
+                </div>
+                {nearMeError && <p className="alert-text small-text">{nearMeError}</p>}
                 <form onSubmit={handleDestinationSearch} className="search-form">
                   <label>
                     Search
@@ -3871,6 +3984,9 @@ function App() {
                             <div className="discovery-card-media-fallback">{(place.category || 'place').replace('_', ' ')}</div>
                           )}
                           <span className="discovery-card-badge">{(place.category || 'place').replace('_', ' ')}</span>
+                          {place.distance_km !== undefined && (
+                            <span className="discovery-card-distance">{place.distance_km < 1 ? '<1 km' : `${place.distance_km.toFixed(1)} km`} away</span>
+                          )}
                         </div>
                         <div className="discovery-card-body">
                         <strong>{place.name}</strong>
@@ -4176,6 +4292,15 @@ function App() {
                     </select>
                   </label>
                   <label>
+                    Trip
+                    <select value={newMediaItineraryId} onChange={(event) => setNewMediaItineraryId(event.target.value)}>
+                      <option value="">No linked trip</option>
+                      {itineraries.map((itinerary) => (
+                        <option key={itinerary.id} value={itinerary.id}>{itinerary.title}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
                     Type
                     <select value={newMediaType} onChange={(event) => setNewMediaType(event.target.value)}>
                       <option value="photo">Photo</option>
@@ -4400,7 +4525,7 @@ function App() {
                     <li key={item.id}>
                       <span>
                         <strong>{item.name}</strong> <small>({item.type})</small>
-                        <small>{item.city || item.location} ┬╖ {item.region}</small>
+                        <small>{item.city || item.location} · {item.region}</small>
                         {item.description && <small>{item.description}</small>}
                         <small>Submitted by {item.submitted_by}</small>
                       </span>
@@ -4419,7 +4544,7 @@ function App() {
                     <li key={item.id}>
                       <span>
                         <strong>{item.name}</strong>
-                        <small>{item.status} ┬╖ by {item.submitted_by}</small>
+                        <small>{item.status} • by {item.submitted_by}</small>
                       </span>
                     </li>
                   ))}
@@ -4496,7 +4621,7 @@ function App() {
                       <li key={item.id}>
                         <span>
                           <strong>{item.name}</strong>
-                          <small>{item.city || item.location} ┬╖ {item.region}</small>
+                          <small>{item.city || item.location} · {item.region}</small>
                         </span>
                         <small className={`request-status request-status-${item.status}`}>{item.status}</small>
                       </li>
@@ -5439,6 +5564,25 @@ function App() {
                       ))}
                     </ul>
                   )}
+                  <h4 className="mt-16">Trip stories</h4>
+                  {media.filter((item) => item.itinerary_id === selectedItinerary.id).length === 0 ? (
+                    <p className="small-text">No photos or videos shared for this trip yet.</p>
+                  ) : (
+                    <div className="media-feed">
+                      {media.filter((item) => item.itinerary_id === selectedItinerary.id).map((item) => (
+                        <div key={item.id}>
+                          {item.type === 'video' ? (
+                            <video src={item.url} controls preload="metadata" />
+                          ) : (
+                            <img src={item.url} alt={item.caption || 'Trip photo'} loading="lazy" decoding="async" />
+                          )}
+                          <p className="small-text">{item.caption} 
+—
+ by {item.username}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -5467,6 +5611,25 @@ function App() {
                       </label>
                       <button type="submit" className="button button-primary">Start discussion</button>
                     </form>
+                    {media.filter((item) => item.group_id === selectedGroup.id && item.itinerary_id).length > 0 && (
+                      <div className="mt-16">
+                        <h4>Trip stories</h4>
+                        <div className="media-feed">
+                          {media.filter((item) => item.group_id === selectedGroup.id && item.itinerary_id).map((item) => (
+                            <div key={item.id}>
+                              {item.type === 'video' ? (
+                                <video src={item.url} controls preload="metadata" />
+                              ) : (
+                                <img src={item.url} alt={item.caption || 'Trip story'} loading="lazy" decoding="async" />
+                              )}
+                              <p className="small-text">{item.caption} 
+—
+ by {item.username}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     {selectedGroup.discussions?.length > 0 ? (
                       <ul className="list-card discussion-thread-list">
                         {selectedGroup.discussions.map((discussion) => (
@@ -5555,6 +5718,15 @@ function App() {
                           <option value="">No linked place</option>
                           {resources.places.map((place) => (
                             <option key={place.id} value={place.id}>{place.name} · {place.city || place.region}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Trip
+                        <select value={newMediaItineraryId} onChange={(event) => setNewMediaItineraryId(event.target.value)}>
+                          <option value="">No linked trip</option>
+                          {itineraries.map((itinerary) => (
+                            <option key={itinerary.id} value={itinerary.id}>{itinerary.title}</option>
                           ))}
                         </select>
                       </label>
