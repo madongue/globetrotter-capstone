@@ -117,9 +117,13 @@ def _verify_google_id_token(id_token: str) -> dict | None:
 def _bootstrap_role_for(username: str) -> str:
     """Return the initial role for a newly registered account.
 
-    This lets a deployed instance create its first administrator without
-    editing the JSON data store by hand. Set ADMIN_USERNAMES to a comma-separated
-    list on Render to make matching new registrations admins.
+    Every self-registered account is a regular "user" by default. To grant
+    admin on registration (e.g. to bootstrap your own super-admin account),
+    set ADMIN_USERNAMES to a comma-separated list of usernames on Render.
+    From then on, admins can promote other accounts via the Admin dashboard
+    (PATCH /admin/users/<username>/role) -- there is no automatic
+    "first user becomes admin" behaviour, since that is unsafe on hosts
+    with non-persistent storage where the user list can reset to empty.
     """
     configured_admins = {
         item.strip().lower()
@@ -127,8 +131,6 @@ def _bootstrap_role_for(username: str) -> str:
         if item.strip()
     }
     if username.lower() in configured_admins:
-        return "admin"
-    if not get_all_users():
         return "admin"
     return "user"
 

@@ -677,6 +677,7 @@ function App() {
   const [newResourceFiles, setNewResourceFiles] = useState([]);
   const [placeRequests, setPlaceRequests] = useState([]);
   const [resourcesTab, setResourcesTab] = useState('catalogue');
+  const [adminTab, setAdminTab] = useState('overview');
   const [catalogueQuery, setCatalogueQuery] = useState('');
   const [catalogueVisibleCount, setCatalogueVisibleCount] = useState({ hotels: 20, activities: 20, places: 20 });
   const [communityItineraries, setCommunityItineraries] = useState([]);
@@ -4323,16 +4324,89 @@ function App() {
               </div>
             </div>
             )}
-            {dashboardView === 'admin' && (
-            <div className="grid-2 mt-24">
-              {profile?.role !== 'admin' ? (
-                <div className="panel">
-                  <h3>Admin dashboard</h3>
-                  <p>Admin access is required.</p>
-                </div>
+{dashboardView === 'admin' && isAdmin && (
+            <>
+            <div className="tab-nav mt-24">
+              <button type="button" className={adminTab === 'overview' ? 'active' : ''} onClick={() => setAdminTab('overview')}>Overview</button>
+              <button type="button" className={adminTab === 'add-place' ? 'active' : ''} onClick={() => setAdminTab('add-place')}>Add a place</button>
+            </div>
+            {adminTab === 'overview' && (
+            <>
+            {adminStats && (
+            <div className="stats-grid">
+              <div className="stat-card">
+                <Users size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_users}</span>
+                <span className="stat-label">Total users ({adminStats.total_admins} admin{adminStats.total_admins === 1 ? '' : 's'})</span>
+              </div>
+              <div className="stat-card">
+                <MapIcon size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_itineraries}</span>
+                <span className="stat-label">Itineraries ({adminStats.public_itineraries} public)</span>
+              </div>
+              <div className="stat-card">
+                <Compass size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_places}</span>
+                <span className="stat-label">Places in catalogue</span>
+              </div>
+              <div className="stat-card">
+                <Building2 size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_hotels}</span>
+                <span className="stat-label">Hotels listed</span>
+              </div>
+              <div className="stat-card">
+                <ClipboardCheck size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.pending_place_requests}</span>
+                <span className="stat-label">Pending requests (of {adminStats.total_place_requests})</span>
+              </div>
+              <div className="stat-card">
+                <Images size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_media}</span>
+                <span className="stat-label">Media posts ({adminStats.total_groups} groups)</span>
+              </div>
+            </div>
+            )}
+            <div className="panel mt-24">
+              <h3>Pending place requests</h3>
+              {placeRequests.filter((item) => item.status === 'pending').length === 0 ? (
+                <p className="small-text">No pending requests right now.</p>
               ) : (
-                <>
-                <div className="panel">
+                <ul className="list-card">
+                  {placeRequests.filter((item) => item.status === 'pending').map((item) => (
+                    <li key={item.id}>
+                      <span>
+                        <strong>{item.name}</strong> <small>({item.type})</small>
+                        <small>{item.city || item.location} · {item.region}</small>
+                        {item.description && <small>{item.description}</small>}
+                        <small>Submitted by {item.submitted_by}</small>
+                      </span>
+                      <div className="inline-actions">
+                        <button type="button" className="button button-primary" onClick={() => handleReviewPlaceRequest(item.id, true)}>Approve</button>
+                        <button type="button" className="button button-secondary" onClick={() => handleReviewPlaceRequest(item.id, false)}>Reject</button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="mt-16">
+                <h4>Recently reviewed</h4>
+                <ul className="plain-list">
+                  {placeRequests.filter((item) => item.status !== 'pending').slice(0, 8).map((item) => (
+                    <li key={item.id}>
+                      <span>
+                        <strong>{item.name}</strong>
+                        <small>{item.status} • by {item.submitted_by}</small>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            </>
+            )}
+            {adminTab === 'add-place' && (
+            <div className="grid-2 mt-24">
+              <div className="panel">
                   <h3>Add place to visit</h3>
                   <form onSubmit={handleCreateResource} className="stacked-form">
                     <label>
@@ -4477,82 +4551,9 @@ function App() {
                     </ul>
                   </div>
                 </div>
-                </>
-              )}
+                
             </div>
             )}
-            {dashboardView === 'admin' && isAdmin && (
-            <>
-            {adminStats && (
-            <div className="stats-grid">
-              <div className="stat-card">
-                <Users size={20} strokeWidth={2} aria-hidden="true" />
-                <span className="stat-value">{adminStats.total_users}</span>
-                <span className="stat-label">Total users ({adminStats.total_admins} admin{adminStats.total_admins === 1 ? '' : 's'})</span>
-              </div>
-              <div className="stat-card">
-                <MapIcon size={20} strokeWidth={2} aria-hidden="true" />
-                <span className="stat-value">{adminStats.total_itineraries}</span>
-                <span className="stat-label">Itineraries ({adminStats.public_itineraries} public)</span>
-              </div>
-              <div className="stat-card">
-                <Compass size={20} strokeWidth={2} aria-hidden="true" />
-                <span className="stat-value">{adminStats.total_places}</span>
-                <span className="stat-label">Places in catalogue</span>
-              </div>
-              <div className="stat-card">
-                <Building2 size={20} strokeWidth={2} aria-hidden="true" />
-                <span className="stat-value">{adminStats.total_hotels}</span>
-                <span className="stat-label">Hotels listed</span>
-              </div>
-              <div className="stat-card">
-                <ClipboardCheck size={20} strokeWidth={2} aria-hidden="true" />
-                <span className="stat-value">{adminStats.pending_place_requests}</span>
-                <span className="stat-label">Pending requests (of {adminStats.total_place_requests})</span>
-              </div>
-              <div className="stat-card">
-                <Images size={20} strokeWidth={2} aria-hidden="true" />
-                <span className="stat-value">{adminStats.total_media}</span>
-                <span className="stat-label">Media posts ({adminStats.total_groups} groups)</span>
-              </div>
-            </div>
-            )}
-            <div className="panel mt-24">
-              <h3>Pending place requests</h3>
-              {placeRequests.filter((item) => item.status === 'pending').length === 0 ? (
-                <p className="small-text">No pending requests right now.</p>
-              ) : (
-                <ul className="list-card">
-                  {placeRequests.filter((item) => item.status === 'pending').map((item) => (
-                    <li key={item.id}>
-                      <span>
-                        <strong>{item.name}</strong> <small>({item.type})</small>
-                        <small>{item.city || item.location} · {item.region}</small>
-                        {item.description && <small>{item.description}</small>}
-                        <small>Submitted by {item.submitted_by}</small>
-                      </span>
-                      <div className="inline-actions">
-                        <button type="button" className="button button-primary" onClick={() => handleReviewPlaceRequest(item.id, true)}>Approve</button>
-                        <button type="button" className="button button-secondary" onClick={() => handleReviewPlaceRequest(item.id, false)}>Reject</button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <div className="mt-16">
-                <h4>Recently reviewed</h4>
-                <ul className="plain-list">
-                  {placeRequests.filter((item) => item.status !== 'pending').slice(0, 8).map((item) => (
-                    <li key={item.id}>
-                      <span>
-                        <strong>{item.name}</strong>
-                        <small>{item.status} • by {item.submitted_by}</small>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
             </>
             )}
             {dashboardView === 'suggest' && (
