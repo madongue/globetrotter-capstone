@@ -302,6 +302,77 @@ function AdminGoogleMapPicker({ place, onChange }) {
   );
 }
 
+function LiveLocationMap({ apiKey, position, status, error }) {
+  const mapElementRef = useRef(null);
+  const mapRef = useRef(null);
+  const markerRef = useRef(null);
+  const [mapStatus, setMapStatus] = useState(apiKey ? 'loading' : 'fallback');
+
+  useEffect(() => {
+    if (!apiKey) {
+      setMapStatus('fallback');
+      return undefined;
+    }
+
+    let cancelled = false;
+    loadGoogleMaps(apiKey)
+      .then((google) => {
+        if (cancelled || !mapElementRef.current) {
+          return;
+        }
+        const initialPosition = position
+          ? { lat: Number(position.latitude), lng: Number(position.longitude) }
+          : { lat: 5.9631, lng: 12.5029 };
+        mapRef.current = new google.maps.Map(mapElementRef.current, {
+          center: initialPosition,
+          zoom: position ? 12 : 6,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: true,
+        });
+        markerRef.current = new google.maps.Marker({
+          position: initialPosition,
+          map: mapRef.current,
+          title: 'Your live location',
+        });
+        setMapStatus('ready');
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setMapStatus('fallback');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiKey, position?.latitude, position?.longitude]);
+
+  useEffect(() => {
+    if (!mapRef.current || !markerRef.current || !position) {
+      return;
+    }
+    const nextPosition = {
+      lat: Number(position.latitude),
+      lng: Number(position.longitude),
+    };
+    markerRef.current.setPosition(nextPosition);
+    mapRef.current.panTo(nextPosition);
+  }, [position]);
+
+  return (
+    <div className="map-info map-panel">
+      {mapStatus === 'fallback' ? (
+        <p className="small-text">Add a Google Maps API key to render the live tracker.</p>
+      ) : (
+        <div ref={mapElementRef} className="google-map-canvas" aria-label="Live Google map tracker" />
+      )}
+      {status === 'requesting' && <p className="small-text">Requesting your location...</p>}
+      {error && <p className="small-text alert-text">{error}</p>}
+    </div>
+  );
+}
+
 const FR_TEXT = {
   Home: 'Accueil',
   Login: 'Connexion',
@@ -685,7 +756,12 @@ function App() {
   const [paymentMethod, setPaymentMethod] = useState('mobile');
   const [paymentTargetType, setPaymentTargetType] = useState('total');
   const [runtimeGoogleClientId, setRuntimeGoogleClientId] = useState('');
+  const [runtimeGoogleMapsApiKey, setRuntimeGoogleMapsApiKey] = useState('');
   const [googleClientIdLoadingError, setGoogleClientIdLoadingError] = useState(null);
+  const [liveLocationStatus, setLiveLocationStatus] = useState('idle');
+  const [liveLocationError, setLiveLocationError] = useState('');
+  const [liveLocationPosition, setLiveLocationPosition] = useState(null);
+  const [liveLocationWatchId, setLiveLocationWatchId] = useState(null);
   const [reservationForm, setReservationForm] = useState({
     type: 'hotel',
     stageId: '',
@@ -704,6 +780,7 @@ function App() {
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [selectedGroup, setSelectedGroup] = useState(null);
   const googleClientId = getGoogleIdentityClientId(runtimeGoogleClientId);
+  const effectiveGoogleMapsApiKey = runtimeGoogleMapsApiKey || GOOGLE_MAPS_API_KEY;
 
   useEffect(() => {
     let cancelled = false;
@@ -720,6 +797,9 @@ function App() {
         }
         if (typeof config.googleClientId === 'string') {
           setRuntimeGoogleClientId(config.googleClientId);
+        }
+        if (typeof config.googleMapsApiKey === 'string') {
+          setRuntimeGoogleMapsApiKey(config.googleMapsApiKey);
         }
       })
       .catch((error) => {
@@ -2165,9 +2245,10 @@ function App() {
     setAlert({ type: 'success', message: 'Reservation cancelled.' });
   };
 
-  const handleUpdateTracking = async (event) => {
-    event.preventDefault();
-    if (!selectedItinerary) return;
+  const syncTrackingToBackend = async (latitude, longitude, currentLocation) => {
+    if (!selectedItinerary) {
+      return null;
+    }
     const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/tracking`, {
       method: 'PATCH',
       headers: {
@@ -2175,20 +2256,78 @@ function App() {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        latitude: Number(trackingForm.latitude),
-        longitude: Number(trackingForm.longitude),
-        current_location: trackingForm.currentLocation,
+        latitude,
+        longitude,
+        current_location: currentLocation,
         current_stage_id: progressForm.currentStageId || undefined,
       }),
     });
     const result = await response.json();
     if (!response.ok) {
-      setAlert({ type: 'error', message: result.error || 'Unable to update live tracking.' });
-      return;
+      throw new Error(result.error || 'Unable to update live tracking.');
     }
     setTrackingInfo(result.tracking);
     refreshSelectedItinerary(result.itinerary);
-    setAlert({ type: 'success', message: 'Live tracking updated.' });
+    return result;
+  };
+
+  const handleUpdateTracking = async (event) => {
+    event.preventDefault();
+    if (!selectedItinerary) return;
+    try {
+      await syncTrackingToBackend(Number(trackingForm.latitude), Number(trackingForm.longitude), trackingForm.currentLocation);
+      setAlert({ type: 'success', message: 'Live tracking updated.' });
+    } catch (error) {
+      setAlert({ type: 'error', message: error.message || 'Unable to update live tracking.' });
+    }
+  };
+
+  const handleStartLiveTracking = () => {
+    if (!navigator.geolocation) {
+      setLiveLocationError('Geolocation is not supported in this browser.');
+      return;
+    }
+    if (liveLocationWatchId !== null) {
+      return;
+    }
+    setLiveLocationStatus('requesting');
+    setLiveLocationError('');
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const nextLocation = { latitude, longitude };
+        setLiveLocationPosition(nextLocation);
+        const locationLabel = `Live position ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+        setTrackingForm((prev) => ({
+          ...prev,
+          latitude: latitude.toFixed(6),
+          longitude: longitude.toFixed(6),
+          currentLocation: prev.currentLocation || locationLabel,
+        }));
+        setLiveLocationStatus('tracking');
+        if (selectedItinerary && token) {
+          syncTrackingToBackend(latitude, longitude, locationLabel)
+            .catch((error) => {
+              setLiveLocationError(error.message || 'Unable to share live location.');
+            });
+        }
+      },
+      (error) => {
+        setLiveLocationStatus('error');
+        setLiveLocationError(error.message || 'Unable to read your location.');
+      },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
+    );
+    setLiveLocationWatchId(watchId);
+  };
+
+  const handleStopLiveTracking = () => {
+    if (liveLocationWatchId !== null && navigator.geolocation) {
+      navigator.geolocation.clearWatch(liveLocationWatchId);
+    }
+    setLiveLocationWatchId(null);
+    setLiveLocationStatus('stopped');
   };
 
   const handleLoadBudget = async () => {
@@ -4396,6 +4535,16 @@ function App() {
                   <div className="panel">
                     <h3>Map metadata</h3>
                     <button type="button" className="button button-secondary" onClick={handleLoadMapInfo}>Load map</button>
+                    <div className="map-links mt-16">
+                      <button type="button" className="button button-primary" onClick={handleStartLiveTracking}>Start live map</button>
+                      <button type="button" className="button button-secondary" onClick={handleStopLiveTracking}>Stop</button>
+                    </div>
+                    <LiveLocationMap
+                      apiKey={effectiveGoogleMapsApiKey}
+                      position={liveLocationPosition}
+                      status={liveLocationStatus}
+                      error={liveLocationError}
+                    />
                     <form onSubmit={handleUpdateTracking} className="stacked-form mt-16">
                       <label>
                         Latitude

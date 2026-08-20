@@ -36,6 +36,10 @@ def create_app():
         "routes": {},
     }
     app.config["GOOGLE_CLIENT_ID"] = os.environ.get("GOOGLE_CLIENT_ID", "")
+    app.config["GOOGLE_MAPS_API_KEY"] = os.environ.get(
+        "GOOGLE_MAPS_API_KEY",
+        os.environ.get("VITE_GOOGLE_MAPS_API_KEY", ""),
+    )
 
     @app.before_request
     def start_request_timer():
@@ -92,6 +96,7 @@ def create_app():
     def api_config():
         return jsonify({
             "googleClientId": app.config.get("GOOGLE_CLIENT_ID", "") or "",
+            "googleMapsApiKey": app.config.get("GOOGLE_MAPS_API_KEY", "") or "",
         }), 200
 
     # Keep the server-rendered teaching UI available during local development,
