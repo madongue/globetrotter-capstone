@@ -27,6 +27,7 @@ MEDIA_FILE = os.path.join(DATA_DIR, "media.json")
 NOTIFICATIONS_FILE = os.path.join(DATA_DIR, "notifications.json")
 INVITES_FILE = os.path.join(DATA_DIR, "invites.json")
 AUDIT_LOG_FILE = os.path.join(DATA_DIR, "audit_log.json")
+PLACE_REQUESTS_FILE = os.path.join(DATA_DIR, "place_requests.json")
 UPLOADS_DIR = os.path.join(DATA_DIR, "uploads")
 
 
@@ -442,4 +443,36 @@ def update_itinerary(updated_itinerary: dict) -> None:
             itineraries[index] = updated_itinerary
             _write_json(ITINERARIES_FILE, itineraries)
             return
+
+
+def get_all_place_requests() -> list:
+    """Return all submitted place/hotel/activity requests."""
+    return _read_json(PLACE_REQUESTS_FILE)
+
+
+def get_place_request_by_id(request_id: str) -> dict | None:
+    for item in get_all_place_requests():
+        if item.get("id") == request_id:
+            return item
+    return None
+
+
+def get_place_requests_for_user(username: str) -> list:
+    return [item for item in get_all_place_requests() if item.get("submitted_by") == username]
+
+
+def save_place_request(item: dict) -> None:
+    items = get_all_place_requests()
+    items.append(item)
+    _write_json(PLACE_REQUESTS_FILE, items)
+
+
+def update_place_request(updated: dict) -> None:
+    items = get_all_place_requests()
+    for index, item in enumerate(items):
+        if item.get("id") == updated.get("id"):
+            items[index] = updated
+            _write_json(PLACE_REQUESTS_FILE, items)
+            return
+    raise ValueError("Place request not found")
     raise ValueError("Itinerary not found")

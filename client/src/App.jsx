@@ -1,10 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
+import {
+  LayoutDashboard,
+  Map as MapIcon,
+  Compass,
+  Users,
+  Images,
+  Building2,
+  ShieldCheck,
+  Lightbulb,
+  Settings,
+  Bookmark,
+  ClipboardCheck,
+} from 'lucide-react';
+import TravelMap from './TravelMap';
+import { CAMEROON_CENTER, getItemCoordinates } from './mapCoordinates';
 
 const API_BASE = '/api';
 const DEFAULT_CURRENCY = 'XAF';
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
-const CAMEROON_MAP_EMBED = 'https://www.google.com/maps?q=Cameroon&output=embed';
-const CAMEROON_MAP_URL = 'https://www.google.com/maps/search/?api=1&query=Cameroon';
+const OPENSTREETMAP_CAMEROON_URL = 'https://www.openstreetmap.org/search?query=Cameroon';
 const CURRENCY_OPTIONS = [
   { code: 'XAF', label: 'FCFA', rateFromXaf: 1, fractionDigits: 0 },
   { code: 'EUR', label: 'EUR', rateFromXaf: 1 / 655.957, fractionDigits: 2 },
@@ -37,36 +50,6 @@ const PREDEFINED_INTERESTS = [
   'family',
   'photography',
 ];
-
-let googleMapsLoadPromise;
-
-function loadGoogleMaps(apiKey) {
-  if (!apiKey) {
-    return Promise.reject(new Error('Google Maps API key is missing.'));
-  }
-  if (window.google?.maps) {
-    return Promise.resolve(window.google);
-  }
-  if (!googleMapsLoadPromise) {
-    googleMapsLoadPromise = new Promise((resolve, reject) => {
-      const existing = document.querySelector('script[data-globetrotter-google-maps]');
-      if (existing) {
-        existing.addEventListener('load', () => resolve(window.google));
-        existing.addEventListener('error', reject);
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async`;
-      script.async = true;
-      script.defer = true;
-      script.dataset.globetrotterGoogleMaps = 'true';
-      script.onload = () => resolve(window.google);
-      script.onerror = () => reject(new Error('Unable to load Google Maps.'));
-      document.head.appendChild(script);
-    });
-  }
-  return googleMapsLoadPromise;
-}
 
 const GOOGLE_IDENTITY_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 let googleIdentityLoadPromise;
@@ -150,107 +133,22 @@ function GoogleSignInButton({ clientId, onSuccess, onError }) {
   return <div ref={buttonRef} className="google-signin-button" />;
 }
 
-function AdminGoogleMapPicker({ place, onChange }) {
-  const mapElementRef = useRef(null);
-  const mapRef = useRef(null);
-  const markerRef = useRef(null);
-  const geocoderRef = useRef(null);
-  const [mapStatus, setMapStatus] = useState(GOOGLE_MAPS_API_KEY ? 'loading' : 'fallback');
+function AdminLeafletMapPicker({ place, onChange }) {
   const [searchText, setSearchText] = useState(place.mapQuery || place.location || 'Cameroon');
-
-  const fallbackQuery = place.latitude && place.longitude
-    ? `${place.latitude},${place.longitude}`
-    : (place.mapQuery || place.location || 'Cameroon');
+  const selectedPosition = getItemCoordinates({
+    ...place,
+    latitude: place.latitude,
+    longitude: place.longitude,
+    map_query: place.mapQuery,
+  });
 
   useEffect(() => {
     setSearchText(place.mapQuery || place.location || 'Cameroon');
   }, [place.mapQuery, place.location]);
 
-  useEffect(() => {
-    if (!GOOGLE_MAPS_API_KEY) return undefined;
-    let cancelled = false;
-    loadGoogleMaps(GOOGLE_MAPS_API_KEY)
-      .then((google) => {
-        if (cancelled || !mapElementRef.current) return;
-        const initialPosition = {
-          lat: Number(place.latitude) || 5.9631,
-          lng: Number(place.longitude) || 12.5029,
-        };
-        mapRef.current = new google.maps.Map(mapElementRef.current, {
-          center: initialPosition,
-          zoom: place.latitude && place.longitude ? 13 : 6,
-          mapTypeControl: false,
-          streetViewControl: true,
-          fullscreenControl: true,
-        });
-        markerRef.current = new google.maps.Marker({
-          position: initialPosition,
-          map: mapRef.current,
-          draggable: true,
-          title: place.name || 'Selected place',
-        });
-        geocoderRef.current = new google.maps.Geocoder();
-        markerRef.current.addListener('dragend', (event) => {
-          onChange({
-            latitude: event.latLng.lat().toFixed(6),
-            longitude: event.latLng.lng().toFixed(6),
-          });
-        });
-        mapRef.current.addListener('click', (event) => {
-          markerRef.current.setPosition(event.latLng);
-          onChange({
-            latitude: event.latLng.lat().toFixed(6),
-            longitude: event.latLng.lng().toFixed(6),
-          });
-        });
-        setMapStatus('ready');
-      })
-      .catch(() => setMapStatus('fallback'));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!mapRef.current || !markerRef.current || !place.latitude || !place.longitude || !window.google?.maps) return;
-    const position = {
-      lat: Number(place.latitude),
-      lng: Number(place.longitude),
-    };
-    markerRef.current.setPosition(position);
-    mapRef.current.panTo(position);
-  }, [place.latitude, place.longitude]);
-
   const handleSearch = () => {
     const query = searchText.trim() || place.mapQuery || place.location || 'Cameroon';
-    if (!geocoderRef.current || !mapRef.current || !markerRef.current) {
-      onChange({ mapQuery: query, location: query });
-      return;
-    }
-    geocoderRef.current.geocode(
-      {
-        address: query,
-        componentRestrictions: { country: 'CM' },
-      },
-      (results, status) => {
-        if (status !== 'OK' || !results?.[0]) {
-          setMapStatus('search-error');
-          return;
-        }
-        const result = results[0];
-        const position = result.geometry.location;
-        markerRef.current.setPosition(position);
-        mapRef.current.panTo(position);
-        mapRef.current.setZoom(14);
-        setMapStatus('ready');
-        onChange({
-          mapQuery: result.formatted_address || query,
-          location: result.formatted_address || query,
-          latitude: position.lat().toFixed(6),
-          longitude: position.lng().toFixed(6),
-        });
-      },
-    );
+    onChange({ mapQuery: query, location: query });
   };
 
   return (
@@ -260,37 +158,27 @@ function AdminGoogleMapPicker({ place, onChange }) {
         <input
           value={searchText}
           onChange={(event) => setSearchText(event.target.value)}
-          placeholder="Search a Cameroon place on Google Maps"
+          placeholder="Search or name a Cameroon place"
         />
         <button type="button" className="button button-secondary" onClick={handleSearch}>Search map</button>
       </div>
-      {mapStatus === 'fallback' ? (
-        <>
-          <p className="small-text">Set VITE_GOOGLE_MAPS_API_KEY to enable click-to-select and draggable marker editing.</p>
-          <iframe
-            className="map-embed map-embed-large"
-            title="Admin Google map picker"
-            src={`https://www.google.com/maps?q=${encodeURIComponent(fallbackQuery)}&output=embed`}
-            loading="lazy"
-          />
-        </>
-      ) : (
-        <div ref={mapElementRef} className="google-map-canvas" aria-label="Interactive Google map picker" />
-      )}
-      {mapStatus === 'search-error' && (
-        <p className="small-text alert-text">No Cameroon Google Maps result was found for that search.</p>
-      )}
+      <p className="small-text">Click the OpenStreetMap map to set exact coordinates for this place.</p>
+      <TravelMap
+        selectedPosition={selectedPosition}
+        center={selectedPosition || CAMEROON_CENTER}
+        zoom={selectedPosition ? 12 : 6}
+        className="map-embed-large"
+        ariaLabel="Interactive OpenStreetMap place picker"
+        onMapClick={({ latitude, longitude }) => onChange({
+          latitude: latitude.toFixed(6),
+          longitude: longitude.toFixed(6),
+        })}
+      />
       <div className="map-links">
-        <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapQuery || place.location || 'Cameroon')}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Search in Google Maps
-        </a>
+        <a href={OPENSTREETMAP_CAMEROON_URL} target="_blank" rel="noreferrer">Open Cameroon in OpenStreetMap</a>
         {place.latitude && place.longitude && (
           <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.latitude},${place.longitude}`)}`}
+            href={`https://www.openstreetmap.org/?mlat=${encodeURIComponent(place.latitude)}&mlon=${encodeURIComponent(place.longitude)}#map=14/${encodeURIComponent(place.latitude)}/${encodeURIComponent(place.longitude)}`}
             target="_blank"
             rel="noreferrer"
           >
@@ -715,6 +603,7 @@ function App() {
   const [searchFilters, setSearchFilters] = useState({
     q: '',
     tag: '',
+    category: '',
     region: '',
     division: '',
     subdivision: '',
@@ -776,6 +665,10 @@ function App() {
     longitude: '',
     currentLocation: '',
   });
+  const [isLiveTracking, setIsLiveTracking] = useState(false);
+  const [geoError, setGeoError] = useState(null);
+  const liveWatchIdRef = useRef(null);
+  const lastTrackingPostRef = useRef(0);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -821,11 +714,22 @@ function App() {
   const [newMediaType, setNewMediaType] = useState('photo');
   const [mediaGroupId, setMediaGroupId] = useState('');
   const [newMediaPlaceId, setNewMediaPlaceId] = useState('');
+  const [newMediaItineraryId, setNewMediaItineraryId] = useState('');
   const [mediaComments, setMediaComments] = useState({});
   const [mediaShareTargets, setMediaShareTargets] = useState({});
   const [savedPlaces, setSavedPlaces] = useState([]);
   const [selectedPlaceGuide, setSelectedPlaceGuide] = useState(null);
   const [placeGuideItineraryId, setPlaceGuideItineraryId] = useState('');
+  const [placeComments, setPlaceComments] = useState([]);
+  const [newPlaceComment, setNewPlaceComment] = useState('');
+  const [requestFiles, setRequestFiles] = useState([]);
+  const [editingPlaceId, setEditingPlaceId] = useState(null);
+  const [adminStats, setAdminStats] = useState(null);
+  const [editPlaceForm, setEditPlaceForm] = useState({ name: '', description: '', cost: '', location: '', latitude: '', longitude: '' });
+  const [userLocation, setUserLocation] = useState(null);
+  const [nearMeActive, setNearMeActive] = useState(false);
+  const [nearMeError, setNearMeError] = useState(null);
+  const [locatingUser, setLocatingUser] = useState(false);
   const [resources, setResources] = useState({ hotels: [], activities: [], places: [] });
   const [hotelCompareFilters, setHotelCompareFilters] = useState({ location: '', city: '', maxPrice: '' });
   const [hotelComparison, setHotelComparison] = useState(null);
@@ -851,6 +755,29 @@ function App() {
     sourceUrls: '',
   });
   const [newResourceFiles, setNewResourceFiles] = useState([]);
+  const [placeRequests, setPlaceRequests] = useState([]);
+  const [resourcesTab, setResourcesTab] = useState('catalogue');
+  const [adminTab, setAdminTab] = useState('overview');
+  const [catalogueQuery, setCatalogueQuery] = useState('');
+  const [catalogueVisibleCount, setCatalogueVisibleCount] = useState({ hotels: 20, activities: 20, places: 20 });
+  const [communityItineraries, setCommunityItineraries] = useState([]);
+  const [itinerariesTab, setItinerariesTab] = useState('mine');
+  const [requestForm, setRequestForm] = useState({
+    type: 'places',
+    name: '',
+    location: '',
+    region: '',
+    division: '',
+    subdivision: '',
+    city: '',
+    quarter: '',
+    cost: '',
+    costNote: '',
+    description: '',
+    tags: '',
+    mapQuery: '',
+    imageUrls: '',
+  });
   const [resourceReview, setResourceReview] = useState({ type: 'hotels', id: '', rating: '5', comment: '' });
   const [newItinerary, setNewItinerary] = useState({
     title: '',
@@ -868,6 +795,7 @@ function App() {
     placeCost: '',
     startDate: '',
     endDate: '',
+    visibility: 'private',
   });
 
   const currencyOption = getCurrencyOption(currency);
@@ -920,15 +848,20 @@ function App() {
     fetchCameroonLocations();
   }, []);
 
+  const isAdmin = profile?.role === 'admin';
   const dashboardMenuItems = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'itineraries', label: 'Itineraries' },
-    { id: 'discovery', label: 'Discovery' },
-    { id: 'community', label: 'Community' },
-    { id: 'media', label: 'Media' },
-    { id: 'resources', label: 'Resources' },
-    ...(profile?.role === 'admin' ? [{ id: 'admin', label: 'Admin' }] : []),
-    { id: 'settings', label: 'Settings' },
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'itineraries', label: 'Itineraries', icon: MapIcon },
+    { id: 'discovery', label: 'Discovery', icon: Compass },
+    { id: 'community', label: 'Community', icon: Users },
+    { id: 'media', label: 'Media', icon: Images },
+    ...(isAdmin
+      ? [
+          { id: 'resources', label: 'Resources', icon: Building2 },
+          { id: 'admin', label: 'Admin', icon: ShieldCheck },
+        ]
+      : [{ id: 'suggest', label: 'Suggest a place', icon: Lightbulb }]),
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   const navigate = (target) => {
@@ -967,8 +900,38 @@ function App() {
       !filters[field]?.trim() || item[field]?.toLowerCase() === filters[field].trim().toLowerCase()
     ))
   );
+  const getDiscoveryCatalogue = () => [
+    ...resources.places,
+    ...resources.hotels.map((hotel) => ({
+      ...hotel,
+      category: hotel.category || 'hotel',
+      cost: hotel.cost_per_night,
+    })),
+  ];
+  const matchesDiscoveryFilters = (item) => {
+    if (!matchesGeoFilters(item, searchFilters)) return false;
+    if (searchFilters.category && (item.category || '').toLowerCase() !== searchFilters.category) return false;
+    const searchable = [
+      item.name,
+      item.location,
+      item.category,
+      item.description,
+      item.region,
+      item.city,
+      ...(item.tags || []),
+    ].filter(Boolean).join(' ').toLowerCase();
+    if (searchFilters.q.trim() && !searchable.includes(searchFilters.q.trim().toLowerCase())) return false;
+    if (searchFilters.tag.trim() && !(item.tags || []).some((tag) => tag.toLowerCase().includes(searchFilters.tag.trim().toLowerCase()))) return false;
+    if (searchFilters.maxCost.trim()) {
+      const maxCost = toBaseMoney(searchFilters.maxCost);
+      const itemCost = Number(item.cost ?? item.cost_per_night ?? 0);
+      if (Number.isFinite(maxCost) && itemCost > maxCost) return false;
+    }
+    return true;
+  };
+  const getFilteredDiscoveryCatalogue = () => getDiscoveryCatalogue().filter(matchesDiscoveryFilters);
   const getPartitionedPlaces = () => {
-    const filteredPlaces = resources.places.filter((place) => matchesGeoFilters(place, searchFilters));
+    const filteredPlaces = getFilteredDiscoveryCatalogue();
     return filteredPlaces.reduce((groupsByRegion, place) => {
       const region = place.region || 'Unassigned region';
       groupsByRegion[region] = groupsByRegion[region] || [];
@@ -976,14 +939,103 @@ function App() {
       return groupsByRegion;
     }, {});
   };
-  const getPlaceCountByRegion = () => resources.places.reduce((counts, place) => {
+  const getPlaceCountByRegion = () => getDiscoveryCatalogue().reduce((counts, place) => {
     const region = place.region || 'Unassigned region';
     counts[region] = (counts[region] || 0) + 1;
     return counts;
   }, {});
-  const getFeaturedDiscoveryPlaces = () => {
-    const filteredPlaces = resources.places.filter((place) => matchesGeoFilters(place, searchFilters));
-    return filteredPlaces.slice(0, searchFilters.region ? 12 : 6);
+  const DISCOVERY_PAGE_SIZE = 60;
+  const DISCOVERY_MAP_MAX_MARKERS = 150;
+  const EARTH_RADIUS_KM = 6371;
+  const getDistanceKm = (from, to) => {
+    if (!from || !to) return null;
+    const toRad = (value) => (value * Math.PI) / 180;
+    const dLat = toRad(to[0] - from[0]);
+    const dLng = toRad(to[1] - from[1]);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(from[0])) * Math.cos(toRad(to[0])) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return EARTH_RADIUS_KM * c;
+  };
+  const getItemDistanceFromUser = (item) => {
+    if (!userLocation) return null;
+    const position = getItemCoordinates(item);
+    if (!position) return null;
+    return getDistanceKm([userLocation.latitude, userLocation.longitude], position);
+  };
+  const handleUseMyLocationDiscovery = () => {
+    if (!navigator.geolocation) {
+      setNearMeError('Geolocation is not supported on this device.');
+      return;
+    }
+    setLocatingUser(true);
+    setNearMeError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+        setNearMeActive(true);
+        setLocatingUser(false);
+      },
+      (error) => {
+        setNearMeError(error.message || 'Unable to get your location.');
+        setLocatingUser(false);
+      },
+      { enableHighAccuracy: true, timeout: 12000 }
+    );
+  };
+  const getSortedDiscoveryCatalogue = () => {
+    const filteredPlaces = getFilteredDiscoveryCatalogue();
+    if (nearMeActive && userLocation) {
+      return filteredPlaces
+        .map((item) => ({ item, distance: getItemDistanceFromUser(item) }))
+        .filter((entry) => entry.distance !== null)
+        .sort((a, b) => a.distance - b.distance)
+        .map((entry) => ({ ...entry.item, distance_km: entry.distance }));
+    }
+    return filteredPlaces.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  };
+  const getFeaturedDiscoveryPlaces = () => getSortedDiscoveryCatalogue().slice(0, DISCOVERY_PAGE_SIZE);
+  const buildMapMarker = (item, type = 'place') => {
+    const position = getItemCoordinates(item);
+    if (!position) return null;
+    return {
+      id: item.id || `${type}-${item.name}`,
+      name: item.name || item.location || 'Cameroon stop',
+      location: item.location || buildCameroonLocation(item),
+      description: item.description || item.notes || '',
+      position,
+    };
+  };
+  const buildMapMarkers = (items = [], type = 'place') => items
+    .map((item) => buildMapMarker(item, type))
+    .filter(Boolean);
+  const getDiscoveryMapMarkers = () => buildMapMarkers(getSortedDiscoveryCatalogue().slice(0, DISCOVERY_MAP_MAX_MARKERS), 'place');
+  const getItineraryMapMarkers = () => buildMapMarkers([
+    ...(selectedItinerary?.stages || []),
+    ...(selectedItinerary?.places_to_visit || []),
+    selectedItinerary?.hotel,
+  ].filter(Boolean), 'itinerary');
+  const getTrackingPosition = () => {
+    const tracking = trackingInfo || selectedItinerary?.live_tracking;
+    const latitude = Number(tracking?.latitude);
+    const longitude = Number(tracking?.longitude);
+    if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+      return [latitude, longitude];
+    }
+    return null;
+  };
+  const getMapInfoPosition = () => {
+    const latitude = Number(mapInfo?.map_info?.latitude);
+    const longitude = Number(mapInfo?.map_info?.longitude);
+    if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+      return [latitude, longitude];
+    }
+    return getItemCoordinates({
+      name: mapInfo?.location,
+      location: mapInfo?.location,
+      map_info: mapInfo?.map_info,
+    });
   };
   const updateGeoFilter = (setter, field, value) => {
     setter((prev) => {
@@ -1168,8 +1220,21 @@ function App() {
         } else {
           setAdminUsers([]);
         }
+        const statsRes = await fetch(`${API_BASE}/admin/stats`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAdminStats(statsRes.ok ? await statsRes.json() : null);
       } else {
         setAdminUsers([]);
+      }
+
+      try {
+        const requestsRes = await fetch(`${API_BASE}/resources/requests`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setPlaceRequests(requestsRes.ok ? await requestsRes.json() : []);
+      } catch (error) {
+        setPlaceRequests([]);
       }
 
       const mediaRes = await fetch(`${API_BASE}/media`, {
@@ -1489,6 +1554,37 @@ function App() {
     }
     setSelectedPlaceGuide(result);
     setPlaceGuideItineraryId(itineraries[0]?.id || '');
+    try {
+      const commentsRes = await fetch(`${API_BASE}/resources/places/${placeId}/comment`);
+      setPlaceComments(commentsRes.ok ? await commentsRes.json() : []);
+    } catch (error) {
+      setPlaceComments([]);
+    }
+  };
+
+  const handleAddPlaceComment = async (event) => {
+    event.preventDefault();
+    if (!token) {
+      setAlert({ type: 'error', message: 'Please login to comment.' });
+      return;
+    }
+    const commentText = newPlaceComment.trim();
+    if (!commentText || !selectedPlaceGuide?.place?.id) return;
+    const response = await fetch(`${API_BASE}/resources/places/${selectedPlaceGuide.place.id}/comment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ comment: commentText }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to add comment.' });
+      return;
+    }
+    setPlaceComments((current) => [...current, result.comment]);
+    setNewPlaceComment('');
   };
 
   const handleDownloadPlaceGuide = async () => {
@@ -1702,6 +1798,7 @@ function App() {
         currency_label: 'FCFA',
         start_date: newItinerary.startDate,
         end_date: newItinerary.endDate,
+        visibility: newItinerary.visibility === 'public' ? 'public' : 'private',
       };
 
       const response = await fetch(`${API_BASE}/itineraries`, {
@@ -1732,12 +1829,48 @@ function App() {
         placeCost: '',
         startDate: '',
         endDate: '',
+        visibility: 'private',
       });
     } catch (error) {
       setAlert({ type: 'error', message: 'Unable to create itinerary.' });
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchCommunityItineraries = async () => {
+    if (!token) return;
+    try {
+      const response = await fetch(`${API_BASE}/itineraries/community`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCommunityItineraries(response.ok ? await response.json() : []);
+    } catch (error) {
+      setCommunityItineraries([]);
+    }
+  };
+
+  const handleCopyItinerary = async (itineraryId) => {
+    if (!token) {
+      setAlert({ type: 'error', message: 'Please login to copy this itinerary.' });
+      return;
+    }
+    const response = await fetch(`${API_BASE}/itineraries/${itineraryId}/copy`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({}),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to copy itinerary.' });
+      return;
+    }
+    setItineraries((current) => [result, ...current]);
+    setItinerariesTab('mine');
+    setAlert({ type: 'success', message: 'Trip copied to your itineraries. You can edit it freely.' });
   };
 
   const handleCreateGroup = async (event) => {
@@ -1889,6 +2022,7 @@ function App() {
         formData.append('caption', newMediaCaption.trim());
         if (mediaGroupId) formData.append('group_id', mediaGroupId);
         if (newMediaPlaceId.trim()) formData.append('place_id', newMediaPlaceId.trim());
+        if (newMediaItineraryId) formData.append('itinerary_id', newMediaItineraryId);
         response = await fetch(`${API_BASE}/media/upload`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -1907,6 +2041,7 @@ function App() {
             caption: newMediaCaption.trim(),
             group_id: mediaGroupId || undefined,
             place_id: newMediaPlaceId.trim() || undefined,
+            itinerary_id: newMediaItineraryId || undefined,
           }),
         });
       }
@@ -2330,6 +2465,75 @@ function App() {
     setLiveLocationStatus('stopped');
   };
 
+  const postTrackingPosition = async (latitude, longitude, accuracy) => {
+    if (!selectedItinerary || !token) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/tracking`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        latitude,
+        longitude,
+        accuracy_meters: accuracy,
+        current_location: trackingForm.currentLocation || selectedItinerary.location,
+        current_stage_id: progressForm.currentStageId || undefined,
+      }),
+    });
+    const result = await response.json();
+    if (response.ok) {
+      setTrackingInfo(result.tracking);
+      refreshSelectedItinerary(result.itinerary);
+      setTrackingForm((prev) => ({ ...prev, latitude: String(latitude), longitude: String(longitude) }));
+    }
+  };
+
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) {
+      setGeoError('Geolocation is not supported on this device.');
+      return;
+    }
+    setGeoError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        postTrackingPosition(latitude, longitude, accuracy);
+        setAlert({ type: 'success', message: 'Your current location was shared as the live trip position.' });
+      },
+      (error) => setGeoError(error.message || 'Unable to get your location.'),
+      { enableHighAccuracy: true, timeout: 12000 }
+    );
+  };
+
+  const handleToggleLiveTracking = () => {
+    if (isLiveTracking) {
+      if (liveWatchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(liveWatchIdRef.current);
+        liveWatchIdRef.current = null;
+      }
+      setIsLiveTracking(false);
+      return;
+    }
+    if (!navigator.geolocation) {
+      setGeoError('Geolocation is not supported on this device.');
+      return;
+    }
+    setGeoError(null);
+    liveWatchIdRef.current = navigator.geolocation.watchPosition(
+      (position) => {
+        const now = Date.now();
+        if (now - lastTrackingPostRef.current < 15000) return;
+        lastTrackingPostRef.current = now;
+        const { latitude, longitude, accuracy } = position.coords;
+        postTrackingPosition(latitude, longitude, accuracy);
+      },
+      (error) => setGeoError(error.message || 'Unable to track your location.'),
+      { enableHighAccuracy: true, maximumAge: 10000 }
+    );
+    setIsLiveTracking(true);
+  };
+
   const handleLoadBudget = async () => {
     if (!token || !selectedItinerary) return;
     const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/budget`, {
@@ -2610,6 +2814,35 @@ function App() {
     }
   };
 
+  const handleToggleStageComplete = async (stageId, checked) => {
+    if (!token || !selectedItinerary) return;
+    const current = progressForm.completedStageIds
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+    const nextCompleted = checked
+      ? Array.from(new Set([...current, stageId]))
+      : current.filter((id) => id !== stageId);
+    setProgressForm((prev) => ({ ...prev, completedStageIds: nextCompleted.join(', ') }));
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/progress`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        status: progressForm.status,
+        completed_stage_ids: nextCompleted,
+      }),
+    });
+    const result = await response.json();
+    if (response.ok) {
+      refreshSelectedItinerary(result.itinerary);
+    } else {
+      setAlert({ type: 'error', message: result.error || 'Unable to update stage.' });
+    }
+  };
+
   const handleSubmitFeedback = async (event) => {
     event.preventDefault();
     if (!token || !selectedItinerary) {
@@ -2876,6 +3109,148 @@ function App() {
     setAlert({ type: 'success', message: result.message || 'Resource removed.' });
   };
 
+  const startEditPlace = (place) => {
+    setEditingPlaceId(place.id);
+    setEditPlaceForm({
+      name: place.name || '',
+      description: place.description || '',
+      cost: place.cost !== undefined ? String(place.cost) : '',
+      location: place.location || '',
+      latitude: place.latitude !== undefined ? String(place.latitude) : '',
+      longitude: place.longitude !== undefined ? String(place.longitude) : '',
+    });
+  };
+
+  const cancelEditPlace = () => {
+    setEditingPlaceId(null);
+  };
+
+  const handleSaveEditPlace = async (placeId) => {
+    if (!token) return;
+    const payload = {
+      name: editPlaceForm.name,
+      description: editPlaceForm.description,
+      cost: editPlaceForm.cost,
+      location: editPlaceForm.location,
+    };
+    if (editPlaceForm.latitude !== '' && editPlaceForm.longitude !== '') {
+      payload.latitude = editPlaceForm.latitude;
+      payload.longitude = editPlaceForm.longitude;
+    }
+    const response = await fetch(`${API_BASE}/resources/places/${placeId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to update place.' });
+      return;
+    }
+    setResources((current) => ({
+      ...current,
+      places: (current.places || []).map((item) => (item.id === placeId ? result.place : item)),
+    }));
+    setEditingPlaceId(null);
+    setAlert({ type: 'success', message: 'Place updated.' });
+  };
+
+  const handleSubmitPlaceRequest = async (event) => {
+    event.preventDefault();
+    if (!token) {
+      setAlert({ type: 'error', message: 'Please login to suggest a place.' });
+      return;
+    }
+    const name = requestForm.name.trim();
+    const location = requestForm.location.trim() || buildCameroonLocation(requestForm);
+    const cost = toBaseMoney(requestForm.cost);
+    if (!name || !location || Number.isNaN(cost)) {
+      setAlert({ type: 'error', message: 'Name, location, and cost are required.' });
+      return;
+    }
+    const isHotel = requestForm.type === 'hotels';
+    const payload = {
+      type: requestForm.type,
+      name,
+      location,
+      region: requestForm.region,
+      division: requestForm.division,
+      subdivision: requestForm.subdivision,
+      city: requestForm.city,
+      quarter: requestForm.quarter,
+      description: requestForm.description.trim(),
+      tags: requestForm.tags,
+      cost_note: requestForm.costNote,
+      map_query: requestForm.mapQuery || location,
+      image_urls: requestForm.imageUrls,
+      [isHotel ? 'cost_per_night' : 'cost']: cost,
+    };
+    const formData = new FormData();
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) formData.append(key, value);
+    });
+    requestFiles.forEach((file) => formData.append('media_files', file));
+    const response = await fetch(`${API_BASE}/resources/requests`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to submit suggestion.' });
+      return;
+    }
+    setPlaceRequests((current) => [result, ...current]);
+    setRequestForm((prev) => ({
+      type: prev.type,
+      name: '',
+      location: '',
+      region: '',
+      division: '',
+      subdivision: '',
+      city: '',
+      quarter: '',
+      cost: '',
+      costNote: '',
+      description: '',
+      tags: '',
+      mapQuery: '',
+      imageUrls: '',
+    }));
+    setRequestFiles([]);
+    setAlert({ type: 'success', message: 'Suggestion submitted. An admin will review it soon.' });
+  };
+
+  const handleReviewPlaceRequest = async (requestId, approve) => {
+    if (!token) return;
+    const response = await fetch(`${API_BASE}/resources/requests/${requestId}/${approve ? 'approve' : 'reject'}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({}),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to review request.' });
+      return;
+    }
+    setPlaceRequests((current) => current.map((item) => (item.id === requestId ? result.request : item)));
+    if (approve && result.request?.resource_id) {
+      const resourceType = result.request.type || 'places';
+      fetch(`${API_BASE}/resources/${resourceType}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((items) => {
+          if (items) setResources((current) => ({ ...current, [resourceType]: items }));
+        });
+    }
+    setAlert({ type: 'success', message: approve ? 'Request approved and published.' : 'Request rejected.' });
+  };
+
   const handleUpdateUserRole = async (username, role) => {
     const response = await fetch(`${API_BASE}/admin/users/${username}/role`, {
       method: 'PATCH',
@@ -3006,10 +3381,6 @@ function App() {
                   <input name="username" type="text" autoComplete="username" required />
                 </label>
                 <label>
-                  Phone
-                  <input name="phone" type="tel" autoComplete="tel" />
-                </label>
-                <label>
                   Password
                   <input name="password" type="password" autoComplete="current-password" required />
                 </label>
@@ -3043,7 +3414,7 @@ function App() {
                 </label>
                 <label>
                   Phone
-                  <input name="phone" type="tel" autoComplete="tel" />
+                  <input name="phone" type="tel" autoComplete="tel" placeholder="+237 6XX XXX XXX" required />
                 </label>
                 <label>
                   Password
@@ -3078,30 +3449,56 @@ function App() {
               <aside className="app-menu">
                 <h3>Menu</h3>
                 <div className="app-menu-list">
-                  {dashboardMenuItems.map((item) => (
+                  {dashboardMenuItems.map((item) => {
+                    const ItemIcon = item.icon;
+                    return (
                     <button
                       key={item.id}
                       type="button"
                       className={dashboardView === item.id ? 'active' : ''}
-                      onClick={() => setDashboardView(item.id)}
+                      onClick={() => { setAlert(null); setDashboardView(item.id); }}
                     >
-                      {item.label}
+                      {ItemIcon && <ItemIcon size={18} strokeWidth={2} aria-hidden="true" />}
+                      <span>{item.label}</span>
                     </button>
-                  ))}
+                    );
+                  })}
                 </div>
               </aside>
               <div className="app-page">
             {dashboardView === 'overview' && (
             <>
-            <div className="grid-2">
+            <div className="stats-grid">
+              <div className="stat-card">
+                <MapIcon size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{itineraries.length}</span>
+                <span className="stat-label">Itineraries planned</span>
+              </div>
+              <div className="stat-card">
+                <Bookmark size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{savedPlaces.length}</span>
+                <span className="stat-label">Saved places</span>
+              </div>
+              <div className="stat-card">
+                <Users size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{groups.length}</span>
+                <span className="stat-label">Community groups</span>
+              </div>
+              <div className="stat-card">
+                <ClipboardCheck size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{isAdmin ? placeRequests.filter((item) => item.status === 'pending').length : placeRequests.length}</span>
+                <span className="stat-label">{isAdmin ? 'Pending requests' : 'My suggestions'}</span>
+              </div>
+            </div>
+            <div className="grid-2 mt-24">
               <div className="panel panel-primary">
                 <h2>Welcome back</h2>
                 <p>Access your itineraries, event receipts, and community groups in one place.</p>
                 <div className="dashboard-actions">
-                  <button type="button" className="button button-secondary" onClick={() => setDashboardView('itineraries')}>
+                  <button type="button" className="button button-secondary" onClick={() => { setAlert(null); setDashboardView('itineraries'); }}>
                     Create itinerary
                   </button>
-                  <button type="button" className="button button-secondary" onClick={() => setDashboardView('community')}>
+                  <button type="button" className="button button-secondary" onClick={() => { setAlert(null); setDashboardView('community'); }}>
                     Join a group
                   </button>
                 </div>
@@ -3127,9 +3524,51 @@ function App() {
                 <div className="guide-layout">
                   <div>
                     {selectedPlaceGuide.place.image_url && (
-                      <img className="guide-image" src={selectedPlaceGuide.place.image_url} alt={selectedPlaceGuide.place.name} />
+                      <img className="guide-image" src={selectedPlaceGuide.place.image_url} alt={selectedPlaceGuide.place.name} loading="lazy" decoding="async" />
                     )}
+                    {(() => {
+                      const allPhotos = [
+                        ...(selectedPlaceGuide.place.images || []),
+                        ...(selectedPlaceGuide.photos || []),
+                      ];
+                      return allPhotos.length > 0 && (
+                        <div className="guide-gallery">
+                          {allPhotos.map((photo, index) => (
+                            <img
+                              key={photo.id || index}
+                              src={photo.url}
+                              alt={photo.caption || selectedPlaceGuide.place.name}
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          ))}
+                        </div>
+                      );
+                    })()}
+                    {(() => {
+                      const allVideos = [
+                        ...(selectedPlaceGuide.place.videos || []),
+                        ...(selectedPlaceGuide.videos || []),
+                      ];
+                      return allVideos.length > 0 && (
+                        <div className="guide-video-list">
+                          {allVideos.map((video, index) => (
+                            <video key={video.id || index} src={video.url} controls preload="metadata" />
+                          ))}
+                        </div>
+                      );
+                    })()}
                     <p>{selectedPlaceGuide.place.description}</p>
+                    <p className="small-text">
+                      {selectedPlaceGuide.place.quarter || ''} {selectedPlaceGuide.place.city || ''} 
+·
+ {selectedPlaceGuide.place.region}
+                    </p>
+                    <TravelMap
+                      markers={[buildMapMarker(selectedPlaceGuide.place, 'place')].filter(Boolean)}
+                      className="map-embed"
+                      ariaLabel={`Map showing ${selectedPlaceGuide.place.name}`}
+                    />
                     <p><strong>Entry/activity budget:</strong> {formatMoney(selectedPlaceGuide.place.cost || 0)}</p>
                     {selectedPlaceGuide.place.difficulty && (
                       <p><strong>Outdoor info:</strong> {selectedPlaceGuide.place.difficulty} · Guide {selectedPlaceGuide.place.guide_required ? 'recommended' : 'optional'}</p>
@@ -3179,6 +3618,29 @@ function App() {
                       ))}
                     </ul>
                   </div>
+                </div>
+                <div className="mt-24">
+                  <h4>Comments</h4>
+                  {placeComments.length === 0 ? (
+                    <p className="small-text">No comments yet. Be the first to share a tip.</p>
+                  ) : (
+                    <ul className="discussion-posts">
+                      {placeComments.map((comment) => (
+                        <li key={comment.id} className="discussion-post">
+                          <span className="discussion-post-author">{comment.username}</span>
+                          <p>{comment.text}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <form onSubmit={handleAddPlaceComment} className="reply-box mt-16">
+                    <input
+                      value={newPlaceComment}
+                      onChange={(event) => setNewPlaceComment(event.target.value)}
+                      placeholder="Share a tip about this place"
+                    />
+                    <button type="submit" className="button button-secondary">Post</button>
+                  </form>
                 </div>
               </div>
             )}
@@ -3248,6 +3710,48 @@ function App() {
 
             {dashboardView === 'itineraries' && (
             <>
+            <div className="tab-nav mt-24">
+              <button type="button" className={itinerariesTab === 'mine' ? 'active' : ''} onClick={() => setItinerariesTab('mine')}>My trips</button>
+              <button
+                type="button"
+                className={itinerariesTab === 'community' ? 'active' : ''}
+                onClick={() => {
+                  setItinerariesTab('community');
+                  fetchCommunityItineraries();
+                }}
+              >
+                Community trips
+              </button>
+            </div>
+            {itinerariesTab === 'community' ? (
+            <div className="panel">
+              <h3>Public trips from the community</h3>
+              <p className="small-text">Browse trips other travellers made public. Copy one to start planning your own version.</p>
+              {communityItineraries.length === 0 ? (
+                <p className="small-text">No public trips shared yet.</p>
+              ) : (
+                <ul className="list-card">
+                  {communityItineraries.map((itinerary) => (
+                    <li key={itinerary.id} className="itinerary-card">
+                      <div className="itinerary-card-icon">
+                        <MapIcon size={18} strokeWidth={2} aria-hidden="true" />
+                      </div>
+                      <div className="itinerary-card-info">
+                        <strong>{itinerary.title}</strong>
+                        <p>{itinerary.location} 
+·
+ by {itinerary.owner_username || itinerary.username}</p>
+                      </div>
+                      <button type="button" className="button button-secondary" onClick={() => handleCopyItinerary(itinerary.id)}>
+                        Copy
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            ) : (
+            <>
             <div className="grid-2 mt-24">
               <div className="panel">
                 <h3>Recent itineraries</h3>
@@ -3259,7 +3763,10 @@ function App() {
                   <ul className="list-card">
                     {itineraries.map((itinerary) => (
                       <li key={itinerary.id} className="itinerary-card">
-                        <div>
+                        <div className="itinerary-card-icon">
+                          <MapIcon size={18} strokeWidth={2} aria-hidden="true" />
+                        </div>
+                        <div className="itinerary-card-info">
                           <strong>{itinerary.title}</strong>
                           <p>{itinerary.location}</p>
                         </div>
@@ -3363,7 +3870,7 @@ function App() {
                                 {items.slice(0, 3).map((item) => (
                                   <li key={item.id || item.name}>
                                     <span>
-                                      {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} />}
+                                      {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} loading="lazy" decoding="async" />}
                                       <strong>{item.name}</strong>
                                       {item.location && <small>{item.location}</small>}
                                       {item.cost_per_night !== undefined && <small>{formatMoney(item.cost_per_night)} / night</small>}
@@ -3448,6 +3955,14 @@ function App() {
                       onChange={(event) => setNewItinerary((prev) => ({ ...prev, endDate: event.target.value }))}
                     />
                   </label>
+                  <label className="inline-check">
+                    <input
+                      type="checkbox"
+                      checked={newItinerary.visibility === 'public'}
+                      onChange={(event) => setNewItinerary((prev) => ({ ...prev, visibility: event.target.checked ? 'public' : 'private' }))}
+                    />
+                    Share this trip publicly so other travellers can view and copy it
+                  </label>
                   <button type="submit" className="button button-primary">Create itinerary</button>
                 </form>
               </div>
@@ -3511,9 +4026,29 @@ function App() {
 
             {dashboardView === 'discovery' && (
             <>
-            <div className="grid-2 mt-24">
+            <div className="grid-2 discovery-layout mt-24">
               <div className="panel">
                 <h3>Destination search</h3>
+                <div className="inline-actions wrap-actions">
+                  <button
+                    type="button"
+                    className={nearMeActive ? 'button button-primary' : 'button button-secondary'}
+                    onClick={() => {
+                      if (nearMeActive) {
+                        setNearMeActive(false);
+                      } else if (userLocation) {
+                        setNearMeActive(true);
+                      } else {
+                        handleUseMyLocationDiscovery();
+                      }
+                    }}
+                    disabled={locatingUser}
+                  >
+                    {locatingUser ? 'Locating...' : nearMeActive ? 'Near me: on' : 'Show places near me'}
+                  </button>
+                  {nearMeActive && <span className="small-text">Sorted by distance from your location</span>}
+                </div>
+                {nearMeError && <p className="alert-text small-text">{nearMeError}</p>}
                 <form onSubmit={handleDestinationSearch} className="search-form">
                   <label>
                     Search
@@ -3531,6 +4066,21 @@ function App() {
                       placeholder="food"
                     />
                   </label>
+                  <label>
+                    Category
+                    <select
+                      value={searchFilters.category}
+                      onChange={(event) => setSearchFilters((prev) => ({ ...prev, category: event.target.value }))}
+                    >
+                      <option value="">All categories</option>
+                      <option value="hotel">Hotels</option>
+                      <option value="restaurant">Restaurants</option>
+                      <option value="natural_site">Natural sites</option>
+                      <option value="man_made_site">Man-made sites</option>
+                      <option value="monument">Monuments and heritage</option>
+                      <option value="museum">Museums</option>
+                    </select>
+                  </label>
                   {renderCameroonFilters(searchFilters, setSearchFilters)}
                   <label>
                     Max daily cost ({currencyLabel})
@@ -3544,7 +4094,7 @@ function App() {
                   <button type="submit" className="button button-primary">Search</button>
                 </form>
                 <div className="mt-16">
-                  <h4>Places to visit by region</h4>
+                  <h4>Tourism catalogue by region</h4>
                   <div className="region-chip-grid">
                     {Object.entries(getPlaceCountByRegion()).map(([region, count]) => (
                       <button
@@ -3554,33 +4104,52 @@ function App() {
                         onClick={() => updateGeoFilter(setSearchFilters, 'region', searchFilters.region === region ? '' : region)}
                       >
                         <strong>{region}</strong>
-                        <span>{count} places</span>
+                        <span>{count} entries</span>
                       </button>
                     ))}
                   </div>
                 </div>
                 <div className="mt-16">
-                  <h4>{searchFilters.region ? `${searchFilters.region} places to visit` : 'Featured places to visit'}</h4>
+                  <h4>{searchFilters.region ? `${searchFilters.region} tourism catalogue` : 'Cameroon tourism catalogue'}</h4>
                   <p className="small-text">
                     {searchFilters.region
-                      ? 'These suggestions are filtered to your selected Cameroon region.'
-                      : 'A short preview is shown first. Select a region to see more focused places.'}
+                      ? 'These entries are filtered to your selected Cameroon region.'
+                      : 'Hotels, restaurants, natural sites, monuments, museums, and other attractions imported from open data.'}
                   </p>
                   <ul className="list-card discovery-place-list">
                     {getFeaturedDiscoveryPlaces().map((place) => (
-                      <li key={place.id}>
-                        {place.image_url && <img className="resource-thumb" src={place.image_url} alt={place.name} />}
+                      <li key={place.id} className="discovery-card">
+                        <div className="discovery-card-media">
+                          {place.image_url ? (
+                            <img src={place.image_url} alt={place.name} loading="lazy" decoding="async" />
+                          ) : (
+                            <div className="discovery-card-media-fallback">{(place.category || 'place').replace('_', ' ')}</div>
+                          )}
+                          <span className="discovery-card-badge">{(place.category || 'place').replace('_', ' ')}</span>
+                          {place.distance_km !== undefined && (
+                            <span className="discovery-card-distance">{place.distance_km < 1 ? '<1 km' : `${place.distance_km.toFixed(1)} km`} away</span>
+                          )}
+                        </div>
+                        <div className="discovery-card-body">
                         <strong>{place.name}</strong>
-                        <p>{place.region} • {place.division} • {place.city}</p>
-                        <p className="small-text">{place.description}</p>
+                        <p className="small-text">{place.region || 'Cameroon'} • {place.city || place.location}</p>
+                        <p className="small-text discovery-card-desc">{place.description}</p>
+                        {(place.cost !== undefined || place.cost_per_night !== undefined) && (
+                          <p className="small-text">
+                            Estimated cost: {formatMoney(place.cost ?? place.cost_per_night)}
+                            {place.category === 'hotel' ? ' / night' : ''}
+                          </p>
+                        )}
                         {place.difficulty && (
                           <p className="small-text">
-                            Difficulty: {place.difficulty} · Guide {place.guide_required ? 'recommended' : 'optional'}
+                            Difficulty: {place.difficulty} 
+·
+ Guide {place.guide_required ? 'recommended' : 'optional'}
                           </p>
                         )}
                         <div className="inline-actions wrap-actions">
-                          <button type="button" className="link-button" onClick={() => handleSavePlace(place)}>Save</button>
-                          <button type="button" className="link-button" onClick={() => handleViewPlaceGuide(place.id)}>Guide</button>
+                          {place.category !== 'hotel' && <button type="button" className="link-button" onClick={() => handleSavePlace(place)}>Save</button>}
+                          {place.category !== 'hotel' && <button type="button" className="link-button" onClick={() => handleViewPlaceGuide(place.id)}>Guide</button>}
                           <button
                             type="button"
                             className="link-button"
@@ -3602,6 +4171,7 @@ function App() {
                             Plan here
                           </button>
                         </div>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -3612,7 +4182,7 @@ function App() {
                     <ul className="list-card">
                       {searchResults.map((dest) => (
                         <li key={dest.name}>
-                          {dest.image_url && <img className="resource-thumb" src={dest.image_url} alt={dest.name} />}
+                          {dest.image_url && <img className="resource-thumb" src={dest.image_url} alt={dest.name} loading="lazy" decoding="async" />}
                           <strong>{dest.name}</strong>
                           <p>{dest.region} • {dest.division} • {dest.city}</p>
                           {dest.quarter && <p className="small-text">{dest.quarter}</p>}
@@ -3624,25 +4194,24 @@ function App() {
                 )}
               </div>
               <div className="panel">
-                <h3>Personalised city suggestions</h3>
+                <h3>Explore on the map</h3>
                 <div className="map-info map-panel">
-                  <strong>Google Map of Cameroon</strong>
-                  <p className="small-text">Use this map while filtering by region, city, subdivision, and quarter.</p>
-                  <a href={CAMEROON_MAP_URL} target="_blank" rel="noreferrer">Open Cameroon in Google Maps</a>
-                  <iframe
-                    className="map-embed map-embed-large"
-                    title="Google map of Cameroon"
-                    src={CAMEROON_MAP_EMBED}
-                    loading="lazy"
+                  <TravelMap
+                    markers={getDiscoveryMapMarkers()}
+                    className="map-embed-large"
+                    ariaLabel="OpenStreetMap map of Cameroon places"
                   />
+                  <p className="small-text">Pins update as you filter by region, city, subdivision, and quarter.</p>
+                  <a href={OPENSTREETMAP_CAMEROON_URL} target="_blank" rel="noreferrer">Open Cameroon in OpenStreetMap</a>
                 </div>
+                <h4 className="mt-16">Personalised city suggestions</h4>
                 {cityRecommendations.length === 0 ? (
                   <p>No city suggestions yet. Browse or save places to train your suggestions.</p>
                 ) : (
                   <ul className="list-card">
                     {cityRecommendations.map((city) => (
                       <li key={city.city}>
-                        {city.image_url && <img className="resource-thumb" src={city.image_url} alt={city.city} />}
+                        {city.image_url && <img className="resource-thumb" src={city.image_url} alt={city.city} loading="lazy" decoding="async" />}
                         <strong>{city.city}</strong>
                         <p>{city.region} • {city.division}</p>
                         <p className="small-text">Match score: {city.match_score} · {city.places_count} places</p>
@@ -3669,6 +4238,8 @@ function App() {
                 )}
               </div>
             </div>
+            </>
+            )}
             </>
             )}
 
@@ -3700,7 +4271,10 @@ function App() {
                   <ul className="list-card mt-16">
                     {groups.slice(0, 4).map((group) => (
                       <li key={group.id} className="group-card">
-                        <div>
+                        <div className="group-card-icon">
+                          <Users size={18} strokeWidth={2} aria-hidden="true" />
+                        </div>
+                        <div className="group-card-info">
                           <strong>{group.name}</strong>
                           <p>{group.description}</p>
                         </div>
@@ -3758,7 +4332,7 @@ function App() {
                             {items.map((item) => (
                               <li key={item.id || item.name}>
                                 <span>
-                                  {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} />}
+                                  {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} loading="lazy" decoding="async" />}
                                   <strong>{item.name}</strong>
                                   {item.location && <small>{item.location}</small>}
                                   {item.cost_per_night && <small>{formatMoney(item.cost_per_night)} / night</small>}
@@ -3798,7 +4372,7 @@ function App() {
                           {item.place_name ? ` · ${item.place_name}` : ''}
                           {item.city ? `, ${item.city}` : ''}
                         </p>
-                        {item.type === 'photo' && <img src={item.url} alt={item.caption || 'Shared travel media'} />}
+                        {item.type === 'photo' && <img src={item.url} alt={item.caption || 'Shared travel media'} loading="lazy" decoding="async" />}
                         <div className="inline-actions">
                           <button type="button" className="button button-secondary" onClick={() => handleLikeMedia(item.id)}>Like</button>
                         </div>
@@ -3860,6 +4434,15 @@ function App() {
                     </select>
                   </label>
                   <label>
+                    Trip
+                    <select value={newMediaItineraryId} onChange={(event) => setNewMediaItineraryId(event.target.value)}>
+                      <option value="">No linked trip</option>
+                      {itineraries.map((itinerary) => (
+                        <option key={itinerary.id} value={itinerary.id}>{itinerary.title}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
                     Type
                     <select value={newMediaType} onChange={(event) => setNewMediaType(event.target.value)}>
                       <option value="photo">Photo</option>
@@ -3880,16 +4463,89 @@ function App() {
               </div>
             </div>
             )}
-            {dashboardView === 'admin' && (
-            <div className="grid-2 mt-24">
-              {profile?.role !== 'admin' ? (
-                <div className="panel">
-                  <h3>Admin dashboard</h3>
-                  <p>Admin access is required.</p>
-                </div>
+{dashboardView === 'admin' && isAdmin && (
+            <>
+            <div className="tab-nav mt-24">
+              <button type="button" className={adminTab === 'overview' ? 'active' : ''} onClick={() => setAdminTab('overview')}>Overview</button>
+              <button type="button" className={adminTab === 'add-place' ? 'active' : ''} onClick={() => setAdminTab('add-place')}>Add a place</button>
+            </div>
+            {adminTab === 'overview' && (
+            <>
+            {adminStats && (
+            <div className="stats-grid">
+              <div className="stat-card">
+                <Users size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_users}</span>
+                <span className="stat-label">Total users ({adminStats.total_admins} admin{adminStats.total_admins === 1 ? '' : 's'})</span>
+              </div>
+              <div className="stat-card">
+                <MapIcon size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_itineraries}</span>
+                <span className="stat-label">Itineraries ({adminStats.public_itineraries} public)</span>
+              </div>
+              <div className="stat-card">
+                <Compass size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_places}</span>
+                <span className="stat-label">Places in catalogue</span>
+              </div>
+              <div className="stat-card">
+                <Building2 size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_hotels}</span>
+                <span className="stat-label">Hotels listed</span>
+              </div>
+              <div className="stat-card">
+                <ClipboardCheck size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.pending_place_requests}</span>
+                <span className="stat-label">Pending requests (of {adminStats.total_place_requests})</span>
+              </div>
+              <div className="stat-card">
+                <Images size={20} strokeWidth={2} aria-hidden="true" />
+                <span className="stat-value">{adminStats.total_media}</span>
+                <span className="stat-label">Media posts ({adminStats.total_groups} groups)</span>
+              </div>
+            </div>
+            )}
+            <div className="panel mt-24">
+              <h3>Pending place requests</h3>
+              {placeRequests.filter((item) => item.status === 'pending').length === 0 ? (
+                <p className="small-text">No pending requests right now.</p>
               ) : (
-                <>
-                <div className="panel">
+                <ul className="list-card">
+                  {placeRequests.filter((item) => item.status === 'pending').map((item) => (
+                    <li key={item.id}>
+                      <span>
+                        <strong>{item.name}</strong> <small>({item.type})</small>
+                        <small>{item.city || item.location} · {item.region}</small>
+                        {item.description && <small>{item.description}</small>}
+                        <small>Submitted by {item.submitted_by}</small>
+                      </span>
+                      <div className="inline-actions">
+                        <button type="button" className="button button-primary" onClick={() => handleReviewPlaceRequest(item.id, true)}>Approve</button>
+                        <button type="button" className="button button-secondary" onClick={() => handleReviewPlaceRequest(item.id, false)}>Reject</button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="mt-16">
+                <h4>Recently reviewed</h4>
+                <ul className="plain-list">
+                  {placeRequests.filter((item) => item.status !== 'pending').slice(0, 8).map((item) => (
+                    <li key={item.id}>
+                      <span>
+                        <strong>{item.name}</strong>
+                        <small>{item.status} • by {item.submitted_by}</small>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            </>
+            )}
+            {adminTab === 'add-place' && (
+            <div className="grid-2 mt-24">
+              <div className="panel">
                   <h3>Add place to visit</h3>
                   <form onSubmit={handleCreateResource} className="stacked-form">
                     <label>
@@ -3939,7 +4595,7 @@ function App() {
                     </label>
                     {renderCameroonFilters(newResource, setNewResource)}
                     <label>
-                      Localisation / Google Maps search
+                      Localisation / map search
                       <input
                         value={newResource.mapQuery}
                         onChange={(event) => setNewResource((prev) => ({
@@ -4013,9 +4669,9 @@ function App() {
                   </form>
                 </div>
                 <div className="panel">
-                  <h3>Google Maps localisation</h3>
+                  <h3>OpenStreetMap localisation</h3>
                   <p className="small-text">Search the place name or paste coordinates, then confirm the location before creating the place.</p>
-                  <AdminGoogleMapPicker
+                  <AdminLeafletMapPicker
                     place={newResource}
                     onChange={(changes) => setNewResource((prev) => ({ ...prev, type: 'places', ...changes }))}
                   />
@@ -4034,13 +4690,99 @@ function App() {
                     </ul>
                   </div>
                 </div>
-                </>
-              )}
+                
+            </div>
+            )}
+            </>
+            )}
+            {dashboardView === 'suggest' && (
+            <div className="grid-2 mt-24">
+              <div className="panel">
+                <h3>Suggest a place to visit</h3>
+                <p className="small-text">Propose a hotel, activity, or place. An admin will review it before it appears in the catalogue.</p>
+                <form onSubmit={handleSubmitPlaceRequest} className="stacked-form">
+                  <label>
+                    Type
+                    <select value={requestForm.type} onChange={(event) => setRequestForm((prev) => ({ ...prev, type: event.target.value }))}>
+                      <option value="places">Place</option>
+                      <option value="hotels">Hotel</option>
+                      <option value="activities">Activity</option>
+                    </select>
+                  </label>
+                  <label>
+                    Name
+                    <input value={requestForm.name} onChange={(event) => setRequestForm((prev) => ({ ...prev, name: event.target.value }))} placeholder="Lobe Falls" required />
+                  </label>
+                  <label>
+                    Description
+                    <textarea value={requestForm.description} onChange={(event) => setRequestForm((prev) => ({ ...prev, description: event.target.value }))} rows="3" />
+                  </label>
+                  <label>
+                    Cost ({currencyLabel})
+                    <input type="number" value={requestForm.cost} onChange={(event) => setRequestForm((prev) => ({ ...prev, cost: event.target.value }))} required />
+                  </label>
+                  <label>
+                    Cost note
+                    <input value={requestForm.costNote} onChange={(event) => setRequestForm((prev) => ({ ...prev, costNote: event.target.value }))} />
+                  </label>
+                  <label>
+                    Tags
+                    <input value={requestForm.tags} onChange={(event) => setRequestForm((prev) => ({ ...prev, tags: event.target.value }))} placeholder="waterfall, nature" />
+                  </label>
+                  {renderCameroonFilters(requestForm, setRequestForm)}
+                  <label>
+                    Localisation / map search
+                    <input value={requestForm.mapQuery} onChange={(event) => setRequestForm((prev) => ({ ...prev, mapQuery: event.target.value }))} placeholder="Search e.g. Lobe Falls Kribi Cameroon" />
+                  </label>
+                  <label>
+                    Photos & videos
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      multiple
+                      onChange={(event) => setRequestFiles(Array.from(event.target.files || []))}
+                    />
+                  </label>
+                  {requestFiles.length > 0 && (
+                    <p className="small-text">{requestFiles.length} file{requestFiles.length === 1 ? '' : 's'} selected</p>
+                  )}
+                  <label>
+                    Image URLs (optional, if you don't have files to upload)
+                    <textarea value={requestForm.imageUrls} onChange={(event) => setRequestForm((prev) => ({ ...prev, imageUrls: event.target.value }))} rows="2" placeholder="One image URL per line" />
+                  </label>
+                  <button type="submit" className="button button-primary">Submit suggestion</button>
+                </form>
+              </div>
+              <div className="panel">
+                <h3>My submissions</h3>
+                {placeRequests.length === 0 ? (
+                  <p className="small-text">You have not suggested any places yet.</p>
+                ) : (
+                  <ul className="plain-list">
+                    {placeRequests.map((item) => (
+                      <li key={item.id}>
+                        <span>
+                          <strong>{item.name}</strong>
+                          <small>{item.city || item.location} · {item.region}</small>
+                        </span>
+                        <small className={`request-status request-status-${item.status}`}>{item.status}</small>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
             )}
             {dashboardView === 'resources' && (
             <div className="panel mt-24">
               <h3>Resource management</h3>
+              <div className="tab-nav">
+                <button type="button" className={resourcesTab === 'catalogue' ? 'active' : ''} onClick={() => setResourcesTab('catalogue')}>Catalogue</button>
+                <button type="button" className={resourcesTab === 'hotels-compare' ? 'active' : ''} onClick={() => setResourcesTab('hotels-compare')}>Compare hotels</button>
+                <button type="button" className={resourcesTab === 'reviews' ? 'active' : ''} onClick={() => setResourcesTab('reviews')}>Reviews</button>
+                <button type="button" className={resourcesTab === 'admin' ? 'active' : ''} onClick={() => setResourcesTab('admin')}>Admin & waitlist</button>
+              </div>
+              {resourcesTab === 'catalogue' && (
               <form onSubmit={handleCreateResource} className="resource-form">
                 <label>
                   Type
@@ -4069,6 +4811,8 @@ function App() {
                 </label>
                 <button type="submit" className="button button-primary">Add resource</button>
               </form>
+              )}
+              {resourcesTab === 'hotels-compare' && (
               <div className="panel panel-nested mt-16">
                 <h4>Compare hotel prices</h4>
                 <form onSubmit={handleCompareHotels} className="resource-form">
@@ -4114,18 +4858,67 @@ function App() {
                   </ul>
                 )}
               </div>
-              <div className="resource-columns mt-16">
-                {Object.entries(resources).map(([type, items]) => (
+              )}
+              {resourcesTab === 'catalogue' && (
+              <>
+              <div className="compact-form mt-16">
+                <label>
+                  Search catalogue
+                  <input value={catalogueQuery} onChange={(event) => setCatalogueQuery(event.target.value)} placeholder="Search by name or location" />
+                </label>
+              </div>
+              <div className="resource-columns">
+                {Object.entries(resources).map(([type, allItems]) => {
+                  const q = catalogueQuery.trim().toLowerCase();
+                  const items = q
+                    ? allItems.filter((item) => (item.name || '').toLowerCase().includes(q) || (item.location || '').toLowerCase().includes(q))
+                    : allItems;
+                  const visibleCount = catalogueVisibleCount[type] || 20;
+                  const visibleItems = items.slice(0, visibleCount);
+                  return (
                   <div key={type}>
-                    <h4>{type}</h4>
-                    {items.length === 0 ? (
+                    <h4>{type} <span className="small-text">({items.length})</span></h4>
+                    {visibleItems.length === 0 ? (
                       <p className="small-text">No entries.</p>
                     ) : (
                       <ul className="plain-list">
-                        {items.slice(0, 6).map((item) => (
+                        {visibleItems.map((item) => (
                           <li key={item.id}>
+                          {type === 'places' && editingPlaceId === item.id ? (
+                            <div className="place-edit-form">
+                              <label>
+                                Name
+                                <input value={editPlaceForm.name} onChange={(event) => setEditPlaceForm((prev) => ({ ...prev, name: event.target.value }))} />
+                              </label>
+                              <label>
+                                Description
+                                <textarea rows="2" value={editPlaceForm.description} onChange={(event) => setEditPlaceForm((prev) => ({ ...prev, description: event.target.value }))} />
+                              </label>
+                              <label>
+                                Cost
+                                <input type="number" value={editPlaceForm.cost} onChange={(event) => setEditPlaceForm((prev) => ({ ...prev, cost: event.target.value }))} />
+                              </label>
+                              <label>
+                                Location
+                                <input value={editPlaceForm.location} onChange={(event) => setEditPlaceForm((prev) => ({ ...prev, location: event.target.value }))} />
+                              </label>
+                              <label>
+                                Latitude
+                                <input value={editPlaceForm.latitude} onChange={(event) => setEditPlaceForm((prev) => ({ ...prev, latitude: event.target.value }))} />
+                              </label>
+                              <label>
+                                Longitude
+                                <input value={editPlaceForm.longitude} onChange={(event) => setEditPlaceForm((prev) => ({ ...prev, longitude: event.target.value }))} />
+                              </label>
+                              <div className="inline-actions">
+                                <button type="button" className="button button-primary" onClick={() => handleSaveEditPlace(item.id)}>Save</button>
+                                <button type="button" className="button button-secondary" onClick={cancelEditPlace}>Cancel</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
                             <span>
-                              {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} />}
+                              {item.image_url && <img className="resource-thumb" src={item.image_url} alt={item.name} loading="lazy" decoding="async" />}
                               <strong>{item.name}</strong>
                               {item.location && <small>{item.location}</small>}
                               {item.id && <small>ID: {item.id}</small>}
@@ -4138,6 +4931,7 @@ function App() {
                               <>
                                 <button type="button" className="link-button" onClick={() => handleSavePlace(item)}>Save</button>
                                 <button type="button" className="link-button" onClick={() => handleViewPlaceGuide(item.id)}>Guide</button>
+                                <button type="button" className="link-button" onClick={() => startEditPlace(item)}>Edit</button>
                                 <button
                                   type="button"
                                   className="link-button"
@@ -4151,13 +4945,28 @@ function App() {
                               </>
                             )}
                             <button type="button" className="link-button" onClick={() => handleDeleteResource(type, item.id)}>Remove</button>
+                            </>
+                          )}
                           </li>
                         ))}
                       </ul>
                     )}
+                    {items.length > visibleItems.length && (
+                      <button
+                        type="button"
+                        className="link-button"
+                        onClick={() => setCatalogueVisibleCount((prev) => ({ ...prev, [type]: (prev[type] || 20) + 20 }))}
+                      >
+                        Show more ({items.length - visibleItems.length} remaining)
+                      </button>
+                    )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
+              </>
+              )}
+              {resourcesTab === 'reviews' && (
               <form onSubmit={handleAddResourceReview} className="resource-form mt-16">
                 <label>
                   Review type
@@ -4187,6 +4996,9 @@ function App() {
                 </label>
                 <button type="submit" className="button button-secondary">Add review</button>
               </form>
+              )}
+              {resourcesTab === 'admin' && (
+              <>
               {adminUsers.length > 0 && (
                 <div className="mt-16">
                   <h4>Admin users</h4>
@@ -4223,6 +5035,8 @@ function App() {
                   </ul>
                 )}
               </div>
+              </>
+              )}
             </div>
             )}
               </div>
@@ -4407,6 +5221,13 @@ function App() {
                 <div className="grid-2 mt-24">
                   <div className="panel">
                     <h3>Trip stages</h3>
+                    {getItineraryMapMarkers().length > 0 && (
+                      <TravelMap
+                        markers={getItineraryMapMarkers()}
+                        className="map-embed-large"
+                        ariaLabel="OpenStreetMap map of itinerary stages"
+                      />
+                    )}
                     {selectedItinerary.stages?.length > 0 ? (
                       <ul className="list-card">
                         {selectedItinerary.stages.map((stage) => (
@@ -4443,8 +5264,29 @@ function App() {
                     )}
                   </div>
                   <div className="panel">
-                    <h3>Update progress</h3>
-                    <form onSubmit={handleUpdateProgress} className="stacked-form">
+                    <h3>Trip progress</h3>
+                    <div className="progress-track">
+                      <div className="progress-fill" style={{ width: `${selectedItinerary.progress?.progress_percent || 0}%` }} />
+                    </div>
+                    <p className="small-text">{Math.round(selectedItinerary.progress?.progress_percent || 0)}% complete</p>
+                    {(selectedItinerary.stages || []).length > 0 && (
+                      <ul className="stage-checklist">
+                        {(selectedItinerary.stages || []).map((stage) => (
+                          <li key={stage.id}>
+                            <label className="inline-check">
+                              <input
+                                type="checkbox"
+                                checked={stage.status === 'completed'}
+                                onChange={(event) => handleToggleStageComplete(stage.id, event.target.checked)}
+                              />
+                              {stage.name}
+                              {stage.status === 'active' && <span className="stage-active-badge">current</span>}
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <form onSubmit={handleUpdateProgress} className="stacked-form mt-16">
                       <label>
                         Status
                         <select value={progressForm.status} onChange={(event) => setProgressForm((prev) => ({ ...prev, status: event.target.value }))}>
@@ -4462,14 +5304,6 @@ function App() {
                             <option key={stage.id} value={stage.id}>{stage.name}</option>
                           ))}
                         </select>
-                      </label>
-                      <label>
-                        Completed stage IDs
-                        <input
-                          value={progressForm.completedStageIds}
-                          onChange={(event) => setProgressForm((prev) => ({ ...prev, completedStageIds: event.target.value }))}
-                          placeholder="hotel, activity-1"
-                        />
                       </label>
                       <label>
                         Current location
@@ -4583,12 +5417,12 @@ function App() {
                         {(trackingInfo || selectedItinerary.live_tracking).google_map_url && (
                           <a href={(trackingInfo || selectedItinerary.live_tracking).google_map_url} target="_blank" rel="noreferrer">Open live point</a>
                         )}
-                        {(trackingInfo || selectedItinerary.live_tracking).google_maps_embed_url && (
-                          <iframe
-                            className="map-embed"
-                            title="Live trip tracking map"
-                            src={(trackingInfo || selectedItinerary.live_tracking).google_maps_embed_url}
-                            loading="lazy"
+                        {getTrackingPosition() && (
+                          <TravelMap
+                            selectedPosition={getTrackingPosition()}
+                            center={getTrackingPosition()}
+                            zoom={13}
+                            ariaLabel="OpenStreetMap live trip tracking map"
                           />
                         )}
                       </div>
@@ -4596,19 +5430,19 @@ function App() {
                     {mapInfo && (
                       <div className="map-info">
                         <p><strong>Location:</strong> {mapInfo.location}</p>
-                        <p><strong>Provider:</strong> Google Maps · {mapInfo.country_focus}</p>
+                        <p><strong>Provider:</strong> OpenStreetMap · {mapInfo.country_focus}</p>
                         {mapInfo.map_info?.google_map_url && (
                           <a href={mapInfo.map_info.google_map_url} target="_blank" rel="noreferrer">Open in Google Maps</a>
                         )}
                         {mapInfo.map_info?.google_maps_directions_url && (
                           <a href={mapInfo.map_info.google_maps_directions_url} target="_blank" rel="noreferrer">Directions</a>
                         )}
-                        {mapInfo.map_info?.google_maps_embed_url && (
-                          <iframe
-                            className="map-embed"
-                            title={`Google map for ${mapInfo.location}`}
-                            src={mapInfo.map_info.google_maps_embed_url}
-                            loading="lazy"
+                        {getMapInfoPosition() && (
+                          <TravelMap
+                            selectedPosition={getMapInfoPosition()}
+                            center={getMapInfoPosition()}
+                            zoom={12}
+                            ariaLabel={`OpenStreetMap map for ${mapInfo.location}`}
                           />
                         )}
                         {mapInfo.map_info?.latitude && (
@@ -4893,6 +5727,25 @@ function App() {
                       ))}
                     </ul>
                   )}
+                  <h4 className="mt-16">Trip stories</h4>
+                  {media.filter((item) => item.itinerary_id === selectedItinerary.id).length === 0 ? (
+                    <p className="small-text">No photos or videos shared for this trip yet.</p>
+                  ) : (
+                    <div className="media-feed">
+                      {media.filter((item) => item.itinerary_id === selectedItinerary.id).map((item) => (
+                        <div key={item.id}>
+                          {item.type === 'video' ? (
+                            <video src={item.url} controls preload="metadata" />
+                          ) : (
+                            <img src={item.url} alt={item.caption || 'Trip photo'} loading="lazy" decoding="async" />
+                          )}
+                          <p className="small-text">{item.caption} 
+—
+ by {item.username}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -4921,16 +5774,42 @@ function App() {
                       </label>
                       <button type="submit" className="button button-primary">Start discussion</button>
                     </form>
+                    {media.filter((item) => item.group_id === selectedGroup.id && item.itinerary_id).length > 0 && (
+                      <div className="mt-16">
+                        <h4>Trip stories</h4>
+                        <div className="media-feed">
+                          {media.filter((item) => item.group_id === selectedGroup.id && item.itinerary_id).map((item) => (
+                            <div key={item.id}>
+                              {item.type === 'video' ? (
+                                <video src={item.url} controls preload="metadata" />
+                              ) : (
+                                <img src={item.url} alt={item.caption || 'Trip story'} loading="lazy" decoding="async" />
+                              )}
+                              <p className="small-text">{item.caption} 
+—
+ by {item.username}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     {selectedGroup.discussions?.length > 0 ? (
-                      <ul className="list-card">
+                      <ul className="list-card discussion-thread-list">
                         {selectedGroup.discussions.map((discussion) => (
-                          <li key={discussion.id}>
+                          <li key={discussion.id} className="discussion-thread">
                             <strong>{discussion.title}</strong>
-                            <p>{discussion.posts[0]?.message}</p>
                             <div className="discussion-meta">
-                              <span>{discussion.posts.length} posts</span>
+                              <span>{discussion.posts.length} post{discussion.posts.length === 1 ? '' : 's'}</span>
                               <span>Started by {discussion.created_by}</span>
                             </div>
+                            <ul className="discussion-posts">
+                              {discussion.posts.map((post, index) => (
+                                <li key={post.id || index} className="discussion-post">
+                                  <span className="discussion-post-author">{post.username || post.author || discussion.created_by}</span>
+                                  <p>{post.message}</p>
+                                </li>
+                              ))}
+                            </ul>
                             <div className="reply-box">
                               <input
                                 type="text"
@@ -5002,6 +5881,15 @@ function App() {
                           <option value="">No linked place</option>
                           {resources.places.map((place) => (
                             <option key={place.id} value={place.id}>{place.name} · {place.city || place.region}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Trip
+                        <select value={newMediaItineraryId} onChange={(event) => setNewMediaItineraryId(event.target.value)}>
+                          <option value="">No linked trip</option>
+                          {itineraries.map((itinerary) => (
+                            <option key={itinerary.id} value={itinerary.id}>{itinerary.title}</option>
                           ))}
                         </select>
                       </label>

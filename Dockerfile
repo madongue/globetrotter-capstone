@@ -15,4 +15,4 @@ COPY . .
 COPY --from=frontend /globetrotter/client/dist ./client/dist
 
 EXPOSE 5000
-CMD ["python", "app/main.py"]
+CMD gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --threads 4 --timeout 120 app.main:app

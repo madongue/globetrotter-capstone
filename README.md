@@ -295,6 +295,22 @@ python tools/download_catalog_images.py places destinations
 
 The importer only uses curated source URLs, mainly Wikimedia Commons/compatible sources; it does not scrape or rehost protected social-media images.
 
+### Import Cameroon tourism catalogue data
+
+The project includes an OpenStreetMap importer for hotels, restaurants, natural sites, man-made attractions, monuments, museums, and parks in Cameroon:
+
+```bash
+python tools/import_cameroon_places.py --max-items 600 --no-media
+```
+
+To make best-effort Wikimedia Commons photo/video lookups for existing catalogue records:
+
+```bash
+python tools/import_cameroon_places.py --media-only 25
+```
+
+The importer stores OpenStreetMap source URLs, coordinates, categories, estimated costs, and reusable-media attribution metadata when media is found. It does not scrape TikTok, Instagram, Tripadvisor, or other protected sites; add those only through official APIs, embeds, or creator-approved uploads.
+
 ---
 
 ## Local UI
@@ -371,7 +387,7 @@ Key platform features inspired by research:
 - Destination discovery with tags, cost filters, continent search, and autocomplete.
 - Personalised recommendations based on user preferences, feedback, budget, and travel history.
 - Money defaults to FCFA/XAF across budgets, payments, receipts, and exports. The React UI includes a currency selector and converts selected-currency input back to FCFA for consistent API storage.
-- Map metadata is backed by Google Maps URLs for worldwide search, directions, and embeds. Cameroon-focused trips get extra Google Maps links for nearby hotels, restaurants, attractions, transport, hospitals, pharmacies, and banks.
+- In-app maps are rendered with Leaflet and OpenStreetMap-compatible tiles. External Google Maps links may still be shown for search or directions metadata returned by the API.
 - Discovery partitions Cameroon visit places by region, shows only a short featured preview by default, and expands focused places when a region/local filter is selected.
 - Place guides include nearby hotels, nearby activities, traveller photos, practical notes, safety information, map links, and an offline JSON export.
 - Admin users have a dedicated dashboard for adding Cameroon places to visit with descriptions, uploaded pictures/videos, external media URLs, Google Maps search/preview, optional coordinates, and regional metadata. When `VITE_GOOGLE_MAPS_API_KEY` is set, admins can search Cameroon locations, click the map, and drag the marker to capture coordinates.

@@ -33,6 +33,13 @@ from app.models import (
     normalize_phone,
     save_user,
     update_user,
+    get_all_itineraries,
+    get_all_places,
+    get_all_hotels,
+    get_all_activities,
+    get_all_groups,
+    get_all_media,
+    get_all_place_requests,
 )
 
 auth_bp = Blueprint("auth", __name__)
@@ -110,9 +117,13 @@ def _verify_google_id_token(id_token: str) -> dict | None:
 def _bootstrap_role_for(username: str) -> str:
     """Return the initial role for a newly registered account.
 
-    This lets a deployed instance create its first administrator without
-    editing the JSON data store by hand. Set ADMIN_USERNAMES to a comma-separated
-    list on Render to make matching new registrations admins.
+    Every self-registered account is a regular "user" by default. To grant
+    admin on registration (e.g. to bootstrap your own super-admin account),
+    set ADMIN_USERNAMES to a comma-separated list of usernames on Render.
+    From then on, admins can promote other accounts via the Admin dashboard
+    (PATCH /admin/users/<username>/role) -- there is no automatic
+    "first user becomes admin" behaviour, since that is unsafe on hosts
+    with non-persistent storage where the user list can reset to empty.
     """
     configured_admins = {
         item.strip().lower()
@@ -120,8 +131,6 @@ def _bootstrap_role_for(username: str) -> str:
         if item.strip()
     }
     if username.lower() in configured_admins:
-        return "admin"
-    if not get_all_users():
         return "admin"
     return "user"
 
@@ -174,10 +183,13 @@ def register():
     if not username or not password:
         return jsonify({"error": "username and password are required"}), 400
 
+    if not phone:
+        return jsonify({"error": "phone number is required"}), 400
+
     if get_user_by_username(username):
         return jsonify({"error": "username already exists"}), 409
 
-    if phone and get_user_by_phone(phone):
+    if get_user_by_phone(phone):
         return jsonify({"error": "phone already registered"}), 409
 
     user = {
@@ -476,4 +488,32 @@ def update_user_role_admin(username: str):
             "username": user.get("username"),
             "role": user.get("role", "user"),
         },
+    }), 200
+
+
+@auth_bp.route("/admin/stats", methods=["GET"])
+def admin_stats():
+    """Platform-wide counts for the admin overview dashboard."""
+    admin_user, error = _require_admin_user(request)
+    if error:
+        return error
+
+    users = get_all_users()
+    itineraries = get_all_itineraries()
+    place_requests = get_all_place_requests()
+    public_itineraries = [item for item in itineraries if item.get("visibility") == "public"]
+    pending_requests = [item for item in place_requests if item.get("status") == "pending"]
+
+    return jsonify({
+        "total_users": len(users),
+        "total_admins": sum(1 for user in users if user.get("role") == "admin"),
+        "total_itineraries": len(itineraries),
+        "public_itineraries": len(public_itineraries),
+        "total_places": len(get_all_places()),
+        "total_hotels": len(get_all_hotels()),
+        "total_activities": len(get_all_activities()),
+        "total_groups": len(get_all_groups()),
+        "total_media": len(get_all_media()),
+        "pending_place_requests": len(pending_requests),
+        "total_place_requests": len(place_requests),
     }), 200
