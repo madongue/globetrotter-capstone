@@ -43,3 +43,7 @@ data/*.json
 .idea/
 *.swp
 *.swo
+
+# trip_io build output
+trip_io/dist/
+trip_io/node_modules/

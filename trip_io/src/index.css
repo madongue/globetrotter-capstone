@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-ink-950 text-mist-100 font-sans antialiased;
+    /* The page is dark end to end; without this the browser paints white
+       behind an over-scroll bounce. */
+    background-color: #05070d;
+  }
+
+  ::selection {
+    @apply bg-cyan-500/30 text-white;
+  }
+
+  /* Visible focus everywhere, since almost every surface here is dark. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-cyan-400 ring-offset-2 ring-offset-ink-950;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight;
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  /* Translucent surfaces. Kept to two levels -- panel and raised -- so the
+     glass reads as structure rather than decoration. */
+  .glass {
+    @apply border border-white/10 bg-white/[0.04] backdrop-blur-xl;
+  }
+
+  .glass-raised {
+    @apply border border-white/[0.12] bg-white/[0.07] backdrop-blur-2xl;
+  }
+
+  .surface {
+    @apply rounded-2xl border border-white/[0.08] bg-ink-900;
+  }
+
+  .hairline {
+    @apply border-white/[0.08];
+  }
+
+  .label-eyebrow {
+    @apply font-mono text-2xs uppercase tracking-[0.2em] text-cyan-400;
+  }
+
+  /* Loading skeleton with a sweep, rather than a flat grey block. */
+  .skeleton {
+    @apply relative overflow-hidden rounded-lg bg-white/[0.06];
+  }
+
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/[0.08] to-transparent;
+    transform: translateX(-100%);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
