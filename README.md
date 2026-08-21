@@ -282,7 +282,9 @@ docker-compose down
 
 ## Data Storage
 
-All data is persisted in plain JSON files inside the `data/` directory:
+The app stores these collections. With no `DATABASE_URL` set they are plain
+JSON files inside `data/`; with one set they become rows in the database,
+keyed by the same collection names (see [Storage backends](#storage-backends)):
 
 | File                    | Purpose                              |
 |-------------------------|--------------------------------------|
@@ -301,19 +303,54 @@ All data is persisted in plain JSON files inside the `data/` directory:
 
 Curated catalogue files (`destinations`, `places`, `hotels`, and `activities`) are versioned seed data. Runtime/user files remain local-only.
 
-> ### ⚠️ Runtime data is not durable on ephemeral hosts
+### Storage backends
+
+The app reads and writes every collection through one interface, with two
+interchangeable backends selected by the `DATABASE_URL` environment variable:
+
+| `DATABASE_URL` | Backend | Use |
+|----------------|---------|-----|
+| unset | JSON files under `data/` | Local development and the test suite. Zero setup. |
+| set   | SQL database (Postgres) | **Production.** Data survives redeploys and restarts. |
+
+Application code is identical either way — see [`app/store.py`](app/store.py).
+
+> #### ⚠️ Without `DATABASE_URL`, runtime data is lost on every redeploy
 >
-> Runtime files (`users.json`, `itineraries.json`, `groups.json`, `media.json`,
-> `uploads/`, …) are written to the container's local filesystem and are **not**
-> committed to git. On platforms with an ephemeral disk — including Render web
-> services without a paid persistent disk — every deploy, restart, or instance
-> replacement wipes them, so all registered users, trips, and uploads are lost.
+> Runtime collections (`users`, `itineraries`, `groups`, `media`, …) are not
+> committed to git. On a host with an ephemeral filesystem — including Render
+> web services without a paid persistent disk — anything written to local disk
+> is wiped on every deploy, restart, or instance replacement.
 >
-> To run this with real users, either attach a persistent disk mounted at
-> `data/`, or migrate the storage layer in [`app/models.py`](app/models.py) to a
-> managed database. Concurrent writes are already guarded with per-file locks
-> and atomic replaces, but that protects against corruption, not against the
-> disk disappearing.
+> **Set `DATABASE_URL` in production.** Any managed Postgres works; free,
+> non-expiring tiers include [Neon](https://neon.tech) and
+> [Supabase](https://supabase.com).
+
+### Migrating existing JSON data into the database
+
+To move data already collected on a running deployment, copy its `data/`
+directory locally, then run the one-time import:
+
+```bash
+export DATABASE_URL="postgresql://user:password@host/dbname"
+
+# Preview: reports document counts and flags duplicate or missing keys.
+python scripts/migrate_json_to_db.py --data-dir ./data --dry-run
+
+# Import for real.
+python scripts/migrate_json_to_db.py --data-dir ./data
+```
+
+The script refuses to touch a collection that already has rows, so re-running
+it cannot double-import or clobber live data; pass `--replace` to overwrite a
+collection deliberately, or `--only users itineraries` to limit its scope.
+
+> #### Uploaded files are not covered by the database
+>
+> Photos and videos posted through the app are written to `data/uploads/` as
+> files, not into the database, so they still disappear on redeploy even once
+> `DATABASE_URL` is set. Durable media needs either object storage (S3,
+> Cloudinary) or a persistent disk mounted at `data/uploads/`.
 
 Catalogue photos are cached under `client/public/images/` and referenced by local `/images/...` paths in the JSON records. Each cached record keeps `image_source_url`, `original_image_url`, and `image_license_note` metadata for attribution review. To refresh the local assets from the curated source URLs, run:
 
@@ -399,6 +436,7 @@ Then open `http://localhost:5000`.
 | Environment Variable | Default                              | Description           |
 |----------------------|--------------------------------------|-----------------------|
 | `SECRET_KEY`         | _(none – required)_                  | JWT signing key. **Required**: the app refuses to start without it unless `FLASK_DEBUG=1` or running under pytest. |
+| `DATABASE_URL`       | unset                                | Postgres connection string. Unset uses JSON files under `data/`, which **do not survive redeploys**. Legacy `postgres://` URLs are accepted. |
 | `FLASK_DEBUG`        | `0`                                  | Set to `1` to enable Flask debug mode (development only) |
 | `PORT`               | `5000`                               | Port the app listens on |
 | `GOOGLE_CLIENT_ID`   | unset                                | Optional audience check for Google ID-token login |

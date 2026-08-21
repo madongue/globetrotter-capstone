@@ -24,6 +24,13 @@ build/
 # Docker
 .dockerignore
 
+# Local databases and the file-backend's lock/temp artefacts
+*.db
+*.sqlite
+*.sqlite3
+*.json.lock
+*.json.tmp
+
 # Runtime data files are populated locally; curated catalogue seeds are versioned.
 data/*.json
 !data/activities.json

@@ -1,18 +1,24 @@
 """
 app/models.py
 
-Data models and file I/O helpers.
+Data models and persistence helpers.
 
-All persistent data is stored in JSON files under the /data directory.
-  - data/users.json       – registered users
-  - data/itineraries.json – user itineraries
-  - data/destinations.json – static destination catalogue (seed data)
+Each collection (users, itineraries, destinations, ...) is a list of JSON
+documents. Where those documents actually live depends on the configured
+storage backend (see :mod:`app.store`):
+
+  * ``DATABASE_URL`` unset -> JSON files under the /data directory. This is the
+    default for local development and the test suite.
+  * ``DATABASE_URL`` set   -> a SQL database (Postgres in production). Required
+    on hosts with an ephemeral filesystem, where anything written to local disk
+    is wiped on every redeploy.
+
+Every function below works identically against either backend, so callers
+never need to know which one is active.
 """
-import json
 import os
-from contextlib import contextmanager
 
-from filelock import FileLock
+from app.store import build_store, collection_name_for
 
 # Resolve the /data directory relative to this file's location so the app
 # works regardless of the current working directory.
@@ -35,66 +41,91 @@ UPLOADS_DIR = os.path.join(DATA_DIR, "uploads")
 
 
 # ---------------------------------------------------------------------------
-# Generic file I/O helpers
+# Storage plumbing
 #
-# Every read/write of a data file is guarded by a per-file lock (via
-# filelock, which works across threads, processes, and platforms) and every
-# write goes to a temp file that is atomically renamed into place. Mutating
-# helpers below (save_*/update_*/remove_*) acquire the lock ONCE around
-# their full read-modify-write so concurrent requests touching the same
-# file can't interleave and lose or corrupt each other's changes.
+# Collections are addressed by the data-file constants above. Both backends
+# resolve a collection from that path's basename ("users.json" -> "users"),
+# which keeps the file constants meaningful for the JSON backend and lets the
+# test suite keep monkeypatching them to temp files.
+#
+# Reads and writes are serialised per collection, and mutating helpers below
+# (save_*/update_*/remove_*) hold that lock ONCE around their full
+# read-modify-write, so concurrent workers can't interleave and lose each
+# other's changes.
 # ---------------------------------------------------------------------------
 
-def _lock_path(filepath: str) -> str:
-    return filepath + ".lock"
+#: Collection name -> the module-level constant holding its data-file path.
+_COLLECTION_PATHS = {
+    "users": "USERS_FILE",
+    "itineraries": "ITINERARIES_FILE",
+    "destinations": "DESTINATIONS_FILE",
+    "hotels": "HOTELS_FILE",
+    "activities": "ACTIVITIES_FILE",
+    "places": "PLACES_FILE",
+    "groups": "GROUPS_FILE",
+    "media": "MEDIA_FILE",
+    "notifications": "NOTIFICATIONS_FILE",
+    "invites": "INVITES_FILE",
+    "audit_log": "AUDIT_LOG_FILE",
+    "place_requests": "PLACE_REQUESTS_FILE",
+}
 
 
-@contextmanager
+def _path_for_collection(collection: str) -> str:
+    """Resolve a collection name back to its current data-file path.
+
+    Looked up dynamically rather than cached because the test suite
+    monkeypatches these constants between tests.
+    """
+    constant = _COLLECTION_PATHS.get(collection)
+    if constant:
+        return globals()[constant]
+    return os.path.join(DATA_DIR, f"{collection}.json")
+
+
+_store = None
+
+
+def get_store():
+    """Return the active storage backend, creating it on first use."""
+    global _store
+    if _store is None:
+        _store = build_store(_path_for_collection)
+    return _store
+
+
+def reset_store() -> None:
+    """Drop the cached backend so the next call re-reads DATABASE_URL.
+
+    Used by tests and by the migration script when switching backends.
+    """
+    global _store
+    _store = None
+
+
 def _locked(filepath: str):
-    """Acquire an exclusive lock for *filepath* for the duration of the block."""
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with FileLock(_lock_path(filepath), timeout=10):
-        yield
+    """Hold an exclusive lock on *filepath*'s collection for the block."""
+    return get_store().locked(collection_name_for(filepath))
 
 
 def _read_json_unlocked(filepath: str) -> list:
-    """Read a JSON file and return its contents as a Python list.
-
-    Returns an empty list if the file does not exist or is empty. Caller
-    must already hold the lock for *filepath*.
-    """
-    if not os.path.exists(filepath):
-        return []
-    with open(filepath, "r", encoding="utf-8") as fh:
-        content = fh.read().strip()
-        if not content:
-            return []
-        data = json.loads(content)
-        return data if isinstance(data, list) else []
+    """Return the collection's documents. Caller must already hold its lock."""
+    return get_store().read(collection_name_for(filepath))
 
 
 def _write_json_unlocked(filepath: str, data: list) -> None:
-    """Serialise *data* and atomically replace *filepath*.
-
-    Writes to a temp file first and renames it into place, so a process
-    killed mid-write can never leave truncated/invalid JSON behind. Caller
-    must already hold the lock for *filepath*.
-    """
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    tmp_path = f"{filepath}.tmp"
-    with open(tmp_path, "w", encoding="utf-8") as fh:
-        json.dump(data, fh, indent=2)
-    os.replace(tmp_path, filepath)
+    """Replace the collection's documents. Caller must already hold its lock."""
+    get_store().write(collection_name_for(filepath), data)
 
 
 def _read_json(filepath: str) -> list:
-    """Read a JSON file and return its contents as a Python list."""
+    """Return every document in the collection backing *filepath*."""
     with _locked(filepath):
         return _read_json_unlocked(filepath)
 
 
 def _write_json(filepath: str, data: list) -> None:
-    """Serialise *data* and write it to *filepath* (pretty-printed)."""
+    """Replace every document in the collection backing *filepath*."""
     with _locked(filepath):
         _write_json_unlocked(filepath, data)
 
