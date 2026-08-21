@@ -52,6 +52,11 @@ const PREDEFINED_INTERESTS = [
 ];
 
 const GOOGLE_IDENTITY_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+// Optional: enables the click-to-select map picker in the admin dashboard.
+// Maps themselves are Leaflet/OpenStreetMap and need no key, so an empty
+// value is normal. The Leaflet migration deleted this constant while leaving
+// a reference to it, which threw during render and blanked the whole app.
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 let googleIdentityLoadPromise;
 
 function getGoogleIdentityClientId(runtimeClientId = '') {
@@ -648,6 +653,7 @@ function App() {
   const [runtimeGoogleMapsApiKey, setRuntimeGoogleMapsApiKey] = useState('');
   const [googleClientIdLoadingError, setGoogleClientIdLoadingError] = useState(null);
   const [platformStats, setPlatformStats] = useState(null);
+  const [featuredDestinations, setFeaturedDestinations] = useState([]);
   const [liveLocationStatus, setLiveLocationStatus] = useState('idle');
   const [liveLocationError, setLiveLocationError] = useState('');
   const [liveLocationPosition, setLiveLocationPosition] = useState(null);
@@ -2280,7 +2286,19 @@ function App() {
       }
     };
 
+    const loadDestinations = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/destinations`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!cancelled && Array.isArray(data)) setFeaturedDestinations(data);
+      } catch (error) {
+        // The showcase is optional; the hero stands on its own without it.
+      }
+    };
+
     loadStats();
+    loadDestinations();
     const timer = setInterval(loadStats, 60000);
     return () => {
       cancelled = true;
@@ -3285,66 +3303,145 @@ function App() {
           </div>
         )}
 
-        {page === 'home' && (
-          <section className="hero-section">
-            <div className="hero-copy">
-              <p className="eyebrow">Travel meets community</p>
-              <h1>Plan trips, sell event tickets, and connect with travelers.</h1>
-              <p>GlobeTrotter brings itineraries, payments, groups, and media sharing into one polished React experience.</p>
-              <div className="hero-actions">
-                <button type="button" className="button button-primary" onClick={() => navigate('register')}>Get Started</button>
-                <button type="button" className="button button-secondary" onClick={() => navigate('login')}>Sign In</button>
-              </div>
-              {googleClientId ? (
-                <div className="hero-google-signin">
-                  <p>Or sign in directly with Google:</p>
-                  <GoogleSignInButton clientId={googleClientId} onSuccess={handleGoogleCredential} onError={handleGoogleError} />
+        {page === 'home' && (() => {
+          const withImages = featuredDestinations.filter((item) => item.image_url);
+          // Lead with coast or mountain rather than whichever city sorts first:
+          // a hazy city skyline makes a poor first impression for a travel app.
+          const heroPreference = ['Kribi', 'Limbe', 'Buea', 'Ngaoundere'];
+          const heroPick = heroPreference
+            .map((name) => withImages.find((item) => item.name === name))
+            .find(Boolean);
+          const heroImage = heroPick?.image_url || withImages[0]?.image_url || '/images/destinations/kribi.jpg';
+          // Keep the hero's city out of the rail so the same photo isn't shown twice.
+          const showcase = withImages.filter((item) => item.name !== heroPick?.name).slice(0, 8);
+
+          return (
+            <div className="landing">
+              <section className="landing-hero">
+                <div
+                  className="landing-hero-media"
+                  style={{ backgroundImage: 'url(' + heroImage + ')' }}
+                  aria-hidden="true"
+                />
+                <div className="landing-hero-scrim" aria-hidden="true" />
+
+                <div className="landing-hero-inner">
+                  <p className="landing-eyebrow">Cameroon, properly mapped</p>
+                  <h1 className="landing-title">
+                    Every corner of<br />
+                    <em>Cameroon</em>, in one trip.
+                  </h1>
+                  <p className="landing-sub">
+                    Plan itineraries across {platformStats ? platformStats.total_places.toLocaleString() : '870+'} real
+                    places &mdash; beaches, highlands, reserves and cities &mdash; then share the trip,
+                    split the cost in FCFA and take it offline.
+                  </p>
+
+                  <div className="landing-cta">
+                    <button type="button" className="button button-primary" onClick={() => navigate('register')}>
+                      Start planning
+                    </button>
+                    <button type="button" className="button button-ghost" onClick={() => navigate('login')}>
+                      Sign in
+                    </button>
+                  </div>
+
+                  {googleClientId ? (
+                    <div className="landing-google">
+                      <GoogleSignInButton clientId={googleClientId} onSuccess={handleGoogleCredential} onError={handleGoogleError} />
+                    </div>
+                  ) : null}
                 </div>
-              ) : (
-                <div className="hero-google-signin">
-                  <p className="muted-note">Google sign-in is unavailable until the app is configured.</p>
-                </div>
+
+                {platformStats && (
+                  <div className="stats-strip" aria-label="Community activity">
+                    <div className="stat-tile">
+                      <span className="stat-value">{platformStats.total_travellers.toLocaleString()}</span>
+                      <span className="stat-label">Travellers</span>
+                    </div>
+                    <div className="stat-tile stat-live">
+                      <span className="stat-value">
+                        <span className="live-dot" aria-hidden="true"></span>
+                        {platformStats.active_today.toLocaleString()}
+                      </span>
+                      <span className="stat-label">Active today</span>
+                    </div>
+                    <div className="stat-tile">
+                      <span className="stat-value">{platformStats.total_trips.toLocaleString()}</span>
+                      <span className="stat-label">Trips planned</span>
+                    </div>
+                    <div className="stat-tile">
+                      <span className="stat-value">{platformStats.total_places.toLocaleString()}</span>
+                      <span className="stat-label">Places mapped</span>
+                    </div>
+                  </div>
+                )}
+              </section>
+
+              {showcase.length > 0 && (
+                <section className="landing-section">
+                  <div className="landing-section-head">
+                    <h2>Start somewhere</h2>
+                    <p>Eleven cities, and everything worth stopping for between them.</p>
+                  </div>
+                  <div className="dest-rail">
+                    {showcase.map((destination) => (
+                      <button
+                        type="button"
+                        className="dest-card"
+                        key={destination.name}
+                        onClick={() => navigate('register')}
+                      >
+                        <img src={destination.image_url} alt={destination.name} loading="lazy" decoding="async" />
+                        <span className="dest-card-scrim" aria-hidden="true" />
+                        <span className="dest-card-body">
+                          <span className="dest-name">{destination.name}</span>
+                          {(destination.tags || []).length > 0 && (
+                            <span className="dest-tags">{(destination.tags || []).slice(0, 2).join(' · ')}</span>
+                          )}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
               )}
+
+              <section className="landing-section">
+                <div className="landing-section-head">
+                  <h2>Built for how trips here actually happen</h2>
+                </div>
+                <div className="value-grid">
+                  <article className="value-card value-wide">
+                    <h3>Plan together, pay together</h3>
+                    <p>
+                      Invite friends to a trip, set view or edit access, split expenses in FCFA and
+                      keep a receipt for every payment.
+                    </p>
+                  </article>
+                  <article className="value-card">
+                    <h3>Works offline</h3>
+                    <p>Download a place guide and keep it when the signal goes.</p>
+                  </article>
+                  <article className="value-card">
+                    <h3>Real maps</h3>
+                    <p>Every place carries coordinates, not just an address.</p>
+                  </article>
+                  <article className="value-card">
+                    <h3>Share the trip</h3>
+                    <p>Publish an itinerary and let other travellers copy it.</p>
+                  </article>
+                  <article className="value-card value-wide">
+                    <h3>Photos and video from the ground</h3>
+                    <p>
+                      Post to the community feed, tag a place, and build a picture of Cameroon that
+                      no global travel app has.
+                    </p>
+                  </article>
+                </div>
+              </section>
             </div>
-            {platformStats && (
-              <div className="stats-strip" aria-label="Community activity">
-                <div className="stat-tile">
-                  <span className="stat-value">{platformStats.total_travellers.toLocaleString()}</span>
-                  <span className="stat-label">Travellers on GlobeTrotter</span>
-                </div>
-                <div className="stat-tile stat-live">
-                  <span className="stat-value">
-                    <span className="live-dot" aria-hidden="true"></span>
-                    {platformStats.active_today.toLocaleString()}
-                  </span>
-                  <span className="stat-label">Active today</span>
-                </div>
-                <div className="stat-tile">
-                  <span className="stat-value">{platformStats.total_trips.toLocaleString()}</span>
-                  <span className="stat-label">Trips planned</span>
-                </div>
-                <div className="stat-tile">
-                  <span className="stat-value">{platformStats.total_places.toLocaleString()}</span>
-                  <span className="stat-label">Places to discover</span>
-                </div>
-              </div>
-            )}
-            <div className="hero-cards">
-              <article className="feature-card">
-                <h3>Shared travel plans</h3>
-                <p>Build itineraries together, invite friends, and track every booking.</p>
-              </article>
-              <article className="feature-card">
-                <h3>Ticket monetization</h3>
-                <p>Sell event tickets with receipts, commission tracking, and secure payment records.</p>
-              </article>
-              <article className="feature-card">
-                <h3>Community feed</h3>
-                <p>Post photos, comment, like, and reach travel groups with media sharing.</p>
-              </article>
-            </div>
-          </section>
-        )}
+          );
+        })()}
 
         {page === 'login' && (
           <section className="form-section">
