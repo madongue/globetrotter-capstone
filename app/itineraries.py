@@ -17,7 +17,6 @@ import re
 import urllib.parse
 
 from flask import Blueprint, Response, request, jsonify, send_from_directory
-from werkzeug.utils import secure_filename
 
 from app.auth import get_current_user
 from app.cameroon_geo import (
@@ -27,6 +26,7 @@ from app.cameroon_geo import (
     infer_cameroon_geo,
     matches_cameroon_filters,
 )
+from app.media_storage import get_upload_store
 from app.models import (
     get_all_destinations,
     get_all_hotels,
@@ -1332,11 +1332,9 @@ def upload_media():
         if username not in group.get("members", []):
             return jsonify({"error": "must join the group before posting"}), 403
 
-    os.makedirs(UPLOADS_DIR, exist_ok=True)
-    filename = f"{uuid.uuid4().hex}-{secure_filename(uploaded_file.filename)}"
-    filepath = os.path.join(UPLOADS_DIR, filename)
-    uploaded_file.save(filepath)
-    url = f"/api/uploads/{filename}"
+    stored = get_upload_store().save(uploaded_file, folder="media")
+    filename = stored["filename"]
+    url = stored["url"]
     media_item = {
         "id": str(uuid.uuid4()),
         "username": username,
@@ -2503,11 +2501,9 @@ def itinerary_documents(itinerary_id: str):
     url = external_url
     filename = ""
     if uploaded_file and uploaded_file.filename:
-        os.makedirs(UPLOADS_DIR, exist_ok=True)
-        filename = f"{uuid.uuid4().hex}-{secure_filename(uploaded_file.filename)}"
-        filepath = os.path.join(UPLOADS_DIR, filename)
-        uploaded_file.save(filepath)
-        url = f"/api/uploads/{filename}"
+        stored = get_upload_store().save(uploaded_file, folder="documents")
+        filename = stored["filename"]
+        url = stored["url"]
     if not url:
         return jsonify({"error": "file or url is required"}), 400
     document = {

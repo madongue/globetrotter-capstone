@@ -30,7 +30,6 @@ def temp_data_files(monkeypatch, tmp_path):
     monkeypatch.setattr("app.models.ACTIVITIES_FILE", str(activities_file))
     monkeypatch.setattr("app.models.PLACES_FILE", str(places_file))
     monkeypatch.setattr("app.models.UPLOADS_DIR", str(uploads_dir))
-    monkeypatch.setattr("app.resources.UPLOADS_DIR", str(uploads_dir))
     yield
 
 

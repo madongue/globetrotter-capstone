@@ -16,10 +16,10 @@ import uuid
 import os
 import datetime
 from flask import Blueprint, request, jsonify
-from werkzeug.utils import secure_filename
 
 from app.auth import get_current_user
 from app.cameroon_geo import enrich_cameroon_item, ensure_cameroon_location, infer_cameroon_geo
+from app.media_storage import get_upload_store
 from app.models import (
     get_all_hotels,
     save_hotel,
@@ -29,7 +29,6 @@ from app.models import (
     update_activity,
     get_all_places,
     get_all_media,
-    UPLOADS_DIR,
     save_place,
     update_place,
     remove_hotel_by_id,
@@ -121,21 +120,17 @@ def _save_uploaded_place_media(place_id: str) -> list:
     media_items = []
     if not request.files:
         return media_items
-    os.makedirs(UPLOADS_DIR, exist_ok=True)
     files = request.files.getlist("media_files") + request.files.getlist("images") + request.files.getlist("videos")
+    store = get_upload_store()
     for uploaded_file in files:
         if not uploaded_file or not uploaded_file.filename:
             continue
-        filename = f"{uuid.uuid4().hex}-{secure_filename(uploaded_file.filename)}"
-        filepath = os.path.join(UPLOADS_DIR, filename)
-        uploaded_file.save(filepath)
-        mimetype = uploaded_file.mimetype or ""
-        media_type = "video" if mimetype.startswith("video/") else "photo"
+        stored = store.save(uploaded_file, folder="places")
         media_items.append({
             "id": str(uuid.uuid4()),
-            "type": media_type,
-            "url": f"/api/uploads/{filename}",
-            "filename": filename,
+            "type": stored["type"],
+            "url": stored["url"],
+            "filename": stored["filename"],
             "place_id": place_id,
             "caption": "",
             "source": "admin_upload",

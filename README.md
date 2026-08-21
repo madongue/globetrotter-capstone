@@ -347,12 +347,30 @@ The script refuses to touch a collection that already has rows, so re-running
 it cannot double-import or clobber live data; pass `--replace` to overwrite a
 collection deliberately, or `--only users itineraries` to limit its scope.
 
-> #### Uploaded files are not covered by the database
+### Uploaded photos, videos and documents
+
+Uploads are stored separately from the database, through their own pair of
+backends selected by `CLOUDINARY_URL` (see [`app/media_storage.py`](app/media_storage.py)):
+
+| `CLOUDINARY_URL` | Backend | Use |
+|------------------|---------|-----|
+| unset | `data/uploads/` on local disk, served by `/api/uploads/<filename>` | Local development and the test suite |
+| set   | Cloudinary, returning CDN URLs the browser fetches directly | **Production.** Uploads survive redeploys |
+
+> #### ⚠️ Without `CLOUDINARY_URL`, uploads are lost on every redeploy
 >
-> Photos and videos posted through the app are written to `data/uploads/` as
-> files, not into the database, so they still disappear on redeploy even once
-> `DATABASE_URL` is set. Durable media needs either object storage (S3,
-> Cloudinary) or a persistent disk mounted at `data/uploads/`.
+> Setting `DATABASE_URL` makes trips and accounts durable, but not the files
+> themselves — those are written to the container's disk. Create a free account
+> at [cloudinary.com](https://cloudinary.com), copy the **API Environment
+> variable** from your dashboard, and set it:
+>
+> ```
+> CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
+> ```
+>
+> A malformed value fails at startup rather than silently dropping uploads.
+> Media already posted keeps its stored URL, so existing local uploads continue
+> to resolve (or show the placeholder) after the switch.
 
 Catalogue photos are cached under `client/public/images/` and referenced by local `/images/...` paths in the JSON records. Each cached record keeps `image_source_url`, `original_image_url`, and `image_license_note` metadata for attribution review. To refresh the local assets from the curated source URLs, run:
 
@@ -464,6 +482,7 @@ TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/globetrotter_test pytest
 |----------------------|--------------------------------------|-----------------------|
 | `SECRET_KEY`         | _(none – required)_                  | JWT signing key. **Required**: the app refuses to start without it unless `FLASK_DEBUG=1` or running under pytest. |
 | `DATABASE_URL`       | unset                                | Postgres connection string. Unset uses JSON files under `data/`, which **do not survive redeploys**. Legacy `postgres://` URLs are accepted. |
+| `CLOUDINARY_URL`     | unset                                | Cloudinary credentials for uploaded media. Unset writes to `data/uploads/`, which **does not survive redeploys**. |
 | `FLASK_DEBUG`        | `0`                                  | Set to `1` to enable Flask debug mode (development only) |
 | `PORT`               | `5000`                               | Port the app listens on |
 | `GOOGLE_CLIENT_ID`   | unset                                | Optional audience check for Google ID-token login |
