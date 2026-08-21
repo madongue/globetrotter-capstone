@@ -5,6 +5,7 @@ cover the SQL backend that production uses, and assert the two behave
 identically, since every route in the app is written against one shared API.
 """
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -23,9 +24,33 @@ from app.store import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def sql_url(tmp_path) -> str:
+    """The database these tests run against.
+
+    Defaults to a throwaway SQLite file so the suite needs no services. CI sets
+    TEST_DATABASE_URL to a real Postgres so the production backend -- JSONB,
+    advisory locks and all -- is exercised on the dialect it actually ships on.
+    """
+    return os.environ.get("TEST_DATABASE_URL") or f"sqlite:///{tmp_path / 'store.db'}"
+
+
+def _fresh_sql_store(tmp_path) -> SqlDocumentStore:
+    """A SQL store with no rows.
+
+    A file-backed SQLite database starts empty, but a shared Postgres does not,
+    so clear the table to keep tests isolated from each other either way.
+    """
+    store = SqlDocumentStore(sql_url(tmp_path))
+    from sqlalchemy import text
+
+    with store.engine.begin() as connection:
+        connection.execute(text("DELETE FROM documents"))
+    return store
+
+
 @pytest.fixture
 def sql_store(tmp_path):
-    return SqlDocumentStore(f"sqlite:///{tmp_path / 'store.db'}")
+    return _fresh_sql_store(tmp_path)
 
 
 @pytest.fixture
@@ -38,7 +63,7 @@ def any_store(request, tmp_path):
     """Each test using this runs once per backend, asserting parity."""
     if request.param == "json":
         return JsonFileStore(lambda collection: str(tmp_path / f"{collection}.json"))
-    return SqlDocumentStore(f"sqlite:///{tmp_path / 'store.db'}")
+    return _fresh_sql_store(tmp_path)
 
 
 # ---------------------------------------------------------------------------
@@ -186,6 +211,34 @@ class _StopBuilding(Exception):
     """Sentinel so the URL check doesn't need a reachable database."""
 
 
+def test_advisory_lock_keys_are_stable_distinct_and_fit_in_int64():
+    """pg_advisory_xact_lock takes a bigint, and every worker must derive the
+    same key for a collection or the lock protects nothing."""
+    key_for = SqlDocumentStore._advisory_lock_key
+
+    assert key_for("users") == key_for("users")
+    assert key_for("users") != key_for("itineraries")
+    for collection in ("users", "itineraries", "audit_log", "place_requests"):
+        assert -(2**63) <= key_for(collection) < 2**63
+
+
+def test_advisory_lock_key_is_not_process_randomised():
+    """Python's built-in hash() is salted per process; this must not be."""
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "from app.store import SqlDocumentStore as S; print(S._advisory_lock_key('users'))",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=str(ROOT),
+        env={**os.environ, "PYTHONHASHSEED": "random"},
+    )
+    assert result.returncode == 0, result.stderr
+    assert int(result.stdout.strip()) == SqlDocumentStore._advisory_lock_key("users")
+
+
 # ---------------------------------------------------------------------------
 # Backend selection
 # ---------------------------------------------------------------------------
@@ -199,7 +252,7 @@ def test_build_store_defaults_to_json_files(tmp_path, monkeypatch):
 def test_build_store_uses_sql_when_database_url_is_set(tmp_path):
     store = build_store(
         lambda c: str(tmp_path / f"{c}.json"),
-        database_url=f"sqlite:///{tmp_path / 'x.db'}",
+        database_url=sql_url(tmp_path),
     )
     assert isinstance(store, SqlDocumentStore)
 
@@ -211,7 +264,8 @@ def test_build_store_uses_sql_when_database_url_is_set(tmp_path):
 @pytest.fixture
 def db_client(tmp_path, monkeypatch):
     """A test client whose every read and write goes through SQLite, not files."""
-    monkeypatch.setenv("DATABASE_URL", f"sqlite:///{tmp_path / 'app.db'}")
+    monkeypatch.setenv("DATABASE_URL", sql_url(tmp_path))
+    _fresh_sql_store(tmp_path)  # start from a clean slate on shared Postgres
     monkeypatch.setenv("SECRET_KEY", "test-secret-key")
     models.reset_store()
 
@@ -315,7 +369,8 @@ def seeded_data_dir(tmp_path):
 
 
 def test_migration_dry_run_writes_nothing(seeded_data_dir, tmp_path):
-    db_url = f"sqlite:///{tmp_path / 'migrate.db'}"
+    db_url = sql_url(tmp_path)
+    _fresh_sql_store(tmp_path)
     result = _run_migration(
         "--data-dir", str(seeded_data_dir), "--database-url", db_url, "--dry-run"
     )
@@ -325,7 +380,8 @@ def test_migration_dry_run_writes_nothing(seeded_data_dir, tmp_path):
 
 
 def test_migration_imports_documents_in_order(seeded_data_dir, tmp_path):
-    db_url = f"sqlite:///{tmp_path / 'migrate.db'}"
+    db_url = sql_url(tmp_path)
+    _fresh_sql_store(tmp_path)
     result = _run_migration(
         "--data-dir", str(seeded_data_dir), "--database-url", db_url
     )
@@ -338,7 +394,8 @@ def test_migration_imports_documents_in_order(seeded_data_dir, tmp_path):
 
 def test_migration_refuses_to_clobber_existing_data(seeded_data_dir, tmp_path):
     """Re-running the import must not double-import or overwrite live rows."""
-    db_url = f"sqlite:///{tmp_path / 'migrate.db'}"
+    db_url = sql_url(tmp_path)
+    _fresh_sql_store(tmp_path)
     _run_migration("--data-dir", str(seeded_data_dir), "--database-url", db_url)
 
     result = _run_migration(
@@ -350,7 +407,8 @@ def test_migration_refuses_to_clobber_existing_data(seeded_data_dir, tmp_path):
 
 
 def test_migration_replace_flag_overwrites(seeded_data_dir, tmp_path):
-    db_url = f"sqlite:///{tmp_path / 'migrate.db'}"
+    db_url = sql_url(tmp_path)
+    _fresh_sql_store(tmp_path)
     _run_migration("--data-dir", str(seeded_data_dir), "--database-url", db_url)
 
     (seeded_data_dir / "users.json").write_text(
@@ -373,7 +431,7 @@ def test_migration_warns_about_duplicate_keys(tmp_path):
         "--data-dir",
         str(data_dir),
         "--database-url",
-        f"sqlite:///{tmp_path / 'dup.db'}",
+        sql_url(tmp_path),
         "--dry-run",
     )
     assert "duplicates username='alice'" in result.stdout

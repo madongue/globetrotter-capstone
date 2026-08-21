@@ -22,6 +22,7 @@ set it and the SQL store is used; leave it unset and JSON files are used.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from abc import ABC, abstractmethod
@@ -211,16 +212,29 @@ class SqlDocumentStore(DocumentStore):
             return f"__pos_{index}"
         return str(value)
 
+    @staticmethod
+    def _advisory_lock_key(collection: str) -> int:
+        """Map a collection name to a stable signed 64-bit advisory lock key.
+
+        Computed here rather than with Postgres' ``hashtext()``, which is an
+        undocumented internal function, and hashed explicitly rather than with
+        ``hash()``, which is randomised per process and so would hand different
+        workers different keys for the same collection.
+        """
+        digest = hashlib.blake2b(collection.encode("utf-8"), digest_size=8).digest()
+        return int.from_bytes(digest, "big", signed=True)
+
     @contextmanager
     def locked(self, collection: str):
         from sqlalchemy import text
 
         with self._engine.begin() as connection:
             if not self._is_sqlite:
-                # Serialise writers for this collection across all workers.
+                # Serialise writers for this collection across all workers. The
+                # lock is released when this transaction ends, i.e. on exit.
                 connection.execute(
-                    text("SELECT pg_advisory_xact_lock(hashtext(:name))"),
-                    {"name": collection},
+                    text("SELECT pg_advisory_xact_lock(:key)"),
+                    {"key": self._advisory_lock_key(collection)},
                 )
             yield
 

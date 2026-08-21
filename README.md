@@ -1,5 +1,7 @@
 # GlobeTrotter – Travel Assistant
 
+[![CI](https://github.com/madongue/globetrotter-capstone/actions/workflows/ci.yml/badge.svg)](https://github.com/madongue/globetrotter-capstone/actions/workflows/ci.yml)
+
 GlobeTrotter is a **monolithic Flask application** that serves as the starting point for a semester-long capstone project.  
 Students build the monolith first, then refactor it into microservices, and finally deploy it to the cloud with resilience patterns using Docker, Kubernetes, and cloud-native tooling.
 
@@ -430,6 +432,31 @@ docker run -p 5000:5000 globetrotter-app
 ```
 
 Then open `http://localhost:5000`.
+
+## Continuous Integration
+
+Every push and pull request runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
+
+| Job | What it checks |
+|-----|----------------|
+| `backend` | The full pytest suite against the JSON file backend |
+| `backend-postgres` | The storage tests against a real Postgres service, plus a seed-catalogue import, so the production backend is verified on the dialect it ships on |
+| `frontend` | `npm ci` and a production Vite build |
+| `docker` | The multi-stage image builds, catching deploy-time breakage early |
+
+Run the same checks locally:
+
+```bash
+pip install -r requirements-dev.txt
+pytest -q
+(cd client && npm ci && npm run build)
+```
+
+To exercise the Postgres backend locally, point the storage tests at a database:
+
+```bash
+TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/globetrotter_test pytest tests/test_store.py -q
+```
 
 ## Configuration
 
