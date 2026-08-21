@@ -71,9 +71,17 @@ def any_store(request, tmp_path):
 # ---------------------------------------------------------------------------
 
 def test_collection_name_is_derived_from_file_basename():
-    """models.py addresses collections by path; both backends key off the stem."""
+    """models.py addresses collections by path; both backends key off the stem.
+
+    Paths are built with os.path.join on whichever platform is running, so the
+    separator here must be the native one -- a hard-coded Windows path parses as
+    a single filename on Linux, which passed locally and broke CI.
+    """
     assert collection_name_for("/srv/data/users.json") == "users"
-    assert collection_name_for(r"C:\app\data\audit_log.json") == "audit_log"
+    assert collection_name_for(os.path.join("data", "audit_log.json")) == "audit_log"
+    assert collection_name_for(
+        os.path.join("a", "b", "place_requests.json")
+    ) == "place_requests"
 
 
 def test_key_field_defaults_to_id_with_documented_exceptions():
@@ -435,3 +443,25 @@ def test_migration_warns_about_duplicate_keys(tmp_path):
         "--dry-run",
     )
     assert "duplicates username='alice'" in result.stdout
+
+
+def test_over_long_keys_do_not_break_the_insert(sql_store):
+    """Postgres enforces the key column width where the JSON files did not.
+
+    A user could register a 500-character username, which would have turned
+    every subsequent write to that collection into a 500.
+    """
+    long_name = "a" * 900
+    sql_store.write("users", [{"username": long_name, "role": "user"}])
+
+    stored = sql_store.read("users")
+    assert stored == [{"username": long_name, "role": "user"}]
+
+
+def test_over_long_keys_stay_distinct(sql_store):
+    """Truncating would have collapsed two different users into one row."""
+    first = "x" * 400 + "-alice"
+    second = "x" * 400 + "-bob"
+    sql_store.write("users", [{"username": first}, {"username": second}])
+
+    assert [u["username"] for u in sql_store.read("users")] == [first, second]

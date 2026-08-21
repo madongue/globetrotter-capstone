@@ -45,6 +45,10 @@ from app.models import (
 
 auth_bp = Blueprint("auth", __name__)
 
+#: Usernames key the user record in storage, so they are bounded here rather
+#: than left to fail deeper down against the database's column width.
+MAX_USERNAME_LENGTH = 64
+
 
 # ---------------------------------------------------------------------------
 # Helper – JWT utilities
@@ -185,6 +189,11 @@ def register():
     if not username or not password:
         return jsonify({"error": "username and password are required"}), 400
 
+    if len(username) > MAX_USERNAME_LENGTH:
+        return jsonify({
+            "error": f"username must be at most {MAX_USERNAME_LENGTH} characters"
+        }), 400
+
     if not phone:
         return jsonify({"error": "phone number is required"}), 400
 
@@ -229,10 +238,21 @@ def google_auth():
             params={"id_token": id_token},
             timeout=5,
         )
-        response.raise_for_status()
-        profile = response.json()
     except requests.RequestException:
-        return jsonify({"error": "google authentication failed"}), 502
+        # Google itself was unreachable: a genuine upstream failure, and worth
+        # retrying.
+        return jsonify({"error": "google authentication is unavailable"}), 502
+
+    if response.status_code >= 400:
+        # Google rejected the token. That is the caller's problem, not an
+        # upstream outage, so it must not be reported as 502 -- the client
+        # cannot tell "sign in again" from "try again later" otherwise.
+        return jsonify({"error": "invalid google token"}), 401
+
+    try:
+        profile = response.json()
+    except ValueError:
+        return jsonify({"error": "google authentication is unavailable"}), 502
 
     email = (profile.get("email") or "").strip().lower()
     google_id = str(profile.get("sub") or "").strip()

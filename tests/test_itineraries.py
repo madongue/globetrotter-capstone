@@ -690,3 +690,89 @@ def test_cameroon_map_metadata_uses_google_maps_links(client):
     assert "Cameroon" in payload["map_info"]["query"]
     assert payload["map_info"]["google_maps_directions_url"].startswith("https://www.google.com/maps/dir/")
     assert "restaurants" in payload["map_info"]["cameroon_searches"]
+
+
+def test_single_itinerary_can_be_fetched_by_id(client):
+    """The list endpoint alone forced clients to download every trip to open one."""
+    token = register_and_login(client)
+    created = client.post(
+        "/api/itineraries",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"title": "Kribi", "location": "Kribi"}),
+        content_type="application/json",
+    )
+    itinerary_id = created.get_json()["id"]
+
+    for path in (f"/api/itineraries/{itinerary_id}", f"/api/trips/{itinerary_id}"):
+        response = client.get(path, headers={"Authorization": f"Bearer {token}"})
+        assert response.status_code == 200, path
+        assert response.get_json()["id"] == itinerary_id
+
+
+def test_single_itinerary_requires_authentication(client):
+    token = register_and_login(client)
+    created = client.post(
+        "/api/itineraries",
+        headers={"Authorization": f"Bearer {token}"},
+        data=json.dumps({"title": "Kribi", "location": "Kribi"}),
+        content_type="application/json",
+    )
+    itinerary_id = created.get_json()["id"]
+
+    assert client.get(f"/api/itineraries/{itinerary_id}").status_code == 401
+
+
+def test_private_itinerary_is_hidden_from_other_users(client):
+    """A stranger must not be able to read, or even confirm the existence of,
+    someone else's private trip."""
+    owner_token = register_and_login(client, "alice")
+    created = client.post(
+        "/api/itineraries",
+        headers={"Authorization": f"Bearer {owner_token}"},
+        data=json.dumps({"title": "Secret", "location": "Kribi"}),
+        content_type="application/json",
+    )
+    itinerary_id = created.get_json()["id"]
+
+    stranger_token = register_and_login(client, "mallory")
+    response = client.get(
+        f"/api/itineraries/{itinerary_id}",
+        headers={"Authorization": f"Bearer {stranger_token}"},
+    )
+    assert response.status_code == 404
+    assert "Secret" not in response.get_data(as_text=True)
+
+
+def test_public_itinerary_is_readable_by_other_users(client):
+    """Community trips are shared deliberately, so they must open for anyone."""
+    owner_token = register_and_login(client, "alice")
+    created = client.post(
+        "/api/itineraries",
+        headers={"Authorization": f"Bearer {owner_token}"},
+        data=json.dumps({"title": "Shared trip", "location": "Kribi"}),
+        content_type="application/json",
+    )
+    itinerary_id = created.get_json()["id"]
+    client.put(
+        f"/api/itineraries/{itinerary_id}",
+        headers={"Authorization": f"Bearer {owner_token}"},
+        data=json.dumps({"visibility": "public"}),
+        content_type="application/json",
+    )
+
+    reader_token = register_and_login(client, "bob")
+    response = client.get(
+        f"/api/itineraries/{itinerary_id}",
+        headers={"Authorization": f"Bearer {reader_token}"},
+    )
+    assert response.status_code == 200
+    assert response.get_json()["title"] == "Shared trip"
+
+
+def test_unknown_itinerary_id_returns_not_found(client):
+    token = register_and_login(client)
+    response = client.get(
+        "/api/itineraries/does-not-exist",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 404

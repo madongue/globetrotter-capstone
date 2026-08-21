@@ -202,6 +202,9 @@ class SqlDocumentStore(DocumentStore):
     def engine(self):
         return self._engine
 
+    #: Must match the doc_key column width below.
+    MAX_KEY_LENGTH = 255
+
     def _doc_key(self, collection: str, document: dict, index: int) -> str:
         field = key_field_for(collection)
         value = document.get(field)
@@ -210,7 +213,15 @@ class SqlDocumentStore(DocumentStore):
             # data) may lack a key; fall back to position so the row is still
             # addressable and ordering is preserved.
             return f"__pos_{index}"
-        return str(value)
+
+        key = str(value)
+        if len(key) > self.MAX_KEY_LENGTH:
+            # Postgres enforces the column width where the JSON files did not,
+            # so an over-long key would turn into a 500. Substitute a digest
+            # that is still stable and unique for that value.
+            digest = hashlib.blake2b(key.encode("utf-8"), digest_size=16).hexdigest()
+            return f"__hash_{digest}"
+        return key
 
     @staticmethod
     def _advisory_lock_key(collection: str) -> int:

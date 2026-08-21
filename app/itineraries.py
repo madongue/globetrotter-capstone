@@ -824,6 +824,32 @@ def create_itinerary():
     return jsonify(itinerary), 201
 
 
+@itineraries_bp.route("/itineraries/<itinerary_id>", methods=["GET"])
+@itineraries_bp.route("/trips/<itinerary_id>", methods=["GET"])
+def get_itinerary_route(itinerary_id: str):
+    """Return a single itinerary the authenticated user may read.
+
+    Public itineraries are readable by any signed-in user so shared trips can
+    be opened from the community list; private ones stay restricted to their
+    owner, participants and explicitly shared users.
+    """
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+
+    is_public = itinerary.get("visibility") == "public"
+    if not is_public and not _can_access_itinerary(itinerary, username):
+        # 404 rather than 403 so the response cannot be used to probe which
+        # itinerary IDs exist.
+        return jsonify({"error": "itinerary not found"}), 404
+
+    return jsonify(itinerary), 200
+
+
 @itineraries_bp.route("/itineraries/<itinerary_id>", methods=["PUT"])
 @itineraries_bp.route("/trips/<itinerary_id>", methods=["PUT"])
 def update_itinerary_route(itinerary_id: str):

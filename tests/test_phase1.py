@@ -61,11 +61,12 @@ def test_google_signup_creates_user_and_returns_token(client, monkeypatch):
 
     def fake_get(url, params=None, timeout=5):
         class FakeResponse:
+            # google_auth branches on status_code to tell a rejected token
+            # (401) from Google being unreachable (502).
+            status_code = 200
+
             def __init__(self, payload):
                 self._payload = payload
-
-            def raise_for_status(self):
-                return None
 
             def json(self):
                 return self._payload
@@ -101,11 +102,12 @@ def test_google_signup_accepts_credential_payload(client, monkeypatch):
 
     def fake_get(url, params=None, timeout=5):
         class FakeResponse:
+            # google_auth branches on status_code to tell a rejected token
+            # (401) from Google being unreachable (502).
+            status_code = 200
+
             def __init__(self, payload):
                 self._payload = payload
-
-            def raise_for_status(self):
-                return None
 
             def json(self):
                 return self._payload

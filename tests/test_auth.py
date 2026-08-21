@@ -225,11 +225,12 @@ def test_google_auth_with_verified_id_token(client, monkeypatch):
 
     def fake_get(url, params=None, timeout=5):
         class FakeResponse:
+            # google_auth branches on status_code to tell a rejected token
+            # (401) from Google being unreachable (502).
+            status_code = 200
+
             def __init__(self, payload):
                 self._payload = payload
-
-            def raise_for_status(self):
-                return None
 
             def json(self):
                 return self._payload
@@ -390,3 +391,75 @@ def test_secret_key_falls_back_in_debug_mode(monkeypatch):
     monkeypatch.setenv("FLASK_DEBUG", "1")
 
     assert create_app().config["SECRET_KEY"]
+
+
+def test_google_auth_rejects_a_bad_token_as_unauthorised(client, monkeypatch):
+    """Google rejecting a token is the caller's problem, not an upstream outage.
+
+    Returning 502 here would tell the client to retry a token that will never
+    work, instead of prompting the user to sign in again.
+    """
+    class RejectedResponse:
+        status_code = 400
+
+        def json(self):
+            return {"error_description": "Invalid Value"}
+
+    monkeypatch.setattr("app.auth.requests.get", lambda *a, **k: RejectedResponse())
+
+    response = client.post(
+        "/api/google-auth",
+        data=json.dumps({"id_token": "expired-or-forged"}),
+        content_type="application/json",
+    )
+    assert response.status_code == 401
+    assert "google" in response.get_json()["error"].lower()
+
+
+def test_google_auth_reports_unreachable_google_as_bad_gateway(client, monkeypatch):
+    """A network failure is genuinely upstream, and is worth retrying."""
+    import requests
+
+    def explode(*args, **kwargs):
+        raise requests.ConnectionError("dns failure")
+
+    monkeypatch.setattr("app.auth.requests.get", explode)
+
+    response = client.post(
+        "/api/google-auth",
+        data=json.dumps({"id_token": "whatever"}),
+        content_type="application/json",
+    )
+    assert response.status_code == 502
+
+
+def test_registration_rejects_an_over_long_username(client):
+    """Usernames key the stored record, so an unbounded one fails at the database."""
+    response = client.post(
+        "/api/register",
+        data=json.dumps(
+            {
+                "username": "u" * 500,
+                "password": "password123",
+                "phone": _phone_for("longname"),
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+    assert "64" in response.get_json()["error"]
+
+
+def test_registration_accepts_a_username_at_the_limit(client):
+    response = client.post(
+        "/api/register",
+        data=json.dumps(
+            {
+                "username": "u" * 64,
+                "password": "password123",
+                "phone": _phone_for("atlimit"),
+            }
+        ),
+        content_type="application/json",
+    )
+    assert response.status_code == 201
