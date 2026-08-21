@@ -56,3 +56,37 @@ def test_destination_catalog_images_are_local_assets():
         assert image_url.startswith("/images/destinations/"), destination["name"]
         assert (ROOT / "client" / "public" / image_url.lstrip("/")).exists(), destination["name"]
         assert destination.get("image_source_url"), destination["name"]
+
+
+def test_curated_attractions_exist_across_regions():
+    """The bulk import is shops and residences; the curated set is what a
+    visitor is actually shown first, so it must cover the country."""
+    curated = [p for p in _read_catalog("places") if p.get("curated")]
+    assert len(curated) >= 25, f"only {len(curated)} curated attractions"
+
+    regions = {p.get("region") for p in curated}
+    assert len(regions) >= 8, f"curated sites only cover {sorted(regions)}"
+
+
+def test_curated_attractions_are_presentable():
+    """Every curated site needs the fields the place card and detail view read."""
+    for place in _read_catalog("places"):
+        if not place.get("curated"):
+            continue
+        name = place.get("name", "?")
+        assert place.get("description"), name
+        assert place.get("tags"), name
+        assert place.get("latitude") and place.get("longitude"), name
+        assert place.get("rating"), name
+        assert place.get("reviews"), name
+
+
+def test_place_videos_point_at_real_video_files():
+    """A poster-frame JPEG stored as a video renders an empty player."""
+    for place in _read_catalog("places"):
+        for video in place.get("videos") or []:
+            url = video.get("url", "")
+            assert url.endswith((".webm", ".ogv", ".mp4")), f"{place['name']}: {url}"
+            assert (ROOT / "client" / "public" / url.lstrip("/")).exists(), place["name"]
+            assert video.get("source_url"), place["name"]
+            assert video.get("license"), place["name"]

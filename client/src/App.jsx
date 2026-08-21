@@ -654,6 +654,7 @@ function App() {
   const [googleClientIdLoadingError, setGoogleClientIdLoadingError] = useState(null);
   const [platformStats, setPlatformStats] = useState(null);
   const [featuredDestinations, setFeaturedDestinations] = useState([]);
+  const [featuredPlaces, setFeaturedPlaces] = useState([]);
   const [liveLocationStatus, setLiveLocationStatus] = useState('idle');
   const [liveLocationError, setLiveLocationError] = useState('');
   const [liveLocationPosition, setLiveLocationPosition] = useState(null);
@@ -2297,8 +2298,20 @@ function App() {
       }
     };
 
+    const loadFeaturedPlaces = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/resources/places?featured=1&limit=12`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!cancelled && Array.isArray(data)) setFeaturedPlaces(data);
+      } catch (error) {
+        // Optional showcase; the rest of the page is unaffected.
+      }
+    };
+
     loadStats();
     loadDestinations();
+    loadFeaturedPlaces();
     const timer = setInterval(loadStats, 60000);
     return () => {
       cancelled = true;
@@ -3398,6 +3411,58 @@ function App() {
                           <span className="dest-name">{destination.name}</span>
                           {(destination.tags || []).length > 0 && (
                             <span className="dest-tags">{(destination.tags || []).slice(0, 2).join(' · ')}</span>
+                          )}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {featuredPlaces.length > 0 && (
+                <section className="landing-section">
+                  <div className="landing-section-head">
+                    <h2>Places worth the journey</h2>
+                    <p>Attractions across all ten regions, chosen and written up by hand.</p>
+                  </div>
+                  <div className="attraction-grid">
+                    {featuredPlaces.map((place) => (
+                      <button
+                        type="button"
+                        className="attraction-card"
+                        key={place.id}
+                        onClick={() => navigate('register')}
+                      >
+                        <span className="attraction-media">
+                          {place.image_url ? (
+                            <img src={place.image_url} alt={place.name} loading="lazy" decoding="async" />
+                          ) : (
+                            <span className="attraction-media-empty" aria-hidden="true" />
+                          )}
+                          {place.videos && place.videos.length > 0 && (
+                            <span className="attraction-video-badge">Video</span>
+                          )}
+                        </span>
+                        <span className="attraction-body">
+                          <span className="attraction-name">{place.name}</span>
+                          <span className="attraction-meta">
+                            {place.rating > 0 && (
+                              <span className="attraction-rating">
+                                <span className="star on" aria-hidden="true">&#9733;</span>
+                                {Number(place.rating).toFixed(1)}
+                              </span>
+                            )}
+                            <span className="attraction-where">{place.city || place.location}</span>
+                          </span>
+                          {(place.tags || []).filter((t) => t !== 'cameroon').slice(0, 2).length > 0 && (
+                            <span className="attraction-tags">
+                              {(place.tags || [])
+                                .filter((t) => t !== 'cameroon')
+                                .slice(0, 2)
+                                .map((tag) => (
+                                  <span className="attraction-tag" key={tag}>{tag}</span>
+                                ))}
+                            </span>
                           )}
                         </span>
                       </button>

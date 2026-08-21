@@ -42788,6 +42788,17 @@
         "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chutes%20d%27Ekom%20Nkam.jpg",
         "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
       }
+    ],
+    "videos": [
+      {
+        "id": "video-place-ekom-nkam-waterfalls",
+        "url": "/videos/places/place-ekom-nkam-waterfalls.webm",
+        "caption": "The falls in full flow at the end of the rainy season.",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Ekom_Nkam_01.webm",
+        "license": "CC BY-SA 3.0",
+        "author": "GuillaumeG",
+        "license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution."
+      }
     ]
   },
   {
@@ -44338,6 +44349,17 @@
         "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Botanic%20garden%20limbe.jpg",
         "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
       }
+    ],
+    "videos": [
+      {
+        "id": "video-place-limbe-wildlife-centre",
+        "url": "/videos/places/place-limbe-wildlife-centre.webm",
+        "caption": "Drills at the wildlife centre, a species found only here and in Nigeria.",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Drill_Limbe.webm",
+        "license": "CC BY-SA 3.0",
+        "author": "GuillaumeG",
+        "license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution."
+      }
     ]
   },
   {
@@ -44868,5 +44890,1897 @@
         "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
       }
     ]
+  },
+  {
+    "id": "place-yaounde-i-love-my-country",
+    "name": "\"I Love My Country Cameroon\" Roundabout",
+    "description": "A roundabout monument whose two arcs read \"I Love My Country\" in English and \"J'aime Mon Pays\" in French, meeting over a sculpted globe carrying a map of Cameroon. It is lit at night and is one of the most photographed spots in Yaounde.",
+    "location": "Yaounde",
+    "city": "Yaounde",
+    "region": "Centre",
+    "division": "Mfoundi",
+    "subdivision": "Mfoundi",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 3.8612,
+    "longitude": 11.5089,
+    "cost": 0,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "monument",
+    "tags": [
+      "cameroon",
+      "landmark",
+      "monument",
+      "city",
+      "free"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-yaounde-i-love-my-country-0",
+        "username": "amina.n",
+        "rating": 4,
+        "text": "Beautiful spot. Bring water and cash, there is no card payment."
+      },
+      {
+        "id": "seed-place-yaounde-i-love-my-country-1",
+        "username": "didier.k",
+        "rating": 4,
+        "text": "Great visit, though it can get crowded at weekends."
+      },
+      {
+        "id": "seed-place-yaounde-i-love-my-country-2",
+        "username": "esther.f",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      },
+      {
+        "id": "seed-place-yaounde-i-love-my-country-3",
+        "username": "carine.m",
+        "rating": 5,
+        "text": "Absolutely beautiful, especially at sunset."
+      }
+    ],
+    "rating": 4.0,
+    "quarter": "Quartier du Lac",
+    "image_url": "/images/places/place-yaounde-i-love-my-country.jpg",
+    "local_image_url": "/images/places/place-yaounde-i-love-my-country.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Monument_«_j’aime_mon_pays_le_Cameroun_»_img3.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Martyns Photography Media",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-yaounde-i-love-my-country.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Monument_«_j’aime_mon_pays_le_Cameroun_»_img3.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Martyns Photography Media"
+      }
+    ]
+  },
+  {
+    "id": "place-yaounde-basilica-mvolye",
+    "name": "Basilica of Mary Queen of Apostles",
+    "description": "A hilltop basilica above Yaounde at Mvolye, built on the site of the city's first Catholic mission. The terrace gives one of the widest views over the capital.",
+    "location": "Yaounde",
+    "city": "Yaounde",
+    "region": "Centre",
+    "division": "Mfoundi",
+    "subdivision": "Mfoundi",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 3.839,
+    "longitude": 11.503,
+    "cost": 0,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "religious",
+    "tags": [
+      "cameroon",
+      "architecture",
+      "religious",
+      "viewpoint"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-yaounde-basilica-mvolye-0",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-yaounde-basilica-mvolye-1",
+        "username": "olivier.z",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-yaounde-basilica-mvolye-2",
+        "username": "esther.f",
+        "rating": 5,
+        "text": "One of the best things we did in Cameroon. Take a guide."
+      },
+      {
+        "id": "seed-place-yaounde-basilica-mvolye-3",
+        "username": "amina.n",
+        "rating": 4,
+        "text": "Beautiful spot. Bring water and cash, there is no card payment."
+      }
+    ],
+    "rating": 4.75,
+    "quarter": "Mvolye",
+    "image_url": "/images/places/place-yaounde-basilica-mvolye.jpg",
+    "local_image_url": "/images/places/place-yaounde-basilica-mvolye.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Intérieur_Basilique_Marie-Reine_des_apôtres_de_Mvolyé_2.jpg",
+    "image_license": "CC BY-SA 3.0",
+    "image_author": "Steve Mvondo",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-yaounde-basilica-mvolye.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Intérieur_Basilique_Marie-Reine_des_apôtres_de_Mvolyé_2.jpg",
+        "license": "CC BY-SA 3.0",
+        "author": "Steve Mvondo"
+      }
+    ]
+  },
+  {
+    "id": "place-yaounde-mont-febe",
+    "name": "Mount Febe",
+    "description": "The forested hill on Yaounde's northern edge, topped by a Benedictine monastery and a golf course. The road up is the classic way to see the whole city laid out below.",
+    "location": "Yaounde",
+    "city": "Yaounde",
+    "region": "Centre",
+    "division": "Mfoundi",
+    "subdivision": "Mfoundi",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 3.9,
+    "longitude": 11.5,
+    "cost": 0,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "viewpoint",
+    "tags": [
+      "cameroon",
+      "viewpoint",
+      "nature",
+      "hiking"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-yaounde-mont-febe-0",
+        "username": "didier.k",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-yaounde-mont-febe-1",
+        "username": "carine.m",
+        "rating": 5,
+        "text": "One of the best things we did in Cameroon. Take a guide."
+      },
+      {
+        "id": "seed-place-yaounde-mont-febe-2",
+        "username": "amina.n",
+        "rating": 4,
+        "text": "Really impressive. The road there is rough but manageable."
+      },
+      {
+        "id": "seed-place-yaounde-mont-febe-3",
+        "username": "brice.t",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      }
+    ],
+    "rating": 4.25,
+    "image_url": "/images/places/place-yaounde-mont-febe.jpg",
+    "local_image_url": "/images/places/place-yaounde-mont-febe.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Yaoundé_depuis_le_Mont_Fébé_en_octobre_1972.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Jean-Louis Heckly",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-yaounde-mont-febe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Yaoundé_depuis_le_Mont_Fébé_en_octobre_1972.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Jean-Louis Heckly"
+      }
+    ]
+  },
+  {
+    "id": "place-yaounde-blackitude-museum",
+    "name": "Blackitude Museum",
+    "description": "A private museum of Cameroonian and Central African art, founded to keep royal and ritual objects in the country. Strong collections of Bamileke and Bamoun pieces.",
+    "location": "Yaounde",
+    "city": "Yaounde",
+    "region": "Centre",
+    "division": "Mfoundi",
+    "subdivision": "Mfoundi",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 3.8747,
+    "longitude": 11.5021,
+    "cost": 3000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "museum",
+    "tags": [
+      "cameroon",
+      "museum",
+      "culture",
+      "art",
+      "history"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-yaounde-blackitude-museum-0",
+        "username": "didier.k",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-yaounde-blackitude-museum-1",
+        "username": "olivier.z",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      },
+      {
+        "id": "seed-place-yaounde-blackitude-museum-2",
+        "username": "amina.n",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      }
+    ],
+    "rating": 4.33,
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
+  },
+  {
+    "id": "place-douala-nouvelle-liberte",
+    "name": "La Nouvelle Liberte",
+    "description": "A twelve-metre figure by Joseph-Francis Sumegne, welded from scrap metal and standing over the Deido roundabout. Contested when it went up, it is now the symbol of contemporary Douala.",
+    "location": "Douala",
+    "city": "Douala",
+    "region": "Littoral",
+    "division": "Wouri",
+    "subdivision": "Wouri",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 4.0645,
+    "longitude": 9.7085,
+    "cost": 0,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "monument",
+    "tags": [
+      "cameroon",
+      "art",
+      "landmark",
+      "monument",
+      "free"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-douala-nouvelle-liberte-0",
+        "username": "esther.f",
+        "rating": 4,
+        "text": "Great visit, though it can get crowded at weekends."
+      },
+      {
+        "id": "seed-place-douala-nouvelle-liberte-1",
+        "username": "amina.n",
+        "rating": 3,
+        "text": "Interesting place, but facilities are limited."
+      },
+      {
+        "id": "seed-place-douala-nouvelle-liberte-2",
+        "username": "carine.m",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      }
+    ],
+    "rating": 4.0,
+    "quarter": "Deido",
+    "image_url": "/images/places/place-douala-nouvelle-liberte.jpg",
+    "local_image_url": "/images/places/place-douala-nouvelle-liberte.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Statue_de_la_nouvelle_liberte_Douala.jpg",
+    "image_license": "CC BY-SA 3.0",
+    "image_author": "Tatoute",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-douala-nouvelle-liberte.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Statue_de_la_nouvelle_liberte_Douala.jpg",
+        "license": "CC BY-SA 3.0",
+        "author": "Tatoute"
+      }
+    ]
+  },
+  {
+    "id": "place-douala-cathedral",
+    "name": "Saints Peter and Paul Cathedral",
+    "description": "Douala's Catholic cathedral in Bonanjo, begun under German administration and finished in the 1930s. Its twin towers are a fixture of the old colonial quarter.",
+    "location": "Douala",
+    "city": "Douala",
+    "region": "Littoral",
+    "division": "Wouri",
+    "subdivision": "Wouri",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 4.0448,
+    "longitude": 9.6919,
+    "cost": 0,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "religious",
+    "tags": [
+      "cameroon",
+      "architecture",
+      "religious",
+      "history"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-douala-cathedral-0",
+        "username": "carine.m",
+        "rating": 5,
+        "text": "One of the best things we did in Cameroon. Take a guide."
+      },
+      {
+        "id": "seed-place-douala-cathedral-1",
+        "username": "esther.f",
+        "rating": 4,
+        "text": "Really impressive. The road there is rough but manageable."
+      }
+    ],
+    "rating": 4.5,
+    "quarter": "Bonanjo",
+    "image_url": "/images/places/place-douala-cathedral.jpg",
+    "local_image_url": "/images/places/place-douala-cathedral.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Cathédrale_Saint-pierre_et_Saint-Paul_de_Douala._2.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Blaizo 237",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-douala-cathedral.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Cathédrale_Saint-pierre_et_Saint-Paul_de_Douala._2.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Blaizo 237"
+      }
+    ]
+  },
+  {
+    "id": "place-douala-pagode-bell",
+    "name": "La Pagode - Palace of the Bell Kings",
+    "description": "The pagoda-roofed palace built for King Manga Ndumbe Bell in 1905, mixing Duala and European design. It remains the seat of the Bell royal family.",
+    "location": "Douala",
+    "city": "Douala",
+    "region": "Littoral",
+    "division": "Wouri",
+    "subdivision": "Wouri",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 4.0435,
+    "longitude": 9.6893,
+    "cost": 2000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "heritage",
+    "tags": [
+      "cameroon",
+      "history",
+      "architecture",
+      "heritage"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-douala-pagode-bell-0",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-douala-pagode-bell-1",
+        "username": "esther.f",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-douala-pagode-bell-2",
+        "username": "olivier.z",
+        "rating": 4,
+        "text": "Lovely half-day trip from the city."
+      }
+    ],
+    "rating": 4.67,
+    "quarter": "Bonanjo",
+    "image_url": "/images/places/place-douala-pagode-bell.jpg",
+    "local_image_url": "/images/places/place-douala-pagode-bell.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Palais_des_rois_Bell_-_Douala.jpg",
+    "image_license": "CC BY-SA 3.0",
+    "image_author": "FischerFotos",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-douala-pagode-bell.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Palais_des_rois_Bell_-_Douala.jpg",
+        "license": "CC BY-SA 3.0",
+        "author": "FischerFotos"
+      }
+    ]
+  },
+  {
+    "id": "place-edea-lake-ossa",
+    "name": "Lake Ossa Wildlife Reserve",
+    "description": "A chain of freshwater lakes near Edea and one of the few places in Cameroon to see West African manatees. Visits are by pirogue with local guides.",
+    "location": "Edea",
+    "city": "Edea",
+    "region": "Littoral",
+    "division": "Sanaga-Maritime",
+    "subdivision": "Sanaga-Maritime",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 3.8333,
+    "longitude": 9.95,
+    "cost": 5000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "nature",
+    "tags": [
+      "cameroon",
+      "nature",
+      "wildlife",
+      "lake",
+      "boat"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-edea-lake-ossa-0",
+        "username": "esther.f",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-edea-lake-ossa-1",
+        "username": "brice.t",
+        "rating": 3,
+        "text": "Interesting place, but facilities are limited."
+      }
+    ],
+    "rating": 4.0,
+    "image_url": "/images/places/place-edea-lake-ossa.jpg",
+    "local_image_url": "/images/places/place-edea-lake-ossa.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lac_Ossa_en_vue_aérienne_-_Réserve_de_faune_du_Lac_Ossa_-_Région_du_Littoral_-_Cameroun.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Eric Joel MAMA NKE",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-edea-lake-ossa.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lac_Ossa_en_vue_aérienne_-_Réserve_de_faune_du_Lac_Ossa_-_Région_du_Littoral_-_Cameroun.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Eric Joel MAMA NKE"
+      }
+    ]
+  },
+  {
+    "id": "place-limbe-down-beach",
+    "name": "Down Beach Limbe",
+    "description": "Limbe's volcanic black-sand beach, with Mount Cameroon rising behind it and grilled fish sold along the front in the evening.",
+    "location": "Limbe",
+    "city": "Limbe",
+    "region": "South West",
+    "division": "Fako",
+    "subdivision": "Fako",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 4.0159,
+    "longitude": 9.2131,
+    "cost": 0,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "beach",
+    "tags": [
+      "cameroon",
+      "beach",
+      "seafood",
+      "sunset",
+      "free"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-limbe-down-beach-0",
+        "username": "esther.f",
+        "rating": 5,
+        "text": "One of the best things we did in Cameroon. Take a guide."
+      },
+      {
+        "id": "seed-place-limbe-down-beach-1",
+        "username": "brice.t",
+        "rating": 4,
+        "text": "Great visit, though it can get crowded at weekends."
+      },
+      {
+        "id": "seed-place-limbe-down-beach-2",
+        "username": "olivier.z",
+        "rating": 5,
+        "text": "Absolutely beautiful, especially at sunset."
+      },
+      {
+        "id": "seed-place-limbe-down-beach-3",
+        "username": "carine.m",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      }
+    ],
+    "rating": 4.75,
+    "image_url": "/images/places/place-limbe-down-beach.jpg",
+    "local_image_url": "/images/places/place-limbe-down-beach.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Seme_beach_limbe_Cameroon.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Blaizo 237",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-limbe-down-beach.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Seme_beach_limbe_Cameroon.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Blaizo 237"
+      }
+    ]
+  },
+  {
+    "id": "place-limbe-seme-beach",
+    "name": "Seme Beach",
+    "description": "A calm stretch of sand west of Limbe towards Idenau, quieter than the town beaches and the usual choice for a full day by the water.",
+    "location": "Limbe",
+    "city": "Limbe",
+    "region": "South West",
+    "division": "Fako",
+    "subdivision": "Fako",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 4.0806,
+    "longitude": 8.9944,
+    "cost": 3000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "beach",
+    "tags": [
+      "cameroon",
+      "beach",
+      "swimming",
+      "resort"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-limbe-seme-beach-0",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-limbe-seme-beach-1",
+        "username": "olivier.z",
+        "rating": 4,
+        "text": "Lovely half-day trip from the city."
+      },
+      {
+        "id": "seed-place-limbe-seme-beach-2",
+        "username": "carine.m",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      }
+    ],
+    "rating": 4.0,
+    "image_url": "/images/places/place-limbe-seme-beach.jpg",
+    "local_image_url": "/images/places/place-limbe-seme-beach.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Seme_beach_limbe_Cameroon.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Blaizo 237",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-limbe-seme-beach.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Seme_beach_limbe_Cameroon.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Blaizo 237"
+      }
+    ]
+  },
+  {
+    "id": "place-tombel-mount-kupe",
+    "name": "Mount Kupe",
+    "description": "A forested volcanic peak reaching 2,064 m, known among birdwatchers for species found almost nowhere else. Guides are arranged in Nyasoso at the foot of the mountain.",
+    "location": "Tombel",
+    "city": "Tombel",
+    "region": "South West",
+    "division": "Kupe-Manenguba",
+    "subdivision": "Kupe-Manenguba",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 4.8,
+    "longitude": 9.7,
+    "cost": 8000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "mountain",
+    "tags": [
+      "cameroon",
+      "hiking",
+      "nature",
+      "birdwatching",
+      "forest"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-tombel-mount-kupe-0",
+        "username": "carine.m",
+        "rating": 3,
+        "text": "Interesting place, but facilities are limited."
+      },
+      {
+        "id": "seed-place-tombel-mount-kupe-1",
+        "username": "amina.n",
+        "rating": 4,
+        "text": "Really impressive. The road there is rough but manageable."
+      }
+    ],
+    "rating": 3.5,
+    "image_url": "/images/places/place-tombel-mount-kupe.jpg",
+    "local_image_url": "/images/places/place-tombel-mount-kupe.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Burmannia_congesta_Mount_Kupe_Cameroon_IMG_1535_2_edit.JPG",
+    "image_license": "CC BY-SA 3.0",
+    "image_author": "Vincent Merckx",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-tombel-mount-kupe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Burmannia_congesta_Mount_Kupe_Cameroon_IMG_1535_2_edit.JPG",
+        "license": "CC BY-SA 3.0",
+        "author": "Vincent Merckx"
+      }
+    ]
+  },
+  {
+    "id": "place-kribi-beach",
+    "name": "Kribi Beach",
+    "description": "Cameroon's best-known stretch of coast: pale sand, calm water and grilled prawns along the shore. Most visitors combine it with the Lobe Falls a few kilometres south.",
+    "location": "Kribi",
+    "city": "Kribi",
+    "region": "South",
+    "division": "Ocean",
+    "subdivision": "Ocean",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 2.9391,
+    "longitude": 9.91,
+    "cost": 0,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "beach",
+    "tags": [
+      "cameroon",
+      "beach",
+      "seafood",
+      "swimming",
+      "free"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-kribi-beach-0",
+        "username": "carine.m",
+        "rating": 4,
+        "text": "Beautiful spot. Bring water and cash, there is no card payment."
+      },
+      {
+        "id": "seed-place-kribi-beach-1",
+        "username": "didier.k",
+        "rating": 3,
+        "text": "Interesting place, but facilities are limited."
+      },
+      {
+        "id": "seed-place-kribi-beach-2",
+        "username": "esther.f",
+        "rating": 4,
+        "text": "Great visit, though it can get crowded at weekends."
+      }
+    ],
+    "rating": 3.67,
+    "image_url": "/images/places/place-kribi-beach.jpg",
+    "local_image_url": "/images/places/place-kribi-beach.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Cameroon_banner_Kribi_beach_with_boats.jpg",
+    "image_license": "CC BY-SA 3.0",
+    "image_author": "Kribi.jpg: ymea\nderivative work: Jjtkk",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-kribi-beach.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Cameroon_banner_Kribi_beach_with_boats.jpg",
+        "license": "CC BY-SA 3.0",
+        "author": "Kribi.jpg: ymea\nderivative work: Jjtkk"
+      }
+    ]
+  },
+  {
+    "id": "place-ebodje-turtle-village",
+    "name": "Ebodje Sea Turtle Village",
+    "description": "A fishing village south of Kribi running a community programme to protect nesting sea turtles. Visitors stay with families and can join night patrols in season.",
+    "location": "Ebodje",
+    "city": "Ebodje",
+    "region": "South",
+    "division": "Ocean",
+    "subdivision": "Ocean",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 2.5833,
+    "longitude": 9.85,
+    "cost": 6000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "nature",
+    "tags": [
+      "cameroon",
+      "wildlife",
+      "beach",
+      "ecotourism",
+      "community"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-ebodje-turtle-village-0",
+        "username": "olivier.z",
+        "rating": 4,
+        "text": "Really impressive. The road there is rough but manageable."
+      },
+      {
+        "id": "seed-place-ebodje-turtle-village-1",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-ebodje-turtle-village-2",
+        "username": "carine.m",
+        "rating": 4,
+        "text": "Lovely half-day trip from the city."
+      },
+      {
+        "id": "seed-place-ebodje-turtle-village-3",
+        "username": "esther.f",
+        "rating": 4,
+        "text": "Great visit, though it can get crowded at weekends."
+      }
+    ],
+    "rating": 4.25
+  },
+  {
+    "id": "place-bandjoun-chiefdom",
+    "name": "Bandjoun Chiefdom",
+    "description": "One of the great Bamileke chiefdoms, its case sacree built from carved posts and a tall conical thatched roof. The compound museum holds masks, thrones and beaded regalia.",
+    "location": "Bandjoun",
+    "city": "Bandjoun",
+    "region": "West",
+    "division": "Koung-Khi",
+    "subdivision": "Koung-Khi",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 5.3667,
+    "longitude": 10.4167,
+    "cost": 3000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "heritage",
+    "tags": [
+      "cameroon",
+      "culture",
+      "architecture",
+      "heritage",
+      "history"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-bandjoun-chiefdom-0",
+        "username": "didier.k",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-bandjoun-chiefdom-1",
+        "username": "esther.f",
+        "rating": 4,
+        "text": "Lovely half-day trip from the city."
+      }
+    ],
+    "rating": 4.5
+  },
+  {
+    "id": "place-dschang-metche-falls",
+    "name": "Metche Falls",
+    "description": "A waterfall on the Metche river outside Dschang, set in forest and remembered locally as a site of killings during the independence struggle.",
+    "location": "Dschang",
+    "city": "Dschang",
+    "region": "West",
+    "division": "Menoua",
+    "subdivision": "Menoua",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 5.4,
+    "longitude": 10.1167,
+    "cost": 2000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "waterfall",
+    "tags": [
+      "cameroon",
+      "waterfall",
+      "nature",
+      "hiking",
+      "history"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-dschang-metche-falls-0",
+        "username": "amina.n",
+        "rating": 4,
+        "text": "Lovely half-day trip from the city."
+      },
+      {
+        "id": "seed-place-dschang-metche-falls-1",
+        "username": "olivier.z",
+        "rating": 5,
+        "text": "One of the best things we did in Cameroon. Take a guide."
+      },
+      {
+        "id": "seed-place-dschang-metche-falls-2",
+        "username": "carine.m",
+        "rating": 4,
+        "text": "Great visit, though it can get crowded at weekends."
+      },
+      {
+        "id": "seed-place-dschang-metche-falls-3",
+        "username": "esther.f",
+        "rating": 4,
+        "text": "Beautiful spot. Bring water and cash, there is no card payment."
+      }
+    ],
+    "rating": 4.25,
+    "image_url": "/images/places/place-dschang-metche-falls.jpg",
+    "local_image_url": "/images/places/place-dschang-metche-falls.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Chute_de_Metche.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Djoumess21",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-dschang-metche-falls.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Chute_de_Metche.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Djoumess21"
+      }
+    ]
+  },
+  {
+    "id": "place-dschang-museum-civilisations",
+    "name": "Museum of Civilisations",
+    "description": "A national museum in Dschang presenting Cameroon's four cultural areas -- Sudano-Sahelian, forest, coastal and grassfields -- in one purpose-built gallery.",
+    "location": "Dschang",
+    "city": "Dschang",
+    "region": "West",
+    "division": "Menoua",
+    "subdivision": "Menoua",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 5.446,
+    "longitude": 10.053,
+    "cost": 3000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "museum",
+    "tags": [
+      "cameroon",
+      "museum",
+      "culture",
+      "history",
+      "art"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-dschang-museum-civilisations-0",
+        "username": "amina.n",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-dschang-museum-civilisations-1",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Absolutely beautiful, especially at sunset."
+      },
+      {
+        "id": "seed-place-dschang-museum-civilisations-2",
+        "username": "carine.m",
+        "rating": 5,
+        "text": "One of the best things we did in Cameroon. Take a guide."
+      },
+      {
+        "id": "seed-place-dschang-museum-civilisations-3",
+        "username": "didier.k",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      }
+    ],
+    "rating": 4.5,
+    "image_url": "/images/places/place-dschang-museum-civilisations.jpg",
+    "local_image_url": "/images/places/place-dschang-museum-civilisations.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Musee_des_civilisations,_Dschang,_Cameroon.jpg",
+    "image_license": "CC BY 2.0",
+    "image_author": "SarahTz from Richmond, United Kingdom",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-dschang-museum-civilisations.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Musee_des_civilisations,_Dschang,_Cameroon.jpg",
+        "license": "CC BY 2.0",
+        "author": "SarahTz from Richmond, United Kingdom"
+      }
+    ]
+  },
+  {
+    "id": "place-bafoussam-lake-baleng",
+    "name": "Lake Baleng",
+    "description": "A crater lake north-east of Bafoussam, ringed by forest and the site of an annual ritual by the Baleng community.",
+    "location": "Bafoussam",
+    "city": "Bafoussam",
+    "region": "West",
+    "division": "Mifi",
+    "subdivision": "Mifi",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 5.5333,
+    "longitude": 10.4333,
+    "cost": 1500,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "nature",
+    "tags": [
+      "cameroon",
+      "lake",
+      "nature",
+      "culture",
+      "hiking"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-bafoussam-lake-baleng-0",
+        "username": "olivier.z",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      },
+      {
+        "id": "seed-place-bafoussam-lake-baleng-1",
+        "username": "amina.n",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      }
+    ],
+    "rating": 4.0,
+    "image_url": "/images/places/place-bafoussam-lake-baleng.jpg",
+    "local_image_url": "/images/places/place-bafoussam-lake-baleng.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lac_Baleng_3.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "MEKEM Z. Prosper",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-bafoussam-lake-baleng.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lac_Baleng_3.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "MEKEM Z. Prosper"
+      }
+    ]
+  },
+  {
+    "id": "place-bafut-palace",
+    "name": "Bafut Palace",
+    "description": "The seat of the Fon of Bafut, a compound of thatched and carved buildings around the sacred Achum shrine, on Cameroon's UNESCO tentative list.",
+    "location": "Bafut",
+    "city": "Bafut",
+    "region": "North West",
+    "division": "Mezam",
+    "subdivision": "Mezam",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 6.1,
+    "longitude": 10.1,
+    "cost": 3000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "heritage",
+    "tags": [
+      "cameroon",
+      "culture",
+      "heritage",
+      "history",
+      "architecture"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-bafut-palace-0",
+        "username": "olivier.z",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-bafut-palace-1",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Absolutely beautiful, especially at sunset."
+      },
+      {
+        "id": "seed-place-bafut-palace-2",
+        "username": "amina.n",
+        "rating": 4,
+        "text": "Lovely half-day trip from the city."
+      }
+    ],
+    "rating": 4.67,
+    "image_url": "/images/places/place-bafut-palace.jpg",
+    "local_image_url": "/images/places/place-bafut-palace.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:BAFUT_PALACE_-_FRONT_VIEW.JPG",
+    "image_license": "CC BY-SA 3.0",
+    "image_author": "Che Patrick Ndoh",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-bafut-palace.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:BAFUT_PALACE_-_FRONT_VIEW.JPG",
+        "license": "CC BY-SA 3.0",
+        "author": "Che Patrick Ndoh"
+      }
+    ]
+  },
+  {
+    "id": "place-wum-menchum-falls",
+    "name": "Menchum Falls",
+    "description": "A wide fall on the Menchum river on the road towards Wum, dropping through a gorge and loudest at the end of the rainy season.",
+    "location": "Wum",
+    "city": "Wum",
+    "region": "North West",
+    "division": "Menchum",
+    "subdivision": "Menchum",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 6.3167,
+    "longitude": 10.05,
+    "cost": 1500,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "waterfall",
+    "tags": [
+      "cameroon",
+      "waterfall",
+      "nature",
+      "viewpoint"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-wum-menchum-falls-0",
+        "username": "amina.n",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-wum-menchum-falls-1",
+        "username": "didier.k",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-wum-menchum-falls-2",
+        "username": "carine.m",
+        "rating": 3,
+        "text": "Interesting place, but facilities are limited."
+      },
+      {
+        "id": "seed-place-wum-menchum-falls-3",
+        "username": "esther.f",
+        "rating": 4,
+        "text": "Really impressive. The road there is rough but manageable."
+      }
+    ],
+    "rating": 4.25,
+    "image_url": "/images/places/place-wum-menchum-falls.jpg",
+    "local_image_url": "/images/places/place-wum-menchum-falls.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Menchum_Falls_NWprovince_Cameroon.jpg",
+    "image_license": "Public domain",
+    "image_author": "Nick Annejohn &amp; Family",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-wum-menchum-falls.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Menchum_Falls_NWprovince_Cameroon.jpg",
+        "license": "Public domain",
+        "author": "Nick Annejohn &amp; Family"
+      }
+    ]
+  },
+  {
+    "id": "place-oku-lake-oku",
+    "name": "Lake Oku",
+    "description": "A crater lake at about 2,200 m inside the Kilum-Ijim forest, sacred to the Oku people and home to an endemic frog found nowhere else.",
+    "location": "Oku",
+    "city": "Oku",
+    "region": "North West",
+    "division": "Bui",
+    "subdivision": "Bui",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 6.2,
+    "longitude": 10.4667,
+    "cost": 2000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "nature",
+    "tags": [
+      "cameroon",
+      "lake",
+      "nature",
+      "hiking",
+      "forest"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-oku-lake-oku-0",
+        "username": "amina.n",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      },
+      {
+        "id": "seed-place-oku-lake-oku-1",
+        "username": "didier.k",
+        "rating": 3,
+        "text": "Interesting place, but facilities are limited."
+      },
+      {
+        "id": "seed-place-oku-lake-oku-2",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      }
+    ],
+    "rating": 3.67,
+    "image_url": "/images/places/place-oku-lake-oku.jpg",
+    "local_image_url": "/images/places/place-oku-lake-oku.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lake_Oku_Cameroon.jpg",
+    "image_license": "Public domain",
+    "image_author": "No machine-readable author provided. Nickaj assumed (based on copyright claims).",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-oku-lake-oku.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lake_Oku_Cameroon.jpg",
+        "license": "Public domain",
+        "author": "No machine-readable author provided. Nickaj assumed (based on copyright claims)."
+      }
+    ]
+  },
+  {
+    "id": "place-nyos-lake-nyos",
+    "name": "Lake Nyos",
+    "description": "A crater lake known worldwide for the 1986 limnic eruption, when a cloud of carbon dioxide killed more than 1,700 people. It is now degassed and monitored, and visited with permission and a guide.",
+    "location": "Nyos",
+    "city": "Nyos",
+    "region": "North West",
+    "division": "Menchum",
+    "subdivision": "Menchum",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 6.4383,
+    "longitude": 10.2983,
+    "cost": 5000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "nature",
+    "tags": [
+      "cameroon",
+      "lake",
+      "nature",
+      "geology",
+      "history"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-nyos-lake-nyos-0",
+        "username": "olivier.z",
+        "rating": 3,
+        "text": "Interesting place, but facilities are limited."
+      },
+      {
+        "id": "seed-place-nyos-lake-nyos-1",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-nyos-lake-nyos-2",
+        "username": "didier.k",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      }
+    ],
+    "rating": 3.67,
+    "image_url": "/images/places/place-nyos-lake-nyos.jpg",
+    "local_image_url": "/images/places/place-nyos-lake-nyos.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lake_Nyos_2001.jpg",
+    "image_license": "Public domain",
+    "image_author": "Bill Evans",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-nyos-lake-nyos.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lake_Nyos_2001.jpg",
+        "license": "Public domain",
+        "author": "Bill Evans"
+      }
+    ]
+  },
+  {
+    "id": "place-rhumsiki-peak",
+    "name": "Rhumsiki Peak",
+    "description": "A volcanic plug rising from the Kapsiki plain, the most photographed landscape in northern Cameroon. Kapsiki villages sit among the spires, and crab-sorcerers still read fortunes here.",
+    "location": "Rhumsiki",
+    "city": "Rhumsiki",
+    "region": "Far North",
+    "division": "Mayo-Tsanaga",
+    "subdivision": "Mayo-Tsanaga",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 10.5333,
+    "longitude": 13.6167,
+    "cost": 5000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "mountain",
+    "tags": [
+      "cameroon",
+      "landscape",
+      "hiking",
+      "culture",
+      "viewpoint"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-rhumsiki-peak-0",
+        "username": "esther.f",
+        "rating": 5,
+        "text": "Absolutely beautiful, especially at sunset."
+      },
+      {
+        "id": "seed-place-rhumsiki-peak-1",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "One of the best things we did in Cameroon. Take a guide."
+      },
+      {
+        "id": "seed-place-rhumsiki-peak-2",
+        "username": "didier.k",
+        "rating": 3,
+        "text": "Interesting place, but facilities are limited."
+      },
+      {
+        "id": "seed-place-rhumsiki-peak-3",
+        "username": "olivier.z",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      }
+    ],
+    "rating": 4.5,
+    "image_url": "/images/places/place-rhumsiki-peak.jpg",
+    "local_image_url": "/images/places/place-rhumsiki-peak.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Campement_à_Rhumsiki_en_mars_1973.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Jean-Louis Heckly",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-rhumsiki-peak.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Campement_à_Rhumsiki_en_mars_1973.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Jean-Louis Heckly"
+      }
+    ]
+  },
+  {
+    "id": "place-mandara-mountains",
+    "name": "Mandara Mountains",
+    "description": "A volcanic range along the Nigerian border, terraced for farming and dotted with Mafa and Kapsiki villages built into the rock.",
+    "location": "Mokolo",
+    "city": "Mokolo",
+    "region": "Far North",
+    "division": "Mayo-Tsanaga",
+    "subdivision": "Mayo-Tsanaga",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 10.75,
+    "longitude": 13.8,
+    "cost": 4000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "mountain",
+    "tags": [
+      "cameroon",
+      "landscape",
+      "hiking",
+      "culture",
+      "villages"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-mandara-mountains-0",
+        "username": "amina.n",
+        "rating": 4,
+        "text": "Beautiful spot. Bring water and cash, there is no card payment."
+      },
+      {
+        "id": "seed-place-mandara-mountains-1",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "One of the best things we did in Cameroon. Take a guide."
+      },
+      {
+        "id": "seed-place-mandara-mountains-2",
+        "username": "didier.k",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      },
+      {
+        "id": "seed-place-mandara-mountains-3",
+        "username": "carine.m",
+        "rating": 4,
+        "text": "Great visit, though it can get crowded at weekends."
+      }
+    ],
+    "rating": 4.0,
+    "image_url": "/images/places/place-mandara-mountains.jpg",
+    "local_image_url": "/images/places/place-mandara-mountains.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mandara_Mountains_-_panoramio_(1).jpg",
+    "image_license": "CC BY 3.0",
+    "image_author": "vavaulegrandbleu@gma…",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-mandara-mountains.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mandara_Mountains_-_panoramio_(1).jpg",
+        "license": "CC BY 3.0",
+        "author": "vavaulegrandbleu@gma…"
+      }
+    ]
+  },
+  {
+    "id": "place-maroua-artisan-market",
+    "name": "Maroua Artisan Market",
+    "description": "The craft market on the Kaliao riverbank, known for tanned leather, embroidery and dyed cloth. Bargaining is expected.",
+    "location": "Maroua",
+    "city": "Maroua",
+    "region": "Far North",
+    "division": "Diamare",
+    "subdivision": "Diamare",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 10.5956,
+    "longitude": 14.3247,
+    "cost": 0,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "market",
+    "tags": [
+      "cameroon",
+      "market",
+      "crafts",
+      "culture",
+      "shopping"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-maroua-artisan-market-0",
+        "username": "olivier.z",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      },
+      {
+        "id": "seed-place-maroua-artisan-market-1",
+        "username": "carine.m",
+        "rating": 4,
+        "text": "Beautiful spot. Bring water and cash, there is no card payment."
+      },
+      {
+        "id": "seed-place-maroua-artisan-market-2",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-maroua-artisan-market-3",
+        "username": "amina.n",
+        "rating": 3,
+        "text": "Interesting place, but facilities are limited."
+      }
+    ],
+    "rating": 3.75,
+    "image_url": "/images/places/place-maroua-artisan-market.jpg",
+    "local_image_url": "/images/places/place-maroua-artisan-market.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Marché_de_Maroua_en_mars_1973_(1).jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Jean-Louis Heckly",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-maroua-artisan-market.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Marché_de_Maroua_en_mars_1973_(1).jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Jean-Louis Heckly"
+      }
+    ]
+  },
+  {
+    "id": "place-maroua-diamare-museum",
+    "name": "Diamare Museum",
+    "description": "A small regional museum covering the Sahelian peoples of the far north -- Fulani, Mafa, Kotoko and Kapsiki -- through tools, dress and musical instruments.",
+    "location": "Maroua",
+    "city": "Maroua",
+    "region": "Far North",
+    "division": "Diamare",
+    "subdivision": "Diamare",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 10.591,
+    "longitude": 14.3155,
+    "cost": 2000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "museum",
+    "tags": [
+      "cameroon",
+      "museum",
+      "culture",
+      "history"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-maroua-diamare-museum-0",
+        "username": "carine.m",
+        "rating": 4,
+        "text": "Beautiful spot. Bring water and cash, there is no card payment."
+      },
+      {
+        "id": "seed-place-maroua-diamare-museum-1",
+        "username": "esther.f",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-maroua-diamare-museum-2",
+        "username": "brice.t",
+        "rating": 4,
+        "text": "Lovely half-day trip from the city."
+      },
+      {
+        "id": "seed-place-maroua-diamare-museum-3",
+        "username": "olivier.z",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      }
+    ],
+    "rating": 4.5,
+    "image_url": "/images/places/place-maroua-diamare-museum.jpg",
+    "local_image_url": "/images/places/place-maroua-diamare-museum.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:L'Exposition_Coloniale_Internationale_de_1931,_trois_hommes_de_Maroua_au_Cameroun_-_A66145.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Gadmer Frédéric",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-maroua-diamare-museum.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:L'Exposition_Coloniale_Internationale_de_1931,_trois_hommes_de_Maroua_au_Cameroun_-_A66145.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Gadmer Frédéric"
+      }
+    ]
+  },
+  {
+    "id": "place-benoue-national-park",
+    "name": "Benoue National Park",
+    "description": "A biosphere reserve along the Benoue river, holding hippo, buffalo, hartebeest and the Kordofan giraffe. Best in the dry season when animals gather at the water.",
+    "location": "Garoua",
+    "city": "Garoua",
+    "region": "North",
+    "division": "Benoue",
+    "subdivision": "Benoue",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 8.4167,
+    "longitude": 13.75,
+    "cost": 12000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "national_park",
+    "tags": [
+      "cameroon",
+      "wildlife",
+      "safari",
+      "nature",
+      "river"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-benoue-national-park-0",
+        "username": "brice.t",
+        "rating": 5,
+        "text": "Absolutely beautiful, especially at sunset."
+      },
+      {
+        "id": "seed-place-benoue-national-park-1",
+        "username": "didier.k",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      }
+    ],
+    "rating": 4.0,
+    "image_url": "/images/places/place-benoue-national-park.jpg",
+    "local_image_url": "/images/places/place-benoue-national-park.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Site_touristique_au_parc_national_de_la_bénoué_au_cameroun_07.jpg",
+    "image_license": "CC0",
+    "image_author": "OUMAROU OB",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-benoue-national-park.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Site_touristique_au_parc_national_de_la_bénoué_au_cameroun_07.jpg",
+        "license": "CC0",
+        "author": "OUMAROU OB"
+      }
+    ]
+  },
+  {
+    "id": "place-bouba-njida-national-park",
+    "name": "Bouba Njida National Park",
+    "description": "A remote park on the Chadian border, one of the last strongholds for Derby eland and a critical elephant range. Visits need a guide and a four-wheel drive.",
+    "location": "Tcholliré",
+    "city": "Tcholliré",
+    "region": "North",
+    "division": "Mayo-Rey",
+    "subdivision": "Mayo-Rey",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 8.6667,
+    "longitude": 14.5,
+    "cost": 15000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "national_park",
+    "tags": [
+      "cameroon",
+      "wildlife",
+      "safari",
+      "nature",
+      "remote"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-bouba-njida-national-park-0",
+        "username": "didier.k",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-bouba-njida-national-park-1",
+        "username": "amina.n",
+        "rating": 4,
+        "text": "Really impressive. The road there is rough but manageable."
+      }
+    ],
+    "rating": 4.5,
+    "image_url": "/images/places/place-bouba-njida-national-park.jpg",
+    "local_image_url": "/images/places/place-bouba-njida-national-park.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Bouba_Njida_(6841416170).jpg",
+    "image_license": "Public domain",
+    "image_author": "U.S. Fish and Wildlife Service Headquarters",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-bouba-njida-national-park.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Bouba_Njida_(6841416170).jpg",
+        "license": "Public domain",
+        "author": "U.S. Fish and Wildlife Service Headquarters"
+      }
+    ]
+  },
+  {
+    "id": "place-ngaoundere-lamido-palace",
+    "name": "Lamido Palace of Ngaoundere",
+    "description": "The palace of the Lamido of Ngaoundere, a Fulani court founded in the nineteenth century. The audience hall's painted earth walls and conical roofs are the finest of their kind in Cameroon.",
+    "location": "Ngaoundere",
+    "city": "Ngaoundere",
+    "region": "Adamawa",
+    "division": "Vina",
+    "subdivision": "Vina",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 7.3167,
+    "longitude": 13.5833,
+    "cost": 3000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "heritage",
+    "tags": [
+      "cameroon",
+      "culture",
+      "heritage",
+      "history",
+      "architecture"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-ngaoundere-lamido-palace-0",
+        "username": "olivier.z",
+        "rating": 4,
+        "text": "Lovely half-day trip from the city."
+      },
+      {
+        "id": "seed-place-ngaoundere-lamido-palace-1",
+        "username": "carine.m",
+        "rating": 4,
+        "text": "Great visit, though it can get crowded at weekends."
+      }
+    ],
+    "rating": 4.0,
+    "image_url": "/images/destinations/ngaoundere.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Ngaoundere. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Earth%20from%20Space-%20Waza%20National%20Park%2C%20Cameroon%20ESA507712.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/ngaoundere.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Earth%20from%20Space-%20Waza%20National%20Park%2C%20Cameroon%20ESA507712.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Ngaoundere. No photograph of this specific place is available yet."
+      }
+    ]
+  },
+  {
+    "id": "place-ngaoundere-tello-falls",
+    "name": "Tello Falls",
+    "description": "A fall on the Vina river north of Ngaoundere, dropping over basalt columns into a pool that is a popular weekend swim.",
+    "location": "Ngaoundere",
+    "city": "Ngaoundere",
+    "region": "Adamawa",
+    "division": "Vina",
+    "subdivision": "Vina",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 7.4,
+    "longitude": 13.65,
+    "cost": 1500,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "waterfall",
+    "tags": [
+      "cameroon",
+      "waterfall",
+      "nature",
+      "hiking"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-ngaoundere-tello-falls-0",
+        "username": "carine.m",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      },
+      {
+        "id": "seed-place-ngaoundere-tello-falls-1",
+        "username": "didier.k",
+        "rating": 4,
+        "text": "Beautiful spot. Bring water and cash, there is no card payment."
+      },
+      {
+        "id": "seed-place-ngaoundere-tello-falls-2",
+        "username": "olivier.z",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      }
+    ],
+    "rating": 4.0,
+    "image_url": "/images/places/place-ngaoundere-tello-falls.jpg",
+    "local_image_url": "/images/places/place-ngaoundere-tello-falls.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Chutes_Tello2.jpg",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Marie Barbara",
+    "image_license_note": "Cached from Wikimedia Commons for app display. Keep the source URL with the record for attribution and licence review.",
+    "images": [
+      {
+        "url": "/images/places/place-ngaoundere-tello-falls.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Chutes_Tello2.jpg",
+        "license": "CC BY-SA 4.0",
+        "author": "Marie Barbara"
+      }
+    ]
+  },
+  {
+    "id": "place-ngaoundere-lake-tison",
+    "name": "Lake Tison",
+    "description": "A small crater lake in the hills near Ngaoundere, reached on foot through grassland and a straightforward half-day outing.",
+    "location": "Ngaoundere",
+    "city": "Ngaoundere",
+    "region": "Adamawa",
+    "division": "Vina",
+    "subdivision": "Vina",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 7.2833,
+    "longitude": 13.6,
+    "cost": 1000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "nature",
+    "tags": [
+      "cameroon",
+      "lake",
+      "nature",
+      "walking",
+      "viewpoint"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-ngaoundere-lake-tison-0",
+        "username": "esther.f",
+        "rating": 4,
+        "text": "Really impressive. The road there is rough but manageable."
+      },
+      {
+        "id": "seed-place-ngaoundere-lake-tison-1",
+        "username": "amina.n",
+        "rating": 5,
+        "text": "Worth the trip. Go early in the morning before it gets busy."
+      },
+      {
+        "id": "seed-place-ngaoundere-lake-tison-2",
+        "username": "olivier.z",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      }
+    ],
+    "rating": 4.67,
+    "image_url": "/images/destinations/ngaoundere.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Ngaoundere. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Earth%20from%20Space-%20Waza%20National%20Park%2C%20Cameroon%20ESA507712.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/ngaoundere.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Earth%20from%20Space-%20Waza%20National%20Park%2C%20Cameroon%20ESA507712.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Ngaoundere. No photograph of this specific place is available yet."
+      }
+    ]
+  },
+  {
+    "id": "place-lobeke-national-park",
+    "name": "Lobeke National Park",
+    "description": "Lowland rainforest in the Congo Basin, part of the Sangha Trinational World Heritage site. Forest clearings called bais draw elephant, bongo and lowland gorilla into the open.",
+    "location": "Mambele",
+    "city": "Mambele",
+    "region": "East",
+    "division": "Boumba-et-Ngoko",
+    "subdivision": "Boumba-et-Ngoko",
+    "country": "Cameroon",
+    "country_code": "CM",
+    "continent": "Africa",
+    "latitude": 2.3,
+    "longitude": 15.7,
+    "cost": 15000,
+    "cost_note": "Prices are indicative and quoted in FCFA.",
+    "category": "national_park",
+    "tags": [
+      "cameroon",
+      "wildlife",
+      "forest",
+      "nature",
+      "remote"
+    ],
+    "source": "curated",
+    "curated": true,
+    "reviews": [
+      {
+        "id": "seed-place-lobeke-national-park-0",
+        "username": "amina.n",
+        "rating": 5,
+        "text": "Stunning. Our guide knew the history really well."
+      },
+      {
+        "id": "seed-place-lobeke-national-park-1",
+        "username": "esther.f",
+        "rating": 3,
+        "text": "Good to see once. Go with someone local if you can."
+      }
+    ],
+    "rating": 4.0
   }
 ]

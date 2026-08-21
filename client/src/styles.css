@@ -2321,3 +2321,121 @@ textarea {
 @media (max-width: 400px) {
   .language-picker { display: none; }
 }
+
+
+/* ==========================================================================
+   Featured attractions
+   The curated sites, shown before a visitor has searched for anything, so the
+   first impression is somewhere worth going rather than a search box.
+   ========================================================================== */
+
+.attraction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  gap: 1rem;
+}
+
+.attraction-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.attraction-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.attraction-card:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+.attraction-media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--surface-soft);
+  overflow: hidden;
+}
+
+.attraction-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.attraction-media-empty {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+}
+
+.attraction-video-badge {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(12, 15, 22, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.attraction-body {
+  padding: 0.85rem 0.95rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  flex: 1;
+}
+
+.attraction-name {
+  font-family: var(--font-display);
+  font-size: 0.99rem;
+  font-weight: 600;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.attraction-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.attraction-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.attraction-rating .star.on { color: #f0a500; font-size: 0.9rem; }
+
+.attraction-where { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.attraction-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: auto; }
+
+.attraction-tag {
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attraction-card { transition: none; }
+  .attraction-card:hover { transform: none; }
+}

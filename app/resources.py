@@ -404,9 +404,48 @@ def list_activities():
     return jsonify([_with_resource_metadata(item) for item in get_all_activities()]), 200
 
 
+def _discovery_rank(place: dict) -> tuple:
+    """Order places by how worth visiting they are, best first.
+
+    The catalogue is mostly a bulk OpenStreetMap import -- shops, offices and
+    private residences -- with a much smaller hand-written set of genuine
+    attractions. Listing them in file order buries the attractions, so curated
+    entries with a photograph come first, then anything else with a photograph,
+    then the rest.
+    """
+    curated = bool(place.get("curated"))
+    has_own_photo = str(place.get("image_url") or "").startswith("/images/places/")
+    has_any_photo = bool(str(place.get("image_url") or "").strip())
+    rating = float(place.get("rating") or 0)
+    return (
+        not curated,
+        not has_own_photo,
+        not has_any_photo,
+        -rating,
+        str(place.get("name") or ""),
+    )
+
+
 @resources_bp.route("/resources/places", methods=["GET"])
 def list_places():
-    return jsonify([_with_resource_metadata(item) for item in get_all_places()]), 200
+    """List places, most interesting first.
+
+    ``featured=1`` narrows this to the curated attractions, which is what the
+    discovery screens show before a visitor has searched for anything.
+    """
+    places = sorted(get_all_places(), key=_discovery_rank)
+
+    if request.args.get("featured") in ("1", "true", "yes"):
+        places = [item for item in places if item.get("curated")]
+
+    limit = request.args.get("limit")
+    if limit:
+        try:
+            places = places[: max(0, int(limit))]
+        except ValueError:
+            pass
+
+    return jsonify([_with_resource_metadata(item) for item in places]), 200
 
 
 @resources_bp.route("/resources/places/<place_id>", methods=["GET"])
