@@ -10,6 +10,9 @@ All persistent data is stored in JSON files under the /data directory.
 """
 import json
 import os
+from contextlib import contextmanager
+
+from filelock import FileLock
 
 # Resolve the /data directory relative to this file's location so the app
 # works regardless of the current working directory.
@@ -33,12 +36,32 @@ UPLOADS_DIR = os.path.join(DATA_DIR, "uploads")
 
 # ---------------------------------------------------------------------------
 # Generic file I/O helpers
+#
+# Every read/write of a data file is guarded by a per-file lock (via
+# filelock, which works across threads, processes, and platforms) and every
+# write goes to a temp file that is atomically renamed into place. Mutating
+# helpers below (save_*/update_*/remove_*) acquire the lock ONCE around
+# their full read-modify-write so concurrent requests touching the same
+# file can't interleave and lose or corrupt each other's changes.
 # ---------------------------------------------------------------------------
 
-def _read_json(filepath: str) -> list:
+def _lock_path(filepath: str) -> str:
+    return filepath + ".lock"
+
+
+@contextmanager
+def _locked(filepath: str):
+    """Acquire an exclusive lock for *filepath* for the duration of the block."""
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with FileLock(_lock_path(filepath), timeout=10):
+        yield
+
+
+def _read_json_unlocked(filepath: str) -> list:
     """Read a JSON file and return its contents as a Python list.
 
-    Returns an empty list if the file does not exist or is empty.
+    Returns an empty list if the file does not exist or is empty. Caller
+    must already hold the lock for *filepath*.
     """
     if not os.path.exists(filepath):
         return []
@@ -50,11 +73,30 @@ def _read_json(filepath: str) -> list:
         return data if isinstance(data, list) else []
 
 
+def _write_json_unlocked(filepath: str, data: list) -> None:
+    """Serialise *data* and atomically replace *filepath*.
+
+    Writes to a temp file first and renames it into place, so a process
+    killed mid-write can never leave truncated/invalid JSON behind. Caller
+    must already hold the lock for *filepath*.
+    """
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    tmp_path = f"{filepath}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as fh:
+        json.dump(data, fh, indent=2)
+    os.replace(tmp_path, filepath)
+
+
+def _read_json(filepath: str) -> list:
+    """Read a JSON file and return its contents as a Python list."""
+    with _locked(filepath):
+        return _read_json_unlocked(filepath)
+
+
 def _write_json(filepath: str, data: list) -> None:
     """Serialise *data* and write it to *filepath* (pretty-printed)."""
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, "w", encoding="utf-8") as fh:
-        json.dump(data, fh, indent=2)
+    with _locked(filepath):
+        _write_json_unlocked(filepath, data)
 
 
 # ---------------------------------------------------------------------------
@@ -115,20 +157,22 @@ def get_user_by_google_id(google_id: str) -> dict | None:
 
 def save_user(user: dict) -> None:
     """Append *user* to the users store."""
-    users = get_all_users()
-    users.append(user)
-    _write_json(USERS_FILE, users)
+    with _locked(USERS_FILE):
+        users = _read_json_unlocked(USERS_FILE)
+        users.append(user)
+        _write_json_unlocked(USERS_FILE, users)
 
 
 def update_user(updated_user: dict) -> None:
     """Persist changes to an existing user."""
-    users = get_all_users()
-    for index, user in enumerate(users):
-        if user.get("username") == updated_user.get("username"):
-            users[index] = updated_user
-            _write_json(USERS_FILE, users)
-            return
-    raise ValueError("User not found")
+    with _locked(USERS_FILE):
+        users = _read_json_unlocked(USERS_FILE)
+        for index, user in enumerate(users):
+            if user.get("username") == updated_user.get("username"):
+                users[index] = updated_user
+                _write_json_unlocked(USERS_FILE, users)
+                return
+        raise ValueError("User not found")
 
 
 def get_user_by_reset_token(token: str) -> dict | None:
@@ -136,15 +180,6 @@ def get_user_by_reset_token(token: str) -> dict | None:
     users = get_all_users()
     for user in users:
         if user.get("password_reset_token") == token:
-            return user
-    return None
-
-
-def get_user_by_google_id(google_id: str) -> dict | None:
-    """Return the user dict for a Google account identifier."""
-    users = get_all_users()
-    for user in users:
-        if user.get("google_id") == google_id:
             return user
     return None
 
@@ -165,9 +200,10 @@ def get_all_hotels() -> list:
 
 def save_hotel(hotel: dict) -> None:
     """Append *hotel* to the hotels store."""
-    hotels = get_all_hotels()
-    hotels.append(hotel)
-    _write_json(HOTELS_FILE, hotels)
+    with _locked(HOTELS_FILE):
+        hotels = _read_json_unlocked(HOTELS_FILE)
+        hotels.append(hotel)
+        _write_json_unlocked(HOTELS_FILE, hotels)
 
 
 def get_all_activities() -> list:
@@ -177,9 +213,10 @@ def get_all_activities() -> list:
 
 def save_activity(activity: dict) -> None:
     """Append *activity* to the activities store."""
-    activities = get_all_activities()
-    activities.append(activity)
-    _write_json(ACTIVITIES_FILE, activities)
+    with _locked(ACTIVITIES_FILE):
+        activities = _read_json_unlocked(ACTIVITIES_FILE)
+        activities.append(activity)
+        _write_json_unlocked(ACTIVITIES_FILE, activities)
 
 
 def get_all_places() -> list:
@@ -189,39 +226,43 @@ def get_all_places() -> list:
 
 def save_place(place: dict) -> None:
     """Append *place* to the places store."""
-    places = get_all_places()
-    places.append(place)
-    _write_json(PLACES_FILE, places)
+    with _locked(PLACES_FILE):
+        places = _read_json_unlocked(PLACES_FILE)
+        places.append(place)
+        _write_json_unlocked(PLACES_FILE, places)
 
 
 def update_hotel(updated_hotel: dict) -> None:
-    hotels = get_all_hotels()
-    for index, hotel in enumerate(hotels):
-        if hotel.get("id") == updated_hotel.get("id"):
-            hotels[index] = updated_hotel
-            _write_json(HOTELS_FILE, hotels)
-            return
-    raise ValueError("Hotel not found")
+    with _locked(HOTELS_FILE):
+        hotels = _read_json_unlocked(HOTELS_FILE)
+        for index, hotel in enumerate(hotels):
+            if hotel.get("id") == updated_hotel.get("id"):
+                hotels[index] = updated_hotel
+                _write_json_unlocked(HOTELS_FILE, hotels)
+                return
+        raise ValueError("Hotel not found")
 
 
 def update_activity(updated_activity: dict) -> None:
-    activities = get_all_activities()
-    for index, activity in enumerate(activities):
-        if activity.get("id") == updated_activity.get("id"):
-            activities[index] = updated_activity
-            _write_json(ACTIVITIES_FILE, activities)
-            return
-    raise ValueError("Activity not found")
+    with _locked(ACTIVITIES_FILE):
+        activities = _read_json_unlocked(ACTIVITIES_FILE)
+        for index, activity in enumerate(activities):
+            if activity.get("id") == updated_activity.get("id"):
+                activities[index] = updated_activity
+                _write_json_unlocked(ACTIVITIES_FILE, activities)
+                return
+        raise ValueError("Activity not found")
 
 
 def update_place(updated_place: dict) -> None:
-    places = get_all_places()
-    for index, place in enumerate(places):
-        if place.get("id") == updated_place.get("id"):
-            places[index] = updated_place
-            _write_json(PLACES_FILE, places)
-            return
-    raise ValueError("Place not found")
+    with _locked(PLACES_FILE):
+        places = _read_json_unlocked(PLACES_FILE)
+        for index, place in enumerate(places):
+            if place.get("id") == updated_place.get("id"):
+                places[index] = updated_place
+                _write_json_unlocked(PLACES_FILE, places)
+                return
+        raise ValueError("Place not found")
 
 
 def get_all_groups() -> list:
@@ -240,20 +281,22 @@ def get_group_by_id(group_id: str) -> dict | None:
 
 def save_group(group: dict) -> None:
     """Append *group* to the groups store."""
-    groups = get_all_groups()
-    groups.append(group)
-    _write_json(GROUPS_FILE, groups)
+    with _locked(GROUPS_FILE):
+        groups = _read_json_unlocked(GROUPS_FILE)
+        groups.append(group)
+        _write_json_unlocked(GROUPS_FILE, groups)
 
 
 def update_group(updated_group: dict) -> None:
     """Persist changes to an existing group."""
-    groups = get_all_groups()
-    for index, group in enumerate(groups):
-        if group.get("id") == updated_group.get("id"):
-            groups[index] = updated_group
-            _write_json(GROUPS_FILE, groups)
-            return
-    raise ValueError("Group not found")
+    with _locked(GROUPS_FILE):
+        groups = _read_json_unlocked(GROUPS_FILE)
+        for index, group in enumerate(groups):
+            if group.get("id") == updated_group.get("id"):
+                groups[index] = updated_group
+                _write_json_unlocked(GROUPS_FILE, groups)
+                return
+        raise ValueError("Group not found")
 
 
 def get_all_media() -> list:
@@ -272,20 +315,22 @@ def get_media_by_id(media_id: str) -> dict | None:
 
 def save_media(media: dict) -> None:
     """Append *media* to the media store."""
-    media_items = get_all_media()
-    media_items.append(media)
-    _write_json(MEDIA_FILE, media_items)
+    with _locked(MEDIA_FILE):
+        media_items = _read_json_unlocked(MEDIA_FILE)
+        media_items.append(media)
+        _write_json_unlocked(MEDIA_FILE, media_items)
 
 
 def update_media(updated_media: dict) -> None:
     """Persist changes to an existing media post."""
-    media_items = get_all_media()
-    for index, item in enumerate(media_items):
-        if item.get("id") == updated_media.get("id"):
-            media_items[index] = updated_media
-            _write_json(MEDIA_FILE, media_items)
-            return
-    raise ValueError("Media not found")
+    with _locked(MEDIA_FILE):
+        media_items = _read_json_unlocked(MEDIA_FILE)
+        for index, item in enumerate(media_items):
+            if item.get("id") == updated_media.get("id"):
+                media_items[index] = updated_media
+                _write_json_unlocked(MEDIA_FILE, media_items)
+                return
+        raise ValueError("Media not found")
 
 
 def get_all_notifications() -> list:
@@ -306,20 +351,22 @@ def get_notifications_for_user(username: str, unread_only: bool = False) -> list
 
 def save_notification(notification: dict) -> None:
     """Append *notification* to the notifications store."""
-    notifications = get_all_notifications()
-    notifications.append(notification)
-    _write_json(NOTIFICATIONS_FILE, notifications)
+    with _locked(NOTIFICATIONS_FILE):
+        notifications = _read_json_unlocked(NOTIFICATIONS_FILE)
+        notifications.append(notification)
+        _write_json_unlocked(NOTIFICATIONS_FILE, notifications)
 
 
 def update_notification(updated_notification: dict) -> None:
     """Persist changes to an existing notification."""
-    notifications = get_all_notifications()
-    for index, notification in enumerate(notifications):
-        if notification.get("id") == updated_notification.get("id"):
-            notifications[index] = updated_notification
-            _write_json(NOTIFICATIONS_FILE, notifications)
-            return
-    raise ValueError("Notification not found")
+    with _locked(NOTIFICATIONS_FILE):
+        notifications = _read_json_unlocked(NOTIFICATIONS_FILE)
+        for index, notification in enumerate(notifications):
+            if notification.get("id") == updated_notification.get("id"):
+                notifications[index] = updated_notification
+                _write_json_unlocked(NOTIFICATIONS_FILE, notifications)
+                return
+        raise ValueError("Notification not found")
 
 
 def get_all_invites() -> list:
@@ -335,19 +382,21 @@ def get_invite_by_token(token: str) -> dict | None:
 
 
 def save_invite(invite: dict) -> None:
-    invites = get_all_invites()
-    invites.append(invite)
-    _write_json(INVITES_FILE, invites)
+    with _locked(INVITES_FILE):
+        invites = _read_json_unlocked(INVITES_FILE)
+        invites.append(invite)
+        _write_json_unlocked(INVITES_FILE, invites)
 
 
 def update_invite(updated_invite: dict) -> None:
-    invites = get_all_invites()
-    for index, invite in enumerate(invites):
-        if invite.get("token") == updated_invite.get("token"):
-            invites[index] = updated_invite
-            _write_json(INVITES_FILE, invites)
-            return
-    raise ValueError("Invite not found")
+    with _locked(INVITES_FILE):
+        invites = _read_json_unlocked(INVITES_FILE)
+        for index, invite in enumerate(invites):
+            if invite.get("token") == updated_invite.get("token"):
+                invites[index] = updated_invite
+                _write_json_unlocked(INVITES_FILE, invites)
+                return
+        raise ValueError("Invite not found")
 
 
 def get_all_audit_entries() -> list:
@@ -363,39 +412,43 @@ def get_audit_entries_for_itinerary(itinerary_id: str) -> list:
 
 
 def save_audit_entry(entry: dict) -> None:
-    entries = get_all_audit_entries()
-    entries.append(entry)
-    _write_json(AUDIT_LOG_FILE, entries)
+    with _locked(AUDIT_LOG_FILE):
+        entries = _read_json_unlocked(AUDIT_LOG_FILE)
+        entries.append(entry)
+        _write_json_unlocked(AUDIT_LOG_FILE, entries)
 
 
 def remove_hotel_by_id(hotel_id: str) -> bool:
     """Remove a hotel by ID and return True if removed."""
-    hotels = get_all_hotels()
-    updated = [hotel for hotel in hotels if hotel.get("id") != hotel_id]
-    if len(updated) == len(hotels):
-        return False
-    _write_json(HOTELS_FILE, updated)
-    return True
+    with _locked(HOTELS_FILE):
+        hotels = _read_json_unlocked(HOTELS_FILE)
+        updated = [hotel for hotel in hotels if hotel.get("id") != hotel_id]
+        if len(updated) == len(hotels):
+            return False
+        _write_json_unlocked(HOTELS_FILE, updated)
+        return True
 
 
 def remove_activity_by_id(activity_id: str) -> bool:
     """Remove an activity by ID and return True if removed."""
-    activities = get_all_activities()
-    updated = [activity for activity in activities if activity.get("id") != activity_id]
-    if len(updated) == len(activities):
-        return False
-    _write_json(ACTIVITIES_FILE, updated)
-    return True
+    with _locked(ACTIVITIES_FILE):
+        activities = _read_json_unlocked(ACTIVITIES_FILE)
+        updated = [activity for activity in activities if activity.get("id") != activity_id]
+        if len(updated) == len(activities):
+            return False
+        _write_json_unlocked(ACTIVITIES_FILE, updated)
+        return True
 
 
 def remove_place_by_id(place_id: str) -> bool:
     """Remove a place by ID and return True if removed."""
-    places = get_all_places()
-    updated = [place for place in places if place.get("id") != place_id]
-    if len(updated) == len(places):
-        return False
-    _write_json(PLACES_FILE, updated)
-    return True
+    with _locked(PLACES_FILE):
+        places = _read_json_unlocked(PLACES_FILE)
+        updated = [place for place in places if place.get("id") != place_id]
+        if len(updated) == len(places):
+            return False
+        _write_json_unlocked(PLACES_FILE, updated)
+        return True
 
 
 # ---------------------------------------------------------------------------
@@ -421,9 +474,10 @@ def get_itineraries_for_user(username: str) -> list:
 
 def save_itinerary(itinerary: dict) -> None:
     """Append *itinerary* to the itineraries store."""
-    itineraries = get_all_itineraries()
-    itineraries.append(itinerary)
-    _write_json(ITINERARIES_FILE, itineraries)
+    with _locked(ITINERARIES_FILE):
+        itineraries = _read_json_unlocked(ITINERARIES_FILE)
+        itineraries.append(itinerary)
+        _write_json_unlocked(ITINERARIES_FILE, itineraries)
 
 
 def get_itinerary_by_id(itinerary_id: str) -> dict | None:
@@ -437,12 +491,13 @@ def get_itinerary_by_id(itinerary_id: str) -> dict | None:
 
 def update_itinerary(updated_itinerary: dict) -> None:
     """Persist changes to an existing itinerary."""
-    itineraries = get_all_itineraries()
-    for index, itinerary in enumerate(itineraries):
-        if itinerary.get("id") == updated_itinerary.get("id"):
-            itineraries[index] = updated_itinerary
-            _write_json(ITINERARIES_FILE, itineraries)
-            return
+    with _locked(ITINERARIES_FILE):
+        itineraries = _read_json_unlocked(ITINERARIES_FILE)
+        for index, itinerary in enumerate(itineraries):
+            if itinerary.get("id") == updated_itinerary.get("id"):
+                itineraries[index] = updated_itinerary
+                _write_json_unlocked(ITINERARIES_FILE, itineraries)
+                return
 
 
 def get_all_place_requests() -> list:
@@ -462,17 +517,18 @@ def get_place_requests_for_user(username: str) -> list:
 
 
 def save_place_request(item: dict) -> None:
-    items = get_all_place_requests()
-    items.append(item)
-    _write_json(PLACE_REQUESTS_FILE, items)
+    with _locked(PLACE_REQUESTS_FILE):
+        items = _read_json_unlocked(PLACE_REQUESTS_FILE)
+        items.append(item)
+        _write_json_unlocked(PLACE_REQUESTS_FILE, items)
 
 
 def update_place_request(updated: dict) -> None:
-    items = get_all_place_requests()
-    for index, item in enumerate(items):
-        if item.get("id") == updated.get("id"):
-            items[index] = updated
-            _write_json(PLACE_REQUESTS_FILE, items)
-            return
-    raise ValueError("Place request not found")
-    raise ValueError("Itinerary not found")
+    with _locked(PLACE_REQUESTS_FILE):
+        items = _read_json_unlocked(PLACE_REQUESTS_FILE)
+        for index, item in enumerate(items):
+            if item.get("id") == updated.get("id"):
+                items[index] = updated
+                _write_json_unlocked(PLACE_REQUESTS_FILE, items)
+                return
+        raise ValueError("Place request not found")

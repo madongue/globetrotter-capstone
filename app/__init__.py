@@ -6,6 +6,12 @@ Flask application factory.
 import os
 import time
 from flask import Flask, Response, g, jsonify, request, send_from_directory
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+# Module-level so app/auth.py can import it to decorate routes with
+# @limiter.limit(...). Bound to a concrete Flask app via init_app() below.
+limiter = Limiter(key_func=get_remote_address)
 
 
 def create_app():
@@ -23,12 +29,31 @@ def create_app():
 
     app = Flask(__name__, static_folder=static_folder, static_url_path=static_url_path)
 
-    # Secret key used for JWT signing.  Set the SECRET_KEY environment variable
-    # in production.  The fallback is intentionally weak and must never be used
-    # outside of local development.
-    app.config["SECRET_KEY"] = os.environ.get(
-        "SECRET_KEY", "globetrotter-secret-change-in-prod"
+    # Secret key used for JWT signing. Must be set via the SECRET_KEY
+    # environment variable in any real deployment -- the weak fallback is
+    # only ever used for local development or under pytest, so a forgotten
+    # SECRET_KEY in production fails loudly at startup instead of silently
+    # accepting forgeable tokens.
+    is_dev_or_test = os.environ.get("FLASK_DEBUG") == "1" or bool(
+        os.environ.get("PYTEST_CURRENT_TEST")
     )
+    secret_key = os.environ.get("SECRET_KEY")
+    if not secret_key:
+        if is_dev_or_test:
+            secret_key = "globetrotter-secret-change-in-prod"
+        else:
+            raise RuntimeError(
+                "SECRET_KEY environment variable must be set. Set FLASK_DEBUG=1 "
+                "to run locally without it."
+            )
+    app.config["SECRET_KEY"] = secret_key
+
+    # Rate limiting uses in-memory storage, so limits are per gunicorn worker
+    # rather than global -- adequate at this deployment's scale, but revisit
+    # with a shared backend (e.g. Redis) if it ever runs multi-instance.
+    app.config["RATELIMIT_ENABLED"] = not os.environ.get("PYTEST_CURRENT_TEST")
+    limiter.init_app(app)
+
     app.config["METRICS"] = {
         "request_count": 0,
         "error_count": 0,

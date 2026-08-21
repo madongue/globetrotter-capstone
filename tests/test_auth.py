@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import tempfile
@@ -7,6 +8,12 @@ import pytest
 import app.models as models
 from app import create_app
 from app.models import _read_json, _write_json
+
+
+def _phone_for(username: str) -> str:
+    """Deterministic, distinct phone number per username for test registrations."""
+    digest = hashlib.md5(username.encode()).hexdigest()
+    return "+237" + str(int(digest[:8], 16) % 900000000 + 100000000)
 
 
 @pytest.fixture(autouse=True)
@@ -29,7 +36,12 @@ def test_register_and_login(client):
     response = client.post(
         "/api/register",
         data=json.dumps(
-            {"username": "alice", "password": "password123", "preferences": ["beach"]}
+            {
+                "username": "alice",
+                "password": "password123",
+                "preferences": ["beach"],
+                "phone": _phone_for("alice"),
+            }
         ),
         content_type="application/json",
     )
@@ -45,28 +57,38 @@ def test_register_and_login(client):
     assert "token" in response.get_json()
 
 
-def test_first_registered_user_becomes_admin(client):
+def test_first_registered_user_is_not_admin_by_default(client):
     response = client.post(
         "/api/register",
-        data=json.dumps({"username": "owner", "password": "password123"}),
+        data=json.dumps(
+            {"username": "owner", "password": "password123", "phone": "+237600000001"}
+        ),
         content_type="application/json",
     )
 
     assert response.status_code == 201
-    assert _read_json(models.USERS_FILE)[0]["role"] == "admin"
+    assert _read_json(models.USERS_FILE)[0]["role"] == "user"
 
 
 def test_configured_admin_username_becomes_admin(client, monkeypatch):
     client.post(
         "/api/register",
-        data=json.dumps({"username": "alice", "password": "password123"}),
+        data=json.dumps(
+            {"username": "alice", "password": "password123", "phone": _phone_for("alice")}
+        ),
         content_type="application/json",
     )
     monkeypatch.setenv("ADMIN_USERNAMES", "operator, adminuser")
 
     response = client.post(
         "/api/register",
-        data=json.dumps({"username": "adminuser", "password": "password123"}),
+        data=json.dumps(
+            {
+                "username": "adminuser",
+                "password": "password123",
+                "phone": _phone_for("adminuser"),
+            }
+        ),
         content_type="application/json",
     )
 
@@ -81,7 +103,9 @@ def test_register_recovers_from_null_user_store(client):
 
     response = client.post(
         "/api/register",
-        data=json.dumps({"username": "alice", "password": "password123"}),
+        data=json.dumps(
+            {"username": "alice", "password": "password123", "phone": _phone_for("alice")}
+        ),
         content_type="application/json",
     )
 
@@ -92,12 +116,16 @@ def test_register_recovers_from_null_user_store(client):
 def test_register_duplicate_username(client):
     client.post(
         "/api/register",
-        data=json.dumps({"username": "alice", "password": "password123"}),
+        data=json.dumps(
+            {"username": "alice", "password": "password123", "phone": _phone_for("alice")}
+        ),
         content_type="application/json",
     )
     response = client.post(
         "/api/register",
-        data=json.dumps({"username": "alice", "password": "otherpass"}),
+        data=json.dumps(
+            {"username": "alice", "password": "otherpass", "phone": _phone_for("alice2")}
+        ),
         content_type="application/json",
     )
     assert response.status_code == 409
@@ -117,7 +145,14 @@ def test_login_invalid_credentials(client):
 def test_profile_read_and_update_preferences(client):
     client.post(
         "/api/register",
-        data=json.dumps({"username": "alice", "password": "password123", "preferences": ["beach"]}),
+        data=json.dumps(
+            {
+                "username": "alice",
+                "password": "password123",
+                "preferences": ["beach"],
+                "phone": _phone_for("alice"),
+            }
+        ),
         content_type="application/json",
     )
     login_response = client.post(
@@ -148,7 +183,14 @@ def test_interests_are_predefined_and_unknown_values_are_ignored(client):
 
     client.post(
         "/api/register",
-        data=json.dumps({"username": "alice", "password": "password123", "preferences": ["beach", "made-up"]}),
+        data=json.dumps(
+            {
+                "username": "alice",
+                "password": "password123",
+                "preferences": ["beach", "made-up"],
+                "phone": _phone_for("alice"),
+            }
+        ),
         content_type="application/json",
     )
     login_response = client.post(
@@ -219,12 +261,16 @@ def test_google_auth_with_verified_id_token(client, monkeypatch):
 def test_admin_can_manage_user_roles(client):
     client.post(
         "/api/register",
-        data=json.dumps({"username": "admin", "password": "password123"}),
+        data=json.dumps(
+            {"username": "admin", "password": "password123", "phone": _phone_for("admin")}
+        ),
         content_type="application/json",
     )
     client.post(
         "/api/register",
-        data=json.dumps({"username": "bob", "password": "password123"}),
+        data=json.dumps(
+            {"username": "bob", "password": "password123", "phone": _phone_for("bob")}
+        ),
         content_type="application/json",
     )
     users = _read_json(models.USERS_FILE)
@@ -250,3 +296,97 @@ def test_admin_can_manage_user_roles(client):
     )
     assert response.status_code == 200
     assert response.get_json()["user"]["role"] == "admin"
+
+
+def _register(client, username="victim"):
+    return client.post(
+        "/api/register",
+        data=json.dumps(
+            {
+                "username": username,
+                "password": "password123",
+                "phone": _phone_for(username),
+            }
+        ),
+        content_type="application/json",
+    )
+
+
+def test_forgot_password_does_not_leak_reset_token_outside_debug(client):
+    """The reset token must never travel back in the HTTP response.
+
+    Returning it would let anyone who knows a username take over that
+    account by replaying it against /reset-password.
+    """
+    _register(client)
+
+    response = client.post(
+        "/api/forgot-password",
+        data=json.dumps({"username": "victim"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert "reset_token" not in payload
+    assert "expires_at" in payload
+
+
+def test_forgot_password_exposes_token_only_in_debug(client):
+    """Debug mode keeps local testing usable while no mailer is configured."""
+    _register(client)
+    client.application.debug = True
+
+    response = client.post(
+        "/api/forgot-password",
+        data=json.dumps({"username": "victim"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["reset_token"]
+
+
+def test_reset_password_flow_completes_with_issued_token(client):
+    """The debug-issued token still drives a real password change."""
+    _register(client)
+    client.application.debug = True
+    reset_token = client.post(
+        "/api/forgot-password",
+        data=json.dumps({"username": "victim"}),
+        content_type="application/json",
+    ).get_json()["reset_token"]
+    client.application.debug = False
+
+    response = client.post(
+        "/api/reset-password",
+        data=json.dumps({"token": reset_token, "new_password": "brand-new-pass"}),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
+    login = client.post(
+        "/api/login",
+        data=json.dumps({"username": "victim", "password": "brand-new-pass"}),
+        content_type="application/json",
+    )
+    assert login.status_code == 200
+    assert login.get_json()["token"]
+
+
+def test_secret_key_is_required_outside_debug_and_tests(monkeypatch):
+    """A missing SECRET_KEY must fail loudly instead of signing JWTs with a known default."""
+    monkeypatch.delenv("SECRET_KEY", raising=False)
+    monkeypatch.delenv("FLASK_DEBUG", raising=False)
+    monkeypatch.delenv("PYTEST_CURRENT_TEST", raising=False)
+
+    with pytest.raises(RuntimeError, match="SECRET_KEY"):
+        create_app()
+
+
+def test_secret_key_falls_back_in_debug_mode(monkeypatch):
+    monkeypatch.delenv("SECRET_KEY", raising=False)
+    monkeypatch.delenv("PYTEST_CURRENT_TEST", raising=False)
+    monkeypatch.setenv("FLASK_DEBUG", "1")
+
+    assert create_app().config["SECRET_KEY"]

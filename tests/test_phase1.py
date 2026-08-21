@@ -142,6 +142,7 @@ def test_register_login_recommend_and_itinerary_flow(client):
             "username": "alice",
             "password": "secret123",
             "preferences": ["beach", "food"],
+            "phone": "+237650000001",
         },
     )
     assert register_resp.status_code == 201

@@ -665,10 +665,6 @@ function App() {
     longitude: '',
     currentLocation: '',
   });
-  const [isLiveTracking, setIsLiveTracking] = useState(false);
-  const [geoError, setGeoError] = useState(null);
-  const liveWatchIdRef = useRef(null);
-  const lastTrackingPostRef = useRef(0);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -2463,75 +2459,6 @@ function App() {
     }
     setLiveLocationWatchId(null);
     setLiveLocationStatus('stopped');
-  };
-
-  const postTrackingPosition = async (latitude, longitude, accuracy) => {
-    if (!selectedItinerary || !token) return;
-    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/tracking`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        latitude,
-        longitude,
-        accuracy_meters: accuracy,
-        current_location: trackingForm.currentLocation || selectedItinerary.location,
-        current_stage_id: progressForm.currentStageId || undefined,
-      }),
-    });
-    const result = await response.json();
-    if (response.ok) {
-      setTrackingInfo(result.tracking);
-      refreshSelectedItinerary(result.itinerary);
-      setTrackingForm((prev) => ({ ...prev, latitude: String(latitude), longitude: String(longitude) }));
-    }
-  };
-
-  const handleUseMyLocation = () => {
-    if (!navigator.geolocation) {
-      setGeoError('Geolocation is not supported on this device.');
-      return;
-    }
-    setGeoError(null);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude, accuracy } = position.coords;
-        postTrackingPosition(latitude, longitude, accuracy);
-        setAlert({ type: 'success', message: 'Your current location was shared as the live trip position.' });
-      },
-      (error) => setGeoError(error.message || 'Unable to get your location.'),
-      { enableHighAccuracy: true, timeout: 12000 }
-    );
-  };
-
-  const handleToggleLiveTracking = () => {
-    if (isLiveTracking) {
-      if (liveWatchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(liveWatchIdRef.current);
-        liveWatchIdRef.current = null;
-      }
-      setIsLiveTracking(false);
-      return;
-    }
-    if (!navigator.geolocation) {
-      setGeoError('Geolocation is not supported on this device.');
-      return;
-    }
-    setGeoError(null);
-    liveWatchIdRef.current = navigator.geolocation.watchPosition(
-      (position) => {
-        const now = Date.now();
-        if (now - lastTrackingPostRef.current < 15000) return;
-        lastTrackingPostRef.current = now;
-        const { latitude, longitude, accuracy } = position.coords;
-        postTrackingPosition(latitude, longitude, accuracy);
-      },
-      (error) => setGeoError(error.message || 'Unable to track your location.'),
-      { enableHighAccuracy: true, maximumAge: 10000 }
-    );
-    setIsLiveTracking(true);
   };
 
   const handleLoadBudget = async () => {

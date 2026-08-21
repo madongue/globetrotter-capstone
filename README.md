@@ -254,15 +254,29 @@ The API will be available at `http://localhost:5000`.
 
 ## Running with Docker
 
+The root `Dockerfile` builds the deployed application (the Flask monolith in
+`app/`, serving the compiled React frontend):
+
 ```bash
-# Build and start
+docker build -t globetrotter-app .
+docker run -p 5000:5000 -e SECRET_KEY=dev-secret -v "$(pwd)/data:/globetrotter/data" globetrotter-app
+```
+
+`docker-compose.yml` is separate: it starts the **Phase 2 microservices**
+stack (gateway plus the four services under `services/`), not the monolith.
+
+```bash
+# Build and start the microservices stack
 docker-compose up --build
 
 # Stop
 docker-compose down
 ```
 
-The `data/` directory is mounted into the container, so JSON files persist between runs.
+> **Data does not persist unless you mount a volume.** Neither the Dockerfile
+> nor `docker-compose.yml` declares one, so JSON files written inside a
+> container are lost when it is removed or rebuilt. Pass `-v` as shown above
+> to keep data between runs.
 
 ---
 
@@ -286,6 +300,20 @@ All data is persisted in plain JSON files inside the `data/` directory:
 | `data/notifications.json` | User notifications |
 
 Curated catalogue files (`destinations`, `places`, `hotels`, and `activities`) are versioned seed data. Runtime/user files remain local-only.
+
+> ### ⚠️ Runtime data is not durable on ephemeral hosts
+>
+> Runtime files (`users.json`, `itineraries.json`, `groups.json`, `media.json`,
+> `uploads/`, …) are written to the container's local filesystem and are **not**
+> committed to git. On platforms with an ephemeral disk — including Render web
+> services without a paid persistent disk — every deploy, restart, or instance
+> replacement wipes them, so all registered users, trips, and uploads are lost.
+>
+> To run this with real users, either attach a persistent disk mounted at
+> `data/`, or migrate the storage layer in [`app/models.py`](app/models.py) to a
+> managed database. Concurrent writes are already guarded with per-file locks
+> and atomic replaces, but that protects against corruption, not against the
+> disk disappearing.
 
 Catalogue photos are cached under `client/public/images/` and referenced by local `/images/...` paths in the JSON records. Each cached record keeps `image_source_url`, `original_image_url`, and `image_license_note` metadata for attribution review. To refresh the local assets from the curated source URLs, run:
 
@@ -370,11 +398,11 @@ Then open `http://localhost:5000`.
 
 | Environment Variable | Default                              | Description           |
 |----------------------|--------------------------------------|-----------------------|
-| `SECRET_KEY`         | `globetrotter-secret-change-in-prod` | JWT signing key – **must be overridden in production** |
+| `SECRET_KEY`         | _(none – required)_                  | JWT signing key. **Required**: the app refuses to start without it unless `FLASK_DEBUG=1` or running under pytest. |
 | `FLASK_DEBUG`        | `0`                                  | Set to `1` to enable Flask debug mode (development only) |
 | `PORT`               | `5000`                               | Port the app listens on |
 | `GOOGLE_CLIENT_ID`   | unset                                | Optional audience check for Google ID-token login |
-| `ADMIN_USERNAMES`    | unset                                | Comma-separated usernames that become admins when they register; the first registered account is also promoted for bootstrap setup |
+| `ADMIN_USERNAMES`    | unset                                | Comma-separated usernames that become admins when they register. There is no automatic "first user becomes admin" promotion; admins promote others from the Admin dashboard |
 | `VITE_GOOGLE_MAPS_API_KEY` | unset                         | Enables the interactive Google Maps picker in the admin dashboard. Without it, the app falls back to Google Maps embeds and external links. |
 
 > **Important:** Always set `SECRET_KEY` to a long, random value in production (e.g. `python -c "import secrets; print(secrets.token_hex(32))"`).

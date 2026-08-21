@@ -3728,21 +3728,27 @@
       "country_focus": "Cameroon"
     },
     "cost": 5000,
-    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bimbia_-_Canon_allemand.JPG/960px-Bimbia_-_Canon_allemand.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "image_url": "/images/places/place-osm-node-3783586796.jpg",
     "images": [
       {
-        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bimbia_-_Canon_allemand.JPG/960px-Bimbia_-_Canon_allemand.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "url": "/images/places/place-osm-node-3783586796.jpg",
         "source_url": "https://commons.wikimedia.org/wiki/File:Bimbia_-_Canon_allemand.JPG",
         "license": "CC BY-SA 3.0",
         "author": "GuillaumeG",
-        "license_note": "Media discovered via Wikimedia Commons API; verify attribution before production use."
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
       }
     ],
     "continent": "Africa",
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Limbé III"
+    "city": "Limbé III",
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bimbia_-_Canon_allemand.JPG/960px-Bimbia_-_Canon_allemand.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "local_image_url": "/images/places/place-osm-node-3783586796.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Bimbia_-_Canon_allemand.JPG",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "image_license": "CC BY-SA 3.0",
+    "image_author": "GuillaumeG"
   },
   {
     "id": "place-osm-node-6683412087",
@@ -4714,14 +4720,14 @@
       "country_focus": "Cameroon"
     },
     "cost": 5000,
-    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Alfred_Saker_Monument%2C_Limbe.jpg/960px-Alfred_Saker_Monument%2C_Limbe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "image_url": "/images/places/place-osm-node-3167101059.jpg",
     "images": [
       {
-        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Alfred_Saker_Monument%2C_Limbe.jpg/960px-Alfred_Saker_Monument%2C_Limbe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "url": "/images/places/place-osm-node-3167101059.jpg",
         "source_url": "https://commons.wikimedia.org/wiki/File:Alfred_Saker_Monument,_Limbe.jpg",
         "license": "CC BY-SA 4.0",
         "author": "AmateurProgress",
-        "license_note": "Media discovered via Wikimedia Commons API; verify attribution before production use."
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
       }
     ],
     "continent": "Africa",
@@ -4729,7 +4735,13 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Limbe",
-    "quarter": "Ambas Bay"
+    "quarter": "Ambas Bay",
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Alfred_Saker_Monument%2C_Limbe.jpg/960px-Alfred_Saker_Monument%2C_Limbe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "local_image_url": "/images/places/place-osm-node-3167101059.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Alfred_Saker_Monument,_Limbe.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "AmateurProgress"
   },
   {
     "id": "place-osm-node-11465283199",
@@ -5772,14 +5784,14 @@
       "country_focus": "Cameroon"
     },
     "cost": 10000,
-    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Ambas_Bay_dance.jpg/960px-Ambas_Bay_dance.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "image_url": "/images/places/place-osm-node-6508805093.jpg",
     "images": [
       {
-        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Ambas_Bay_dance.jpg/960px-Ambas_Bay_dance.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "url": "/images/places/place-osm-node-6508805093.jpg",
         "source_url": "https://commons.wikimedia.org/wiki/File:Ambas_Bay_dance.jpg",
         "license": "CC BY-SA 4.0",
         "author": "Adesolive",
-        "license_note": "Media discovered via Wikimedia Commons API; verify attribution before production use."
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
       }
     ],
     "continent": "Africa",
@@ -5794,7 +5806,13 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Limbé II"
+    "city": "Limbé II",
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Ambas_Bay_dance.jpg/960px-Ambas_Bay_dance.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "local_image_url": "/images/places/place-osm-node-6508805093.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Ambas_Bay_dance.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "image_license": "CC BY-SA 4.0",
+    "image_author": "Adesolive"
   },
   {
     "id": "place-osm-node-3128537549",
@@ -16642,21 +16660,27 @@
       "country_focus": "Cameroon"
     },
     "cost": 12000,
-    "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Met_traditionnel_chez_les_Tupuris_dans_l%27Extr%C3%AAme-Nord.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "image_url": "/images/places/place-osm-node-2784182153.jpg",
     "images": [
       {
-        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Met_traditionnel_chez_les_Tupuris_dans_l%27Extr%C3%AAme-Nord.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "url": "/images/places/place-osm-node-2784182153.jpg",
         "source_url": "https://commons.wikimedia.org/wiki/File:Met_traditionnel_chez_les_Tupuris_dans_l%27Extr%C3%AAme-Nord.jpg",
         "license": "CC0",
         "author": "Barkafidele",
-        "license_note": "Media discovered via Wikimedia Commons API; verify attribution before production use."
+        "license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review."
       }
     ],
     "continent": "Africa",
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Limbé II"
+    "city": "Limbé II",
+    "original_image_url": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Met_traditionnel_chez_les_Tupuris_dans_l%27Extr%C3%AAme-Nord.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "local_image_url": "/images/places/place-osm-node-2784182153.jpg",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Met_traditionnel_chez_les_Tupuris_dans_l%27Extr%C3%AAme-Nord.jpg",
+    "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
+    "image_license": "CC0",
+    "image_author": "Barkafidele"
   },
   {
     "id": "place-osm-node-9591616417",

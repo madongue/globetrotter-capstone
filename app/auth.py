@@ -22,6 +22,7 @@ import requests
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from app import limiter
 from app.interests import PREDEFINED_INTERESTS, normalize_interests
 from app.models import (
     get_all_users,
@@ -165,6 +166,7 @@ def _normalize_username(name: str, email: str | None = None) -> str:
 
 
 @auth_bp.route("/register", methods=["POST"])
+@limiter.limit("10 per minute")
 def register():
     """Register a new user.
 
@@ -208,6 +210,7 @@ def register():
 
 @auth_bp.route("/auth/google", methods=["POST"])
 @auth_bp.route("/google-auth", methods=["POST"])
+@limiter.limit("10 per minute")
 def google_auth():
     """Authenticate or create a user from a Google ID token."""
     data = request.get_json(silent=True) or {}
@@ -296,6 +299,7 @@ def google_auth():
 
 
 @auth_bp.route("/login", methods=["POST"])
+@limiter.limit("5 per minute")
 def login():
     """Authenticate a user and return a JWT.
 
@@ -332,6 +336,7 @@ def login():
 
 
 @auth_bp.route("/forgot-password", methods=["POST"])
+@limiter.limit("5 per minute")
 def forgot_password():
     data = request.get_json(silent=True) or {}
     username = data.get("username", "").strip()
@@ -349,15 +354,26 @@ def forgot_password():
     user["password_reset_expires_at"] = expires_at
     update_user(user)
 
-    return jsonify({
+    response = {
         "message": "password reset requested",
-        "reset_token": reset_token,
         "expires_at": expires_at,
-        "note": "In production, send this token by email."
-    }), 200
+    }
+    if current_app.debug:
+        # No email service is configured for this capstone, so expose the
+        # token directly in debug mode to keep local dev/grading usable.
+        # It must never be returned outside debug mode.
+        response["reset_token"] = reset_token
+        response["note"] = "Debug mode only: token included since no email service is configured."
+    else:
+        current_app.logger.info(
+            "Password reset requested for %s; token=%s", username, reset_token
+        )
+
+    return jsonify(response), 200
 
 
 @auth_bp.route("/reset-password", methods=["POST"])
+@limiter.limit("5 per minute")
 def reset_password():
     data = request.get_json(silent=True) or {}
     reset_token = data.get("token", "").strip()

@@ -161,13 +161,25 @@ def _attach_local_image(record: dict, local_url: str, source_url: str, original_
     )
     if context_note:
         record["image_context_note"] = context_note
-    record["images"] = [
-        {
-            "url": local_url,
-            "source_url": record["image_source_url"],
-            "license_note": record["image_license_note"],
-        }
-    ]
+    # Caching the bytes locally must not drop the upstream attribution that
+    # CC BY-SA images legally require, so carry licence/author across.
+    previous = (record.get("images") or [{}])[0]
+    licence = record.get("image_license") or previous.get("license", "")
+    author = record.get("image_author") or previous.get("author", "")
+    if licence:
+        record["image_license"] = licence
+    if author:
+        record["image_author"] = author
+    cached = {
+        "url": local_url,
+        "source_url": record["image_source_url"],
+        "license_note": record["image_license_note"],
+    }
+    if licence:
+        cached["license"] = licence
+    if author:
+        cached["author"] = author
+    record["images"] = [cached]
 
 
 def _source_url(record: dict) -> str:

@@ -1,3 +1,4 @@
+import hashlib
 import json
 from io import BytesIO
 
@@ -5,6 +6,12 @@ import pytest
 
 from app import create_app
 from app.models import _read_json, _write_json
+
+
+def _phone_for(username: str) -> str:
+    """Deterministic, distinct phone number per username for test registrations."""
+    digest = hashlib.md5(username.encode()).hexdigest()
+    return "+237" + str(int(digest[:8], 16) % 900000000 + 100000000)
 
 
 @pytest.fixture(autouse=True)
@@ -38,7 +45,9 @@ def client():
 def register_and_login(client, username="alice"):
     client.post(
         "/api/register",
-        data=json.dumps({"username": username, "password": "password123"}),
+        data=json.dumps(
+            {"username": username, "password": "password123", "phone": _phone_for(username)}
+        ),
         content_type="application/json",
     )
     response = client.post(
