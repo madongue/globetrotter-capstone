@@ -54,6 +54,14 @@ def create_app():
     app.config["RATELIMIT_ENABLED"] = not os.environ.get("PYTEST_CURRENT_TEST")
     limiter.init_app(app)
 
+    # A database-backed deployment starts with an empty store, so load the
+    # committed catalogue if nothing is there yet. Skipped under pytest, whose
+    # fixtures supply their own fixture data.
+    if not os.environ.get("PYTEST_CURRENT_TEST"):
+        from app.models import seed_catalogue_if_empty
+
+        seed_catalogue_if_empty(app.logger)
+
     app.config["METRICS"] = {
         "request_count": 0,
         "error_count": 0,

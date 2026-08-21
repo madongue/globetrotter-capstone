@@ -16,6 +16,7 @@ storage backend (see :mod:`app.store`):
 Every function below works identically against either backend, so callers
 never need to know which one is active.
 """
+import json
 import os
 
 from app.store import build_store, collection_name_for
@@ -128,6 +129,66 @@ def _write_json(filepath: str, data: list) -> None:
     """Replace every document in the collection backing *filepath*."""
     with _locked(filepath):
         _write_json_unlocked(filepath, data)
+
+
+# ---------------------------------------------------------------------------
+# Catalogue seeding
+#
+# The curated catalogue (destinations, places, hotels, activities) is seed data
+# committed to git, not user data. With the JSON backend it is simply read from
+# those files. With a database backend a fresh database starts empty, so
+# without this the app would come up with nothing to discover -- no places, no
+# search results -- until someone remembered to run the migration script.
+# ---------------------------------------------------------------------------
+
+#: Collections safe to import from disk when the store has none. User data is
+#: deliberately absent: an empty users table means a new deployment, not a
+#: deployment missing its seed.
+SEED_COLLECTIONS = ("destinations", "places", "hotels", "activities")
+
+
+def seed_catalogue_if_empty(logger=None) -> dict:
+    """Load the committed catalogue into empty collections.
+
+    Returns a mapping of collection name to how many documents were imported.
+    Never raises: a failure to seed must not stop the application booting.
+    """
+    imported = {}
+    store = get_store()
+
+    for collection in SEED_COLLECTIONS:
+        try:
+            seed_path = os.path.join(DATA_DIR, f"{collection}.json")
+            if not os.path.exists(seed_path):
+                continue
+
+            with _locked(collection_path_for(collection)):
+                if _read_json_unlocked(collection_path_for(collection)):
+                    continue  # already populated; never overwrite live edits
+
+                with open(seed_path, "r", encoding="utf-8") as handle:
+                    content = handle.read().strip()
+                if not content:
+                    continue
+                documents = json.loads(content)
+                if not isinstance(documents, list) or not documents:
+                    continue
+
+                _write_json_unlocked(collection_path_for(collection), documents)
+                imported[collection] = len(documents)
+        except Exception:  # noqa: BLE001 - seeding is best-effort
+            if logger:
+                logger.warning("could not seed %s catalogue", collection, exc_info=True)
+
+    if imported and logger:
+        summary = ", ".join(f"{count} {name}" for name, count in imported.items())
+        logger.info("Seeded catalogue into empty store: %s", summary)
+    return imported
+
+
+def collection_path_for(collection: str) -> str:
+    """Public alias for resolving a collection to its data-file path."""
+    return _path_for_collection(collection)
 
 
 # ---------------------------------------------------------------------------

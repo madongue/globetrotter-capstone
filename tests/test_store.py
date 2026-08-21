@@ -465,3 +465,69 @@ def test_over_long_keys_stay_distinct(sql_store):
     sql_store.write("users", [{"username": first}, {"username": second}])
 
     assert [u["username"] for u in sql_store.read("users")] == [first, second]
+
+
+# ---------------------------------------------------------------------------
+# Catalogue seeding
+#
+# With a database backend a fresh deployment starts empty. Without seeding, the
+# app boots with nothing to discover -- no places, no search results -- which is
+# a silent, total failure of the product's main surface.
+# ---------------------------------------------------------------------------
+
+def test_fresh_database_is_seeded_with_the_catalogue(tmp_path, monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", sql_url(tmp_path))
+    monkeypatch.setenv("SECRET_KEY", "seed-test")
+    _fresh_sql_store(tmp_path)
+    models.reset_store()
+
+    imported = models.seed_catalogue_if_empty()
+
+    assert imported.get("places", 0) > 0, "catalogue did not load"
+    assert len(models.get_all_places()) == imported["places"]
+    assert len(models.get_all_destinations()) > 0
+
+    models.reset_store()
+
+
+def test_seeding_does_not_duplicate_on_restart(tmp_path, monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", sql_url(tmp_path))
+    _fresh_sql_store(tmp_path)
+    models.reset_store()
+
+    models.seed_catalogue_if_empty()
+    first = len(models.get_all_places())
+    models.seed_catalogue_if_empty()
+
+    assert len(models.get_all_places()) == first
+    models.reset_store()
+
+
+def test_seeding_never_overwrites_curated_data(tmp_path, monkeypatch):
+    """An admin who prunes the catalogue must not have it restored under them."""
+    monkeypatch.setenv("DATABASE_URL", sql_url(tmp_path))
+    _fresh_sql_store(tmp_path)
+    models.reset_store()
+
+    models.seed_catalogue_if_empty()
+    models._write_json(models.PLACES_FILE, [{"id": "only-one", "name": "Curated"}])
+
+    models.seed_catalogue_if_empty()
+
+    places = models.get_all_places()
+    assert len(places) == 1 and places[0]["id"] == "only-one"
+    models.reset_store()
+
+
+def test_seeding_never_invents_users(tmp_path, monkeypatch):
+    """An empty users table means a new deployment, not a missing seed."""
+    monkeypatch.setenv("DATABASE_URL", sql_url(tmp_path))
+    _fresh_sql_store(tmp_path)
+    models.reset_store()
+
+    models.seed_catalogue_if_empty()
+
+    assert models.get_all_users() == []
+    assert "users" not in models.SEED_COLLECTIONS
+    assert "itineraries" not in models.SEED_COLLECTIONS
+    models.reset_store()
