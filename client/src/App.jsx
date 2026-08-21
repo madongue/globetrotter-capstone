@@ -647,6 +647,7 @@ function App() {
   const [runtimeGoogleClientId, setRuntimeGoogleClientId] = useState('');
   const [runtimeGoogleMapsApiKey, setRuntimeGoogleMapsApiKey] = useState('');
   const [googleClientIdLoadingError, setGoogleClientIdLoadingError] = useState(null);
+  const [platformStats, setPlatformStats] = useState(null);
   const [liveLocationStatus, setLiveLocationStatus] = useState('idle');
   const [liveLocationError, setLiveLocationError] = useState('');
   const [liveLocationPosition, setLiveLocationPosition] = useState(null);
@@ -2263,6 +2264,30 @@ function App() {
     }
   };
 
+  // Public community counters shown on the landing page. Refreshed on an
+  // interval so "active today" stays current without a reload.
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadStats = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/stats`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!cancelled) setPlatformStats(data);
+      } catch (error) {
+        // Counters are decorative; a failure here must not disturb the page.
+      }
+    };
+
+    loadStats();
+    const timer = setInterval(loadStats, 60000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, []);
+
   const handleLoadMapInfo = async () => {
     if (!token || !selectedItinerary) {
       setAlert({ type: 'error', message: 'Please login and select an itinerary first.' });
@@ -3281,6 +3306,29 @@ function App() {
                 </div>
               )}
             </div>
+            {platformStats && (
+              <div className="stats-strip" aria-label="Community activity">
+                <div className="stat-tile">
+                  <span className="stat-value">{platformStats.total_travellers.toLocaleString()}</span>
+                  <span className="stat-label">Travellers on GlobeTrotter</span>
+                </div>
+                <div className="stat-tile stat-live">
+                  <span className="stat-value">
+                    <span className="live-dot" aria-hidden="true"></span>
+                    {platformStats.active_today.toLocaleString()}
+                  </span>
+                  <span className="stat-label">Active today</span>
+                </div>
+                <div className="stat-tile">
+                  <span className="stat-value">{platformStats.total_trips.toLocaleString()}</span>
+                  <span className="stat-label">Trips planned</span>
+                </div>
+                <div className="stat-tile">
+                  <span className="stat-value">{platformStats.total_places.toLocaleString()}</span>
+                  <span className="stat-label">Places to discover</span>
+                </div>
+              </div>
+            )}
             <div className="hero-cards">
               <article className="feature-card">
                 <h3>Shared travel plans</h3>

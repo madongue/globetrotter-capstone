@@ -463,3 +463,94 @@ def test_registration_accepts_a_username_at_the_limit(client):
         content_type="application/json",
     )
     assert response.status_code == 201
+
+
+def _register_user(client, username):
+    return client.post(
+        "/api/register",
+        data=json.dumps(
+            {
+                "username": username,
+                "password": "password123",
+                "phone": _phone_for(username),
+            }
+        ),
+        content_type="application/json",
+    )
+
+
+def test_platform_stats_are_public(client):
+    """The landing page shows these to signed-out visitors."""
+    response = client.get("/api/stats")
+    assert response.status_code == 200
+    assert response.get_json()["total_travellers"] == 0
+
+
+def test_platform_stats_count_travellers_and_activity(client):
+    for name in ("alice", "bob", "carine"):
+        _register_user(client, name)
+
+    stats = client.get("/api/stats").get_json()
+    assert stats["total_travellers"] == 3
+    # Registering is itself activity, so all three count as active today.
+    assert stats["active_today"] == 3
+    assert stats["joined_this_week"] == 3
+
+
+def test_platform_stats_never_expose_personal_data(client):
+    """These counters are shown to anyone, so they must stay aggregate-only."""
+    _register_user(client, "alice")
+
+    body = client.get("/api/stats").get_data(as_text=True).lower()
+    for leak in ("alice", "password", "phone", "email", "token"):
+        assert leak not in body, f"stats leaked {leak}"
+
+
+def test_authenticated_requests_record_activity(client):
+    """"Active today" is derived from this stamp, so a request must refresh it."""
+    _register_user(client, "alice")
+    token = client.post(
+        "/api/login",
+        data=json.dumps({"username": "alice", "password": "password123"}),
+        content_type="application/json",
+    ).get_json()["token"]
+
+    user = _read_json(models.USERS_FILE)[0]
+    user.pop("last_seen_at", None)
+    _write_json(models.USERS_FILE, [user])
+    assert client.get("/api/stats").get_json()["active_today"] == 0
+
+    client.get("/api/itineraries", headers={"Authorization": f"Bearer {token}"})
+
+    assert client.get("/api/stats").get_json()["active_today"] == 1
+
+
+def test_activity_write_is_throttled(client):
+    """Every authenticated request passes through here; writing each time would
+    mean a storage write per request."""
+    _register_user(client, "alice")
+    token = client.post(
+        "/api/login",
+        data=json.dumps({"username": "alice", "password": "password123"}),
+        content_type="application/json",
+    ).get_json()["token"]
+
+    first = _read_json(models.USERS_FILE)[0]["last_seen_at"]
+    for _ in range(5):
+        client.get("/api/itineraries", headers={"Authorization": f"Bearer {token}"})
+
+    assert _read_json(models.USERS_FILE)[0]["last_seen_at"] == first
+
+
+def test_stats_survive_users_with_no_activity_stamp(client):
+    """Accounts created before activity tracking existed have no stamp."""
+    _register_user(client, "alice")
+    legacy = _read_json(models.USERS_FILE)[0]
+    legacy.pop("last_seen_at", None)
+    legacy.pop("created_at", None)
+    _write_json(models.USERS_FILE, [legacy])
+
+    stats = client.get("/api/stats").get_json()
+    assert stats["total_travellers"] == 1
+    assert stats["active_today"] == 0
+    assert stats["joined_this_week"] == 0

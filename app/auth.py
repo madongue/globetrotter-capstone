@@ -74,7 +74,8 @@ def get_current_user(request_obj) -> str | None:
     """Extract and validate the JWT from the Authorization header.
 
     Returns the username (subject claim) or None if the token is missing /
-    invalid.
+    invalid. Also refreshes the caller's last-seen timestamp, which is what
+    the "active today" figure on the platform counters is derived from.
     """
     auth_header = request_obj.headers.get("Authorization", "")
     if not auth_header.startswith("Bearer "):
@@ -82,9 +83,55 @@ def get_current_user(request_obj) -> str | None:
     token = auth_header.split(" ", 1)[1]
     try:
         payload = decode_token(token, current_app.config["SECRET_KEY"])
-        return payload.get("sub")
     except jwt.PyJWTError:
         return None
+
+    username = payload.get("sub")
+    if username:
+        touch_user_activity(username)
+    return username
+
+
+#: How stale a last-seen stamp may get before it is rewritten. Every
+#: authenticated request passes through here, so writing each time would mean a
+#: storage write per request; a few minutes' granularity is far more than
+#: "active today" needs.
+ACTIVITY_REFRESH_SECONDS = 300
+
+
+def touch_user_activity(username: str) -> None:
+    """Record that *username* was seen just now, at most every few minutes.
+
+    Never raises: a failure to record presence must not break the request the
+    user actually made.
+    """
+    try:
+        user = get_user_by_username(username)
+        if not user:
+            return
+
+        now = datetime.datetime.now(datetime.timezone.utc)
+        previous = _parse_timestamp(user.get("last_seen_at"))
+        if previous and (now - previous).total_seconds() < ACTIVITY_REFRESH_SECONDS:
+            return
+
+        user["last_seen_at"] = now.isoformat()
+        update_user(user)
+    except Exception:  # noqa: BLE001 - presence tracking is best-effort
+        current_app.logger.debug("could not record activity for %s", username)
+
+
+def _parse_timestamp(value) -> datetime.datetime | None:
+    """Parse an ISO timestamp, tolerating older records without a timezone."""
+    if not value:
+        return None
+    try:
+        parsed = datetime.datetime.fromisoformat(str(value))
+    except (TypeError, ValueError):
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=datetime.timezone.utc)
+    return parsed
 
 
 def _generate_password_reset_token() -> str:
@@ -203,6 +250,7 @@ def register():
     if get_user_by_phone(phone):
         return jsonify({"error": "phone already registered"}), 409
 
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
     user = {
         "id": str(uuid.uuid4()),
         "username": username,
@@ -210,6 +258,8 @@ def register():
         "password_hash": generate_password_hash(password),
         "preferences": preferences,
         "role": _bootstrap_role_for(username),
+        "created_at": now,
+        "last_seen_at": now,
     }
     if phone:
         user["phone"] = phone
@@ -527,6 +577,45 @@ def update_user_role_admin(username: str):
     }), 200
 
 
+@auth_bp.route("/stats", methods=["GET"])
+def platform_stats():
+    """Public counters for the landing page: community size and today's activity.
+
+    Deliberately aggregate-only -- no usernames, no per-user detail -- so it is
+    safe to show to signed-out visitors.
+    """
+    users = get_all_users()
+    itineraries = get_all_itineraries()
+
+    now = datetime.datetime.now(datetime.timezone.utc)
+    start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    last_7_days = now - datetime.timedelta(days=7)
+
+    active_today = 0
+    joined_this_week = 0
+    for user in users:
+        seen = _parse_timestamp(user.get("last_seen_at"))
+        if seen and seen >= start_of_today:
+            active_today += 1
+        created = _parse_timestamp(user.get("created_at"))
+        if created and created >= last_7_days:
+            joined_this_week += 1
+
+    return jsonify({
+        "total_travellers": len(users),
+        "active_today": active_today,
+        "joined_this_week": joined_this_week,
+        "total_trips": len(itineraries),
+        "public_trips": sum(
+            1 for item in itineraries if item.get("visibility") == "public"
+        ),
+        "total_places": len(get_all_places()),
+        "total_hotels": len(get_all_hotels()),
+        "total_activities": len(get_all_activities()),
+        "generated_at": now.isoformat(),
+    }), 200
+
+
 @auth_bp.route("/admin/stats", methods=["GET"])
 def admin_stats():
     """Platform-wide counts for the admin overview dashboard."""
@@ -540,8 +629,17 @@ def admin_stats():
     public_itineraries = [item for item in itineraries if item.get("visibility") == "public"]
     pending_requests = [item for item in place_requests if item.get("status") == "pending"]
 
+    now = datetime.datetime.now(datetime.timezone.utc)
+    start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    active_today = sum(
+        1
+        for user in users
+        if (seen := _parse_timestamp(user.get("last_seen_at"))) and seen >= start_of_today
+    )
+
     return jsonify({
         "total_users": len(users),
+        "active_today": active_today,
         "total_admins": sum(1 for user in users if user.get("role") == "admin"),
         "total_itineraries": len(itineraries),
         "public_itineraries": len(public_itineraries),
