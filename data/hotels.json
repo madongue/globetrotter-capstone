@@ -83,7 +83,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7710573541",
@@ -213,7 +226,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Logpom"
+    "quarter": "Logpom",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5939380885",
@@ -257,7 +283,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala IV",
-    "quarter": "Mabanda"
+    "quarter": "Mabanda",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4241126392",
@@ -432,7 +471,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mvan"
+    "quarter": "Mvan",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6366028385",
@@ -476,7 +528,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4802487222",
@@ -606,7 +671,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-1885503049",
@@ -650,7 +728,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Songbikako"
+    "quarter": "Songbikako",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8684458672",
@@ -694,7 +785,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10249499619",
@@ -781,7 +885,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5650210704",
@@ -825,7 +942,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mvan"
+    "quarter": "Mvan",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8684458667",
@@ -869,7 +999,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8684458668",
@@ -913,7 +1056,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7806117585",
@@ -1000,7 +1156,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Biyem-Assi"
+    "quarter": "Biyem-Assi",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7636796990",
@@ -1304,7 +1473,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7636788724",
@@ -1735,7 +1917,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonamoussongo"
+    "quarter": "Bonamoussongo",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10948125605",
@@ -1822,7 +2017,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Didom II"
+    "quarter": "Didom II",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4776686621",
@@ -1908,7 +2116,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Limbé II"
+    "city": "Limbé II",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7193740885",
@@ -2038,7 +2259,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10779884805",
@@ -2133,7 +2367,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Limbé II",
-    "quarter": "Bota Land"
+    "quarter": "Bota Land",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4749623121",
@@ -2177,7 +2424,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala IV",
-    "quarter": "Bonambape"
+    "quarter": "Bonambape",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877814",
@@ -2221,7 +2481,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10060611017",
@@ -2308,7 +2581,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Denver"
+    "quarter": "Denver",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7636773864",
@@ -2395,7 +2681,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Bali"
+    "quarter": "Bali",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-12658323582",
@@ -2438,7 +2737,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4419001730",
@@ -2482,7 +2794,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Domaine Universitaire"
+    "quarter": "Domaine Universitaire",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10780307306",
@@ -2656,7 +2981,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7062919558",
@@ -2699,7 +3037,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7636772272",
@@ -2891,7 +3242,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7062919559",
@@ -2934,7 +3298,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5148254321",
@@ -2978,7 +3355,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Akwa"
+    "quarter": "Akwa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7884827685",
@@ -3065,7 +3455,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Limbé II"
+    "city": "Limbé II",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5774565831",
@@ -3109,7 +3512,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Simbock"
+    "quarter": "Simbock",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-3421957015",
@@ -3153,7 +3569,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-12118856202",
@@ -3197,7 +3626,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Bomkoul"
+    "quarter": "Bomkoul",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4500627489",
@@ -3329,7 +3771,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Nsam"
+    "quarter": "Nsam",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13760185442",
@@ -3373,7 +3828,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Makepe II Bonamoussadi"
+    "quarter": "Makepe II Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5531649021",
@@ -3417,7 +3885,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Yaoundé VI"
+    "quarter": "Yaoundé VI",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4877869121",
@@ -3461,7 +3942,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Limbé II",
-    "quarter": "Wovia"
+    "quarter": "Wovia",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4389097686",
@@ -3505,7 +3999,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Logpom"
+    "quarter": "Logpom",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877851",
@@ -3549,7 +4056,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877841",
@@ -3592,7 +4112,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877821",
@@ -3635,7 +4168,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877847",
@@ -3678,7 +4224,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877836",
@@ -3721,7 +4280,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877812",
@@ -3764,7 +4336,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877830",
@@ -3807,7 +4392,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877837",
@@ -3850,7 +4448,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877815",
@@ -3893,7 +4504,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11469886930",
@@ -4088,7 +4712,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonamoussongo"
+    "quarter": "Bonamoussongo",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7062919554",
@@ -4131,7 +4768,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4333925426",
@@ -4175,7 +4825,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonamoussadi"
+    "quarter": "Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4347579472",
@@ -4218,7 +4881,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8148288220",
@@ -4262,7 +4938,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Bonateki"
+    "quarter": "Bonateki",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13760089520",
@@ -4306,7 +4995,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala II",
-    "quarter": "Ndogsimbi"
+    "quarter": "Ndogsimbi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11813754133",
@@ -4478,7 +5180,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4394643451",
@@ -4522,7 +5237,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Denver"
+    "quarter": "Denver",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13760089521",
@@ -4566,7 +5294,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala II",
-    "quarter": "Ndogsimbi"
+    "quarter": "Ndogsimbi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10171194518",
@@ -4610,7 +5351,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mendong"
+    "quarter": "Mendong",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11472628849",
@@ -4741,7 +5495,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Ndogpassi III"
+    "quarter": "Ndogpassi III",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4535709013",
@@ -4785,7 +5552,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Vallée Bessengué"
+    "quarter": "Vallée Bessengué",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-1033231153",
@@ -4829,7 +5609,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7062919562",
@@ -4873,7 +5666,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4333925427",
@@ -4917,7 +5723,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonangang"
+    "quarter": "Bonangang",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6695921885",
@@ -4961,7 +5780,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonangang"
+    "quarter": "Bonangang",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4241115391",
@@ -5092,7 +5924,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Ndogpassi III"
+    "quarter": "Ndogpassi III",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-2608216926",
@@ -5136,7 +5981,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Akwa"
+    "quarter": "Akwa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11824667290",
@@ -5179,7 +6037,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4310405390",
@@ -5223,7 +6094,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Bali"
+    "quarter": "Bali",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-2889955855",
@@ -5354,7 +6238,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mendong"
+    "quarter": "Mendong",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877845",
@@ -5398,7 +6295,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877819",
@@ -5442,7 +6352,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877817",
@@ -5485,7 +6408,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6521004185",
@@ -5529,7 +6465,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Bonanjo"
+    "quarter": "Bonanjo",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8684458669",
@@ -5573,7 +6522,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11473068743",
@@ -5704,7 +6666,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Nkolminta"
+    "quarter": "Nkolminta",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11465749245",
@@ -5836,7 +6811,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Nkolbisson"
+    "quarter": "Nkolbisson",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7713479687",
@@ -5880,7 +6868,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala IV",
-    "quarter": "Bonaberi"
+    "quarter": "Bonaberi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6633202285",
@@ -5924,7 +6925,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Akwa"
+    "quarter": "Akwa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877816",
@@ -5968,7 +6982,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11465759420",
@@ -6055,7 +7082,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6637780342",
@@ -6142,7 +7182,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11465721279",
@@ -6274,7 +7327,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11468718066",
@@ -6361,7 +7427,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5078451901",
@@ -6404,7 +7483,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11468923842",
@@ -6624,7 +7716,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877832",
@@ -6668,7 +7773,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7801588887",
@@ -6755,7 +7873,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877843",
@@ -6798,7 +7929,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4394643443",
@@ -6842,7 +7986,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Bonamouang"
+    "quarter": "Bonamouang",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13076227607",
@@ -6886,7 +8043,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Odza"
+    "quarter": "Odza",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4332399881",
@@ -6930,7 +8100,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonamoussadi"
+    "quarter": "Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4831254923",
@@ -7018,7 +8201,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7062919561",
@@ -7062,7 +8258,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877844",
@@ -7106,7 +8315,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4163491590",
@@ -7237,7 +8459,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Messame-Ndongo"
+    "quarter": "Messame-Ndongo",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4555768241",
@@ -7281,7 +8516,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Odza"
+    "quarter": "Odza",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10225296117",
@@ -7325,7 +8573,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Biyem-Assi"
+    "quarter": "Biyem-Assi",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4347378591",
@@ -7369,7 +8630,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Odza"
+    "quarter": "Odza",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8022017285",
@@ -7499,7 +8773,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Limbé II",
-    "quarter": "Wovia"
+    "quarter": "Wovia",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13359862264",
@@ -7543,7 +8830,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Limbé II",
-    "quarter": "Wovia"
+    "quarter": "Wovia",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11480935521",
@@ -7630,7 +8930,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi"
+    "city": "Kribi",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-12432304501",
@@ -7674,7 +8987,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Bonanjo"
+    "quarter": "Bonanjo",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4908747233",
@@ -7846,7 +9172,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-9280380317",
@@ -7933,7 +9272,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Logbessou I"
+    "quarter": "Logbessou I",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-2889955856",
@@ -8020,7 +9372,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi"
+    "city": "Kribi",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-639566664",
@@ -8150,7 +9515,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13913338971",
@@ -8194,7 +9572,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "New-Bell"
+    "quarter": "New-Bell",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11472428727",
@@ -8282,7 +9673,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Akwa"
+    "quarter": "Akwa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-9992410617",
@@ -8326,7 +9730,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Makepe II Bonamoussadi"
+    "quarter": "Makepe II Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877820",
@@ -8369,7 +9786,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877825",
@@ -8413,7 +9843,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11480686326",
@@ -8500,7 +9943,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-3053355291",
@@ -8544,7 +10000,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Makepe II Bonamoussadi"
+    "quarter": "Makepe II Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4592996589",
@@ -8588,7 +10057,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonamoussongo"
+    "quarter": "Bonamoussongo",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13763670506",
@@ -8804,7 +10286,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Akwa"
+    "quarter": "Akwa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13954314399",
@@ -8848,7 +10343,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Yassa"
+    "quarter": "Yassa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877818",
@@ -8891,7 +10399,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5929476385",
@@ -8935,7 +10456,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Makepe II Bonamoussadi"
+    "quarter": "Makepe II Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-2456123704",
@@ -8978,7 +10512,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Limbé II"
+    "city": "Limbé II",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877826",
@@ -9022,7 +10569,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11727093169",
@@ -9066,7 +10626,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Biyem-Assi"
+    "quarter": "Biyem-Assi",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4752179721",
@@ -9110,7 +10683,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Nsam"
+    "quarter": "Nsam",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6119459687",
@@ -9154,7 +10740,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonamoussadi"
+    "quarter": "Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4382437989",
@@ -9197,7 +10796,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7062919563",
@@ -9241,7 +10853,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7847553587",
@@ -9285,7 +10910,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Bonajinje"
+    "quarter": "Bonajinje",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-3695304923",
@@ -9329,7 +10967,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13376431701",
@@ -9459,7 +11110,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11478549767",
@@ -9589,7 +11253,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala IV",
-    "quarter": "Lobe"
+    "quarter": "Lobe",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5588595397",
@@ -9632,7 +11309,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877834",
@@ -9676,7 +11366,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5650210744",
@@ -9720,7 +11423,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mvan"
+    "quarter": "Mvan",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13326870621",
@@ -9764,7 +11480,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "New-Bell"
+    "quarter": "New-Bell",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13744093202",
@@ -9851,7 +11580,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11472701444",
@@ -9982,7 +11724,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Limbe",
-    "quarter": "Ambas Bay"
+    "quarter": "Ambas Bay",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5595086419",
@@ -10025,7 +11780,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Limbé II"
+    "city": "Limbé II",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-9378464517",
@@ -10111,7 +11879,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11255379138",
@@ -10285,7 +12066,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Bonadouma"
+    "quarter": "Bonadouma",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8119494617",
@@ -10329,7 +12123,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Vallée Bessengué"
+    "quarter": "Vallée Bessengué",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8684458674",
@@ -10372,7 +12179,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4960202466",
@@ -10415,7 +12235,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13760089515",
@@ -10459,7 +12292,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala II",
-    "quarter": "Ndogsimbi"
+    "quarter": "Ndogsimbi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-2898211315",
@@ -10933,7 +12779,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4705181784",
@@ -10976,7 +12835,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi I"
+    "city": "Kribi I",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6637780341",
@@ -11063,7 +12935,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13785295012",
@@ -11107,7 +12992,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Ahala"
+    "quarter": "Ahala",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5671952622",
@@ -11194,7 +13092,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mendong"
+    "quarter": "Mendong",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-2889955868",
@@ -11280,7 +13191,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi"
+    "city": "Kribi",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8593110111",
@@ -11367,7 +13291,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Akwa"
+    "quarter": "Akwa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10215220427",
@@ -11411,7 +13348,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4591197289",
@@ -11499,7 +13449,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mvolye"
+    "quarter": "Mvolye",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877839",
@@ -11543,7 +13506,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877849",
@@ -11586,7 +13562,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877823",
@@ -11629,7 +13618,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877810",
@@ -11673,7 +13675,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13206753072",
@@ -11717,7 +13732,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Logpom"
+    "quarter": "Logpom",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-3255758368",
@@ -11761,7 +13789,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala IV",
-    "quarter": "Bonaberi"
+    "quarter": "Bonaberi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4895885523",
@@ -11805,7 +13846,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Makepe II Bonamoussadi"
+    "quarter": "Makepe II Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877811",
@@ -11849,7 +13903,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi II",
-    "quarter": "Zaïre"
+    "quarter": "Zaïre",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4097784030",
@@ -11980,7 +14047,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Makepe II Bonamoussadi"
+    "quarter": "Makepe II Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4413468300",
@@ -12024,7 +14104,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Songbikako"
+    "quarter": "Songbikako",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-8339355717",
@@ -12112,7 +14205,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Didom II"
+    "quarter": "Didom II",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4333925421",
@@ -12156,7 +14262,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonamoussadi"
+    "quarter": "Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7375251188",
@@ -12199,7 +14318,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6864836286",
@@ -12286,7 +14418,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala",
-    "quarter": "Village"
+    "quarter": "Village",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6154795288",
@@ -12330,7 +14475,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonamoussadi"
+    "quarter": "Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7902231486",
@@ -12374,7 +14532,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Messame-Ndongo"
+    "quarter": "Messame-Ndongo",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4394643447",
@@ -12418,7 +14589,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Bonamouang"
+    "quarter": "Bonamouang",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-9459426921",
@@ -12504,7 +14688,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4383883342",
@@ -12590,7 +14787,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4413468290",
@@ -12634,7 +14844,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Songbikako"
+    "quarter": "Songbikako",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4413468057",
@@ -12678,7 +14901,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Didom II"
+    "quarter": "Didom II",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4413468050",
@@ -12722,7 +14958,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala",
-    "quarter": "Village"
+    "quarter": "Village",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11469909519",
@@ -12810,7 +15059,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-9459427517",
@@ -12897,7 +15159,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Nsimeyong"
+    "quarter": "Nsimeyong",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4382025189",
@@ -13029,7 +15304,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Domaine Universitaire"
+    "quarter": "Domaine Universitaire",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-2456123749",
@@ -13073,7 +15361,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Limbé II",
-    "quarter": "Wovia"
+    "quarter": "Wovia",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7929530785",
@@ -13117,7 +15418,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala I",
-    "quarter": "Akwa"
+    "quarter": "Akwa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7062919560",
@@ -13161,7 +15475,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5763854853",
@@ -13248,7 +15575,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4524316290",
@@ -13292,7 +15632,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mendong"
+    "quarter": "Mendong",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4446073909",
@@ -13336,7 +15689,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala III",
-    "quarter": "Ndogpassi III"
+    "quarter": "Ndogpassi III",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11472590134",
@@ -13467,7 +15833,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Songbikako"
+    "quarter": "Songbikako",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-12578971795",
@@ -13639,7 +16018,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi"
+    "city": "Kribi",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6389666785",
@@ -13682,7 +16074,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7062919553",
@@ -13725,7 +16130,20 @@
     "region": "South West",
     "division": "Fako",
     "subdivision": "Fako",
-    "city": "Buéa"
+    "city": "Buéa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5476922121",
@@ -13769,7 +16187,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mendong"
+    "quarter": "Mendong",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-9948702717",
@@ -13813,7 +16244,20 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Buéa",
-    "quarter": "Small-Soppo"
+    "quarter": "Small-Soppo",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5207347021",
@@ -13857,7 +16301,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala",
-    "quarter": "New-Bell"
+    "quarter": "New-Bell",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4332399879",
@@ -13901,7 +16358,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala V",
-    "quarter": "Bonamoussadi"
+    "quarter": "Bonamoussadi",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4470744389",
@@ -13945,7 +16415,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Simbock"
+    "quarter": "Simbock",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13588958201",
@@ -13988,7 +16471,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5143122922",
@@ -14032,7 +16528,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Odza"
+    "quarter": "Odza",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5043552622",
@@ -14075,7 +16584,20 @@
     "region": "South",
     "division": "Océan",
     "subdivision": "Océan",
-    "city": "Kribi II"
+    "city": "Kribi II",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4676942890",
@@ -14119,7 +16641,20 @@
     "division": "Wouri",
     "subdivision": "Wouri",
     "city": "Douala",
-    "quarter": "New-Bell"
+    "quarter": "New-Bell",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4825018022",
@@ -14249,7 +16784,20 @@
     "division": "Mfoundi",
     "subdivision": "Mfoundi",
     "city": "Yaoundé",
-    "quarter": "Mendong"
+    "quarter": "Mendong",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877833",
@@ -14293,7 +16841,20 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Kribi",
-    "quarter": "Ngoyé Plage"
+    "quarter": "Ngoyé Plage",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-yaounde-bastos",
@@ -14320,6 +16881,19 @@
       "restaurants",
       "embassy district",
       "taxi access"
+    ],
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
     ]
   },
   {
@@ -14347,6 +16921,19 @@
       "restaurants",
       "conference services",
       "Google Maps directions"
+    ],
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
     ]
   },
   {
@@ -14398,7 +16985,20 @@
     },
     "cost_per_night": 25000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877824",
@@ -14449,7 +17049,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4378104144",
@@ -14501,7 +17114,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877850",
@@ -14552,7 +17178,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6077479478",
@@ -14603,7 +17242,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10215220426",
@@ -14654,7 +17306,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-maroua-waza-base",
@@ -14681,6 +17346,19 @@
       "park guides",
       "craft markets",
       "restaurants"
+    ],
+    "image_url": "/images/destinations/maroua.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Maroua. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Elephants%20around%20tree%20in%20Waza%2C%20Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/maroua.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Elephants%20around%20tree%20in%20Waza%2C%20Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Maroua. No photograph of this specific place is available yet."
+      }
     ]
   },
   {
@@ -14709,6 +17387,19 @@
       "banks",
       "nightlife",
       "Google Maps directions"
+    ],
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
     ]
   },
   {
@@ -14736,6 +17427,19 @@
       "business services",
       "restaurants",
       "taxi access"
+    ],
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
     ]
   },
   {
@@ -14787,7 +17491,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6685468787",
@@ -14839,7 +17556,20 @@
       "Makepe"
     ],
     "quarter": "Makepe",
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-9151105517",
@@ -14892,7 +17622,20 @@
       "Makepe"
     ],
     "quarter": "Akwa",
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-9151148017",
@@ -14945,7 +17688,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-9151169717",
@@ -14997,7 +17753,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-2558391460",
@@ -15048,7 +17817,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11469909520",
@@ -15264,6 +18046,19 @@
       "seafood restaurants",
       "Lobe Falls tours",
       "canoe rides"
+    ],
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
     ]
   },
   {
@@ -15313,7 +18108,20 @@
       "Londji",
       "Grand Batanga"
     ],
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13799401239",
@@ -15362,7 +18170,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10273368001",
@@ -15412,7 +18233,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877813",
@@ -15461,7 +18295,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-4540555079",
@@ -15510,7 +18357,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-11448928269",
@@ -15559,7 +18419,20 @@
     },
     "cost_per_night": 25000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7085691488",
@@ -15608,7 +18481,20 @@
       "Londji",
       "Grand Batanga"
     ],
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7934877827",
@@ -15657,7 +18543,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-buea-mountain",
@@ -15684,6 +18583,19 @@
       "porters",
       "local restaurants",
       "taxi access"
+    ],
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
     ]
   },
   {
@@ -15734,7 +18646,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5570600737",
@@ -15783,7 +18708,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-13437595596",
@@ -15832,7 +18770,20 @@
       "Bonduma",
       "Mile 17"
     ],
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7062919564",
@@ -15881,7 +18832,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-7066142018",
@@ -15931,7 +18895,20 @@
     },
     "cost_per_night": 25000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-5620831582",
@@ -16055,6 +19032,19 @@
       "wildlife centre",
       "botanic garden",
       "seafood"
+    ],
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
     ]
   },
   {
@@ -16105,7 +19095,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10737036499",
@@ -16155,7 +19158,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-10737252217",
@@ -16205,7 +19221,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-osm-node-6698694302",
@@ -16254,7 +19283,20 @@
     },
     "cost_per_night": 50000,
     "rating": 0,
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-mundemba-korup",
@@ -16328,7 +19370,20 @@
       "Djeleng",
       "Banengo"
     ],
-    "continent": "Africa"
+    "continent": "Africa",
+    "image_url": "/images/destinations/bafoussam.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Bafoussam. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Rue_Bafoussam_(Cameroun).jpg",
+    "images": [
+      {
+        "url": "/images/destinations/bafoussam.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Rue_Bafoussam_(Cameroun).jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Bafoussam. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "hotel-foumban-culture",

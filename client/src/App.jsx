@@ -3487,138 +3487,257 @@ function App() {
                 </ul>
               </div>
             </div>
-            {selectedPlaceGuide && (
-              <div className="panel mt-24">
-                <div className="section-heading">
-                  <div>
-                    <h3>{selectedPlaceGuide.place.name} guide</h3>
-                    <p className="small-text">{selectedPlaceGuide.place.region} • {selectedPlaceGuide.place.division} • {selectedPlaceGuide.place.city}</p>
+            {selectedPlaceGuide && (() => {
+              const place = selectedPlaceGuide.place;
+              const heroImage = place.image_url || '';
+              const photos = [
+                ...(place.images || []),
+                ...(selectedPlaceGuide.photos || []),
+              ].filter((photo) => photo && photo.url && photo.url !== heroImage);
+              const videos = [
+                ...(place.videos || []),
+                ...(selectedPlaceGuide.videos || []),
+              ].filter((video) => video && video.url);
+              const rating = Number(place.rating || 0);
+              const reviewCount = (place.reviews || []).length;
+              const tags = (place.tags || []).filter((tag) => tag && tag !== 'cameroon').slice(0, 4);
+              const area = [place.quarter, place.city || place.location, place.region]
+                .filter(Boolean)
+                .join(', ');
+
+              return (
+                <article className="place-view">
+                  <div
+                    className="place-backdrop"
+                    style={heroImage ? { backgroundImage: 'url(' + heroImage + ')' } : undefined}
+                    aria-hidden="true"
+                  />
+
+                  <div className="place-hero">
+                    {heroImage ? (
+                      <img src={heroImage} alt={place.name} loading="lazy" decoding="async" />
+                    ) : (
+                      <div className="place-hero-empty">
+                        <span>{(place.category || 'place').replace(/_/g, ' ')}</span>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="place-back"
+                      onClick={() => setSelectedPlaceGuide(null)}
+                      aria-label="Back to places"
+                    >
+                      &#8592;
+                    </button>
+                    {place.image_is_contextual && (
+                      <span className="place-photo-note">
+                        Photo of {place.city || place.location} &mdash; no photograph of this place yet
+                      </span>
+                    )}
                   </div>
-                  <button type="button" className="link-button" onClick={() => setSelectedPlaceGuide(null)}>Close</button>
-                </div>
-                <div className="guide-layout">
-                  <div>
-                    {selectedPlaceGuide.place.image_url && (
-                      <img className="guide-image" src={selectedPlaceGuide.place.image_url} alt={selectedPlaceGuide.place.name} loading="lazy" decoding="async" />
-                    )}
-                    {(() => {
-                      const allPhotos = [
-                        ...(selectedPlaceGuide.place.images || []),
-                        ...(selectedPlaceGuide.photos || []),
-                      ];
-                      return allPhotos.length > 0 && (
-                        <div className="guide-gallery">
-                          {allPhotos.map((photo, index) => (
-                            <img
-                              key={photo.id || index}
-                              src={photo.url}
-                              alt={photo.caption || selectedPlaceGuide.place.name}
-                              loading="lazy"
-                              decoding="async"
-                            />
-                          ))}
-                        </div>
-                      );
-                    })()}
-                    {(() => {
-                      const allVideos = [
-                        ...(selectedPlaceGuide.place.videos || []),
-                        ...(selectedPlaceGuide.videos || []),
-                      ];
-                      return allVideos.length > 0 && (
-                        <div className="guide-video-list">
-                          {allVideos.map((video, index) => (
-                            <video key={video.id || index} src={video.url} controls preload="metadata" />
-                          ))}
-                        </div>
-                      );
-                    })()}
-                    <p>{selectedPlaceGuide.place.description}</p>
-                    <p className="small-text">
-                      {selectedPlaceGuide.place.quarter || ''} {selectedPlaceGuide.place.city || ''} 
-·
- {selectedPlaceGuide.place.region}
-                    </p>
-                    <TravelMap
-                      markers={[buildMapMarker(selectedPlaceGuide.place, 'place')].filter(Boolean)}
-                      className="map-embed"
-                      ariaLabel={`Map showing ${selectedPlaceGuide.place.name}`}
-                    />
-                    <p><strong>Entry/activity budget:</strong> {formatMoney(selectedPlaceGuide.place.cost || 0)}</p>
-                    {selectedPlaceGuide.place.difficulty && (
-                      <p><strong>Outdoor info:</strong> {selectedPlaceGuide.place.difficulty} · Guide {selectedPlaceGuide.place.guide_required ? 'recommended' : 'optional'}</p>
-                    )}
-                    {selectedPlaceGuide.place.best_season && <p className="small-text">{selectedPlaceGuide.place.best_season}</p>}
-                    {selectedPlaceGuide.place.transport_note && <p className="small-text">{selectedPlaceGuide.place.transport_note}</p>}
-                    <div className="inline-actions wrap-actions">
-                      {selectedPlaceGuide.place.map_info?.google_map_url && (
-                        <a href={selectedPlaceGuide.place.map_info.google_map_url} target="_blank" rel="noreferrer">Open map</a>
-                      )}
-                      <button type="button" className="button button-secondary" onClick={handleDownloadPlaceGuide}>Download guide</button>
+
+                  <div className="place-sheet">
+                    <div className="place-sheet-top">
+                      <h2>{place.name}</h2>
+                      <div className="place-actions" role="group" aria-label="Place actions">
+                        {place.map_info?.google_map_url && (
+                          <a
+                            className="place-action"
+                            href={place.map_info.google_map_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            title="Directions"
+                            aria-label="Open directions"
+                          >
+                            &#10148;
+                          </a>
+                        )}
+                        <button
+                          type="button"
+                          className="place-action"
+                          onClick={handleDownloadPlaceGuide}
+                          title="Save this guide offline"
+                          aria-label="Save this guide for offline use"
+                        >
+                          &#8681;
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <h4>Add to itinerary</h4>
-                    <div className="inline-form">
-                      <select value={placeGuideItineraryId} onChange={(event) => setPlaceGuideItineraryId(event.target.value)}>
-                        <option value="">Select itinerary</option>
+
+                    {rating > 0 && (
+                      <div className="place-rating">
+                        <span className="stars" aria-hidden="true">
+                          {[1, 2, 3, 4, 5].map((n) => (
+                            <span key={n} className={n <= Math.round(rating) ? 'star on' : 'star'}>&#9733;</span>
+                          ))}
+                        </span>
+                        <span className="rating-value">
+                          {rating.toFixed(1)}{reviewCount > 0 ? ' (' + reviewCount + ')' : ''}
+                        </span>
+                      </div>
+                    )}
+
+                    {area && (
+                      <p className="place-where">
+                        <span className="pin" aria-hidden="true">&#9679;</span>{area}
+                      </p>
+                    )}
+
+                    {tags.length > 0 && (
+                      <div className="place-tags">
+                        {tags.map((tag) => (
+                          <span className="place-tag" key={tag}>{tag}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    {place.description && <p className="place-desc">{place.description}</p>}
+
+                    <div className="place-facts">
+                      <div>
+                        <span className="fact-label">Entry / activity</span>
+                        <span className="fact-value">{formatMoney(place.cost || 0)}</span>
+                      </div>
+                      {place.difficulty && (
+                        <div>
+                          <span className="fact-label">Difficulty</span>
+                          <span className="fact-value">{place.difficulty}</span>
+                        </div>
+                      )}
+                      {place.best_season && (
+                        <div>
+                          <span className="fact-label">Best season</span>
+                          <span className="fact-value">{place.best_season}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="place-add">
+                      <select
+                        value={placeGuideItineraryId}
+                        onChange={(event) => setPlaceGuideItineraryId(event.target.value)}
+                        aria-label="Choose a trip"
+                      >
+                        <option value="">Add to a trip...</option>
                         {itineraries.map((itinerary) => (
                           <option key={itinerary.id} value={itinerary.id}>{itinerary.title}</option>
                         ))}
                       </select>
                       <button type="button" className="button button-primary" onClick={handleAddGuidePlaceToItinerary}>Add</button>
                     </div>
-                    <h4 className="mt-16">Nearby hotels</h4>
-                    <ul className="plain-list">
-                      {selectedPlaceGuide.nearby.hotels.slice(0, 3).map((hotel) => (
-                        <li key={hotel.id}>
-                          <span>
-                            <strong>{hotel.name}</strong>
-                            <small>{formatMoney(hotel.cost_per_night || 0)} / night</small>
-                          </span>
-                          {hotel.map_info?.google_map_url && <a href={hotel.map_info.google_map_url} target="_blank" rel="noreferrer">Map</a>}
-                        </li>
-                      ))}
-                    </ul>
-                    <h4 className="mt-16">Nearby activities</h4>
-                    <ul className="plain-list">
-                      {selectedPlaceGuide.nearby.activities.slice(0, 3).map((activity) => (
-                        <li key={activity.id}>
-                          <span>
-                            <strong>{activity.name}</strong>
-                            <small>{formatMoney(activity.cost || 0)}</small>
-                          </span>
-                          {activity.map_info?.google_map_url && <a href={activity.map_info.google_map_url} target="_blank" rel="noreferrer">Map</a>}
-                        </li>
-                      ))}
-                    </ul>
                   </div>
-                </div>
-                <div className="mt-24">
-                  <h4>Comments</h4>
-                  {placeComments.length === 0 ? (
-                    <p className="small-text">No comments yet. Be the first to share a tip.</p>
-                  ) : (
-                    <ul className="discussion-posts">
-                      {placeComments.map((comment) => (
-                        <li key={comment.id} className="discussion-post">
-                          <span className="discussion-post-author">{comment.username}</span>
-                          <p>{comment.text}</p>
-                        </li>
-                      ))}
-                    </ul>
+
+                  {videos.length > 0 && (
+                    <section className="place-block">
+                      <h3>Watch</h3>
+                      <div className="place-videos">
+                        {videos.map((video, index) => (
+                          <figure className="place-video" key={video.id || index}>
+                            <video
+                              src={video.url}
+                              controls
+                              preload="metadata"
+                              playsInline
+                              poster={video.poster || heroImage || undefined}
+                            />
+                            {video.caption && <figcaption>{video.caption}</figcaption>}
+                          </figure>
+                        ))}
+                      </div>
+                    </section>
                   )}
-                  <form onSubmit={handleAddPlaceComment} className="reply-box mt-16">
-                    <input
-                      value={newPlaceComment}
-                      onChange={(event) => setNewPlaceComment(event.target.value)}
-                      placeholder="Share a tip about this place"
+
+                  {photos.length > 0 && (
+                    <section className="place-block">
+                      <h3>Photos</h3>
+                      <div className="place-photos">
+                        {photos.map((photo, index) => (
+                          <img
+                            key={photo.id || index}
+                            src={photo.url}
+                            alt={photo.caption || place.name}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  <section className="place-block">
+                    <h3>On the map</h3>
+                    <TravelMap
+                      markers={[buildMapMarker(place, 'place')].filter(Boolean)}
+                      className="map-embed"
+                      ariaLabel={'Map showing ' + place.name}
                     />
-                    <button type="submit" className="button button-secondary">Post</button>
-                  </form>
-                </div>
-              </div>
-            )}
+                    {place.transport_note && <p className="small-text mt-16">{place.transport_note}</p>}
+                  </section>
+
+                  <div className="place-columns">
+                    <section className="place-block">
+                      <h3>Nearby stays</h3>
+                      <ul className="plain-list">
+                        {selectedPlaceGuide.nearby.hotels.slice(0, 3).map((hotel) => (
+                          <li key={hotel.id}>
+                            <span>
+                              <strong>{hotel.name}</strong>
+                              <small>{formatMoney(hotel.cost_per_night || 0)} / night</small>
+                            </span>
+                            {hotel.map_info?.google_map_url && <a href={hotel.map_info.google_map_url} target="_blank" rel="noreferrer">Map</a>}
+                          </li>
+                        ))}
+                        {selectedPlaceGuide.nearby.hotels.length === 0 && (
+                          <li><span className="small-text">Nothing listed nearby yet.</span></li>
+                        )}
+                      </ul>
+                    </section>
+
+                    <section className="place-block">
+                      <h3>Things to do</h3>
+                      <ul className="plain-list">
+                        {selectedPlaceGuide.nearby.activities.slice(0, 3).map((activity) => (
+                          <li key={activity.id}>
+                            <span>
+                              <strong>{activity.name}</strong>
+                              <small>{formatMoney(activity.cost || 0)}</small>
+                            </span>
+                            {activity.map_info?.google_map_url && <a href={activity.map_info.google_map_url} target="_blank" rel="noreferrer">Map</a>}
+                          </li>
+                        ))}
+                        {selectedPlaceGuide.nearby.activities.length === 0 && (
+                          <li><span className="small-text">Nothing listed nearby yet.</span></li>
+                        )}
+                      </ul>
+                    </section>
+                  </div>
+
+                  <section className="place-block">
+                    <h3>Traveller tips</h3>
+                    {placeComments.length === 0 ? (
+                      <p className="small-text">No tips yet. Be the first to share one.</p>
+                    ) : (
+                      <ul className="discussion-posts">
+                        {placeComments.map((comment) => (
+                          <li key={comment.id} className="discussion-post">
+                            <span className="discussion-post-author">{comment.username}</span>
+                            <p>{comment.text}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <form onSubmit={handleAddPlaceComment} className="reply-box mt-16">
+                      <input
+                        value={newPlaceComment}
+                        onChange={(event) => setNewPlaceComment(event.target.value)}
+                        placeholder="Share a tip about this place"
+                      />
+                      <button type="submit" className="button button-secondary">Post</button>
+                    </form>
+                  </section>
+                </article>
+              );
+            })()}
             </>
             )}
 

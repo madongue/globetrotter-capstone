@@ -11,9 +11,33 @@
     "duration_hours": 3,
     "cost": 18000,
     "cost_note": "Indicative guide and tasting budget.",
-    "tags": ["food", "markets", "city", "nightlife", "cameroon"],
+    "tags": [
+      "food",
+      "markets",
+      "city",
+      "nightlife",
+      "cameroon"
+    ],
     "description": "Explore local restaurants, markets, street food, and nightlife areas in Douala.",
-    "related_services": ["local guides", "restaurants", "taxi access", "Google Maps directions"]
+    "related_services": [
+      "local guides",
+      "restaurants",
+      "taxi access",
+      "Google Maps directions"
+    ],
+    "image_url": "/images/destinations/douala.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Douala. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+    "images": [
+      {
+        "url": "/images/destinations/douala.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Douala.JPG",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "activity-yaounde-museum",
@@ -26,9 +50,33 @@
     "duration_hours": 4,
     "cost": 22000,
     "cost_note": "Indicative city guide and museum visit budget.",
-    "tags": ["culture", "history", "museum", "monuments", "cameroon"],
+    "tags": [
+      "culture",
+      "history",
+      "museum",
+      "monuments",
+      "cameroon"
+    ],
     "description": "Visit cultural sites, museums, monuments, and viewpoints around Yaounde.",
-    "related_services": ["museum guides", "city transport", "restaurants", "photography"]
+    "related_services": [
+      "museum guides",
+      "city transport",
+      "restaurants",
+      "photography"
+    ],
+    "image_url": "/images/destinations/yaounde.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/yaounde.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Views_of_Yaounde_Cameroon_02.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Yaounde. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "activity-kribi-lobe",
@@ -41,9 +89,33 @@
     "duration_hours": 5,
     "cost": 30000,
     "cost_note": "Indicative local guide, canoe, and beach-day budget.",
-    "tags": ["beach", "waterfall", "nature", "family", "cameroon"],
+    "tags": [
+      "beach",
+      "waterfall",
+      "nature",
+      "family",
+      "cameroon"
+    ],
     "description": "Combine Lobe Falls, beach time, seafood, and coastal sightseeing.",
-    "related_services": ["canoe rides", "seafood restaurants", "beach hotels", "local guides"]
+    "related_services": [
+      "canoe rides",
+      "seafood restaurants",
+      "beach hotels",
+      "local guides"
+    ],
+    "image_url": "/images/destinations/kribi.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/kribi.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Lob%C3%A9_beach_kribi_Cameroon.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Kribi. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "activity-buea-hike",
@@ -56,9 +128,33 @@
     "duration_hours": 8,
     "cost": 45000,
     "cost_note": "Indicative day-hike guide/porter budget; multi-day climbs cost more.",
-    "tags": ["hiking", "mountain", "adventure", "nature", "cameroon"],
+    "tags": [
+      "hiking",
+      "mountain",
+      "adventure",
+      "nature",
+      "cameroon"
+    ],
     "description": "Guided hiking experience around Mount Cameroon routes from Buea.",
-    "related_services": ["guides", "porters", "gear rental", "guesthouses"]
+    "related_services": [
+      "guides",
+      "porters",
+      "gear rental",
+      "guesthouses"
+    ],
+    "image_url": "/images/destinations/buea.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Buea. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/buea.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Mount_Cameroon_from_a_work_site.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Buea. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "activity-limbe-nature-day",
@@ -71,9 +167,33 @@
     "duration_hours": 5,
     "cost": 25000,
     "cost_note": "Indicative visitor, guide, and local transport budget.",
-    "tags": ["wildlife", "garden", "family", "nature", "cameroon"],
+    "tags": [
+      "wildlife",
+      "garden",
+      "family",
+      "nature",
+      "cameroon"
+    ],
     "description": "Visit Limbe Botanic Garden, Limbe Wildlife Centre, and nearby coastal stops.",
-    "related_services": ["garden guides", "wildlife centre", "seafood", "beach access"]
+    "related_services": [
+      "garden guides",
+      "wildlife centre",
+      "seafood",
+      "beach access"
+    ],
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   },
   {
     "id": "activity-waza-safari",
@@ -86,9 +206,20 @@
     "duration_hours": 8,
     "cost": 70000,
     "cost_note": "Indicative guide and vehicle day budget; confirm official park and vehicle fees.",
-    "tags": ["safari", "wildlife", "national parks", "photography", "cameroon"],
+    "tags": [
+      "safari",
+      "wildlife",
+      "national parks",
+      "photography",
+      "cameroon"
+    ],
     "description": "Wildlife viewing day in Waza with guides, vehicle access, and bird/savanna observation.",
-    "related_services": ["park guides", "4x4 transport", "Maroua hotels", "bird watching"]
+    "related_services": [
+      "park guides",
+      "4x4 transport",
+      "Maroua hotels",
+      "bird watching"
+    ]
   },
   {
     "id": "activity-foumban-culture",
@@ -101,9 +232,21 @@
     "duration_hours": 4,
     "cost": 20000,
     "cost_note": "Indicative museum/guide/craft-market budget.",
-    "tags": ["chiefdoms", "museum", "culture", "crafts", "history", "cameroon"],
+    "tags": [
+      "chiefdoms",
+      "museum",
+      "culture",
+      "crafts",
+      "history",
+      "cameroon"
+    ],
     "description": "Explore Foumban Royal Palace, museum collections, and nearby craft markets.",
-    "related_services": ["museum guides", "craft shopping", "local restaurants", "photography"]
+    "related_services": [
+      "museum guides",
+      "craft shopping",
+      "local restaurants",
+      "photography"
+    ]
   },
   {
     "id": "activity-korup-rainforest",
@@ -116,9 +259,20 @@
     "duration_hours": 8,
     "cost": 60000,
     "cost_note": "Indicative forest guide and day-trek budget; confirm permits and route fees locally.",
-    "tags": ["rainforest", "national parks", "hiking", "wildlife", "cameroon"],
+    "tags": [
+      "rainforest",
+      "national parks",
+      "hiking",
+      "wildlife",
+      "cameroon"
+    ],
     "description": "Guided rainforest trek for biodiversity, birding, and ecotourism around Korup National Park.",
-    "related_services": ["forest guides", "eco guesthouses", "park permits", "local transport"]
+    "related_services": [
+      "forest guides",
+      "eco guesthouses",
+      "park permits",
+      "local transport"
+    ]
   },
   {
     "id": "activity-bimbia-heritage",
@@ -132,8 +286,32 @@
     "duration_hours": 3,
     "cost": 20000,
     "cost_note": "Indicative guide and local transport budget.",
-    "tags": ["history", "heritage", "culture", "monuments", "cameroon"],
+    "tags": [
+      "history",
+      "heritage",
+      "culture",
+      "monuments",
+      "cameroon"
+    ],
     "description": "Guided visit to Bimbia slave trade heritage site near Limbe.",
-    "related_services": ["heritage guides", "coastal transport", "history education", "nearby beaches"]
+    "related_services": [
+      "heritage guides",
+      "coastal transport",
+      "history education",
+      "nearby beaches"
+    ],
+    "image_url": "/images/destinations/limbe.jpg",
+    "image_is_contextual": true,
+    "image_context_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet.",
+    "image_source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+    "images": [
+      {
+        "url": "/images/destinations/limbe.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Botanic_garden_limbe.jpg",
+        "license": "",
+        "author": "",
+        "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
+      }
+    ]
   }
 ]
