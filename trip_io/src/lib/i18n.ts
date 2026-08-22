@@ -139,7 +139,7 @@ export const STRINGS = {
   closedToday: { en: 'Closed today', fr: 'Fermé aujourd’hui' },
   openNow: { en: 'Open now', fr: 'Ouvert' },
   closedNow: { en: 'Closed', fr: 'Fermé' },
-  minutes: { en: 'min visit', fr: 'min de visite' },
+  minutes: { en: 'visit', fr: 'de visite' },
 
   // --------------------------------------------------------------- for you
   forYouTitle: { en: 'For You', fr: 'Pour vous' },

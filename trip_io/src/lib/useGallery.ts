@@ -53,7 +53,16 @@ export function useGallery(
       // Keys are image slugs, which are the filename stem of the primary
       // image rather than the destination slug.
       const key = primaryImage.split('/').pop()?.replace(/\.[^.]+$/, '') ?? slug
-      setExtra(manifest[key] ?? manifest[slug] ?? [])
+      const entries = manifest[key] ?? manifest[slug] ?? []
+      // Defensive: the tool that writes this manifest shares a download helper
+      // with another app, which returns an /images/places/ path. A stale entry
+      // would otherwise render as a black tile.
+      setExtra(
+        entries.map((entry) => ({
+          ...entry,
+          url: entry.url.replace('/images/places/', '/images/destinations/'),
+        })),
+      )
     })
     return () => {
       cancelled = true
