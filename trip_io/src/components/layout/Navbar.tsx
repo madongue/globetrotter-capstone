@@ -41,7 +41,7 @@ export function Navbar() {
       )}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 lg:px-8">
-        <Link to="/" className="shrink-0" aria-label="trip_io home">
+        <Link to="/" className="shrink-0" aria-label="mg trip home">
           <Wordmark />
         </Link>
 

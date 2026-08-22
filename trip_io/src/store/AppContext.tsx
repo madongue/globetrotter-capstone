@@ -28,12 +28,12 @@ import { SEED_POSTS, SEED_SUBMISSIONS } from '@/data/community'
  */
 
 const KEYS = {
-  language: 'tripio.language',
-  favorites: 'tripio.favorites',
-  itineraries: 'tripio.itineraries',
-  submissions: 'tripio.submissions',
-  posts: 'tripio.posts',
-  user: 'tripio.user',
+  language: 'mgtrip.language',
+  favorites: 'mgtrip.favorites',
+  itineraries: 'mgtrip.itineraries',
+  submissions: 'mgtrip.submissions',
+  posts: 'mgtrip.posts',
+  user: 'mgtrip.user',
 } as const
 
 interface AppState {

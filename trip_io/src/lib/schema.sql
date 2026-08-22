@@ -1,5 +1,5 @@
 -- =============================================================================
--- trip_io — Supabase schema
+-- mg trip — Supabase schema
 --
 -- The app currently reads from src/data and persists user state to
 -- localStorage. The shapes in src/types mirror these tables one-to-one, so

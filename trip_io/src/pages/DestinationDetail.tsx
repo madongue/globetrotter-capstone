@@ -19,6 +19,9 @@ import { cn, distanceKm, formatDuration, formatFcfa, initials, timeAgo } from '@
 import { Badge, Button, EmptyState, Rating, SafeImage } from '@/components/ui'
 import { DestinationCard } from '@/components/DestinationCard'
 import { StaticMap } from '@/components/StaticMap'
+import { Gallery } from '@/components/Gallery'
+import { useGallery } from '@/lib/useGallery'
+import { useVideos } from '@/lib/useVideos'
 
 const DAYS_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const DAYS_FR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
@@ -31,6 +34,9 @@ export function DestinationDetail() {
   const [added, setAdded] = useState(false)
 
   const destination = slug ? DESTINATION_BY_SLUG[slug] : undefined
+  // Called before the not-found return so the hook order stays stable.
+  const gallery = useGallery(slug ?? '', destination?.image ?? '', destination?.imageIsContextual)
+  const fetchedVideos = useVideos(destination?.image ?? '', destination?.imageIsContextual)
 
   if (!destination) {
     return (
@@ -209,13 +215,25 @@ export function DestinationDetail() {
               </div>
             </section>
 
-            {destination.videos && destination.videos.length > 0 && (
+            {(destination.videos?.length || fetchedVideos.length) > 0 && (
               <section>
                 <h2 className="text-lg font-semibold">
                   {language === 'fr' ? 'Regarder' : 'Watch'}
                 </h2>
                 <div className="mt-3 space-y-4">
-                  {destination.videos.map((video) => (
+                  {[
+                    ...(destination.videos ?? []),
+                    ...fetchedVideos.map((video) => ({
+                      url: video.url,
+                      caption: {
+                        en: `Footage of ${destination.name}, from Wikimedia Commons.`,
+                        fr: `Images de ${destination.name}, via Wikimedia Commons.`,
+                      },
+                      sourceUrl: video.sourceUrl,
+                      license: video.license,
+                      author: video.author,
+                    })),
+                  ].map((video) => (
                     <figure key={video.url} className="overflow-hidden rounded-2xl border border-white/[0.08]">
                       <video
                         src={video.url}
@@ -239,6 +257,17 @@ export function DestinationDetail() {
                     </figure>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {gallery.length > 1 && (
+              <section>
+                <h2 className="text-lg font-semibold">{t('photos')}</h2>
+                <p className="mt-1 text-2xs text-mist-700">
+                  {gallery.length} {language === 'fr' ? 'photos' : 'photos'} ·{' '}
+                  {language === 'fr' ? 'faites défiler' : 'scroll to browse'}
+                </p>
+                <Gallery images={gallery} alt={destination.name} className="mt-3" />
               </section>
             )}
 

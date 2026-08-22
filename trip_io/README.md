@@ -1,4 +1,4 @@
-# trip_io
+# mg trip
 
 **Plan faster. Travel smarter. Discover Yaoundé.**
 
@@ -53,6 +53,30 @@ Every destination is a real place in Yaoundé. A few decisions worth knowing:
   `imageIsContextual: true` and the interface says so on the destination page,
   because letting a stand-in pass as the real thing is the fastest way to lose
   a local user's trust.
+
+### Galleries and video
+
+Destinations with more than one photograph show a scrollable strip that opens
+into a full-screen viewer. The extra images live in
+`public/images/destinations/_galleries.json` and video in
+`public/videos/_videos.json`, both keyed by the stem of the destination's
+primary image and loaded at runtime — so adding media means dropping a file and
+updating one JSON file, with no rebuild.
+
+Two rules the code enforces:
+
+- **A destination that only borrows a photograph gets neither.** Djeuga Palace
+  uses a picture of the Hôtel de Ville as a stand-in; without this guard it
+  would show that building's gallery and its video as though they were its own.
+- **Video over 25 MB is not committed.** Every player uses
+  `preload="metadata"`, so nothing downloads until a viewer presses play, but a
+  clip still has to live in the repository and be pulled on every deploy. Two
+  Commons files of 96 MB and 124 MB were fetched and deleted for this reason.
+
+Free-licensed footage of Yaoundé barely exists — Wikimedia holds a handful of
+clips for the entire city — so most destinations have no video and the section
+simply does not appear. Filling that gap realistically means shooting it, or an
+API key for a stock video service.
 
 ## Configuration
 

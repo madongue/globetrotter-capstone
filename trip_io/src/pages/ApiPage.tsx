@@ -34,8 +34,8 @@ const ENDPOINTS = [
   },
 ]
 
-const SAMPLE = `curl https://api.trip-io.app/v1/destinations?category=museum \\
-  -H "Authorization: Bearer $TRIPIO_KEY"`
+const SAMPLE = `curl https://api.mgtrip.app/v1/destinations?category=museum \\
+  -H "Authorization: Bearer $MGTRIP_KEY"`
 
 const RESPONSE = `{
   "count": ${DESTINATIONS.length},

@@ -1,5 +1,5 @@
 /**
- * Domain types for trip_io.
+ * Domain types for mg trip.
  *
  * These mirror the Supabase schema in `src/lib/schema.sql`, so the local data
  * layer can be swapped for live queries without the UI changing shape.

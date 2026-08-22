@@ -87,8 +87,8 @@ export const STRINGS = {
   // ------------------------------------------------------------------- qr
   qrTitle: { en: 'Scan to explore Yaoundé', fr: 'Scannez pour explorer Yaoundé' },
   qrBody: {
-    en: 'Point your camera at the code to open trip_io on your phone.',
-    fr: 'Visez le code avec votre appareil photo pour ouvrir trip_io sur votre téléphone.',
+    en: 'Point your camera at the code to open mg trip on your phone.',
+    fr: 'Visez le code avec votre appareil photo pour ouvrir mg trip sur votre téléphone.',
   },
 
   // ---------------------------------------------------------------- sidebar
@@ -170,8 +170,8 @@ export const STRINGS = {
   // ----------------------------------------------------------- itineraries
   itinTitle: { en: 'Itineraries', fr: 'Itinéraires' },
   itinSubtitle: {
-    en: 'Plan a day, or let trip_io draft one for you.',
-    fr: 'Planifiez une journée, ou laissez trip_io la composer.',
+    en: 'Plan a day, or let mg trip draft one for you.',
+    fr: 'Planifiez une journée, ou laissez mg trip la composer.',
   },
   itinNew: { en: 'New itinerary', fr: 'Nouvel itinéraire' },
   itinGenerate: { en: 'Auto-generate itinerary', fr: 'Générer l’itinéraire' },
@@ -233,7 +233,7 @@ export const STRINGS = {
   communityComment: { en: 'Comment', fr: 'Commenter' },
 
   // ------------------------------------------------------------------- api
-  apiTitle: { en: 'trip_io API', fr: 'API trip_io' },
+  apiTitle: { en: 'mg trip API', fr: 'API mg trip' },
   apiSubtitle: {
     en: 'Yaoundé destination data, available to build on.',
     fr: 'Les données des destinations de Yaoundé, ouvertes aux développeurs.',
@@ -243,8 +243,8 @@ export const STRINGS = {
   // ----------------------------------------------------------------- stats
   statsTitle: { en: 'Statistics', fr: 'Statistiques' },
   statsSubtitle: {
-    en: 'How trip_io is being used.',
-    fr: 'Comment trip_io est utilisé.',
+    en: 'How mg trip is being used.',
+    fr: 'Comment mg trip est utilisé.',
   },
 
   // ------------------------------------------------------------------ auth

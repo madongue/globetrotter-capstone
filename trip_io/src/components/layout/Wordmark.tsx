@@ -1,10 +1,11 @@
 import { cn } from '@/lib/utils'
 
 /**
- * The trip_io wordmark.
+ * The mg trip wordmark.
  *
- * The underscore is the identity, so it is set in the mono face and given the
- * accent colour rather than being left as an ordinary character.
+ * "mg" carries the accent colour and "trip" stays white, so the mark reads as
+ * one name with a clear owner rather than two words of equal weight. Set tight
+ * and heavy, because it is used very large in the brand section.
  */
 export function Wordmark({
   className,
@@ -17,20 +18,19 @@ export function Wordmark({
     sm: 'text-base',
     md: 'text-lg',
     lg: 'text-3xl sm:text-4xl',
-    xl: 'text-5xl sm:text-7xl',
+    xl: 'text-6xl sm:text-8xl',
   }
 
   return (
     <span
       className={cn(
-        'inline-flex select-none items-baseline font-display font-extrabold tracking-tight text-white',
+        'inline-flex select-none items-baseline gap-[0.18em] font-display font-extrabold tracking-tight text-white',
         sizes[size],
         className,
       )}
     >
-      trip
-      <span className="font-mono font-medium text-cyan-400">_</span>
-      io
+      <span className="text-cyan-400">mg</span>
+      <span>trip</span>
     </span>
   )
 }

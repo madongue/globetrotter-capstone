@@ -110,7 +110,7 @@ function QrGlyph({ payload, size = 232 }: { payload: string; size?: number }) {
 
 export function QrPanel() {
   const { t } = useApp()
-  const payload = typeof window !== 'undefined' ? `${window.location.origin}/app` : 'https://trip-io.app'
+  const payload = typeof window !== 'undefined' ? `${window.location.origin}/app` : 'https://mgtrip.app'
 
   return (
     <div className="glass grid items-center gap-10 rounded-4xl p-8 sm:p-12 lg:grid-cols-2">

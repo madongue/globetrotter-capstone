@@ -45,10 +45,11 @@ export function AppShell() {
         )}
       >
         <div className="flex h-16 items-center justify-center border-b border-white/[0.07] xl:justify-start xl:px-6">
-          <Link to="/" aria-label="trip_io home">
-            <span className="xl:hidden">
-              <span className="font-display text-xl font-extrabold text-white">t</span>
-              <span className="font-mono text-cyan-400">_</span>
+          <Link to="/" aria-label="mg trip home">
+            {/* Collapsed rail: the initials alone, since the full mark does
+                not fit at 76px. */}
+            <span className="font-display text-xl font-extrabold tracking-tight text-cyan-400 xl:hidden">
+              mg
             </span>
             <span className="hidden xl:inline">
               <Wordmark />
