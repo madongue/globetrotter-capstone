@@ -4,5 +4,45 @@
     "source_url": "https://commons.wikimedia.org/wiki/File:Yaoundé_City_Council_Hall.webm",
     "license": "CC BY-SA 4.0",
     "author": "Kateregga1"
+  },
+  "yaounde-street": {
+    "url": "/videos/yaounde-street.webm",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Pluie_qui_tombe_sur_une_moto_avec_parapluie.webm",
+    "license": "CC BY-SA 4.0",
+    "author": "Minette Lontsie",
+    "caption": {
+      "en": "Rain on a Cameroonian street, umbrella over the motorbike.",
+      "fr": "La pluie sur une rue camerounaise, parapluie sur la moto."
+    }
+  },
+  "musee-art": {
+    "url": "/videos/musee-art.webm",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Kambu_masquarade.webm",
+    "license": "CC BY-SA 4.0",
+    "author": "Lawal sani kona",
+    "caption": {
+      "en": "A Cameroonian masquerade — the living use of the masks held in collections like this one.",
+      "fr": "Une mascarade camerounaise — l’usage vivant des masques conservés dans ce type de collection."
+    }
+  },
+  "yaounde-skyline": {
+    "url": "/videos/yaounde-skyline.ogv",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Saison_des_pluies_à_Yaoundé.ogv",
+    "license": "CC BY-SA 3.0",
+    "author": "Serein",
+    "caption": {
+      "en": "The rainy season in Yaoundé.",
+      "fr": "La saison des pluies à Yaoundé."
+    }
+  },
+  "marche-central": {
+    "url": "/videos/marche-central.webm",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Fabrication_artisanale_de_marmites.webm",
+    "license": "CC BY-SA 3.0",
+    "author": "Serieminou",
+    "caption": {
+      "en": "Pots made by hand in Cameroon, of the kind sold in the city markets.",
+      "fr": "Marmites façonnées à la main au Cameroun, comme celles vendues aux marchés."
+    }
   }
 }

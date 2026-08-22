@@ -225,9 +225,9 @@ export function DestinationDetail() {
                     ...(destination.videos ?? []),
                     ...fetchedVideos.map((video) => ({
                       url: video.url,
-                      caption: {
-                        en: `Footage of ${destination.name}, from Wikimedia Commons.`,
-                        fr: `Images de ${destination.name}, via Wikimedia Commons.`,
+                      caption: video.caption ?? {
+                        en: 'Footage from Wikimedia Commons.',
+                        fr: 'Images via Wikimedia Commons.',
                       },
                       sourceUrl: video.sourceUrl,
                       license: video.license,

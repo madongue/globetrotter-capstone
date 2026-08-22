@@ -16,7 +16,14 @@ export interface VideoEntry {
 
 type Manifest = Record<
   string,
-  { url: string; source_url: string; license: string; author: string; title?: string }
+  {
+    url: string
+    source_url: string
+    license: string
+    author: string
+    title?: string
+    caption?: { en: string; fr: string }
+  }
 >
 
 let cache: Manifest | null = null
@@ -62,6 +69,7 @@ export function useVideos(primaryImage: string, imageIsContextual = false): Vide
                 sourceUrl: entry.source_url,
                 license: entry.license,
                 author: entry.author,
+                caption: entry.caption,
               },
             ]
           : [],
