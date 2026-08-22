@@ -109,6 +109,18 @@ export const DESTINATIONS: Destination[] = [
       fr: 'Yaoundé s’étend sur sept collines et Fébé est celle qu’il faut gravir. La route passe devant le monastère bénédictin et son musée d’art camerounais, puis rejoint le golf et l’hôtel au sommet. Tôt le matin, la ville est souvent encore sous la brume.',
     },
     image: `${IMG}/mont-febe.jpg`,
+    videos: [
+      {
+        url: '/videos/mont-febe.webm',
+        caption: {
+          en: 'The Parcours Vita trail on Fébé, where Yaoundé comes to run at dawn.',
+          fr: 'Le Parcours Vita du Fébé, où Yaoundé vient courir au petit matin.',
+        },
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:ParcoursVITAYaound%C3%A9.webm',
+        license: 'CC BY-SA 4.0',
+        author: 'Frederic PAPY',
+      },
+    ],
     lat: 3.9,
     lng: 11.5,
     rating: 4.6,

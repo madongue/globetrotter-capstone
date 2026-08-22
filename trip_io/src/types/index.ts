@@ -60,6 +60,14 @@ export interface Destination {
    */
   imageIsContextual?: boolean
   gallery?: string[]
+  /** Freely-licensed footage of this place, with attribution kept alongside. */
+  videos?: {
+    url: string
+    caption: { en: string; fr: string }
+    sourceUrl: string
+    license: string
+    author: string
+  }[]
   lat: number
   lng: number
   rating: number

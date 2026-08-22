@@ -209,6 +209,39 @@ export function DestinationDetail() {
               </div>
             </section>
 
+            {destination.videos && destination.videos.length > 0 && (
+              <section>
+                <h2 className="text-lg font-semibold">
+                  {language === 'fr' ? 'Regarder' : 'Watch'}
+                </h2>
+                <div className="mt-3 space-y-4">
+                  {destination.videos.map((video) => (
+                    <figure key={video.url} className="overflow-hidden rounded-2xl border border-white/[0.08]">
+                      <video
+                        src={video.url}
+                        controls
+                        preload="metadata"
+                        playsInline
+                        poster={destination.image}
+                        className="aspect-video w-full bg-black object-cover"
+                      />
+                      <figcaption className="p-3 text-sm text-mist-300">
+                        {video.caption[language]}
+                        <a
+                          href={video.sourceUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-1 block text-2xs text-mist-700 hover:text-mist-500"
+                        >
+                          {video.author} · {video.license} · Wikimedia Commons
+                        </a>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </section>
+            )}
+
             <section>
               <h2 className="text-lg font-semibold">{t('location')}</h2>
               <div className="mt-3 overflow-hidden rounded-2xl border border-white/[0.08]">
