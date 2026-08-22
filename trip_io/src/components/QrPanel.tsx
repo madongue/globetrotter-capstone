@@ -13,6 +13,31 @@ import { Wordmark } from '@/components/layout/Wordmark'
  * component takes the payload it would encode, so swapping in a real encoder
  * later is a one-line change.
  */
+/** One of the three finder squares that make a code read as a QR code. */
+function Finder({ x, y, unit }: { x: number; y: number; unit: number }) {
+  return (
+    <>
+      <rect x={x * unit} y={y * unit} width={unit * 7} height={unit * 7} rx={unit} fill="#05070D" />
+      <rect
+        x={(x + 1) * unit}
+        y={(y + 1) * unit}
+        width={unit * 5}
+        height={unit * 5}
+        rx={unit * 0.7}
+        fill="#fff"
+      />
+      <rect
+        x={(x + 2) * unit}
+        y={(y + 2) * unit}
+        width={unit * 3}
+        height={unit * 3}
+        rx={unit * 0.5}
+        fill="#05070D"
+      />
+    </>
+  )
+}
+
 function QrGlyph({ payload, size = 232 }: { payload: string; size?: number }) {
   const modules = 25
   const cells = useMemo(() => {
@@ -52,28 +77,6 @@ function QrGlyph({ payload, size = 232 }: { payload: string; size?: number }) {
 
   const unit = size / modules
 
-  const Finder = ({ x, y }: { x: number; y: number }) => (
-    <>
-      <rect x={x * unit} y={y * unit} width={unit * 7} height={unit * 7} rx={unit} fill="#05070D" />
-      <rect
-        x={(x + 1) * unit}
-        y={(y + 1) * unit}
-        width={unit * 5}
-        height={unit * 5}
-        rx={unit * 0.7}
-        fill="#fff"
-      />
-      <rect
-        x={(x + 2) * unit}
-        y={(y + 2) * unit}
-        width={unit * 3}
-        height={unit * 3}
-        rx={unit * 0.5}
-        fill="#05070D"
-      />
-    </>
-  )
-
   return (
     <svg
       viewBox={`0 0 ${size} ${size}`}
@@ -100,9 +103,9 @@ function QrGlyph({ payload, size = 232 }: { payload: string; size?: number }) {
             ) : null,
           ),
         )}
-        <Finder x={0} y={0} />
-        <Finder x={modules - 7} y={0} />
-        <Finder x={0} y={modules - 7} />
+        <Finder x={0} y={0} unit={unit} />
+        <Finder x={modules - 7} y={0} unit={unit} />
+        <Finder x={0} y={modules - 7} unit={unit} />
       </g>
     </svg>
   )

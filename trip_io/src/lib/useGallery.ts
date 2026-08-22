@@ -67,7 +67,7 @@ export function useGallery(
     return () => {
       cancelled = true
     }
-  }, [slug, primaryImage])
+  }, [slug, primaryImage, imageIsContextual])
 
   return [{ url: primaryImage }, ...extra]
 }

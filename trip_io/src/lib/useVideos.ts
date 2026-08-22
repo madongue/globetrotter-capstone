@@ -78,7 +78,7 @@ export function useVideos(primaryImage: string, imageIsContextual = false): Vide
     return () => {
       cancelled = true
     }
-  }, [primaryImage])
+  }, [primaryImage, imageIsContextual])
 
   return videos
 }

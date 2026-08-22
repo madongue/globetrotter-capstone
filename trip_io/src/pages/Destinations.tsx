@@ -169,6 +169,10 @@ export function Destinations() {
         )}
       </div>
 
+      <h2 className="sr-only">
+        {language === 'fr' ? 'Résultats' : 'Results'}
+      </h2>
+
       {loading ? (
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, index) => (

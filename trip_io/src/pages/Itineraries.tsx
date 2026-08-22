@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -17,60 +17,38 @@ import { useApp } from '@/store/AppContext'
 import { cn, formatDuration, formatTime } from '@/lib/utils'
 import { Button, EmptyState, Field, Input, SafeImage, Select } from '@/components/ui'
 import { PageHeader } from '@/components/layout/PageHeader'
-import type { CategoryId, Itinerary } from '@/types'
+import type { CategoryId, Itinerary, Language } from '@/types'
 
-export function Itineraries() {
-  const { t, language, itineraries, saveItinerary, deleteItinerary, requireAuth } = useApp()
-  const location = useLocation()
+interface TimelineLabels {
+  moveUp: string
+  moveDown: string
+  remove: string
+  lunch: string
+}
 
-  const [building, setBuilding] = useState(false)
-  const [title, setTitle] = useState('')
-  const [duration, setDuration] = useState<'half' | 'full' | 'two'>('full')
-  const [interests, setInterests] = useState<CategoryId[]>(['culture', 'food'])
-  const [draft, setDraft] = useState<Itinerary | null>(null)
-
-  // Arriving from "Add to itinerary" on a destination page.
-  useEffect(() => {
-    const add = (location.state as { add?: string } | null)?.add
-    if (add) setBuilding(true)
-  }, [location.state])
-
-  const generate = () => {
-    const name =
-      title.trim() ||
-      (language === 'fr' ? 'Une journée à Yaoundé' : 'A day in Yaoundé')
-    setDraft(generateItinerary(duration, interests, name))
-  }
-
-  const commit = () => {
-    if (!draft) return
-    if (!requireAuth()) return
-    saveItinerary(draft)
-    setDraft(null)
-    setBuilding(false)
-    setTitle('')
-  }
-
-  const move = (itinerary: Itinerary, index: number, direction: -1 | 1) => {
-    const next = [...itinerary.items]
-    const target = index + direction
-    if (target < 0 || target >= next.length) return
-    ;[next[index], next[target]] = [next[target], next[index]]
-    const updated = { ...itinerary, items: resequence(next) }
-    if (draft && draft.id === itinerary.id) setDraft(updated)
-    else saveItinerary(updated)
-  }
-
-  const removeStop = (itinerary: Itinerary, itemId: string) => {
-    const updated = {
-      ...itinerary,
-      items: resequence(itinerary.items.filter((item) => item.id !== itemId)),
-    }
-    if (draft && draft.id === itinerary.id) setDraft(updated)
-    else saveItinerary(updated)
-  }
-
-  const Timeline = ({ itinerary, editable }: { itinerary: Itinerary; editable?: boolean }) => (
+/**
+ * The visual day plan.
+ *
+ * Declared here rather than inside Itineraries: a component defined in a render
+ * body is a new type on every render, so React would remount the whole list on
+ * any state change and restart each entry's animation.
+ */
+function Timeline({
+  itinerary,
+  editable,
+  language,
+  labels,
+  onMove,
+  onRemove,
+}: {
+  itinerary: Itinerary
+  editable?: boolean
+  language: Language
+  labels: TimelineLabels
+  onMove: (itinerary: Itinerary, index: number, direction: -1 | 1) => void
+  onRemove: (itinerary: Itinerary, itemId: string) => void
+}) {
+  return (
     <ol className="relative mt-4 space-y-3 before:absolute before:left-[52px] before:top-2 before:h-[calc(100%-1rem)] before:w-px before:bg-white/10">
       {itinerary.items.map((item, index) => {
         const destination =
@@ -116,7 +94,7 @@ export function Itineraries() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-mist-100">
-                      {language === 'fr' ? 'Déjeuner' : 'Lunch'}
+                      {labels.lunch}
                     </p>
                     <p className="text-2xs text-mist-500">
                       {formatDuration(item.durationMinutes, language)}
@@ -129,24 +107,24 @@ export function Itineraries() {
                 <div className="flex shrink-0 gap-1">
                   <button
                     type="button"
-                    onClick={() => move(itinerary, index, -1)}
-                    aria-label={t('itinMoveUp')}
+                    onClick={() => onMove(itinerary, index, -1)}
+                    aria-label={labels.moveUp}
                     className="grid h-7 w-7 place-items-center rounded-md text-mist-500 hover:bg-white/[0.08] hover:text-mist-100"
                   >
                     <ChevronUp className="h-3.5 w-3.5" />
                   </button>
                   <button
                     type="button"
-                    onClick={() => move(itinerary, index, 1)}
-                    aria-label={t('itinMoveDown')}
+                    onClick={() => onMove(itinerary, index, 1)}
+                    aria-label={labels.moveDown}
                     className="grid h-7 w-7 place-items-center rounded-md text-mist-500 hover:bg-white/[0.08] hover:text-mist-100"
                   >
                     <ChevronDown className="h-3.5 w-3.5" />
                   </button>
                   <button
                     type="button"
-                    onClick={() => removeStop(itinerary, item.id)}
-                    aria-label={t('itinRemove')}
+                    onClick={() => onRemove(itinerary, item.id)}
+                    aria-label={labels.remove}
                     className="grid h-7 w-7 place-items-center rounded-md text-mist-500 hover:bg-rose-500/15 hover:text-rose-300"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -159,6 +137,57 @@ export function Itineraries() {
       })}
     </ol>
   )
+}
+
+export function Itineraries() {
+  const { t, language, itineraries, saveItinerary, deleteItinerary, requireAuth } = useApp()
+  const location = useLocation()
+
+  // Opened straight away when arriving from "Add to itinerary" on a
+  // destination page, rather than toggled afterwards in an effect.
+  const [building, setBuilding] = useState(
+    () => Boolean((location.state as { add?: string } | null)?.add),
+  )
+  const [title, setTitle] = useState('')
+  const [duration, setDuration] = useState<'half' | 'full' | 'two'>('full')
+  const [interests, setInterests] = useState<CategoryId[]>(['culture', 'food'])
+  const [draft, setDraft] = useState<Itinerary | null>(null)
+
+  const generate = () => {
+    const name =
+      title.trim() ||
+      (language === 'fr' ? 'Une journée à Yaoundé' : 'A day in Yaoundé')
+    setDraft(generateItinerary(duration, interests, name))
+  }
+
+  const commit = () => {
+    if (!draft) return
+    if (!requireAuth()) return
+    saveItinerary(draft)
+    setDraft(null)
+    setBuilding(false)
+    setTitle('')
+  }
+
+  const move = (itinerary: Itinerary, index: number, direction: -1 | 1) => {
+    const next = [...itinerary.items]
+    const target = index + direction
+    if (target < 0 || target >= next.length) return
+    ;[next[index], next[target]] = [next[target], next[index]]
+    const updated = { ...itinerary, items: resequence(next) }
+    if (draft && draft.id === itinerary.id) setDraft(updated)
+    else saveItinerary(updated)
+  }
+
+  const removeStop = (itinerary: Itinerary, itemId: string) => {
+    const updated = {
+      ...itinerary,
+      items: resequence(itinerary.items.filter((item) => item.id !== itemId)),
+    }
+    if (draft && draft.id === itinerary.id) setDraft(updated)
+    else saveItinerary(updated)
+  }
+
 
   return (
     <div className="px-5 py-8 lg:px-10">
@@ -180,7 +209,11 @@ export function Itineraries() {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           className="surface mt-6 overflow-hidden p-5 sm:p-6"
+          aria-labelledby="itinerary-builder"
         >
+          <h2 id="itinerary-builder" className="sr-only">
+            {t('itinNew')}
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label={language === 'fr' ? 'Titre' : 'Title'}>
               <Input
@@ -248,7 +281,7 @@ export function Itineraries() {
           {draft && (
             <div className="mt-6 border-t border-white/[0.08] pt-5">
               <h3 className="text-sm font-semibold">{draft.title}</h3>
-              <Timeline itinerary={draft} editable />
+              <Timeline itinerary={draft} editable language={language} labels={{ moveUp: t('itinMoveUp'), moveDown: t('itinMoveDown'), remove: t('itinRemove'), lunch: language === 'fr' ? 'Déjeuner' : 'Lunch' }} onMove={move} onRemove={removeStop} />
             </div>
           )}
         </motion.section>
@@ -289,7 +322,7 @@ export function Itineraries() {
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
-              <Timeline itinerary={itinerary} editable />
+              <Timeline itinerary={itinerary} editable language={language} labels={{ moveUp: t('itinMoveUp'), moveDown: t('itinMoveDown'), remove: t('itinRemove'), lunch: language === 'fr' ? 'Déjeuner' : 'Lunch' }} onMove={move} onRemove={removeStop} />
             </section>
           ))}
         </div>

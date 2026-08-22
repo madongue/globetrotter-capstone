@@ -19,19 +19,26 @@ const LINKS: { key: StringKey; hash: string }[] = [
 /** Sticky, translucent site navigation for the public pages. */
 export function Navbar() {
   const { t, user } = useApp()
-  const [scrolled, setScrolled] = useState(false)
+  // Initialised from the current scroll position rather than set in the effect,
+  // so a navbar rendered on an already-scrolled page does not flash transparent.
+  const [scrolled, setScrolled] = useState(
+    () => typeof window !== 'undefined' && window.scrollY > 12,
+  )
   const [open, setOpen] = useState(false)
   const location = useLocation()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
-    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   // Close the mobile sheet on navigation, or it lingers over the new page.
-  useEffect(() => setOpen(false), [location.pathname, location.hash])
+  // Written as a functional update so navigating with the sheet already closed
+  // -- which is almost every navigation -- does not schedule a render.
+  useEffect(() => {
+    setOpen((current) => (current ? false : current))
+  }, [location.pathname, location.hash])
 
   return (
     <header
