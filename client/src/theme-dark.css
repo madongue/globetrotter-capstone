@@ -1,0 +1,272 @@
+/* ==========================================================================
+   GlobeTrotter — dark theme
+   ==========================================================================
+
+   Brings the trip_io visual identity into the existing application: near-black
+   navy grounds, a single cyan accent, glass surfaces and hairline borders.
+
+   Loaded after styles.css and written entirely as overrides, so it changes how
+   the app looks without touching a line of its markup or behaviour. Deleting
+   the import in main.jsx returns the app to its original appearance.
+
+   Two parts:
+     1. the design tokens, which most of the stylesheet already reads from;
+     2. the handful of rules that hardcoded a light colour and therefore do
+        not follow the tokens.
+   ========================================================================== */
+
+/* -------------------------------------------------------------- 1. tokens */
+
+:root {
+  --bg: #05070d;
+  --surface: #10151f;
+  --surface-soft: #171d2a;
+  --text: #e8edf5;
+  --muted: #8b97ab;
+
+  /* Cyan is the one accent, used for interactive state and emphasis only. */
+  --primary: #06b6d4;
+  --primary-dark: #0891b2;
+  --primary-soft: rgba(6, 182, 212, 0.14);
+  --accent: #22d3ee;
+  --accent-soft: rgba(34, 211, 238, 0.14);
+  --teal: #2dd4bf;
+
+  --border: rgba(255, 255, 255, 0.09);
+
+  /* Shadows read as depth on a dark ground only when they are near-black. */
+  --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 12px 34px -12px rgba(0, 0, 0, 0.65);
+  --shadow-lg: 0 28px 70px -28px rgba(0, 0, 0, 0.85);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+::selection {
+  background: rgba(6, 182, 212, 0.3);
+  color: #fff;
+}
+
+/* The dark palette makes the browser default focus ring nearly invisible. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------- 2. rules with fixed colours */
+
+/* Header: was a translucent white bar. */
+.app-header {
+  background-color: rgba(8, 11, 20, 0.78);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Primary action: cyan needs dark text, not white, to stay legible. */
+.button-primary {
+  background: linear-gradient(120deg, #06b6d4, #0ea5e9);
+  color: #04202a;
+  box-shadow: 0 10px 26px -10px rgba(6, 182, 212, 0.55);
+}
+
+.button-primary:hover {
+  box-shadow: 0 14px 34px -10px rgba(6, 182, 212, 0.7);
+}
+
+/* Secondary action: was a near-solid white pill. */
+.button-secondary {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.button-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.11);
+}
+
+/* Cards and panels. */
+.panel,
+.form-card,
+.feature-card,
+.list-card,
+.surface-card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.hero-section .feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.hero-section .feature-card:hover,
+.hero-section .feature-card:focus-within {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.map-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.discovery-card-badge {
+  background: rgba(8, 11, 20, 0.78);
+  color: var(--text);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Form controls: inherit from the surface rather than staying white. */
+input,
+select,
+textarea {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7688;
+}
+
+/* A native select paints its dropdown with the option colours, which stay
+   light unless set here. */
+select option {
+  background: #10151f;
+  color: var(--text);
+}
+
+.language-picker select,
+.currency-picker select {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Tables and dividers. */
+table,
+th,
+td,
+hr,
+.divider {
+  border-color: var(--border);
+}
+
+thead th {
+  color: var(--muted);
+}
+
+/* Alerts: the light-theme tints are invisible on a dark ground. */
+.alert-error,
+.alert-text {
+  background: rgba(244, 63, 94, 0.1);
+  color: #fda4af;
+  border-color: rgba(244, 63, 94, 0.25);
+}
+
+.alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+/* Navigation. */
+.nav-bar > button {
+  color: var(--text);
+}
+
+.nav-bar > button:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.brand {
+  color: var(--text);
+}
+
+/* The sidebar's active item kept a hardcoded indigo gradient and white text,
+   which clashed with the cyan accent used everywhere else. */
+.app-menu-list button.active {
+  background: rgba(6, 182, 212, 0.14);
+  color: var(--accent);
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: none;
+}
+
+.app-menu-list button.active svg,
+.app-menu-list button:hover svg {
+  color: var(--accent);
+}
+
+.app-menu-list button {
+  color: var(--muted);
+}
+
+.app-menu-list button:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+/* Muted helper text sat too dark to read on the new ground. */
+.small-text,
+.muted-note,
+.helper-text {
+  color: var(--muted);
+}
+
+/* Stat tiles on the dashboard. */
+.stat-card,
+.metric-card,
+.overview-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* Media queries in the base stylesheet repeat some of the light values. */
+@media (max-width: 900px) {
+  .app-header {
+    background: rgba(8, 11, 20, 0.94);
+  }
+
+  .language-picker select,
+  .currency-picker select {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+  }
+}
+
+/* Leaflet ships a light chrome; tone it to match without touching the tiles. */
+.leaflet-container {
+  background: #0b111c;
+}
+
+.leaflet-control-zoom a,
+.leaflet-bar a {
+  background: #10151f;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #10151f;
+  color: var(--text);
+}
+
+/* The one-step planner is the primary path to an itinerary, so it keeps its
+   accent treatment rather than inheriting the neutral .panel surface above. */
+.panel.quick-plan-panel {
+  background: linear-gradient(140deg, rgba(6, 182, 212, 0.16), rgba(6, 182, 212, 0.04));
+  border: 1px solid rgba(6, 182, 212, 0.38);
+}

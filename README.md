@@ -5,6 +5,20 @@
 GlobeTrotter is a **monolithic Flask application** that serves as the starting point for a semester-long capstone project.  
 Students build the monolith first, then refactor it into microservices, and finally deploy it to the cloud with resilience patterns using Docker, Kubernetes, and cloud-native tooling.
 
+## Documentation
+
+| Document | What it covers |
+| --- | --- |
+| **[docs/presentation_guide.md](docs/presentation_guide.md)** | The GitHub, the data source design, containerization and what changes when the app is split, how to demo planning an itinerary, what data a trip carries, and how checkpoints are swapped and edited |
+| **[docs/uml.md](docs/uml.md)** | Use case, class, component, sequence, activity and deployment diagrams |
+| [docs/architecture.md](docs/architecture.md) | System architecture |
+| [docs/functional_requirements.md](docs/functional_requirements.md) | Functional requirements |
+| [docs/nonfunctional_requirements.md](docs/nonfunctional_requirements.md) | Non-functional requirements |
+| [docs/system_functionality.md](docs/system_functionality.md) | Feature-by-feature behaviour |
+| [docs/business_logic.md](docs/business_logic.md) | Business rules |
+| [docs/implementation_plan.md](docs/implementation_plan.md) | Phase plan |
+| [docs/competitor_analysis.md](docs/competitor_analysis.md) | Benchmarking |
+
 ## Product Vision
 GlobeTrotter is designed to help travellers discover destinations, build shared trips, and collaborate on itineraries. It combines destination search, personalised recommendations, trip planning workflows, Google-style authentication, shared trip boards, and local AI-style itinerary draft generation.
 
@@ -181,7 +195,31 @@ curl -X POST http://localhost:5000/reset-password \
   -H "Content-Type: application/json" \
   -d '{"token": "<reset-token>", "new_password": "newpass123"}'
 
-# Create an itinerary
+# Plan a whole trip from a destination alone — hotel, places and checkpoints
+# are filled in from the Cameroon catalogue
+curl -X POST http://localhost:5000/api/itineraries/quick \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"location": "Kribi", "days": 3}'
+
+# Swap two checkpoints (also accepts {"move": "<id>", "direction": "up"}
+# or a full {"stage_ids": [...]} order)
+curl -X PATCH http://localhost:5000/api/itineraries/<itinerary_id>/stages \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"swap": ["place-1", "place-2"]}'
+
+# Update a single checkpoint
+curl -X PATCH http://localhost:5000/api/itineraries/<itinerary_id>/stages/<stage_id> \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"name": "Lobe Falls at sunset", "cost": 12000, "duration_hours": 3}'
+
+# Remove a checkpoint
+curl -X DELETE http://localhost:5000/api/itineraries/<itinerary_id>/stages/<stage_id> \
+  -H "Authorization: Bearer $TOKEN"
+
+# Create an itinerary in detail
 curl -X POST http://localhost:5000/itineraries \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \

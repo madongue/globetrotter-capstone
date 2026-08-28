@@ -776,3 +776,315 @@ def test_unknown_itinerary_id_returns_not_found(client):
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Quick itinerary creation
+#
+# The full create form demands a hotel, activities, places, dates and a budget
+# before it produces anything. These cover the short path: a destination is
+# enough, and the plan that comes back is complete.
+# ---------------------------------------------------------------------------
+
+
+def test_quick_itinerary_needs_only_a_location(client):
+    token = register_and_login(client)
+    response = client.post(
+        "/api/itineraries/quick",
+        data=json.dumps({"location": "Kribi"}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 201
+    body = response.get_json()
+    itinerary = body["itinerary"]
+
+    assert body["matched"] is True
+    # Locations are normalised to include the country, as elsewhere in the app.
+    assert itinerary["location"] == "Kribi, Cameroon"
+    assert itinerary["hotel"]["name"] == "Kribi Beach Stay"
+    assert [place["name"] for place in itinerary["places_to_visit"]] == ["Lobe Falls"]
+    # A plan is only usable if it arrives with dates, checkpoints and a cost.
+    assert itinerary["start_date"] and itinerary["end_date"]
+    assert len(itinerary["stages"]) >= 2
+    assert itinerary["cost_breakdown"]["total_budget"] > 0
+
+
+def test_quick_itinerary_titles_itself_and_honours_trip_length(client):
+    token = register_and_login(client)
+    response = client.post(
+        "/api/itineraries/quick",
+        data=json.dumps({"location": "Buea", "days": 3}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    itinerary = response.get_json()["itinerary"]
+    assert itinerary["title"] == "3-day trip to Buea"
+    assert itinerary["duration_days"] == 3
+
+
+def test_quick_itinerary_reports_when_the_catalogue_has_nothing(client):
+    token = register_and_login(client)
+    response = client.post(
+        "/api/itineraries/quick",
+        data=json.dumps({"location": "Garoua"}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 201
+    # Still saved, so the traveller can build it by hand, but flagged as empty
+    # rather than silently handed back a plan with no stops.
+    assert response.get_json()["matched"] is False
+
+
+def test_quick_itinerary_requires_a_location(client):
+    token = register_and_login(client)
+    response = client.post(
+        "/api/itineraries/quick",
+        data=json.dumps({"days": 2}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 400
+
+
+def test_quick_itinerary_requires_authentication(client):
+    response = client.post(
+        "/api/itineraries/quick",
+        data=json.dumps({"location": "Kribi"}),
+        content_type="application/json",
+    )
+    assert response.status_code == 401
+
+
+# ---------------------------------------------------------------------------
+# Swapping and updating checkpoints
+# ---------------------------------------------------------------------------
+
+
+def _quick_itinerary(client, token, location="Kribi", days=2):
+    response = client.post(
+        "/api/itineraries/quick",
+        data=json.dumps({"location": location, "days": days}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    return response.get_json()["itinerary"]
+
+
+def test_checkpoints_can_be_swapped(client):
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    order = [stage["id"] for stage in itinerary["stages"]]
+    assert len(order) >= 2
+
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages",
+        data=json.dumps({"swap": [order[0], order[1]]}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    swapped = [stage["id"] for stage in response.get_json()["itinerary"]["stages"]]
+    assert swapped[0] == order[1]
+    assert swapped[1] == order[0]
+
+
+def test_swapped_order_survives_a_later_save(client):
+    """The stage list is rebuilt on every save, so the order has to persist."""
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    order = [stage["id"] for stage in itinerary["stages"]]
+
+    client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages",
+        data=json.dumps({"swap": [order[0], order[1]]}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    client.put(
+        f"/api/itineraries/{itinerary['id']}",
+        data=json.dumps({"notes": "unrelated edit"}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    response = client.get(
+        f"/api/itineraries/{itinerary['id']}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    reloaded = [stage["id"] for stage in response.get_json()["stages"]]
+    assert reloaded[0] == order[1]
+    assert reloaded[1] == order[0]
+
+
+def test_checkpoint_can_be_moved_up_and_down(client):
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    order = [stage["id"] for stage in itinerary["stages"]]
+    target = order[1]
+
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages",
+        data=json.dumps({"move": target, "direction": "up"}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    moved = [stage["id"] for stage in response.get_json()["itinerary"]["stages"]]
+    assert moved.index(target) == 0
+
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages",
+        data=json.dumps({"move": target, "direction": "down"}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    restored = [stage["id"] for stage in response.get_json()["itinerary"]["stages"]]
+    assert restored.index(target) == 1
+
+
+def test_moving_the_first_checkpoint_up_is_a_no_op(client):
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    order = [stage["id"] for stage in itinerary["stages"]]
+
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages",
+        data=json.dumps({"move": order[0], "direction": "up"}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    assert [stage["id"] for stage in response.get_json()["itinerary"]["stages"]] == order
+
+
+def test_explicit_checkpoint_order_is_applied(client):
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    order = [stage["id"] for stage in itinerary["stages"]]
+
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages",
+        data=json.dumps({"stage_ids": list(reversed(order))}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert [stage["id"] for stage in response.get_json()["itinerary"]["stages"]] == list(reversed(order))
+
+
+def test_reordering_rejects_an_unknown_checkpoint(client):
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages",
+        data=json.dumps({"swap": ["hotel", "does-not-exist"]}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 404
+
+
+def test_checkpoint_can_be_renamed_and_repriced(client):
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    stage = next(stage for stage in itinerary["stages"] if stage["type"] == "place")
+
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages/{stage['id']}",
+        data=json.dumps({"name": "Lobe Falls at sunset", "cost": 12000, "duration_hours": 3}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    updated = next(
+        entry for entry in response.get_json()["itinerary"]["stages"] if entry["id"] == stage["id"]
+    )
+    assert updated["name"] == "Lobe Falls at sunset"
+    assert updated["cost"] == 12000
+    assert updated["duration_hours"] == 3
+
+
+def test_checkpoint_cost_may_be_zero(client):
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    stage = next(stage for stage in itinerary["stages"] if stage["type"] == "place")
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages/{stage['id']}",
+        data=json.dumps({"cost": 0}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+
+
+def test_checkpoint_status_is_validated(client):
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    stage = itinerary["stages"][0]
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages/{stage['id']}",
+        data=json.dumps({"status": "somewhere-else"}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 400
+
+
+def test_checkpoint_can_be_removed(client):
+    token = register_and_login(client)
+    itinerary = _quick_itinerary(client, token)
+    stage = next(stage for stage in itinerary["stages"] if stage["type"] == "place")
+
+    response = client.delete(
+        f"/api/itineraries/{itinerary['id']}/stages/{stage['id']}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    remaining = [entry["id"] for entry in response.get_json()["itinerary"]["stages"]]
+    assert stage["id"] not in remaining
+
+
+def test_removing_a_checkpoint_does_not_renumber_the_others(client):
+    """Positional ids must be pinned, or a deletion shifts every later id."""
+    token = register_and_login(client)
+    create = client.post(
+        "/api/itineraries",
+        data=json.dumps({
+            "title": "Manual plan",
+            "location": "Kribi",
+            "places_to_visit": [
+                {"name": "First stop", "cost": 1000},
+                {"name": "Second stop", "cost": 2000},
+                {"name": "Third stop", "cost": 3000},
+            ],
+        }),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    itinerary = create.get_json()
+    stages = {stage["name"]: stage["id"] for stage in itinerary["stages"]}
+
+    client.delete(
+        f"/api/itineraries/{itinerary['id']}/stages/{stages['First stop']}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    response = client.get(
+        f"/api/itineraries/{itinerary['id']}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    after = {stage["name"]: stage["id"] for stage in response.get_json()["stages"]}
+    assert after["Third stop"] == stages["Third stop"]
+    assert after["Second stop"] == stages["Second stop"]
+
+
+def test_checkpoint_edits_require_edit_access(client):
+    token = register_and_login(client, "alice")
+    itinerary = _quick_itinerary(client, token)
+    intruder = register_and_login(client, "mallory")
+
+    response = client.patch(
+        f"/api/itineraries/{itinerary['id']}/stages",
+        data=json.dumps({"move": itinerary["stages"][0]["id"], "direction": "down"}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {intruder}"},
+    )
+    assert response.status_code == 403

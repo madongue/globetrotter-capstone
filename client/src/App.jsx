@@ -633,6 +633,12 @@ function App() {
   const [inviteForm, setInviteForm] = useState({ permission: 'view', maxUses: '1' });
   const [inviteResult, setInviteResult] = useState(null);
   const [checklistText, setChecklistText] = useState({});
+  // The two fields the short itinerary path asks for.
+  const [quickPlan, setQuickPlan] = useState({ location: '', days: '2' });
+  const [quickPlanLoading, setQuickPlanLoading] = useState(false);
+  // Which checkpoint is currently open for inline editing, if any.
+  const [editingStageId, setEditingStageId] = useState(null);
+  const [stageDraft, setStageDraft] = useState({ name: '', cost: '', duration_hours: '' });
   const [packingForm, setPackingForm] = useState({ category: 'General', text: '', assignedTo: '' });
   const [expenseForm, setExpenseForm] = useState({ title: '', category: 'General', amount: '', paidBy: '', splitWith: '' });
   const [documentForm, setDocumentForm] = useState({ title: '', type: 'confirmation', url: '' });
@@ -1765,6 +1771,117 @@ function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  /**
+   * Build a whole trip from a destination and a trip length.
+   *
+   * The full form below asks for a title, an area, a hotel, an activity, a
+   * place and two dates before it will create anything. This is the short
+   * path: two fields, one request, a complete plan the traveller can then
+   * reorder and edit in place.
+   */
+  const handleQuickPlan = async (event) => {
+    event.preventDefault();
+    if (!token) {
+      setAlert({ type: 'error', message: 'Please login to create an itinerary.' });
+      return;
+    }
+    const location = quickPlan.location.trim();
+    if (!location) {
+      setAlert({ type: 'error', message: 'Enter where you are going.' });
+      return;
+    }
+
+    setQuickPlanLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/itineraries/quick`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ location, days: Number(quickPlan.days) || 2 }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setAlert({ type: 'error', message: result.error || 'Unable to create itinerary.' });
+        return;
+      }
+
+      const itinerary = result.itinerary;
+      setItineraries((current) => [itinerary, ...current]);
+      // Opened straight away: the plan is the point, not the confirmation.
+      // Goes through the normal selection handler so every panel on the detail
+      // page (payments, sharing, progress, route) is initialised as usual.
+      handleSelectItinerary(itinerary);
+      setQuickPlan({ location: '', days: '2' });
+      setAlert({
+        type: result.matched ? 'success' : 'error',
+        message: result.matched
+          ? `"${itinerary.title}" is ready with ${itinerary.stages?.length || 0} checkpoints. Reorder or edit them below.`
+          : `Created "${itinerary.title}", but nothing is catalogued for ${location} yet — add checkpoints by hand.`,
+      });
+    } catch (error) {
+      setAlert({ type: 'error', message: 'Unable to create itinerary.' });
+    } finally {
+      setQuickPlanLoading(false);
+    }
+  };
+
+  /** Move one checkpoint up or down; the new order is saved server-side. */
+  const handleMoveCheckpoint = async (stageId, direction) => {
+    if (!token || !selectedItinerary) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/stages`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ move: stageId, direction }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to reorder checkpoints.' });
+      return;
+    }
+    refreshSelectedItinerary(result.itinerary);
+  };
+
+  /** Rename, reprice or retime a single checkpoint. */
+  const handleUpdateCheckpoint = async (stageId, changes) => {
+    if (!token || !selectedItinerary) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/stages/${stageId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(changes),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to update checkpoint.' });
+      return;
+    }
+    refreshSelectedItinerary(result.itinerary);
+    setEditingStageId(null);
+    setAlert({ type: 'success', message: 'Checkpoint updated.' });
+  };
+
+  const handleRemoveCheckpoint = async (stageId) => {
+    if (!token || !selectedItinerary) return;
+    const response = await fetch(`${API_BASE}/trips/${selectedItinerary.id}/stages/${stageId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setAlert({ type: 'error', message: result.error || 'Unable to remove checkpoint.' });
+      return;
+    }
+    refreshSelectedItinerary(result.itinerary);
+    setAlert({ type: 'success', message: 'Checkpoint removed.' });
   };
 
   const handleCreateItinerary = async (event) => {
@@ -4008,6 +4125,44 @@ function App() {
             </div>
             ) : (
             <>
+            <div className="panel quick-plan-panel" id="quick-plan">
+              <h3>Plan a trip in one step</h3>
+              <p className="small-text">
+                Type where you are going and how long for. We build the whole plan — hotel,
+                places and checkpoints — from the Cameroon catalogue. You can reorder and edit
+                every checkpoint afterwards.
+              </p>
+              <form onSubmit={handleQuickPlan} className="quick-plan-form">
+                <label>
+                  Where are you going?
+                  <input
+                    value={quickPlan.location}
+                    onChange={(event) => setQuickPlan((prev) => ({ ...prev, location: event.target.value }))}
+                    placeholder="Kribi"
+                    list="quick-plan-destinations"
+                    required
+                  />
+                </label>
+                <datalist id="quick-plan-destinations">
+                  {['Yaounde', 'Douala', 'Kribi', 'Buea', 'Limbe', 'Bamenda', 'Bafoussam', 'Garoua', 'Maroua', 'Ngaoundere'].map((city) => (
+                    <option key={city} value={city} />
+                  ))}
+                </datalist>
+                <label>
+                  How many days?
+                  <input
+                    type="number"
+                    min="1"
+                    max="14"
+                    value={quickPlan.days}
+                    onChange={(event) => setQuickPlan((prev) => ({ ...prev, days: event.target.value }))}
+                  />
+                </label>
+                <button type="submit" className="button button-primary" disabled={quickPlanLoading}>
+                  {quickPlanLoading ? 'Building your plan…' : 'Build my itinerary'}
+                </button>
+              </form>
+            </div>
             <div className="grid-2 mt-24">
               <div className="panel">
                 <h3>Recent itineraries</h3>
@@ -4077,7 +4232,10 @@ function App() {
                 )}
               </div>
               <div className="panel" id="create-itinerary">
-                <h3>Create itinerary</h3>
+                <h3>Create itinerary in detail</h3>
+                <p className="small-text">
+                  Prefer to fill everything in yourself? Use this longer form instead.
+                </p>
                 <form onSubmit={handleCreateItinerary} className="stacked-form">
                   <label>
                     Title
@@ -5477,6 +5635,10 @@ function App() {
                 <div className="grid-2 mt-24">
                   <div className="panel">
                     <h3>Trip stages</h3>
+                    <p className="small-text">
+                      Checkpoints run in order. Use ↑ and ↓ to swap two of them, Edit to change a
+                      name, cost or duration, and Remove to drop one. Every change is saved.
+                    </p>
                     {getItineraryMapMarkers().length > 0 && (
                       <TravelMap
                         markers={getItineraryMapMarkers()}
@@ -5486,11 +5648,93 @@ function App() {
                     )}
                     {selectedItinerary.stages?.length > 0 ? (
                       <ul className="list-card">
-                        {selectedItinerary.stages.map((stage) => (
+                        {selectedItinerary.stages.map((stage, stageIndex) => (
                           <li key={stage.id}>
-                            <strong>{stage.name}</strong>
+                            <strong>{stageIndex + 1}. {stage.name}</strong>
                             <p>{stage.type} · {stage.duration_hours} hours · {formatMoney(stage.cost)}</p>
                             <p className="small-text">{stage.id} · {stage.status}</p>
+                            <div className="checkpoint-controls">
+                              <button
+                                type="button"
+                                className="button button-secondary"
+                                onClick={() => handleMoveCheckpoint(stage.id, 'up')}
+                                disabled={stageIndex === 0}
+                                aria-label={`Move ${stage.name} earlier`}
+                              >
+                                ↑
+                              </button>
+                              <button
+                                type="button"
+                                className="button button-secondary"
+                                onClick={() => handleMoveCheckpoint(stage.id, 'down')}
+                                disabled={stageIndex === selectedItinerary.stages.length - 1}
+                                aria-label={`Move ${stage.name} later`}
+                              >
+                                ↓
+                              </button>
+                              <button
+                                type="button"
+                                className="button button-secondary"
+                                onClick={() => {
+                                  setEditingStageId(editingStageId === stage.id ? null : stage.id);
+                                  setStageDraft({
+                                    name: stage.name || '',
+                                    cost: String(stage.cost ?? ''),
+                                    duration_hours: String(stage.duration_hours ?? ''),
+                                  });
+                                }}
+                              >
+                                {editingStageId === stage.id ? 'Close' : 'Edit'}
+                              </button>
+                              <button
+                                type="button"
+                                className="button button-secondary"
+                                onClick={() => handleRemoveCheckpoint(stage.id)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                            {editingStageId === stage.id && (
+                              <div className="checkpoint-editor">
+                                <label>
+                                  Name
+                                  <input
+                                    value={stageDraft.name}
+                                    onChange={(event) => setStageDraft((prev) => ({ ...prev, name: event.target.value }))}
+                                  />
+                                </label>
+                                <label>
+                                  Cost ({currencyLabel})
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={stageDraft.cost}
+                                    onChange={(event) => setStageDraft((prev) => ({ ...prev, cost: event.target.value }))}
+                                  />
+                                </label>
+                                <label>
+                                  Duration (hours)
+                                  <input
+                                    type="number"
+                                    min="0.5"
+                                    step="0.5"
+                                    value={stageDraft.duration_hours}
+                                    onChange={(event) => setStageDraft((prev) => ({ ...prev, duration_hours: event.target.value }))}
+                                  />
+                                </label>
+                                <button
+                                  type="button"
+                                  className="button button-primary"
+                                  onClick={() => handleUpdateCheckpoint(stage.id, {
+                                    name: stageDraft.name,
+                                    cost: Number(stageDraft.cost) || 0,
+                                    duration_hours: Number(stageDraft.duration_hours) || 1,
+                                  })}
+                                >
+                                  Save checkpoint
+                                </button>
+                              </div>
+                            )}
                             {stage.map_info?.google_map_url && (
                               <a href={stage.map_info.google_map_url} target="_blank" rel="noreferrer">Open map</a>
                             )}

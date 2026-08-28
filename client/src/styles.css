@@ -2439,3 +2439,78 @@ textarea {
   .attraction-card { transition: none; }
   .attraction-card:hover { transform: none; }
 }
+
+
+/* ------------------------------------------------ one-step trip planning */
+
+/* The short path to an itinerary, kept visually ahead of the detailed form
+   so it reads as the default rather than an alternative. */
+.panel.quick-plan-panel {
+  border: 1px solid var(--primary);
+  background: var(--primary-soft);
+}
+
+.quick-plan-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-top: 16px;
+}
+
+.quick-plan-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.quick-plan-form .button {
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .quick-plan-form {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
+
+/* ------------------------------------------------------ checkpoint edits */
+
+.checkpoint-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.checkpoint-controls .button {
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  min-width: auto;
+}
+
+.checkpoint-controls .button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.checkpoint-editor {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+
+.checkpoint-editor label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}

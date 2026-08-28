@@ -246,7 +246,46 @@ def _build_stage_plan(data: dict) -> list:
             "map_info": place.get("map_info", {}),
         })
 
-    return stages
+    return _apply_stage_order(stages, data.get("stage_order"))
+
+
+def _apply_stage_order(stages: list, stage_order: list | None) -> list:
+    """Reorder the derived stages to follow a traveller-defined sequence.
+
+    Stages are rebuilt from hotel/activities/places on every save, which would
+    otherwise discard any reordering the traveller did. Persisting the order as
+    a list of stage ids on the itinerary lets the rebuild honour it: known ids
+    take their stored position, and anything added since (or an id the stored
+    order never mentioned) keeps its natural position at the end.
+    """
+    if not stage_order or not isinstance(stage_order, list):
+        return stages
+    position = {stage_id: index for index, stage_id in enumerate(stage_order)}
+    return sorted(
+        stages,
+        key=lambda stage: position.get(stage.get("id"), len(position)),
+    )
+
+
+def _source_record_for_stage(itinerary: dict, stage_id: str) -> tuple[dict | None, list | None, int]:
+    """Locate the hotel/activity/place a derived stage was built from.
+
+    Editing a checkpoint has to write back to the source record, because the
+    stage list itself is regenerated on every save. Returns the record, the
+    list holding it (None for the hotel, which is a single dict), and its index
+    in that list (-1 for the hotel).
+    """
+    if stage_id == "hotel":
+        hotel = itinerary.get("hotel") or {}
+        return (hotel if hotel.get("name") else None), None, -1
+
+    for key, prefix in (("activities", "activity"), ("places_to_visit", "place")):
+        records = itinerary.get(key) or []
+        for index, record in enumerate(records):
+            derived_id = record.get("id") or f"{prefix}-{index + 1}"
+            if derived_id == stage_id:
+                return record, records, index
+    return None, None, -1
 
 
 def _calculate_stage_summary(stages: list) -> dict:
@@ -268,7 +307,25 @@ def _calculate_stage_summary(stages: list) -> dict:
     }
 
 
+def _ensure_stage_ids(itinerary: dict) -> None:
+    """Freeze the positional id of every activity and place.
+
+    Stage ids fall back to the record's position in its list. That is stable
+    only until a checkpoint is removed, at which point every later record
+    silently inherits its neighbour's id — and with it that neighbour's stored
+    order, progress and checklist. Writing the positional id onto the record
+    the first time we see it pins the id to the record instead of the slot.
+    The existing positional value is reused rather than a fresh uuid so that
+    ids already referenced by stored progress and day plans keep resolving.
+    """
+    for key, prefix in (("activities", "activity"), ("places_to_visit", "place")):
+        for index, record in enumerate(itinerary.get(key) or [], start=1):
+            if isinstance(record, dict) and not record.get("id"):
+                record["id"] = f"{prefix}-{index}"
+
+
 def _sync_itinerary_calculations(itinerary: dict) -> None:
+    _ensure_stage_ids(itinerary)
     stages = _build_stage_plan(itinerary)
     existing_progress = itinerary.get("progress", {})
     if existing_progress.get("current_stage_id"):
@@ -824,6 +881,186 @@ def create_itinerary():
     return jsonify(itinerary), 201
 
 
+# Places worth building a day around, best first. Most of the catalogue comes
+# from OpenStreetMap, where roughly two thirds of the entries are eateries, so
+# without this a generated plan is a list of bars in alphabetical order.
+SIGHTSEEING_CATEGORIES = (
+    "national_park",
+    "waterfall",
+    "beach",
+    "mountain",
+    "natural_site",
+    "nature",
+    "viewpoint",
+    "museum",
+    "heritage",
+    "monument",
+    "religious",
+    "market",
+    "man_made_site",
+)
+
+# Somewhere to eat belongs in a trip, but as a stop or two, not as the trip.
+FOOD_CATEGORIES = ("restaurant", "bar", "cafe")
+
+# Imported records sometimes carry only their type as a name. Presenting a stop
+# called "Hotel" reads as a missing value, so these sort last among equals.
+GENERIC_NAMES = {
+    "hotel", "hôtel", "motel", "auberge", "lodge", "guest house", "guesthouse",
+    "restaurant", "bar", "cafe", "café", "snack", "boutique", "shop", "market",
+}
+
+
+def _has_generic_name(resource: dict) -> bool:
+    return (resource.get("name") or "").strip().lower() in GENERIC_NAMES
+
+
+def _quick_plan_rank(resource: dict) -> tuple:
+    """Order catalogue matches so the strongest candidates are picked first.
+
+    A generated plan is only as convincing as its first few stops, so this
+    prefers curated entries, then sightseeing over eateries, then places
+    carrying a photograph of their own rather than a stand-in shot of the
+    surrounding city.
+    """
+    category = (resource.get("category") or "").lower()
+    try:
+        category_rank = SIGHTSEEING_CATEGORIES.index(category)
+    except ValueError:
+        category_rank = len(SIGHTSEEING_CATEGORIES)
+
+    # image_url is populated for nearly every record, often with a generic city
+    # photo, so only a non-contextual image counts as the place's own.
+    has_own_photo = bool(resource.get("image_url")) and not resource.get("image_is_contextual")
+    try:
+        rating = float(resource.get("rating") or 0)
+    except (TypeError, ValueError):
+        rating = 0.0
+
+    return (
+        0 if resource.get("curated") else 1,
+        1 if _has_generic_name(resource) else 0,
+        category_rank,
+        0 if has_own_photo else 1,
+        -rating,
+        resource.get("name", ""),
+    )
+
+
+def _balanced_stop_selection(places: list, limit: int) -> list:
+    """Take the best places, holding eateries to at most a quarter of the stops.
+
+    Ranking alone is not enough: once the sightseeing in a town runs out, the
+    remaining slots fill with restaurants. Capping them keeps a generated day
+    recognisable as a day out.
+    """
+    food_allowance = max(1, limit // 4)
+    chosen, food_taken = [], 0
+    for place in places:
+        if len(chosen) >= limit:
+            break
+        if (place.get("category") or "").lower() in FOOD_CATEGORIES:
+            if food_taken >= food_allowance:
+                continue
+            food_taken += 1
+        chosen.append(place)
+    return chosen
+
+
+@itineraries_bp.route("/itineraries/quick", methods=["POST"])
+@itineraries_bp.route("/trips/quick", methods=["POST"])
+def create_quick_itinerary():
+    """Build a complete, ready-to-edit itinerary from a destination alone.
+
+    The full create form asks for a hotel, activities, places, dates and a
+    budget before it will produce anything, which is far more than someone
+    needs to answer to get started. This route takes a destination and an
+    optional trip length, fills the rest from the Cameroon catalogue, and
+    returns a saved itinerary the traveller can then reorder and edit.
+
+    Expected JSON body:
+        {"location": "Kribi", "days": 2, "title": "Kribi weekend"}
+
+    Only ``location`` is required. Returns 201 with the created itinerary.
+    """
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    data = request.get_json(silent=True) or {}
+    # Validated before normalising: ensure_cameroon_location("") returns
+    # "Cameroon", so checking the normalised value would accept a blank field.
+    requested_location = str(data.get("location", "")).strip()
+    if not requested_location:
+        return jsonify({"error": "location is required"}), 400
+    location = ensure_cameroon_location(requested_location)
+
+    try:
+        days = int(data.get("days", 2))
+    except (TypeError, ValueError):
+        days = 2
+    days = max(1, min(days, 14))
+
+    budget = data.get("budget")
+    budget = _parse_positive_amount(budget) if budget not in (None, "") else None
+
+    hotels = sorted(_match_resources(get_all_hotels(), location, budget, "cost_per_night"), key=_quick_plan_rank)
+    places = sorted(_match_resources(get_all_places(), location, None, "cost"), key=_quick_plan_rank)
+    activities = sorted(_match_resources(get_all_activities(), location, None, "cost"), key=_quick_plan_rank)
+
+    # Roughly two stops a day, with a floor so a single-day trip is not a
+    # one-line plan and a ceiling so a fortnight is not overwhelming.
+    stop_target = max(3, min(days * 2, 10))
+    chosen_places = [dict(place) for place in _balanced_stop_selection(places, stop_target)]
+    chosen_activities = [dict(activity) for activity in activities[: max(1, days)]]
+
+    start = datetime.date.today()
+    end = start + datetime.timedelta(days=days - 1)
+
+    # Titled from what the traveller typed, not the normalised value, so the
+    # plan is not called "2-day trip to Kribi, Cameroon".
+    title = str(data.get("title", "")).strip() or f"{days}-day trip to {requested_location}"
+    itinerary = {
+        "id": str(uuid.uuid4()),
+        "username": username,
+        "owner_username": username,
+        "title": title,
+        "location": location,
+        **infer_cameroon_geo(location),
+        "hotel": dict(hotels[0]) if hotels else {},
+        "activities": chosen_activities,
+        "places_to_visit": chosen_places,
+        "start_date": start.isoformat(),
+        "end_date": end.isoformat(),
+        "notes": "",
+        "currency": data.get("currency", DEFAULT_CURRENCY),
+        "currency_label": data.get("currency_label", DEFAULT_CURRENCY_LABEL),
+        "payment_method": "",
+        "payment_status": "pending",
+        "map_info": {},
+        "visibility": "private",
+        "participants": [username],
+        "event_listing": {},
+        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "generated": True,
+    }
+    itinerary["cost_breakdown"] = _calculate_cost_breakdown(itinerary)
+    _ensure_map_info(itinerary, location)
+    itinerary["shared_with"] = []
+    itinerary["shared_permissions"] = {}
+    _sync_itinerary_calculations(itinerary)
+    itinerary["route_plan"] = _route_plan_for_itinerary(itinerary)
+    save_itinerary(itinerary)
+    _audit(username, "created_quick", itinerary["id"], {"title": title, "location": location, "days": days})
+    return jsonify({
+        "message": "itinerary created",
+        "itinerary": itinerary,
+        # Surfaced so the interface can say "nothing catalogued here yet"
+        # instead of quietly handing back an empty plan.
+        "matched": bool(chosen_places or chosen_activities or hotels),
+    }), 201
+
+
 @itineraries_bp.route("/itineraries/<itinerary_id>", methods=["GET"])
 @itineraries_bp.route("/trips/<itinerary_id>", methods=["GET"])
 def get_itinerary_route(itinerary_id: str):
@@ -933,6 +1170,141 @@ def add_place_to_itinerary(itinerary_id: str):
     update_itinerary(itinerary)
     _audit(username, "place_added", itinerary_id, {"place_id": place_id})
     return jsonify({"message": "place added", "itinerary": itinerary, "place": place}), 201
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/stages", methods=["PATCH"])
+@itineraries_bp.route("/trips/<itinerary_id>/stages", methods=["PATCH"])
+def reorder_itinerary_stages(itinerary_id: str):
+    """Reorder the checkpoints of an itinerary.
+
+    Accepts whichever shape the caller finds convenient:
+        {"stage_ids": ["place-2", "hotel", ...]}   full explicit order
+        {"move": "place-2", "direction": "up"}     nudge one checkpoint
+        {"swap": ["place-2", "place-3"]}           exchange two checkpoints
+
+    The resulting order is stored on the itinerary, so it survives the stage
+    rebuild that happens on every subsequent save.
+    """
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to reorder checkpoints"}), 403
+
+    data = request.get_json(silent=True) or {}
+    current = [stage.get("id") for stage in itinerary.get("stages", [])]
+
+    if isinstance(data.get("stage_ids"), list):
+        requested = [str(stage_id) for stage_id in data["stage_ids"]]
+        unknown = [stage_id for stage_id in requested if stage_id not in current]
+        if unknown:
+            return jsonify({"error": f"unknown checkpoint: {unknown[0]}"}), 404
+        # Anything the caller left out keeps its existing relative position.
+        order = requested + [stage_id for stage_id in current if stage_id not in requested]
+    elif data.get("move"):
+        stage_id = str(data["move"])
+        direction = str(data.get("direction", "up")).lower()
+        if direction not in ("up", "down"):
+            return jsonify({"error": "direction must be 'up' or 'down'"}), 400
+        if stage_id not in current:
+            return jsonify({"error": "checkpoint not found"}), 404
+        order = list(current)
+        index = order.index(stage_id)
+        target = index - 1 if direction == "up" else index + 1
+        if 0 <= target < len(order):
+            order[index], order[target] = order[target], order[index]
+    elif isinstance(data.get("swap"), list) and len(data["swap"]) == 2:
+        first, second = (str(value) for value in data["swap"])
+        if first not in current or second not in current:
+            return jsonify({"error": "checkpoint not found"}), 404
+        order = list(current)
+        first_index, second_index = order.index(first), order.index(second)
+        order[first_index], order[second_index] = order[second_index], order[first_index]
+    else:
+        return jsonify({"error": "provide stage_ids, move + direction, or swap"}), 400
+
+    itinerary["stage_order"] = order
+    _sync_itinerary_calculations(itinerary)
+    itinerary["route_plan"] = _route_plan_for_itinerary(itinerary)
+    itinerary["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    update_itinerary(itinerary)
+    _audit(username, "checkpoints_reordered", itinerary_id, {"order": order})
+    return jsonify({"message": "checkpoints reordered", "itinerary": itinerary}), 200
+
+
+@itineraries_bp.route("/itineraries/<itinerary_id>/stages/<stage_id>", methods=["PATCH", "DELETE"])
+@itineraries_bp.route("/trips/<itinerary_id>/stages/<stage_id>", methods=["PATCH", "DELETE"])
+def modify_itinerary_stage(itinerary_id: str, stage_id: str):
+    """Update or remove a single checkpoint.
+
+    Writes through to the hotel/activity/place the checkpoint was derived from,
+    since the stage list itself is regenerated from those records on save.
+    """
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+    itinerary = get_itinerary_by_id(itinerary_id)
+    if not itinerary:
+        return jsonify({"error": "itinerary not found"}), 404
+    if not _can_edit_itinerary(itinerary, username):
+        return jsonify({"error": "edit access is required to modify checkpoints"}), 403
+
+    record, container, index = _source_record_for_stage(itinerary, stage_id)
+    if record is None:
+        return jsonify({"error": "checkpoint not found"}), 404
+
+    if request.method == "DELETE":
+        if container is None:
+            itinerary["hotel"] = {}
+        else:
+            container.pop(index)
+        itinerary["stage_order"] = [
+            existing for existing in itinerary.get("stage_order", []) if existing != stage_id
+        ]
+        action, message = "checkpoint_removed", "checkpoint removed"
+    else:
+        data = request.get_json(silent=True) or {}
+        if "name" in data:
+            name = str(data.get("name", "")).strip()
+            if not name:
+                return jsonify({"error": "name cannot be empty"}), 400
+            record["name"] = name
+        if "location" in data:
+            record["location"] = ensure_cameroon_location(str(data.get("location", "")).strip())
+            _ensure_map_info(record, record.get("location") or itinerary.get("location", ""))
+        if "cost" in data:
+            # Zero is a legitimate cost (a free viewpoint, a public market), so
+            # this cannot reuse the positive-amount parser used for payments.
+            try:
+                cost = float(data.get("cost"))
+            except (TypeError, ValueError):
+                cost = -1.0
+            if cost < 0:
+                return jsonify({"error": "cost must be a number of zero or more"}), 400
+            # The hotel's cost lives under a different key to the other stages.
+            record["cost_per_night" if stage_id == "hotel" else "cost"] = cost
+        if "duration_hours" in data:
+            duration = _parse_positive_amount(data.get("duration_hours"))
+            if duration is None:
+                return jsonify({"error": "duration_hours must be a positive number"}), 400
+            record["duration_hours"] = duration
+        if "status" in data:
+            status = str(data.get("status", "")).strip().lower()
+            if status not in ("pending", "active", "completed"):
+                return jsonify({"error": "status must be pending, active or completed"}), 400
+            record["status"] = status
+        action, message = "checkpoint_updated", "checkpoint updated"
+
+    itinerary["cost_breakdown"] = _calculate_cost_breakdown(itinerary)
+    _sync_itinerary_calculations(itinerary)
+    itinerary["route_plan"] = _route_plan_for_itinerary(itinerary)
+    itinerary["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    update_itinerary(itinerary)
+    _audit(username, action, itinerary_id, {"stage_id": stage_id})
+    return jsonify({"message": message, "itinerary": itinerary}), 200
 
 
 @itineraries_bp.route("/itineraries/<itinerary_id>/share", methods=["POST"])
