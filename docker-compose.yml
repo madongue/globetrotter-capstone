@@ -59,3 +59,6 @@ services:
       - DESTINATION_SERVICE_URL=http://destination-service:8004
       - RECOMMENDATION_SERVICE_URL=http://recommendation-service:8003
       - ITINERARY_SERVICE_URL=http://itinerary-service:8002
+      # Generating an itinerary scans the whole catalogue and takes several
+      # seconds; the default five-second proxy budget failed those requests.
+      - UPSTREAM_TIMEOUT_SECONDS=30

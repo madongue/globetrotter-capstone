@@ -14,6 +14,14 @@ DESTINATION_SERVICE_URL = os.environ.get("DESTINATION_SERVICE_URL", "http://dest
 RECOMMENDATION_SERVICE_URL = os.environ.get("RECOMMENDATION_SERVICE_URL", "http://recommendation-service:8003")
 ITINERARY_SERVICE_URL = os.environ.get("ITINERARY_SERVICE_URL", "http://itinerary-service:8002")
 
+# Generating an itinerary scans the whole catalogue — 903 places and 373 hotels
+# — and measures around 6 seconds against the JSON backend. In the monolith
+# that is a function call and nobody notices; behind the gateway it was a
+# 5-second timeout returning "upstream service unavailable" on a request that
+# had in fact succeeded. This is the clearest cost of splitting the app: work
+# that used to be in-process now has to fit inside a network budget.
+UPSTREAM_TIMEOUT_SECONDS = float(os.environ.get("UPSTREAM_TIMEOUT_SECONDS", "30"))
+
 
 def create_app():
     app = Flask(__name__)
@@ -28,7 +36,7 @@ def create_app():
                 headers=headers,
                 data=request.get_data(),
                 json=request.get_json(silent=True),
-                timeout=5,
+                timeout=UPSTREAM_TIMEOUT_SECONDS,
             )
         except requests.RequestException:
             return jsonify({"error": "upstream service unavailable"}), 502
@@ -76,6 +84,13 @@ def create_app():
     def itineraries():
         return proxy_request(ITINERARY_SERVICE_URL, "/itineraries", method=request.method)
 
+    # Declared before the <itinerary_id> rule below, which is a single-segment
+    # match and would otherwise capture "quick" and reject the POST as 405.
+    @app.route("/itineraries/quick", methods=["POST"])
+    @app.route("/trips/quick", methods=["POST"])
+    def quick_itinerary():
+        return proxy_request(ITINERARY_SERVICE_URL, request.path, method="POST")
+
     @app.route("/itineraries/<itinerary_id>", methods=["GET", "PUT", "DELETE"])
     def itinerary_detail(itinerary_id):
         return proxy_request(ITINERARY_SERVICE_URL, f"/itineraries/{itinerary_id}", method=request.method)
@@ -83,6 +98,24 @@ def create_app():
     @app.route("/itineraries/<itinerary_id>/share", methods=["POST"])
     def share_itinerary(itinerary_id):
         return proxy_request(ITINERARY_SERVICE_URL, f"/itineraries/{itinerary_id}/share", method="POST")
+
+    # The itinerary service carries far more than the handful of routes named
+    # above — quick planning, checkpoint reordering, payments, packing lists,
+    # groups. Listing each one here would mean editing the gateway every time
+    # the service gains a route, and forgetting to do so is a silent 404 that
+    # only appears once the app is split. Everything under /itineraries and
+    # /trips is forwarded instead, so the two stay in step.
+    @app.route("/itineraries/<path:subpath>", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+    def itinerary_subpath(subpath):
+        return proxy_request(ITINERARY_SERVICE_URL, f"/itineraries/{subpath}", method=request.method)
+
+    @app.route("/trips", methods=["GET", "POST"])
+    def trips():
+        return proxy_request(ITINERARY_SERVICE_URL, "/trips", method=request.method)
+
+    @app.route("/trips/<path:subpath>", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+    def trips_subpath(subpath):
+        return proxy_request(ITINERARY_SERVICE_URL, f"/trips/{subpath}", method=request.method)
 
     return app
 

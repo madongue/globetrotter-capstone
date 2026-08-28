@@ -33,7 +33,7 @@ globetrotter-capstone/
 │   └── src/App.jsx         the single-page application
 ├── services/               Phase 2 microservices (built, not deployed)
 ├── data/                   JSON collections used when DATABASE_URL is unset
-├── tests/                  165 tests
+├── tests/                  172 tests
 ├── docs/                   this guide, the UML, requirements, architecture
 ├── Dockerfile              one container: builds the SPA, runs gunicorn
 ├── docker-compose.yml      five containers: the Phase 2 split
@@ -45,7 +45,7 @@ globetrotter-capstone/
 - Continuous integration runs on every push: `.github/workflows/`. Four jobs,
   one of which runs the whole suite against a real PostgreSQL service
   container, so the SQL backend is tested and not merely written.
-- 165 tests, all passing. Run them with `python -m pytest`.
+- 172 tests, all passing. Run them with `python -m pytest`.
 - The commit history shows the phases: JSON storage first, then the storage
   adapter, then Postgres, then the media adapter.
 
@@ -194,11 +194,45 @@ already defines the split, and the code is in **[services/](../services/)**:
 6. **Debugging costs more.** One stack trace becomes five logs that must be
    correlated by a request id.
 
-**The honest summary:** the split is built and it runs with
-`docker-compose up`, but it is not deployed, because at this scale the monolith
-is the correct choice. The value of having built it is that the boundaries are
-proven — each blueprint really is separable — so the migration is a deployment
-decision rather than a rewrite.
+### It was actually run, and it found two real defects
+
+All five services were started locally on ports 8001–8004 and 5000, and the
+whole flow was driven through the gateway: register and log in via
+user-service, list destinations via destination-service, then generate a plan
+and swap, edit and delete its checkpoints via itinerary-service. Every step
+returned 200 or 201.
+
+Two defects appeared only once the app was split, and both are worth
+describing, because they *are* the answer to this question:
+
+1. **A routing gap.** The gateway named each forwarded route by hand, so the
+   itinerary service's newer routes — quick planning, checkpoint reordering,
+   packing lists, expenses — were unreachable through it. The service had them;
+   the gateway did not forward them. In a monolith a route exists as soon as it
+   is written; behind a gateway it has to be published twice, and forgetting the
+   second time is a silent 404. Fixed with a catch-all forward for
+   `/itineraries/…` and `/trips/…` so the two stay in step.
+2. **A timeout that only a network can have.** Generating a plan scans 903
+   places and 373 hotels and takes about 6 seconds against the JSON backend. In
+   one process nobody notices. Through the gateway it exceeded the 5-second
+   proxy budget and returned `502 upstream service unavailable` — for a request
+   that had actually **succeeded** upstream. The work was done, the itinerary
+   was saved, and the caller was told it had failed. Fixed by raising the budget
+   to 30 seconds (`UPSTREAM_TIMEOUT_SECONDS`).
+
+The second is the better story: splitting turns a function call into a network
+call, and a network call has a deadline, a partial-failure mode, and a way to
+lie to the caller that a function call simply does not have.
+
+Both fixes are pinned by tests in `tests/test_gateway.py`.
+
+**The honest summary:** the split is built, and the request path was verified
+end to end by running all five services. It has **not** been run under Docker —
+Docker is not installed on the development machine — so `docker-compose.yml` is
+written and configured but untested. It is not deployed either, because at this
+scale the monolith is the correct choice. The value of having built it is that
+the boundaries are proven, and that splitting surfaced two failures the
+monolith structurally cannot have.
 
 ---
 
@@ -354,7 +388,7 @@ asserts the remaining ids did not shift.
 ```bash
 # Backend
 pip install -r requirements.txt -r requirements-dev.txt
-python -m pytest                      # 165 tests
+python -m pytest                      # 172 tests
 
 # Frontend
 cd client && npm install && npm run build
@@ -363,8 +397,15 @@ cd client && npm install && npm run build
 docker build -t globetrotter-app .
 docker run -p 5000:5000 -v "$(pwd)/data:/globetrotter/data" globetrotter-app
 
-# Five containers — the Phase 2 split
+# Five containers — the Phase 2 split (configured, not yet run under Docker)
 docker compose up
+
+# The same split without Docker — what was actually verified
+SECRET_KEY=dev python -m flask --app services.user_service.main:app          run --port 8001
+SECRET_KEY=dev python -m flask --app services.itinerary_service.main:app     run --port 8002
+SECRET_KEY=dev python -m flask --app services.recommendation_service.main:app run --port 8003
+SECRET_KEY=dev python -m flask --app services.destination_service.main:app   run --port 8004
+SECRET_KEY=dev   USER_SERVICE_URL=http://127.0.0.1:8001   ITINERARY_SERVICE_URL=http://127.0.0.1:8002   RECOMMENDATION_SERVICE_URL=http://127.0.0.1:8003   DESTINATION_SERVICE_URL=http://127.0.0.1:8004   python -m flask --app services.gateway.main:app run --port 5000
 ```
 
 **Live deployment:** https://globetrotter-capstone-1-kuqk.onrender.com
