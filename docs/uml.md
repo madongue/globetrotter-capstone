@@ -30,6 +30,7 @@ graph LR
         UC8["Upload photos and videos"]
         UC9["Record payments and expenses"]
         UC10["Moderate places and users"]
+        UC11["Ask the travel assistant"]
     end
 
     Traveller --> UC1
@@ -41,11 +42,13 @@ graph LR
     Traveller --> UC7
     Traveller --> UC8
     Traveller --> UC9
+    Traveller --> UC11
     Admin --> UC10
     Admin --> UC1
 
     UC2 -.->|includes| UC5
     UC4 -.->|extends| UC2
+    UC11 -.->|reads| UC5
     UC5 --> Maps
     UC8 --> Cloud
 ```
@@ -325,7 +328,7 @@ graph TB
 
 | Diagram | Code it describes |
 | --- | --- |
-| Use case | [app/auth.py](../app/auth.py), [app/itineraries.py](../app/itineraries.py), [app/community.py](../app/community.py), [app/admin.py](../app/admin.py) |
+| Use case | [app/auth.py](../app/auth.py), [app/itineraries.py](../app/itineraries.py), [app/community.py](../app/community.py), [app/admin.py](../app/admin.py), [app/assistant.py](../app/assistant.py) |
 | Class | [app/models.py](../app/models.py), `_build_stage_plan()` in [app/itineraries.py](../app/itineraries.py) |
 | Component | [app/main.py](../app/main.py), [app/store.py](../app/store.py), [Dockerfile](../Dockerfile) |
 | Quick-plan sequence | `create_quick_itinerary()` in [app/itineraries.py](../app/itineraries.py) |

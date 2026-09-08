@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import TravelMap from './TravelMap';
 import { CAMEROON_CENTER, getItemCoordinates } from './mapCoordinates';
+import TravelAssistant from './TravelAssistant';
 
 const API_BASE = '/api';
 const DEFAULT_CURRENCY = 'XAF';
@@ -6402,6 +6403,10 @@ function App() {
           </section>
         ) : null}
       </main>
+
+      {/* Available from every page, so a traveller can ask without losing
+          their place in whatever they were doing. */}
+      <TravelAssistant token={token} />
     </div>
   );
 }

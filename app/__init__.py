@@ -112,6 +112,7 @@ def create_app():
     from app.recommendations import recommendations_bp
     from app.itineraries import itineraries_bp
     from app.resources import resources_bp
+    from app.assistant import assistant_bp
     from app.ui import ui_bp
 
     app.register_blueprint(auth_bp, url_prefix=api_prefix)
@@ -119,6 +120,7 @@ def create_app():
     app.register_blueprint(recommendations_bp, url_prefix=api_prefix)
     app.register_blueprint(itineraries_bp, url_prefix=api_prefix)
     app.register_blueprint(resources_bp, url_prefix=api_prefix)
+    app.register_blueprint(assistant_bp, url_prefix=api_prefix)
 
     app.add_url_rule("/register", view_func=app.view_functions["auth.register"], methods=["POST"])
     app.add_url_rule("/login", view_func=app.view_functions["auth.login"], methods=["POST"])

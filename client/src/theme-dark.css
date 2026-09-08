@@ -270,3 +270,10 @@ thead th {
   background: linear-gradient(140deg, rgba(6, 182, 212, 0.16), rgba(6, 182, 212, 0.04));
   border: 1px solid rgba(6, 182, 212, 0.38);
 }
+
+/* The assistant launcher uses the cyan gradient, which needs dark text to stay
+   legible — the same correction the primary button needs. */
+.assistant-launcher {
+  color: #04202a;
+  box-shadow: 0 12px 30px -10px rgba(6, 182, 212, 0.55);
+}

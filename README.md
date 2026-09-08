@@ -195,6 +195,12 @@ curl -X POST http://localhost:5000/reset-password \
   -H "Content-Type: application/json" \
   -d '{"token": "<reset-token>", "new_password": "newpass123"}'
 
+# Ask the travel assistant (works signed out; sign in for answers about your trips)
+curl -X POST http://localhost:5000/api/assistant/chat   -H "Content-Type: application/json"   -d '{"message": "What can I see in Kribi?"}'
+
+# Suggested opening questions
+curl http://localhost:5000/api/assistant/starters
+
 # Plan a whole trip from a destination alone — hotel, places and checkpoints
 # are filled in from the Cameroon catalogue
 curl -X POST http://localhost:5000/api/itineraries/quick \
