@@ -770,8 +770,43 @@ textarea {
 
 .resource-columns {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Was a hard three columns, which in the Discovery panel left each one about
+     150px wide. Combined with overflow-wrap: anywhere on the cards inside, that
+     broke names mid-word — "Boub a Njida Natio nal Park". Columns now give way
+     as the panel narrows instead of squeezing their contents. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   gap: 1rem;
+}
+
+/* Inside a suggestion card the thumbnail, name, details and actions stack
+   rather than competing for the same line. */
+.resource-columns .plain-list li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  /* Break a long word only when it genuinely cannot fit, not by preference. */
+  overflow-wrap: break-word;
+}
+
+.resource-columns .plain-list li > span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.resource-columns .plain-list li .resource-thumb {
+  width: 100%;
+  height: 8rem;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+.resource-columns .plain-list li > a,
+.resource-columns .plain-list li > button {
+  align-self: flex-start;
 }
 
 .media-feed img {

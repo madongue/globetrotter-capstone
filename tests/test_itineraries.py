@@ -1088,3 +1088,73 @@ def test_checkpoint_edits_require_edit_access(client):
         headers={"Authorization": f"Bearer {intruder}"},
     )
     assert response.status_code == 403
+
+
+# ---------------------------------------------------------------------------
+# Discovery suggestions
+#
+# The panel used to show whatever the catalogue listed first. With no location
+# filled in that meant five alphabetically-early records with no photograph
+# between them, and a Discovery page that looked broken.
+# ---------------------------------------------------------------------------
+
+
+DISCOVERY_CATALOGUE = [
+    {"id": "p-bar", "name": "AAA Bar", "location": "Kribi", "city": "Kribi",
+     "category": "restaurant", "cost": 4000},
+    {"id": "p-bar2", "name": "AAB Bar", "location": "Kribi", "city": "Kribi",
+     "category": "restaurant", "cost": 4000},
+    {"id": "p-bar3", "name": "AAC Bar", "location": "Kribi", "city": "Kribi",
+     "category": "restaurant", "cost": 4000},
+    {"id": "p-bar4", "name": "AAD Bar", "location": "Kribi", "city": "Kribi",
+     "category": "restaurant", "cost": 4000},
+    {"id": "p-park", "name": "Zzz National Park", "location": "Kribi", "city": "Kribi",
+     "category": "national_park", "cost": 12000,
+     "image_url": "/images/places/park.jpg"},
+    {"id": "p-falls", "name": "Zzy Falls", "location": "Kribi", "city": "Kribi",
+     "category": "waterfall", "cost": 8000,
+     "image_url": "/images/places/falls.jpg"},
+]
+
+
+def test_discovery_ranks_sightseeing_above_eateries(client, monkeypatch):
+    """Alphabetical order put four bars ahead of a national park."""
+    token = register_and_login(client)
+    monkeypatch.setattr("app.itineraries.get_all_places", lambda: list(DISCOVERY_CATALOGUE))
+
+    response = client.get(
+        "/api/itineraries/suggestions?location=Kribi",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    places = response.get_json()["suggestions"]["places"]
+    names = [place["name"] for place in places]
+
+    assert names[0] == "Zzz National Park"
+    assert names[1] == "Zzy Falls"
+
+
+def test_discovery_caps_eateries_so_the_panel_is_not_all_bars(client, monkeypatch):
+    token = register_and_login(client)
+    monkeypatch.setattr("app.itineraries.get_all_places", lambda: list(DISCOVERY_CATALOGUE))
+
+    response = client.get(
+        "/api/itineraries/suggestions?location=Kribi",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    places = response.get_json()["suggestions"]["places"]
+    eateries = [p for p in places if p.get("category") == "restaurant"]
+    assert len(eateries) <= 2, f"too many eateries suggested: {[p['name'] for p in places]}"
+
+
+def test_discovery_prefers_places_that_have_a_photograph(client, monkeypatch):
+    """A panel of unillustrated rows is what made Discovery look empty."""
+    token = register_and_login(client)
+    monkeypatch.setattr("app.itineraries.get_all_places", lambda: list(DISCOVERY_CATALOGUE))
+
+    response = client.get(
+        "/api/itineraries/suggestions?location=Kribi",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    places = response.get_json()["suggestions"]["places"]
+    assert places[0].get("image_url"), "the leading suggestion should carry an image"

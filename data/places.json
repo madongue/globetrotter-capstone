@@ -7120,59 +7120,6 @@
     "city": "Mouloundou"
   },
   {
-    "id": "place-osm-node-7431559785",
-    "name": "Ceiba offshore",
-    "location": "Cameroon",
-    "latitude": 1.4070217,
-    "longitude": 9.218305,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 7431559785,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/7431559785"
-    ],
-    "description": "Ceiba offshore is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Ceiba offshore, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Ceiba offshore, Cameroon",
-      "latitude": 1.4070217,
-      "longitude": 9.218305,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/7431559785",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "",
-    "division": "",
-    "subdivision": "",
-    "city": ""
-  },
-  {
     "id": "place-osm-node-8654633465",
     "name": "Civil Engineering",
     "location": "Birshi, Bauchi, Bauchi State, Cameroon",

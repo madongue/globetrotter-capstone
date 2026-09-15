@@ -1656,20 +1656,25 @@ function App() {
   };
 
   const handleFindTripSuggestions = async (event) => {
-    event.preventDefault();
+    // Called both from the form and, with no event, when Discovery first opens.
+    event?.preventDefault?.();
     if (!token) {
       setAlert({ type: 'error', message: 'Please login to get trip suggestions.' });
       return;
     }
-    if (!suggestionFilters.location.trim() && !buildCameroonLocation(suggestionFilters).trim()) {
-      setAlert({ type: 'error', message: 'Location is required for suggestions.' });
-      return;
-    }
+    // A blank location is allowed and means "anywhere in Cameroon". Refusing it
+    // made Discovery look broken: the button reported an error instead of
+    // searching, so the panel stayed empty until a city was guessed.
 
     const params = new URLSearchParams({
       location: suggestionFilters.location.trim() || buildCameroonLocation(suggestionFilters),
-      budget: toBaseMoney(suggestionFilters.budget || '0'),
     });
+    // Only sent when the traveller actually typed one. A blank field used to be
+    // sent as budget=0, and the matcher drops anything costing more than the
+    // budget — so an empty budget box silently excluded every hotel and every
+    // activity, and Discovery came back with almost nothing.
+    const budget = toBaseMoney(suggestionFilters.budget || '0');
+    if (budget > 0) params.set('budget', budget);
     addCameroonGeoParams(params, suggestionFilters);
 
     setLoading(true);
@@ -1689,6 +1694,18 @@ function App() {
       setLoading(false);
     }
   };
+
+  // Discovery opened to an empty panel until something was searched for, which
+  // read as "there is nothing here". Loading the ranked national suggestions on
+  // arrival means the page always has something to show, and the filters below
+  // narrow it rather than being a prerequisite for seeing anything at all.
+  useEffect(() => {
+    if (dashboardView !== 'discovery' || !token || tripSuggestions) return;
+    handleFindTripSuggestions();
+    // Deliberately keyed on the view and the session only: re-running whenever
+    // the filter state changed would refetch on every keystroke.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dashboardView, token]);
 
   const handleFilterRecommendations = async (event) => {
     event.preventDefault();
@@ -4711,7 +4728,10 @@ function App() {
             </div>
             )}
             {dashboardView === 'discovery' && (
-            <div className="grid-2 mt-24">
+            /* One panel, so not a two-column grid: grid-2 is 1.6fr 1fr and the
+               empty second column left half the page blank. Full width also
+               gives the suggestion cards room to sit side by side. */
+            <div className="mt-24">
               <div className="panel">
                 <h3>Trip suggestions</h3>
                 <form onSubmit={handleFindTripSuggestions} className="search-form">

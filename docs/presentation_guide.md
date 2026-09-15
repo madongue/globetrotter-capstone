@@ -113,7 +113,7 @@ files gave for free.
 
 | Collection | Records |
 | --- | --- |
-| places | 902 |
+| places | 901 |
 | hotels | 373 |
 | audit_log | 116 |
 | media | 44 |
@@ -212,7 +212,7 @@ describing, because they *are* the answer to this question:
    is written; behind a gateway it has to be published twice, and forgetting the
    second time is a silent 404. Fixed with a catch-all forward for
    `/itineraries/…` and `/trips/…` so the two stay in step.
-2. **A timeout that only a network can have.** Generating a plan scans 902
+2. **A timeout that only a network can have.** Generating a plan scans 901
    places and 373 hotels and takes about 6 seconds against the JSON backend. In
    one process nobody notices. Through the gateway it exceeded the 5-second
    proxy budget and returned `502 upstream service unavailable` — for a request
@@ -271,7 +271,7 @@ total cost. Nothing else needs to be filled in.
 4. Sets the dates from today for the requested length.
 5. Totals the cost, builds the checkpoints, plans the route, and saves.
 
-**Worth mentioning if asked about the ranking.** 594 of the 902 catalogue
+**Worth mentioning if asked about the ranking.** 594 of the 901 catalogue
 places are restaurants, because most of the catalogue comes from OpenStreetMap.
 Ranking by name alone produced a plan made entirely of bars in alphabetical
 order. The category ranking and the eatery cap in `_quick_plan_rank()` and

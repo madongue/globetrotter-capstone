@@ -499,26 +499,52 @@ def _parse_budget(data: dict, default: float) -> float:
         return default
 
 
-def _match_resources(resources: list, location: str, budget: float | None, cost_field: str, geo_filters: dict | None = None):
-    location_lower = location.lower()
+def _match_resources(
+    resources: list,
+    location: str,
+    budget: float | None,
+    cost_field: str,
+    geo_filters: dict | None = None,
+    limit: int | None = None,
+    rank_key=None,
+):
+    """Select catalogue records matching a location and budget.
+
+    Records are filtered first and enriched afterwards, and only the ones that
+    survive. Enriching first meant every row in the catalogue was decorated with
+    inferred geography and map links — twice over, since ``_ensure_map_info``
+    enriches again — so a Discovery search touched all 1,283 records to return
+    thirteen and took about six and a half seconds. The page looked empty
+    because nobody waits that long.
+
+    Filtering reads the record's own location text, which is exactly what the
+    enrichment infers its geography from; checked across the whole catalogue,
+    both orders select the same records.
+
+    ``rank_key`` and ``limit`` let a caller order the candidates and keep only
+    the best few, so the enrichment cost scales with what is returned rather
+    than with the size of the catalogue.
+    """
     location_terms = [
         term.strip()
-        for term in location_lower.replace(",", " ").split()
+        for term in location.lower().replace(",", " ").split()
         if term.strip() and term.strip() not in {"cameroon", "cameroun"}
     ]
+
     matches = []
     for resource in resources:
-        resource = enrich_cameroon_item(resource)
-        _ensure_map_info(resource, location)
-        if not resource.get("location"):
+        # Mirrors ensure_cameroon_location(location or name), which is how an
+        # enriched record acquires a location when the raw one has none.
+        own_location = resource.get("location") or resource.get("name") or ""
+        if not own_location:
             continue
         searchable_location = " ".join([
-            resource.get("location", ""),
-            resource.get("region", ""),
-            resource.get("division", ""),
-            resource.get("subdivision", ""),
-            resource.get("city", ""),
-            resource.get("quarter", ""),
+            own_location,
+            resource.get("region") or "",
+            resource.get("division") or "",
+            resource.get("subdivision") or "",
+            resource.get("city") or "",
+            resource.get("quarter") or "",
         ]).lower()
         if location_terms and not any(term in searchable_location for term in location_terms):
             continue
@@ -528,14 +554,50 @@ def _match_resources(resources: list, location: str, budget: float | None, cost_
         if budget is not None and cost > budget:
             continue
         matches.append(resource)
-    return matches
+
+    if rank_key is not None:
+        matches.sort(key=rank_key)
+    if limit is not None:
+        matches = matches[:limit]
+
+    enriched = []
+    for resource in matches:
+        item = dict(resource)
+        # _ensure_map_info enriches internally, so enrich_cameroon_item is not
+        # called separately: doing both is what enriched every record twice.
+        _ensure_map_info(item, location)
+        enriched.append(item)
+    return enriched
 
 
 def _find_trip_suggestions(location: str, budget: float | None, geo_filters: dict | None = None) -> dict:
+    """Suggest hotels, activities and places for the Discovery panel.
+
+    The matches are ranked before they are trimmed. Without that, the panel
+    showed whatever the catalogue happened to list first — which, with no
+    location filled in, meant five alphabetically-early records with no
+    photograph between them, and a Discovery page that looked broken. The
+    ranking is the one the itinerary generator uses, so the two agree about
+    what is worth seeing.
+    """
     return {
-        "hotels": _match_resources(get_all_hotels(), location, budget, "cost_per_night", geo_filters)[:3],
-        "activities": _match_resources(get_all_activities(), location, budget, "cost", geo_filters)[:5],
-        "places": _match_resources(get_all_places(), location, budget, "cost", geo_filters)[:5],
+        "hotels": _match_resources(
+            get_all_hotels(), location, budget, "cost_per_night", geo_filters,
+            limit=3, rank_key=_quick_plan_rank,
+        ),
+        "activities": _match_resources(
+            get_all_activities(), location, budget, "cost", geo_filters,
+            limit=5, rank_key=_quick_plan_rank,
+        ),
+        # A wider shortlist than the five shown, so the eatery cap below still
+        # has sightseeing left to choose from after it skips the restaurants.
+        "places": _balanced_stop_selection(
+            _match_resources(
+                get_all_places(), location, budget, "cost", geo_filters,
+                limit=40, rank_key=_quick_plan_rank,
+            ),
+            5,
+        ),
     }
 
 
@@ -1004,9 +1066,15 @@ def create_quick_itinerary():
     budget = data.get("budget")
     budget = _parse_positive_amount(budget) if budget not in (None, "") else None
 
-    hotels = sorted(_match_resources(get_all_hotels(), location, budget, "cost_per_night"), key=_quick_plan_rank)
-    places = sorted(_match_resources(get_all_places(), location, None, "cost"), key=_quick_plan_rank)
-    activities = sorted(_match_resources(get_all_activities(), location, None, "cost"), key=_quick_plan_rank)
+    # Shortlisted before enrichment: generating a plan used to enrich every
+    # record in the catalogue, which took about six seconds and was what
+    # exceeded the API gateway's proxy timeout once the app was split.
+    hotels = _match_resources(get_all_hotels(), location, budget, "cost_per_night",
+                              limit=10, rank_key=_quick_plan_rank)
+    places = _match_resources(get_all_places(), location, None, "cost",
+                              limit=60, rank_key=_quick_plan_rank)
+    activities = _match_resources(get_all_activities(), location, None, "cost",
+                                  limit=20, rank_key=_quick_plan_rank)
 
     # Roughly two stops a day, with a floor so a single-day trip is not a
     # one-line plan and a ceiling so a fortnight is not overwhelming.
