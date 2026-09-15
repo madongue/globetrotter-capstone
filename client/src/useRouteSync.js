@@ -43,6 +43,12 @@ export function useRouteSync({ page, view, setPage, setView, entityId, onEntityR
   const stateToUrlHasRun = useRef(false);
   const pendingEntity = useRef(null);
   const lastEntityHandled = useRef(null);
+  /* Some screens hang a fixed segment off the entity id — /trips/:id/manage.
+     The state alone cannot say which of those variants is open, so the last
+     matched suffix is remembered; without it the state→URL effect would
+     rewrite /trips/:id/manage back to /trips/:id and bounce the visitor out
+     of the screen they asked for. */
+  const activeSuffix = useRef(undefined);
 
   /* ---------------------------------------------------------- URL → state */
   useEffect(() => {
@@ -54,6 +60,8 @@ export function useRouteSync({ page, view, setPage, setView, entityId, onEntityR
       if (location.pathname !== FALLBACK_PATH) navigate(FALLBACK_PATH, { replace: true });
       return;
     }
+
+    activeSuffix.current = match.suffix;
 
     if (match.page !== page) setPage(match.page);
     if (match.view && match.view !== view) setView(match.view);
@@ -86,7 +94,7 @@ export function useRouteSync({ page, view, setPage, setView, entityId, onEntityR
     // complete description of where we are.
     if (pendingEntity.current) return;
 
-    const target = pathFor(page, view, entityId);
+    const target = pathFor(page, view, entityId, { suffix: activeSuffix.current });
     if (target !== location.pathname) navigate(target);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, view, entityId]);

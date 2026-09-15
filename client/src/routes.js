@@ -54,6 +54,13 @@ export const ROUTES = [
   // the fallback.
   { path: '/places/:id',    page: 'place',     param: 'placeId' },
 
+  // The original itinerary screen, kept reachable. Phase C's editor covers
+  // the plan, the checkpoints, the map and the cost; payments, reservations,
+  // packing, documents, sharing, progress and the audit log still live here,
+  // so the redesign adds a route rather than removing features. Declared
+  // before /trips/:id so the longer path wins.
+  { path: '/trips/:id/manage', page: 'itinerary', param: 'itineraryId', suffix: 'manage' },
+
   // Single-entity screens.
   { path: '/trips/:id',     page: 'itinerary', param: 'itineraryId' },
   { path: '/community/:id', page: 'group',     param: 'groupId' },
@@ -77,12 +84,17 @@ export function matchPath(pathname) {
       if (route.path === clean) return { ...route, id: null };
       continue;
     }
-    // One parameter, always in the final segment — enough for /trips/:id and
-    // /community/:id, and simple enough to reason about.
+    // One parameter, optionally followed by a fixed segment — enough for
+    // /trips/:id, /community/:id and /trips/:id/manage.
     const base = route.path.slice(0, route.path.indexOf('/:'));
     if (clean.startsWith(`${base}/`)) {
-      const id = clean.slice(base.length + 1);
-      if (id && !id.includes('/')) return { ...route, id };
+      let rest = clean.slice(base.length + 1);
+      if (route.suffix) {
+        const tail = `/${route.suffix}`;
+        if (!rest.endsWith(tail)) continue;
+        rest = rest.slice(0, -tail.length);
+      }
+      if (rest && !rest.includes('/')) return { ...route, id: rest };
     }
   }
   return null;
@@ -94,8 +106,11 @@ export function matchPath(pathname) {
  * `entityId` supplies the id for the two single-entity screens; without one
  * they cannot be addressed, so those fall back to their list.
  */
-export function pathFor(page, view, entityId) {
-  if (page === 'itinerary') return entityId ? `/trips/${entityId}` : '/trips';
+export function pathFor(page, view, entityId, { suffix } = {}) {
+  if (page === 'itinerary') {
+    if (!entityId) return '/trips';
+    return suffix ? `/trips/${entityId}/${suffix}` : `/trips/${entityId}`;
+  }
   if (page === 'group')     return entityId ? `/community/${entityId}` : '/community';
 
   if (page === 'dashboard') {

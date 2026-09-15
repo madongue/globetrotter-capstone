@@ -209,7 +209,7 @@
 .pd__price-row > span:first-child { font-size: var(--gt-h3); font-weight: 600; }
 
 .pd__map { overflow: hidden; }
-.pd__map-canvas { height: 17rem; width: 100%; }
+.pd__map-canvas { height: 17rem; width: 100%; position: relative; overflow: hidden; }
 
 /* ---------------------------------------------------------------- nearby */
 

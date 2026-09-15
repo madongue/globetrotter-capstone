@@ -1,0 +1,320 @@
+/* The itinerary editor. Composition only — values come from the Phase A tokens. */
+
+.itin { min-height: 100vh; }
+.itin__main { padding-bottom: var(--gt-space-8); }
+
+/* ---------------------------------------------------------------- header */
+
+.itin__head {
+  background: var(--gt-surface);
+  border-bottom: 1px solid var(--gt-border);
+  padding-block: var(--gt-space-4) var(--gt-space-5);
+}
+
+.itin__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  margin-bottom: var(--gt-space-3);
+  font-size: var(--gt-small);
+  font-weight: 500;
+  color: var(--gt-text-soft);
+  text-decoration: none;
+}
+
+.itin__back:hover { color: var(--gt-primary); }
+
+.itin__title {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  flex-wrap: wrap;
+  font-size: var(--gt-h2);
+}
+
+.itin__rename {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-2);
+  align-items: center;
+  margin-bottom: var(--gt-space-2);
+}
+
+.itin__rename .gt-input { max-width: 26rem; }
+
+.itin__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-4);
+  margin-top: var(--gt-space-3);
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+}
+
+.itin__facts span { display: inline-flex; align-items: center; gap: 6px; }
+.itin__total { color: var(--gt-primary); font-weight: 600; }
+
+.itin__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-2);
+  margin-top: var(--gt-space-4);
+}
+
+/* ---------------------------------------------------------- plan/map tabs
+   Only on phones, where the map cannot sit beside the plan. */
+
+.itin__tabs { display: flex; gap: var(--gt-space-2); padding-block: var(--gt-space-4) 0; }
+
+@media (min-width: 960px) { .itin__tabs { display: none; } }
+
+.itin__tab {
+  flex: 1;
+  padding: var(--gt-space-3);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-surface);
+  color: var(--gt-text-soft);
+  font-family: var(--gt-font);
+  font-size: var(--gt-small);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.itin__tab.is-active {
+  background: var(--gt-primary-soft);
+  border-color: var(--gt-primary-line);
+  color: var(--gt-primary);
+}
+
+/* ------------------------------------------------------------------ body */
+
+.itin__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gt-space-5);
+  padding-top: var(--gt-space-5);
+}
+
+@media (min-width: 960px) {
+  /* Side by side, with the map staying in view while the plan is read. */
+  .itin__body { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: start; }
+  .itin__side { position: sticky; top: calc(68px + var(--gt-space-4)); }
+}
+
+/* Below 960 one panel at a time, chosen by the tabs above. */
+@media (max-width: 959px) {
+  .itin__body--plan .itin__side { display: none; }
+  .itin__body--map .itin__plan { display: none; }
+}
+
+.itin__plan { min-width: 0; display: flex; flex-direction: column; gap: var(--gt-space-6); }
+
+.itin__times-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gt-space-2);
+  margin: 0;
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-surface-2);
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+}
+
+.itin__times-note svg { flex: none; margin-top: 1px; }
+.itin__side { display: flex; flex-direction: column; gap: var(--gt-space-4); min-width: 0; }
+
+/* ------------------------------------------------------------------- day */
+
+.day {
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-lg);
+  background: var(--gt-surface);
+  padding: var(--gt-space-5);
+}
+
+.day__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--gt-space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--gt-space-4);
+}
+
+.day__title { font-size: var(--gt-h3); font-weight: 600; margin: 0; }
+.day__date { margin: 2px 0 0; font-size: var(--gt-caption); color: var(--gt-text-faint); }
+
+.day__totals {
+  display: flex;
+  gap: var(--gt-space-3);
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+}
+
+.day__cost { font-weight: 600; color: var(--gt-primary); }
+
+/* Accommodation is the day's base, not a stop on the clock. */
+.day__base {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-3) var(--gt-space-4);
+  margin-bottom: var(--gt-space-4);
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-surface-2);
+  font-size: var(--gt-small);
+}
+
+.day__base > span:nth-child(2) { flex: 1; min-width: 0; }
+.day__base-cost { font-weight: 600; white-space: nowrap; }
+.day__empty { margin: 0; font-size: var(--gt-small); color: var(--gt-text-faint); }
+
+/* -------------------------------------------------------------- timeline */
+
+.day__timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-4);
+}
+
+.cp { display: grid; grid-template-columns: 3.6rem 1fr; gap: var(--gt-space-3); position: relative; }
+
+/* The line joining the stops, drawn behind the markers. */
+.cp:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 3.05rem;
+  top: 1.7rem;
+  bottom: calc(var(--gt-space-4) * -1);
+  width: 2px;
+  background: var(--gt-border);
+}
+
+.cp__time {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  padding-top: 0.55rem;
+}
+
+.cp__clock {
+  font-family: var(--gt-font-mono);
+  font-size: var(--gt-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--gt-text-soft);
+}
+
+.cp__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gt-primary);
+  box-shadow: 0 0 0 3px var(--gt-surface);
+  flex: none;
+  z-index: 1;
+}
+
+.cp__card {
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+  padding: var(--gt-space-3) var(--gt-space-4);
+  min-width: 0;
+}
+
+.cp__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--gt-space-3); }
+.cp__title { min-width: 0; }
+.cp__title strong { display: block; font-weight: 600; }
+
+.cp__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gt-space-2);
+  margin-top: 5px;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+}
+
+.cp__cost { font-weight: 600; color: var(--gt-text); }
+
+.cp__controls { display: flex; gap: 2px; flex: none; }
+.cp__controls .gt-btn--icon { width: 2rem; height: 2rem; }
+
+.cp__editor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: var(--gt-space-3);
+  margin-top: var(--gt-space-4);
+  padding-top: var(--gt-space-4);
+  border-top: 1px solid var(--gt-border);
+}
+
+.cp__editor-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: var(--gt-space-2);
+}
+
+/* ------------------------------------------------------------ map & cost */
+
+.itin__map { overflow: hidden; }
+.itin__map-canvas {
+  width: 100%;
+  height: 22rem;
+  /* Leaflet lays its tiles out past the viewport and relies on the container
+     to clip them; without this the page gains a horizontal scrollbar. */
+  position: relative;
+  overflow: hidden;
+}
+
+.itin__map-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-7) var(--gt-space-4);
+  color: var(--gt-text-faint);
+  text-align: center;
+}
+
+.itin__map-note {
+  margin: 0;
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border-top: 1px solid var(--gt-border);
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+}
+
+.itin__map-note a { color: var(--gt-primary); }
+
+.itin__budget { gap: var(--gt-space-3); }
+
+.itin__cost {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  gap: var(--gt-space-2) var(--gt-space-4);
+  margin: 0;
+  font-size: var(--gt-small);
+}
+
+.itin__cost dt { color: var(--gt-text-soft); }
+.itin__cost dd { margin: 0; font-variant-numeric: tabular-nums; }
+
+.itin__total-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gt-space-3);
+  padding-top: var(--gt-space-3);
+  border-top: 1px solid var(--gt-border);
+}
+
+.itin__total-row strong { font-size: var(--gt-h4); color: var(--gt-primary); font-variant-numeric: tabular-nums; }
+
+.itin__cost-note { margin: 0; font-size: var(--gt-caption); color: var(--gt-text-faint); }

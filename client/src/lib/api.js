@@ -104,9 +104,79 @@ export const addPlaceToTrip = (tripId, placeId, { token } = {}) =>
     token,
   });
 
-/** The one-step planner behind "Build my trip". */
+/** The one-step planner behind "Generate my itinerary". */
 export const quickPlan = ({ location, days }, { token } = {}) =>
   request('/itineraries/quick', { method: 'POST', body: { location, days }, token });
+
+/**
+ * An empty trip, for someone who would rather choose every stop themselves.
+ *
+ * The same endpoint the detailed form has always used; only `title` and
+ * `location` are required, so "plan manually" needs no extra questions.
+ */
+export const createTrip = ({ title, location, startDate, endDate }, { token } = {}) =>
+  request('/itineraries', {
+    method: 'POST',
+    body: {
+      title,
+      location,
+      ...(startDate ? { start_date: startDate } : {}),
+      ...(endDate ? { end_date: endDate } : {}),
+    },
+    token,
+  });
+
+export const getTrip = (tripId, { token, signal } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}`, { token, signal });
+
+export const updateTrip = (tripId, changes, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}`, { method: 'PUT', body: changes, token });
+
+/* ----------------------------------------------------------- checkpoints */
+
+/** Move one checkpoint relative to its neighbour. The order is saved. */
+export const moveCheckpoint = (tripId, stageId, direction, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/stages`, {
+    method: 'PATCH', body: { move: stageId, direction }, token,
+  });
+
+export const reorderCheckpoints = (tripId, stageIds, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/stages`, {
+    method: 'PATCH', body: { stage_ids: stageIds }, token,
+  });
+
+/** Rename, reprice or retime a checkpoint. Writes through to its source record. */
+export const updateCheckpoint = (tripId, stageId, changes, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/stages/${encodeURIComponent(stageId)}`, {
+    method: 'PATCH', body: changes, token,
+  });
+
+export const removeCheckpoint = (tripId, stageId, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/stages/${encodeURIComponent(stageId)}`, {
+    method: 'DELETE', token,
+  });
+
+/* ------------------------------------------------------------- day plans */
+
+export const getDayPlans = (tripId, { token, signal } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/day-plans`, { token, signal });
+
+/** Rewrite which checkpoints fall on which day. */
+export const saveDayPlans = (tripId, dayPlans, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/day-plans`, {
+    method: 'PATCH', body: { day_plans: dayPlans }, token,
+  });
+
+/* ----------------------------------------------------------------- route */
+
+export const getRoute = (tripId, { token, signal } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/route`, { token, signal });
+
+/** Recompute the route, optionally in a given checkpoint order. */
+export const optimiseRoute = (tripId, stageIds, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/route`, {
+    method: 'POST', body: stageIds ? { stage_ids: stageIds } : {}, token,
+  });
 
 /* --------------------------------------------------------------- public */
 

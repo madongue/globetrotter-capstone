@@ -6,6 +6,8 @@ import DesignSystem from './pages/DesignSystem';
 import Home from './pages/Home';
 import Explore from './pages/Explore';
 import PlaceDetails from './pages/PlaceDetails';
+import Trips from './pages/Trips';
+import Itinerary from './pages/Itinerary';
 import 'leaflet/dist/leaflet.css';
 import './styles.css';
 // Loaded after styles.css so its overrides win. Removing this line returns the
@@ -33,6 +35,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/places/:id" element={<PlaceDetails />} />
+
+        {/* Phase C: planning. /trips/:id/manage is deliberately left to App,
+            which still carries payments, reservations, packing, documents,
+            sharing, progress and the audit log. */}
+        <Route path="/trips" element={<Trips />} />
+        <Route path="/trips/:id" element={<Itinerary />} />
         <Route path="/design" element={<DesignSystem />} />
         <Route path="*" element={<App />} />
       </Routes>

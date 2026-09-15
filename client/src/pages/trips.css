@@ -1,0 +1,95 @@
+/* My Trips. Composition only — values come from the Phase A tokens. */
+
+.trips { min-height: 100vh; }
+.trips__main { padding-block: var(--gt-space-6) var(--gt-space-8); }
+
+/* --------------------------------------------------------------- create
+   Two fields and two buttons on one raised surface. Deliberately not a
+   wizard: the decisions that need a plan in front of you are made in the
+   editor, not guessed at beforehand. */
+
+.create {
+  padding: var(--gt-space-6);
+  border-radius: var(--gt-radius-xl);
+  background: var(--gt-surface);
+  border: 1px solid var(--gt-border);
+  box-shadow: var(--gt-shadow-md);
+  margin-bottom: var(--gt-space-8);
+}
+
+.create__lede {
+  margin: var(--gt-space-2) 0 var(--gt-space-5);
+  color: var(--gt-text-soft);
+  max-width: 48ch;
+}
+
+.create__form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gt-space-4);
+  margin-bottom: var(--gt-space-5);
+}
+
+@media (min-width: 720px) {
+  .create__form { grid-template-columns: 1fr 11rem; align-items: end; }
+}
+
+.create__field .gt-input { height: 3.1rem; font-size: var(--gt-body); }
+
+.create__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-3);
+}
+
+@media (max-width: 560px) {
+  .create__actions { flex-direction: column; }
+  .create__actions .gt-btn { width: 100%; }
+}
+
+.create__hint {
+  margin: var(--gt-space-4) 0 0;
+  font-size: var(--gt-small);
+  color: var(--gt-text-faint);
+  max-width: 56ch;
+}
+
+/* ---------------------------------------------------------- trip cards */
+
+.trips__list { margin-top: var(--gt-space-6); }
+
+.trip__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-4);
+  flex: 1;
+}
+
+.trip__title { font-size: var(--gt-h4); font-weight: 600; line-height: var(--gt-leading-snug); }
+
+.trip__meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+}
+
+.trip__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-3);
+  font-size: var(--gt-caption);
+  color: var(--gt-text-faint);
+}
+
+.trip__cost { font-size: var(--gt-small); font-weight: 600; color: var(--gt-primary); }
+
+.trip__open {
+  margin-top: auto;
+  padding-top: var(--gt-space-2);
+  font-size: var(--gt-small);
+  font-weight: 600;
+  color: var(--gt-primary);
+}

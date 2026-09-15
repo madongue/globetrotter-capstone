@@ -560,7 +560,17 @@ a.gt-card * { text-decoration: none; }
 }
 
 /* The desktop link row. Hidden on phones, where the tab bar takes over. */
-.gt-topnav { display: none; align-items: center; gap: var(--gt-space-1); margin-inline-start: auto; }
+.gt-topnav {
+  display: none;
+  align-items: center;
+  gap: var(--gt-space-1);
+  margin-inline-start: auto;
+  /* Flex items do not shrink below their content, and eight nowrap links are
+     wider than the bar at 1440. Allowing the nav to give way keeps the
+     actions on the right from being pushed off the edge. */
+  min-width: 0;
+  overflow: hidden;
+}
 
 @media (min-width: 900px) {
   .gt-topnav { display: flex; }
@@ -586,7 +596,9 @@ a.gt-card * { text-decoration: none; }
    all eight plus the wordmark and the call to action ran past the edge. */
 .gt-topnav__link--wide { display: none; }
 
-@media (min-width: 1240px) {
+/* Measured rather than guessed: with the wordmark, eight links and the call
+   to action, the bar only fits them all past about 1500px. */
+@media (min-width: 1500px) {
   .gt-topnav__link--wide { display: inline-flex; }
 }
 
