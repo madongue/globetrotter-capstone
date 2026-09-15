@@ -1541,6 +1541,11 @@ def copy_itinerary(itinerary_id: str):
     return jsonify(copy_data), 201
 
 
+#: What a community post is for. A discussion without one is a question,
+#: which is what most of them are.
+DISCUSSION_TYPES = ("question", "recommendation", "experience")
+
+
 @itineraries_bp.route("/groups", methods=["GET"])
 def list_groups():
     """List all community groups."""
@@ -1647,11 +1652,22 @@ def create_group_discussion(group_id: str):
     if not message:
         return jsonify({"error": "discussion message is required"}), 400
 
+    # What kind of post this is, and where it is about. Both optional: a
+    # discussion created without them behaves exactly as it always did, and
+    # older records simply have neither.
+    kind = str(data.get("type", "")).strip().lower()
+    if kind not in DISCUSSION_TYPES:
+        kind = "question"
+    location = ensure_cameroon_location(str(data.get("location", "")).strip()) if data.get("location") else ""
+
     discussion = {
         "id": str(uuid.uuid4()),
         "title": title,
+        "type": kind,
+        "location": location,
         "created_by": username,
         "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "liked_by": [],
         "posts": [
             {
                 "id": str(uuid.uuid4()),
@@ -1665,6 +1681,47 @@ def create_group_discussion(group_id: str):
     discussions.append(discussion)
     update_group(group)
     return jsonify({"message": "discussion created", "discussion": discussion, "group": group}), 201
+
+
+@itineraries_bp.route("/groups/<group_id>/discussions/<discussion_id>/like", methods=["POST"])
+def like_group_discussion(group_id: str, discussion_id: str):
+    """Toggle the signed-in traveller's like on a discussion.
+
+    Mirrors the media like endpoint: one call flips the state, so the client
+    does not have to know which way round it currently is. Membership is not
+    required — finding a thread useful is not the same as joining the group it
+    sits in.
+    """
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    group = get_group_by_id(group_id)
+    if not group:
+        return jsonify({"error": "group not found"}), 404
+
+    discussion = next(
+        (item for item in group.get("discussions", []) if item.get("id") == discussion_id),
+        None,
+    )
+    if not discussion:
+        return jsonify({"error": "discussion not found"}), 404
+
+    liked_by = discussion.setdefault("liked_by", [])
+    if username in liked_by:
+        liked_by.remove(username)
+        liked = False
+    else:
+        liked_by.append(username)
+        liked = True
+
+    update_group(group)
+    return jsonify({
+        "message": "like updated",
+        "liked": liked,
+        "likes": len(liked_by),
+        "discussion": discussion,
+    }), 200
 
 
 @itineraries_bp.route("/groups/<group_id>/discussions/<discussion_id>/reply", methods=["POST"])

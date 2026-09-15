@@ -178,6 +178,49 @@ export const optimiseRoute = (tripId, stageIds, { token } = {}) =>
     method: 'POST', body: stageIds ? { stage_ids: stageIds } : {}, token,
   });
 
+/* ------------------------------------------------------------ community */
+
+export const listGroups = ({ token, signal } = {}) => request('/groups', { token, signal });
+
+export const getGroup = (groupId, { token, signal } = {}) =>
+  request(`/groups/${encodeURIComponent(groupId)}`, { token, signal });
+
+export const createGroup = ({ name, description }, { token } = {}) =>
+  request('/groups', { method: 'POST', body: { name, description }, token });
+
+export const joinGroup = (groupId, { token } = {}) =>
+  request(`/groups/${encodeURIComponent(groupId)}/join`, { method: 'POST', body: {}, token });
+
+export const listDiscussions = (groupId, { token, signal } = {}) =>
+  request(`/groups/${encodeURIComponent(groupId)}/discussions`, { token, signal });
+
+/**
+ * Start a discussion.
+ *
+ * `type` and `location` are optional; omitting them yields the record this
+ * endpoint has always produced. Membership is required, which is why the
+ * composer joins first when it needs to.
+ */
+export const createDiscussion = (groupId, { title, message, type, location }, { token } = {}) =>
+  request(`/groups/${encodeURIComponent(groupId)}/discussions`, {
+    method: 'POST',
+    body: { title, message, ...(type ? { type } : {}), ...(location ? { location } : {}) },
+    token,
+  });
+
+export const replyToDiscussion = (groupId, discussionId, message, { token } = {}) =>
+  request(`/groups/${encodeURIComponent(groupId)}/discussions/${encodeURIComponent(discussionId)}/reply`, {
+    method: 'POST', body: { message }, token,
+  });
+
+/** One call flips the like, so the caller need not know its current state. */
+export const likeDiscussion = (groupId, discussionId, { token } = {}) =>
+  request(`/groups/${encodeURIComponent(groupId)}/discussions/${encodeURIComponent(discussionId)}/like`, {
+    method: 'POST', body: {}, token,
+  });
+
+export const listMedia = ({ token, signal } = {}) => request('/media', { token, signal });
+
 /* --------------------------------------------------------------- public */
 
 export const getStats = ({ signal } = {}) => request('/stats', { signal });

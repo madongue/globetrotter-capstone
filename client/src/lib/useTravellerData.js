@@ -15,6 +15,7 @@ import * as api from './api';
 
 export function useAuth() {
   const [token, setToken] = useState(() => api.getToken());
+  const [username, setUsername] = useState('');
 
   // Signing in or out happens in App.jsx, which writes the same key. A storage
   // event fires for other tabs; the focus check covers this one.
@@ -28,7 +29,20 @@ export function useAuth() {
     };
   }, []);
 
-  return { token, isAuthenticated: Boolean(token) };
+  // Who is signed in. Needed wherever the interface has to tell this
+  // traveller's own contributions from everyone else's — their likes, their
+  // group memberships, their posts.
+  useEffect(() => {
+    let cancelled = false;
+    if (!token) { setUsername(''); return undefined; }
+    fetch('/api/profile', { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((profile) => { if (!cancelled && profile?.username) setUsername(profile.username); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [token]);
+
+  return { token, username, isAuthenticated: Boolean(token) };
 }
 
 export function useSavedPlaces(token) {

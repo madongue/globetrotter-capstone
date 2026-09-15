@@ -8,6 +8,8 @@ import Explore from './pages/Explore';
 import PlaceDetails from './pages/PlaceDetails';
 import Trips from './pages/Trips';
 import Itinerary from './pages/Itinerary';
+import Community from './pages/Community';
+import GroupDetail from './pages/GroupDetail';
 import 'leaflet/dist/leaflet.css';
 import './styles.css';
 // Loaded after styles.css so its overrides win. Removing this line returns the
@@ -41,6 +43,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             sharing, progress and the audit log. */}
         <Route path="/trips" element={<Trips />} />
         <Route path="/trips/:id" element={<Itinerary />} />
+
+        {/* Phase D: the community. A group and its threads share one screen,
+            with the open thread carried as ?d=<id>. */}
+        <Route path="/community" element={<Community />} />
+        <Route path="/community/:id" element={<GroupDetail />} />
         <Route path="/design" element={<DesignSystem />} />
         <Route path="*" element={<App />} />
       </Routes>
