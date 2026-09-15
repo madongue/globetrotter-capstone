@@ -79,6 +79,7 @@ SPA_PATHS = [
     "/profile",
     "/settings",
     "/admin",
+    "/places/some-place-id",
     "/trips/some-itinerary-id",
     "/community/some-group-id",
 ]

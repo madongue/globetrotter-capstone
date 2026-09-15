@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './App';
 import DesignSystem from './pages/DesignSystem';
+import Home from './pages/Home';
+import Explore from './pages/Explore';
+import PlaceDetails from './pages/PlaceDetails';
 import 'leaflet/dist/leaflet.css';
 import './styles.css';
 // Loaded after styles.css so its overrides win. Removing this line returns the
@@ -24,6 +27,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         Home, Explore and Place Details beside it. */}
     <BrowserRouter>
       <Routes>
+        {/* Phase B: the discovery experience, rebuilt as real pages.
+            Everything else still renders App, whose own navigation state is
+            mirrored into the URL by useRouteSync. */}
+        <Route path="/" element={<Home />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/places/:id" element={<PlaceDetails />} />
         <Route path="/design" element={<DesignSystem />} />
         <Route path="*" element={<App />} />
       </Routes>

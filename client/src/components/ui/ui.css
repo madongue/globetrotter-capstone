@@ -89,6 +89,9 @@
 
 /* -------------------------------------------------------------------- card */
 
+a.gt-card, a.gt-card:hover, a.gt-card:visited { text-decoration: none; color: inherit; }
+a.gt-card * { text-decoration: none; }
+
 .gt-card {
   background: var(--gt-surface);
   border: 1px solid var(--gt-border);
@@ -104,6 +107,10 @@
 .gt-card--interactive {
   cursor: pointer;
   text-align: left;
+  /* A card is often an <a>. Without this the whole card reads as link text:
+     underlined, and in the browser's link colour. */
+  text-decoration: none;
+  color: inherit;
   transition: transform var(--gt-slow) var(--gt-ease),
               border-color var(--gt-fast) var(--gt-ease),
               box-shadow var(--gt-slow) var(--gt-ease);
@@ -517,10 +524,14 @@
   text-decoration: none;
   white-space: nowrap;
   /* Yields before the actions beside it rather than pushing them off the
-     edge of a narrow screen. */
+     edge of a narrow screen — but only where room is actually short. */
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (min-width: 900px) {
+  .gt-brand { flex: none; overflow: visible; }
 }
 
 .gt-brand__mark {

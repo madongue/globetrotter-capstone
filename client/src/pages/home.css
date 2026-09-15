@@ -1,0 +1,288 @@
+/* Home. Composition only — every colour, size, radius and shadow comes from
+   the Phase A tokens. */
+
+.home { min-height: 100vh; }
+
+/* ------------------------------------------------------------------ hero
+   A photograph, not a panel. The image is a real <img> rather than a CSS
+   background so it can be lazy-decoded and so its aspect ratio is the
+   browser's problem, not a set of magic percentages. */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 34rem;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* Dark enough on the left for text, clear enough on the right that the
+     photograph is still the subject. */
+  background:
+    linear-gradient(100deg, rgba(6, 26, 22, 0.94) 0%, rgba(6, 26, 22, 0.78) 38%, rgba(6, 26, 22, 0.34) 72%, rgba(6, 26, 22, 0.18) 100%);
+}
+
+.hero__inner {
+  padding-block: var(--gt-space-8);
+  max-width: 62rem;
+  color: #fff;
+}
+
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  margin: 0 0 var(--gt-space-4);
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--gt-radius-pill);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  font-size: var(--gt-caption);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.hero__title {
+  font-size: var(--gt-hero);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: var(--gt-tracking-tight);
+  margin: 0 0 var(--gt-space-4);
+  text-wrap: balance;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}
+
+.hero__lede {
+  font-size: var(--gt-h4);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 34ch;
+  margin: 0 0 var(--gt-space-6);
+}
+
+/* The planner. A single raised surface on the photograph rather than three
+   loose controls floating on it. */
+.hero__form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-4);
+  border-radius: var(--gt-radius-lg);
+  background: var(--gt-surface);
+  box-shadow: var(--gt-shadow-lg);
+  max-width: 44rem;
+}
+
+@media (min-width: 720px) {
+  .hero__form {
+    grid-template-columns: 1fr 8.5rem auto;
+    align-items: end;
+    gap: var(--gt-space-4);
+  }
+}
+
+.hero__field .gt-field__label { color: var(--gt-text-soft); }
+.hero__cta { white-space: nowrap; }
+
+@media (max-width: 719px) {
+  .hero__cta { width: 100%; }
+}
+
+.hero__hint {
+  margin: var(--gt-space-4) 0 0;
+  font-size: var(--gt-small);
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 46ch;
+}
+
+@media (max-width: 719px) {
+  .hero { min-height: 30rem; }
+  .hero__inner { padding-block: var(--gt-space-7); }
+  .hero__lede { font-size: var(--gt-body); }
+}
+
+/* --------------------------------------------------------------- sections */
+
+.home__main { padding-top: var(--gt-space-7); }
+
+.home__section { margin-bottom: var(--gt-space-8); }
+
+/* ------------------------------------------------------ destination rail
+   Horizontally scrollable on narrow screens rather than reflowed into a
+   column: a row of cities reads as a row. */
+
+.dest-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 15rem;
+  gap: var(--gt-space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: var(--gt-space-2);
+  /* Bleeds to the page edge so the row reads as continuing off-screen. */
+  margin-inline: calc(var(--gt-gutter) * -1);
+  padding-inline: var(--gt-gutter);
+  scrollbar-width: thin;
+}
+
+.dest-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--gt-radius-lg);
+  overflow: hidden;
+  scroll-snap-align: start;
+  text-decoration: none;
+  background: var(--gt-surface-2);
+  box-shadow: var(--gt-shadow-sm);
+  transition: transform var(--gt-slow) var(--gt-ease), box-shadow var(--gt-slow) var(--gt-ease);
+}
+
+.dest-card:hover { transform: translateY(-4px); box-shadow: var(--gt-shadow-lg); }
+
+.dest-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 700ms var(--gt-ease);
+}
+
+.dest-card:hover img { transform: scale(1.06); }
+
+.dest-card__scrim { position: absolute; inset: 0; background: var(--gt-scrim); }
+
+.dest-card__text {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: var(--gt-space-4);
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+
+.dest-card__text strong { font-size: var(--gt-h4); font-weight: 600; }
+.dest-card__text span { font-size: var(--gt-caption); color: rgba(255, 255, 255, 0.82); }
+
+/* ----------------------------------------------------------- place cards */
+
+.pc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--gt-space-2); }
+
+.pc-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+  font-size: var(--gt-caption);
+  font-weight: 600;
+  color: var(--gt-accent);
+}
+
+.pc-where {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+}
+
+.pc-desc {
+  margin: 0;
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+  /* Two lines, so a long OpenStreetMap description cannot stretch one card
+     taller than its neighbours. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pc-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-2);
+  margin-top: auto;
+  padding-top: var(--gt-space-1);
+}
+
+.pc-price { font-size: var(--gt-small); font-weight: 600; }
+.pc-free { font-size: var(--gt-small); font-weight: 600; color: var(--gt-success); }
+
+.pc .gt-card__body { flex: 1; }
+.pc-add { margin-top: var(--gt-space-2); }
+
+/* ------------------------------------------------------------ trip cards */
+
+.trip-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-1);
+  padding: var(--gt-space-4);
+}
+
+.trip-card__body strong { font-size: var(--gt-h4); font-weight: 600; }
+.trip-card__cost { font-size: var(--gt-small); font-weight: 600; color: var(--gt-primary); margin-top: var(--gt-space-1); }
+
+/* ------------------------------------------------------- closing section */
+
+.home__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-8) var(--gt-space-5);
+  margin-bottom: var(--gt-space-7);
+  border-radius: var(--gt-radius-xl);
+  background: var(--gt-primary-soft);
+  border: 1px solid var(--gt-primary-line);
+  color: var(--gt-primary);
+}
+
+.home__cta .gt-h2 { color: var(--gt-text); }
+.home__cta p { max-width: 46ch; margin: 0; }
+
+/* -------------------------------------------------- add-to-trip dialog */
+
+.attd-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--gt-space-2); }
+
+.attd-trip {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+  color: var(--gt-text);
+  font-family: var(--gt-font);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--gt-fast) var(--gt-ease), background var(--gt-fast) var(--gt-ease);
+}
+
+.attd-trip:hover:not(:disabled) { border-color: var(--gt-primary); background: var(--gt-primary-soft); }
+.attd-trip:disabled { opacity: 0.55; cursor: progress; }
+.attd-trip__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.attd-trip__text strong { font-weight: 600; }

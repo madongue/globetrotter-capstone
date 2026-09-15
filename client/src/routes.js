@@ -49,6 +49,11 @@ export const ROUTES = [
   { path: '/profile',     page: 'dashboard', view: 'settings' },
   { path: '/settings',    page: 'dashboard', view: 'settings', alias: true },
 
+  // Rebuilt in Phase B as standalone pages, outside App. Listed so that
+  // matchPath recognises them as real addresses rather than sending them to
+  // the fallback.
+  { path: '/places/:id',    page: 'place',     param: 'placeId' },
+
   // Single-entity screens.
   { path: '/trips/:id',     page: 'itinerary', param: 'itineraryId' },
   { path: '/community/:id', page: 'group',     param: 'groupId' },

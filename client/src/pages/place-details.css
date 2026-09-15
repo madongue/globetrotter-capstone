@@ -1,0 +1,216 @@
+/* Place Details. Composition only — values come from the Phase A tokens. */
+
+.pd { min-height: 100vh; }
+.pd__main { padding-block: var(--gt-space-6); }
+
+/* --------------------------------------------------------------- gallery */
+
+.pd__gallery-wrap { padding-top: var(--gt-space-4); }
+
+.pd__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  margin-bottom: var(--gt-space-4);
+  font-size: var(--gt-small);
+  font-weight: 500;
+  color: var(--gt-text-soft);
+  text-decoration: none;
+}
+
+.pd__back:hover { color: var(--gt-primary); }
+
+.pd__gallery { display: flex; flex-direction: column; gap: var(--gt-space-3); }
+
+.pd__hero {
+  position: relative;
+  margin: 0;
+  border-radius: var(--gt-radius-xl);
+  overflow: hidden;
+  background: var(--gt-surface-2);
+  /* Wide and cinematic on desktop, closer to square on a phone so the
+     subject is still legible. */
+  aspect-ratio: 4 / 3;
+  box-shadow: var(--gt-shadow-md);
+}
+
+@media (min-width: 720px) {
+  .pd__hero { aspect-ratio: 21 / 9; }
+}
+
+.pd__hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pd__hero-empty { width: 100%; height: 100%; border-radius: 0; }
+
+/* The honesty label. Sits on the photograph so it cannot be missed, and says
+   plainly what the picture is. */
+.pd__contextual {
+  position: absolute;
+  left: var(--gt-space-4);
+  bottom: var(--gt-space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--gt-radius-pill);
+  background: rgba(8, 24, 21, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  color: #e7efec;
+  font-size: var(--gt-caption);
+}
+
+.pd__credit {
+  margin: 0;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-faint);
+}
+
+.pd__credit a { color: inherit; }
+
+.pd__thumbs { display: flex; gap: var(--gt-space-2); overflow-x: auto; scrollbar-width: none; }
+.pd__thumbs::-webkit-scrollbar { display: none; }
+
+.pd__thumb {
+  flex: none;
+  width: 5.5rem;
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--gt-radius-sm);
+  overflow: hidden;
+  background: var(--gt-surface-2);
+  cursor: pointer;
+  transition: border-color var(--gt-fast) var(--gt-ease), opacity var(--gt-fast) var(--gt-ease);
+  opacity: 0.6;
+}
+
+.pd__thumb.is-active { border-color: var(--gt-primary); opacity: 1; }
+.pd__thumb:hover { opacity: 1; }
+.pd__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ------------------------------------------------------------------ body
+   Two columns on desktop — the account of the place on the left, the actions
+   and the map on the right, where they stay in reach while reading. */
+
+.pd__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gt-space-6);
+  padding-block: var(--gt-space-6);
+}
+
+@media (min-width: 960px) {
+  .pd__body { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); align-items: start; }
+  .pd__col-side { position: sticky; top: calc(68px + var(--gt-space-4)); }
+}
+
+.pd__col-main { min-width: 0; }
+.pd__col-side { display: flex; flex-direction: column; gap: var(--gt-space-4); min-width: 0; }
+
+/* ----------------------------------------------------------------- title */
+
+.pd__badges { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gt-space-3); }
+
+.pd__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--gt-small);
+  font-weight: 600;
+  color: var(--gt-accent);
+}
+
+.pd__name { margin: var(--gt-space-3) 0 var(--gt-space-2); }
+
+.pd__where {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  margin: 0;
+  color: var(--gt-text-soft);
+}
+
+/* -------------------------------------------------------------- sections */
+
+.pd__section { padding-top: var(--gt-space-6); }
+.pd__section .gt-h3 { margin-bottom: var(--gt-space-3); }
+
+.pd__desc { margin: 0 0 var(--gt-space-4); color: var(--gt-text-soft); max-width: 68ch; }
+
+.pd__facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--gt-space-2) var(--gt-space-5);
+  margin: 0 0 var(--gt-space-4);
+  font-size: var(--gt-small);
+}
+
+.pd__facts dt { color: var(--gt-text-faint); }
+.pd__facts dd { margin: 0; font-weight: 500; }
+.pd__free { color: var(--gt-success); }
+.pd__coords { font-family: var(--gt-font-mono); font-size: var(--gt-caption); }
+
+/* Absence, stated. No record in the catalogue carries opening hours, and an
+   invented one would be worse than none. */
+.pd__nohours,
+.pd__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gt-space-2);
+  margin: 0 0 var(--gt-space-3);
+  padding: var(--gt-space-3);
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-surface-2);
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+  max-width: 68ch;
+}
+
+.pd__nohours svg, .pd__note svg { flex: none; margin-top: 2px; }
+
+.pd__safety {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+  max-width: 68ch;
+}
+
+.pd__safety li { margin-bottom: var(--gt-space-1); }
+.pd__empty-line { margin: 0; font-size: var(--gt-small); }
+
+/* --------------------------------------------------------------- reviews */
+
+.pd__reviews { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--gt-space-4); }
+
+.pd__reviews li {
+  padding: var(--gt-space-4);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+}
+
+.pd__review-head { display: flex; align-items: center; justify-content: space-between; gap: var(--gt-space-3); margin-bottom: var(--gt-space-2); }
+.pd__reviews p { margin: 0; font-size: var(--gt-small); color: var(--gt-text-soft); }
+
+/* --------------------------------------------------------------- actions */
+
+.pd__actions { gap: var(--gt-space-3); box-shadow: var(--gt-shadow-md); }
+
+.pd__price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gt-space-2);
+  padding-bottom: var(--gt-space-3);
+  border-bottom: 1px solid var(--gt-border);
+}
+
+.pd__price-row > span:first-child { font-size: var(--gt-h3); font-weight: 600; }
+
+.pd__map { overflow: hidden; }
+.pd__map-canvas { height: 17rem; width: 100%; }
+
+/* ---------------------------------------------------------------- nearby */
+
+.pd__nearby { padding-block: var(--gt-space-6) var(--gt-space-8); border-top: 1px solid var(--gt-border); }
