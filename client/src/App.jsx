@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouteSync } from './useRouteSync';
 import {
   LayoutDashboard,
   Map as MapIcon,
@@ -3412,6 +3413,43 @@ function App() {
     setResourceReview((current) => ({ ...current, id: '', comment: '', rating: '5' }));
     setAlert({ type: 'success', message: 'Review added.' });
   };
+
+  /* ------------------------------------------------------------------ URLs
+     Every screen gains an address, without moving any state. The hook mirrors
+     `page` and `dashboardView` into the URL and back; each existing
+     setPage(...) call keeps behaving exactly as it did and now updates the
+     address bar as a side effect.
+
+     onEntityRoute is what makes a pasted link work: a URL naming a trip or a
+     group we do not currently have open loads it first. */
+  const handleEntityRoute = useCallback(async (param, id) => {
+    if (!token) return;
+    try {
+      const path = param === 'itineraryId' ? `trips/${id}` : `groups/${id}`;
+      const response = await fetch(`${API_BASE}/${path}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) return;
+      const result = await response.json();
+      if (param === 'itineraryId') handleSelectItinerary(result);
+      else handleViewGroup(result.group || result);
+    } catch (error) {
+      // A bad or revoked link should leave the traveller on a working screen
+      // rather than a half-loaded one; the route sync has already set the
+      // page, and the panel below renders its own empty state.
+    }
+  }, [token]);
+
+  useRouteSync({
+    page,
+    view: dashboardView,
+    setPage,
+    setView: setDashboardView,
+    entityId: page === 'itinerary' ? selectedItinerary?.id
+      : page === 'group' ? selectedGroup?.id
+      : undefined,
+    onEntityRoute: handleEntityRoute,
+  });
 
   return (
     <div className="app-shell" key={language}>

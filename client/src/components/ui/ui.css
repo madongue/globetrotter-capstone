@@ -1,0 +1,652 @@
+/* ==========================================================================
+   GlobeTrotter — UI primitives
+   ==========================================================================
+
+   Styles for the components in this directory. Every value comes from
+   design/tokens.css; no component declares a colour, radius or shadow of its
+   own, so the visual identity can be retuned in one place.
+
+   Scoped under .gt-* class names that the original styles.css never uses, so
+   these can be introduced screen by screen without colliding with the
+   un-migrated UI.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ button */
+
+.gt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gt-space-2);
+  font-family: var(--gt-font);
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid transparent;
+  border-radius: var(--gt-radius-pill);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--gt-fast) var(--gt-ease),
+              border-color var(--gt-fast) var(--gt-ease),
+              transform var(--gt-fast) var(--gt-ease),
+              box-shadow var(--gt-fast) var(--gt-ease);
+}
+
+.gt-btn:active:not(:disabled) { transform: translateY(1px); }
+
+.gt-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* sizes */
+.gt-btn--sm { font-size: var(--gt-caption);  padding: 0.5rem 0.9rem; }
+.gt-btn--md { font-size: var(--gt-small);  padding: 0.7rem 1.3rem; }
+.gt-btn--lg { font-size: var(--gt-body); padding: 0.95rem 1.9rem; }
+
+/* variants */
+.gt-btn--primary {
+  background: var(--gt-primary);
+  color: var(--gt-on-primary);
+  box-shadow: var(--gt-shadow-primary);
+}
+.gt-btn--primary:hover:not(:disabled) { background: var(--gt-primary-hover); }
+.gt-btn--primary:active:not(:disabled) { background: var(--gt-primary-press); }
+
+.gt-btn--secondary {
+  background: var(--gt-surface);
+  color: var(--gt-text);
+  border-color: var(--gt-border-strong);
+}
+.gt-btn--secondary:hover:not(:disabled) {
+  background: var(--gt-surface-2);
+  border-color: var(--gt-primary);
+  color: var(--gt-primary);
+}
+
+.gt-btn--ghost { background: transparent; color: var(--gt-text-soft); }
+.gt-btn--ghost:hover:not(:disabled) {
+  background: var(--gt-surface-2);
+  color: var(--gt-text);
+}
+
+.gt-btn--danger {
+  background: var(--gt-error-soft);
+  color: var(--gt-error);
+  border-color: var(--gt-error);
+}
+.gt-btn--danger:hover:not(:disabled) { background: var(--gt-error); color: #fff; }
+
+.gt-btn--block { width: 100%; }
+
+/* An icon-only control still needs a touch target of its own. */
+.gt-btn--icon {
+  padding: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--gt-radius-pill);
+}
+
+/* -------------------------------------------------------------------- card */
+
+.gt-card {
+  background: var(--gt-surface);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gt-card--pad { padding: var(--gt-space-5); }
+
+.gt-card--interactive {
+  cursor: pointer;
+  text-align: left;
+  transition: transform var(--gt-slow) var(--gt-ease),
+              border-color var(--gt-fast) var(--gt-ease),
+              box-shadow var(--gt-slow) var(--gt-ease);
+}
+
+.gt-card--interactive:hover {
+  transform: translateY(-3px);
+  border-color: var(--gt-primary-line);
+  box-shadow: var(--gt-shadow-lg);
+}
+
+/* Image-led card: the photograph is the card, the text sits on it. */
+.gt-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--gt-surface-2);
+  overflow: hidden;
+}
+
+.gt-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 600ms var(--gt-ease);
+}
+
+.gt-card--interactive:hover .gt-card__media img { transform: scale(1.05); }
+
+.gt-card__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--gt-scrim);
+  pointer-events: none;
+}
+
+.gt-card__overlay {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: var(--gt-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-1);
+}
+
+.gt-card__body { padding: var(--gt-space-4); display: flex; flex-direction: column; gap: var(--gt-space-2); }
+.gt-card__title { font-size: var(--gt-h4); font-weight: 600; margin: 0; line-height: var(--gt-leading-snug); }
+.gt-card__meta { font-size: var(--gt-caption); color: var(--gt-text-soft); margin: 0; }
+
+/* A photograph that is really of the surrounding city, not of this place.
+   Marked rather than hidden, because passing one off as the other is the
+   dishonest option. */
+.gt-card__contextual {
+  position: absolute;
+  top: var(--gt-space-3);
+  left: var(--gt-space-3);
+  font-size: var(--gt-caption);
+  letter-spacing: 0.04em;
+  /* Sits on the photograph, so it stays dark in both themes. */
+  background: rgba(8, 24, 21, 0.74);
+  color: #e7efec;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--gt-radius-pill);
+  padding: 0.2rem 0.55rem;
+  backdrop-filter: blur(8px);
+}
+
+/* Corner action on a card — saving, mainly. Sits above the scrim. */
+.gt-card__action {
+  position: absolute;
+  top: var(--gt-space-3);
+  right: var(--gt-space-3);
+  z-index: 2;
+  /* Also over the photograph. */
+  background: rgba(8, 24, 21, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+}
+
+.gt-card__action:hover { background: rgba(8, 24, 21, 0.84); }
+.gt-card__action[aria-pressed="true"] { color: var(--gt-error); border-color: var(--gt-error); }
+
+/* ------------------------------------------------------------------- chip */
+
+.gt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  font-size: var(--gt-caption);
+  font-weight: 500;
+  padding: 0.42rem 0.85rem;
+  border-radius: var(--gt-radius-pill);
+  border: 1px solid var(--gt-border);
+  background: var(--gt-surface);
+  color: var(--gt-text-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--gt-fast) var(--gt-ease);
+}
+
+.gt-chip:hover { color: var(--gt-text); border-color: var(--gt-border-strong); }
+
+.gt-chip[aria-pressed="true"],
+.gt-chip--active {
+  background: var(--gt-primary-soft);
+  border-color: var(--gt-primary-line);
+  color: var(--gt-primary-hover);
+}
+
+.gt-chip--static { cursor: default; }
+
+/* ------------------------------------------------------------------ badge */
+
+.gt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: var(--gt-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.22rem 0.55rem;
+  border-radius: var(--gt-radius-sm);
+  border: 1px solid transparent;
+}
+
+.gt-badge--neutral { background: var(--gt-surface-2); color: var(--gt-text-soft); border-color: var(--gt-border); }
+.gt-badge--primary   { background: var(--gt-primary-soft);   color: var(--gt-primary-hover); border-color: var(--gt-primary-line); }
+.gt-badge--success { background: var(--gt-success-soft); color: var(--gt-success); }
+.gt-badge--warning { background: var(--gt-warning-soft); color: var(--gt-warning); }
+.gt-badge--error  { background: var(--gt-error-soft);  color: var(--gt-error); }
+
+/* ------------------------------------------------------------------ field */
+
+.gt-field { display: flex; flex-direction: column; gap: var(--gt-space-2); min-width: 0; }
+
+.gt-field__label {
+  font-size: var(--gt-caption);
+  font-weight: 600;
+  color: var(--gt-text-soft);
+}
+
+.gt-field__hint { font-size: var(--gt-caption); color: var(--gt-text-faint); margin: 0; }
+
+.gt-field__error {
+  font-size: var(--gt-caption);
+  color: var(--gt-error);
+  margin: 0;
+}
+
+.gt-input,
+.gt-select,
+.gt-textarea {
+  width: 100%;
+  font-family: var(--gt-font);
+  font-size: var(--gt-small);
+  color: var(--gt-text);
+  background: var(--gt-surface);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-sm);
+  padding: 0.8rem 1rem;
+  transition: border-color var(--gt-fast) var(--gt-ease),
+              background var(--gt-fast) var(--gt-ease);
+}
+
+.gt-input::placeholder,
+.gt-textarea::placeholder { color: var(--gt-text-faint); }
+
+.gt-input:hover,
+.gt-select:hover,
+.gt-textarea:hover { border-color: var(--gt-border-strong); }
+
+.gt-input:focus,
+.gt-select:focus,
+.gt-textarea:focus {
+  outline: none;
+  border-color: var(--gt-primary);
+  background: var(--gt-surface);
+}
+
+.gt-input[aria-invalid="true"] { border-color: var(--gt-error); }
+
+.gt-textarea { resize: vertical; min-height: 6rem; line-height: var(--gt-leading-normal); }
+
+/* A native select paints its dropdown with the option colours, which stay
+   light unless set here. */
+.gt-select option { background: var(--gt-surface-2); color: var(--gt-text); }
+
+/* Search field with a leading icon. */
+.gt-search { position: relative; display: flex; align-items: center; }
+.gt-search__icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--gt-text-faint);
+  pointer-events: none;
+  display: flex;
+}
+.gt-search .gt-input { padding-left: 2.85rem; }
+
+/* ------------------------------------------------------------ empty state */
+
+.gt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-8) var(--gt-space-5);
+  border: 1px dashed var(--gt-border);
+  border-radius: var(--gt-radius-lg);
+  background: var(--gt-surface);
+}
+
+.gt-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: var(--gt-radius-pill);
+  background: var(--gt-primary-soft);
+  color: var(--gt-primary-hover);
+}
+
+.gt-empty__title { font-size: var(--gt-h4); font-weight: 600; margin: 0; }
+.gt-empty__body { font-size: var(--gt-small); color: var(--gt-text-soft); margin: 0; max-width: 42ch; }
+
+/* --------------------------------------------------------------- skeleton
+   A loading placeholder shaped like the content it replaces, so the layout
+   does not jump when the real thing arrives. */
+
+.gt-skeleton {
+  background: linear-gradient(90deg,
+    var(--gt-surface-2) 25%,
+    var(--gt-surface-3) 37%,
+    var(--gt-surface-2) 63%);
+  background-size: 400% 100%;
+  animation: gt-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--gt-radius-md);
+}
+
+@keyframes gt-shimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* ------------------------------------------------------------------ toast */
+
+.gt-toasts {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--gt-tabbar-h) + var(--gt-space-4));
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-2);
+  width: min(26rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+@media (min-width: 900px) {
+  .gt-toasts { bottom: var(--gt-space-5); }
+}
+
+.gt-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gt-space-3);
+  padding: 0.85rem 1rem;
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+  border: 1px solid var(--gt-border);
+  box-shadow: var(--gt-shadow-lg);
+  font-size: var(--gt-small);
+  pointer-events: auto;
+  animation: gt-toast-in var(--gt-slow) var(--gt-ease);
+}
+
+.gt-toast--success { border-left: 3px solid var(--gt-success); }
+.gt-toast--error   { border-left: 3px solid var(--gt-error); }
+.gt-toast--info    { border-left: 3px solid var(--gt-primary); }
+
+.gt-toast__text { flex: 1; min-width: 0; }
+
+@keyframes gt-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ----------------------------------------------------------------- dialog */
+
+.gt-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(8, 24, 21, 0.55);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: var(--gt-space-4);
+  animation: gt-fade var(--gt-fast) var(--gt-ease);
+}
+
+.gt-dialog {
+  background: var(--gt-surface);
+  border: 1px solid var(--gt-border-strong);
+  border-radius: var(--gt-radius-lg);
+  box-shadow: var(--gt-shadow-lg);
+  width: min(34rem, 100%);
+  max-height: min(80vh, 44rem);
+  overflow-y: auto;
+  padding: var(--gt-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-4);
+}
+
+.gt-dialog__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--gt-space-4); }
+.gt-dialog__title { font-size: var(--gt-h3); font-weight: 600; margin: 0; font-family: var(--gt-font-display); }
+
+@keyframes gt-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* ----------------------------------------------------------------- spinner */
+
+.gt-spinner {
+  width: 1.15em;
+  height: 1.15em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: gt-spin 700ms linear infinite;
+  flex: none;
+}
+
+@keyframes gt-spin { to { transform: rotate(360deg); } }
+
+/* -------------------------------------------------------- section heading */
+
+.gt-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--gt-space-4);
+  margin-bottom: var(--gt-space-4);
+  flex-wrap: wrap;
+}
+
+.gt-section-head h2 {
+  font-family: var(--gt-font-display);
+  font-size: var(--gt-h2);
+  font-weight: 700;
+  letter-spacing: var(--gt-tracking-tight);
+  margin: 0;
+}
+
+.gt-section-head p { margin: 0.35rem 0 0; color: var(--gt-text-soft); font-size: var(--gt-small); }
+
+/* --------------------------------------------------------------- the grid
+   One responsive grid for every collection of cards, so Explore, Saved and
+   Trips share a rhythm instead of each inventing one. */
+
+.gt-grid {
+  display: grid;
+  gap: var(--gt-space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+}
+
+.gt-grid--wide { grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr)); }
+
+
+/* ==========================================================================
+   Navigation
+   ==========================================================================
+   Two shapes for two contexts, as on the design board: a top bar on desktop,
+   a bottom tab bar on phones. Not one shrunk into the other — the audit found
+   the desktop sidebar stacking on mobile and consuming the entire first
+   screen before any content appeared.
+   ========================================================================== */
+
+/* ------------------------------------------------------------ top bar */
+
+.gt-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--gt-surface);
+  border-bottom: 1px solid var(--gt-border);
+}
+
+.gt-topbar__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-3);
+  height: 68px;
+  min-width: 0;
+}
+
+@media (min-width: 720px) {
+  .gt-topbar__inner { gap: var(--gt-space-5); }
+}
+
+.gt-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  font-weight: 700;
+  font-size: var(--gt-h4);
+  letter-spacing: var(--gt-tracking-tight);
+  color: var(--gt-text);
+  text-decoration: none;
+  white-space: nowrap;
+  /* Yields before the actions beside it rather than pushing them off the
+     edge of a narrow screen. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gt-brand__mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-primary);
+  color: var(--gt-on-primary);
+  flex: none;
+}
+
+/* The tagline is a desktop flourish. On a phone the top bar is compact —
+   wordmark and actions only — and the tab bar carries navigation. */
+.gt-brand__tag { display: none; }
+
+@media (min-width: 720px) {
+  .gt-brand__tag {
+    display: block;
+    font-size: var(--gt-caption);
+    font-weight: 400;
+    color: var(--gt-text-faint);
+    letter-spacing: 0;
+  }
+}
+
+/* The desktop link row. Hidden on phones, where the tab bar takes over. */
+.gt-topnav { display: none; align-items: center; gap: var(--gt-space-1); margin-inline-start: auto; }
+
+@media (min-width: 900px) {
+  .gt-topnav { display: flex; }
+}
+
+.gt-topnav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  padding: 0.55rem 0.9rem;
+  border-radius: var(--gt-radius-sm);
+  font-size: var(--gt-small);
+  font-weight: 500;
+  color: var(--gt-text-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--gt-fast) var(--gt-ease), color var(--gt-fast) var(--gt-ease);
+}
+
+.gt-topnav__link:hover { background: var(--gt-surface-2); color: var(--gt-text); }
+
+/* Secondary destinations: shown only where there is genuinely room. At 1024
+   all eight plus the wordmark and the call to action ran past the edge. */
+.gt-topnav__link--wide { display: none; }
+
+@media (min-width: 1240px) {
+  .gt-topnav__link--wide { display: inline-flex; }
+}
+
+.gt-topnav__link[aria-current="page"] {
+  background: var(--gt-primary-soft);
+  color: var(--gt-primary);
+  font-weight: 600;
+}
+
+.gt-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  margin-inline-start: auto;
+  /* Never compressed: these are the controls, not the decoration. */
+  flex: none;
+}
+
+@media (min-width: 900px) {
+  .gt-topbar__actions { margin-inline-start: var(--gt-space-4); }
+}
+
+/* --------------------------------------------------------- bottom tabs */
+
+.gt-tabbar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 50;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  background: var(--gt-surface);
+  border-top: 1px solid var(--gt-border);
+  /* Clears the home indicator on iOS rather than sitting under it. */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-shadow: 0 -2px 12px rgba(16, 34, 31, 0.08);
+}
+
+@media (min-width: 900px) {
+  .gt-tabbar { display: none; }
+}
+
+.gt-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  /* A touch target with room to miss — 44px is the accessible floor. */
+  min-height: var(--gt-tabbar-h);
+  padding: var(--gt-space-2) var(--gt-space-1);
+  font-size: var(--gt-caption);
+  font-weight: 500;
+  color: var(--gt-text-faint);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--gt-fast) var(--gt-ease);
+}
+
+.gt-tab:hover { color: var(--gt-text-soft); }
+.gt-tab[aria-current="page"] { color: var(--gt-primary); font-weight: 600; }
+
+.gt-tab__icon { display: grid; place-items: center; height: 24px; }
+
+/* Only the page body reserves room for the bar, so a fixed element such as
+   the assistant launcher can position against it independently. */
+.gt-has-tabbar { padding-bottom: calc(var(--gt-tabbar-h) + var(--gt-space-4)); }
+
+@media (min-width: 900px) {
+  .gt-has-tabbar { padding-bottom: var(--gt-space-6); }
+}

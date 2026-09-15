@@ -210,4 +210,30 @@ def create_app():
 
         return send_from_directory(app.static_folder, "index.html")
 
+    @app.errorhandler(404)
+    def spa_fallback(error):
+        """Hand any unmatched non-API path to the single-page application.
+
+        When a React build is present the app is mounted with
+        ``static_url_path="/"``, which makes Flask register its own static
+        handler at the root. That handler matches *every* path and answers 404
+        as soon as no file of that name exists on disk -- before
+        ``serve_react_app`` above is ever consulted. The effect was that only
+        ``/`` worked: opening or refreshing any other address returned Flask's
+        404 page rather than the application.
+
+        Nothing depended on it until the client gained real URLs, which is why
+        it went unnoticed. The test suite could not catch it either: with no
+        ``client/dist`` built, the app falls back to ``/static`` and the root
+        handler is never shadowed.
+
+        API routes keep their real 404 -- a missing record must not answer with
+        an HTML page.
+        """
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "not found"}), 404
+        if app.static_folder is None:
+            return error
+        return send_from_directory(app.static_folder, "index.html")
+
     return app

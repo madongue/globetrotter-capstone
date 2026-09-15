@@ -1,0 +1,138 @@
+/* Layout for the style guide at /design. Page-specific only — every colour,
+   size and radius still comes from the tokens. */
+
+.ds { min-height: 100vh; }
+
+.ds-hero {
+  padding-block: var(--gt-space-7) var(--gt-space-6);
+  max-width: 44ch;
+}
+
+.ds-hero .gt-h1 { margin-block: var(--gt-space-3); }
+
+.ds-section {
+  padding-block: var(--gt-space-6);
+  border-top: 1px solid var(--gt-border);
+}
+
+/* -------------------------------------------------------------- swatches */
+
+.ds-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: var(--gt-space-3);
+}
+
+.ds-swatch {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-3);
+  min-width: 0;
+}
+
+.ds-swatch__chip {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--gt-radius-sm);
+  border: 1px solid var(--gt-border);
+  flex: none;
+}
+
+.ds-swatch strong { display: block; font-size: var(--gt-small); font-weight: 600; }
+.ds-swatch code {
+  font-family: var(--gt-font-mono);
+  font-size: var(--gt-caption);
+  color: var(--gt-text-faint);
+  word-break: break-all;
+}
+
+/* ------------------------------------------------------------ typography */
+
+.ds-type {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  gap: var(--gt-space-4);
+  align-items: baseline;
+  padding-block: var(--gt-space-2);
+  border-bottom: 1px solid var(--gt-border);
+}
+
+.ds-type p { margin: 0; min-width: 0; }
+
+@media (max-width: 640px) {
+  .ds-type { grid-template-columns: 1fr; gap: var(--gt-space-1); }
+}
+
+/* ------------------------------------------------------ spacing & radius */
+
+.ds-scale { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--gt-space-4); }
+
+.ds-scale__item { display: flex; flex-direction: column; align-items: center; gap: var(--gt-space-2); }
+
+.ds-scale__bar { display: block; background: var(--gt-primary); border-radius: 2px; }
+
+.ds-scale__radius {
+  display: block;
+  width: 56px;
+  height: 56px;
+  background: var(--gt-primary-soft);
+  border: 1px solid var(--gt-primary-line);
+}
+
+.ds-scale code { font-family: var(--gt-font-mono); font-size: var(--gt-caption); color: var(--gt-text-faint); }
+
+.ds-shadows { display: flex; flex-wrap: wrap; gap: var(--gt-space-5); }
+
+.ds-shadow {
+  display: grid;
+  place-items: center;
+  width: 9rem;
+  height: 5rem;
+  background: var(--gt-surface);
+  border-radius: var(--gt-radius-md);
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+}
+
+/* ---------------------------------------------------------------- groups */
+
+.ds-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gt-space-3);
+  margin-top: var(--gt-space-3);
+}
+
+.ds-forms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: var(--gt-space-4);
+}
+
+.ds-states {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: var(--gt-space-5);
+  align-items: start;
+}
+
+.ds-navdemo {
+  padding: var(--gt-space-4);
+  background: var(--gt-surface);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  margin-bottom: var(--gt-space-3);
+}
+
+.ds-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-4);
+  padding-block: var(--gt-space-6);
+  border-top: 1px solid var(--gt-border);
+}
+
+.ds-footer p { margin: 0; }

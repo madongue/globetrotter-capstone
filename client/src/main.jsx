@@ -1,15 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './App';
+import DesignSystem from './pages/DesignSystem';
 import 'leaflet/dist/leaflet.css';
 import './styles.css';
 // Loaded after styles.css so its overrides win. Removing this line returns the
 // app to its original light appearance without touching anything else.
 import './theme-dark.css';
+// The redesign's vocabulary. Additive: it declares --gt-* custom properties and
+// .gt-* classes that the stylesheets above never use, so screens can migrate to
+// it one at a time without disturbing the ones that have not.
+import './design/tokens.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    {/* Gives every screen a URL. App's own navigation state is unchanged —
+        useRouteSync mirrors the two together.
+
+        /design is the style guide: a standalone page component mounted by the
+        router, deliberately outside App so that the first page built the new
+        way proves the structure without touching the old one. Phase B adds
+        Home, Explore and Place Details beside it. */}
+    <BrowserRouter>
+      <Routes>
+        <Route path="/design" element={<DesignSystem />} />
+        <Route path="*" element={<App />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
 );
 
