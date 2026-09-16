@@ -13,6 +13,7 @@ USER_SERVICE_URL = os.environ.get("USER_SERVICE_URL", "http://user-service:8001"
 DESTINATION_SERVICE_URL = os.environ.get("DESTINATION_SERVICE_URL", "http://destination-service:8004")
 RECOMMENDATION_SERVICE_URL = os.environ.get("RECOMMENDATION_SERVICE_URL", "http://recommendation-service:8003")
 ITINERARY_SERVICE_URL = os.environ.get("ITINERARY_SERVICE_URL", "http://itinerary-service:8002")
+CHAT_SERVICE_URL = os.environ.get("CHAT_SERVICE_URL", "http://chat-service:8005")
 
 # Generating an itinerary scans the whole catalogue — 845 places and 373 hotels
 # — and measures around 6 seconds against the JSON backend. In the monolith
@@ -109,6 +110,17 @@ def create_app():
     def itinerary_subpath(subpath):
         return proxy_request(ITINERARY_SERVICE_URL, f"/itineraries/{subpath}", method=request.method)
 
+    # Chat. A catch-all rather than one rule per route, for the reason the
+    # itinerary block below explains: a service that gains a route must not
+    # need the gateway edited before anyone can reach it.
+    @app.route("/chat/rooms", methods=["GET"])
+    def chat_rooms():
+        return proxy_request(CHAT_SERVICE_URL, "/chat/rooms", method="GET")
+
+    @app.route("/chat/<path:subpath>", methods=["GET", "POST", "PATCH", "DELETE"])
+    def chat_subpath(subpath):
+        return proxy_request(CHAT_SERVICE_URL, f"/chat/{subpath}", method=request.method)
+
     @app.route("/trips", methods=["GET", "POST"])
     def trips():
         return proxy_request(ITINERARY_SERVICE_URL, "/trips", method=request.method)
@@ -116,6 +128,57 @@ def create_app():
     @app.route("/trips/<path:subpath>", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
     def trips_subpath(subpath):
         return proxy_request(ITINERARY_SERVICE_URL, f"/trips/{subpath}", method=request.method)
+
+    # ---------------------------------------------------------------- the rest
+    #
+    # The gateway forwarded eleven of the application's thirty resources. The
+    # other nineteen — groups, media, saved places, the catalogue, the whole of
+    # account management — simply 404'd once the app was split, which is the
+    # failure mode described on the itinerary catch-all above, at scale.
+    #
+    # Each prefix is forwarded to the service that actually serves it, checked
+    # against each service's own route table rather than assumed. Four
+    # resources have no service at all yet — assistant, resources, config and
+    # metrics — and are named at the bottom so the gap is visible rather than
+    # silent.
+
+    ANY = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+
+    def forward(target, prefix):
+        """Register a prefix and everything beneath it against one service."""
+        def bare():
+            return proxy_request(target, request.path, method=request.method)
+
+        def nested(subpath):
+            return proxy_request(target, request.path, method=request.method)
+
+        app.add_url_rule(f"/{prefix}", f"fwd_{prefix}", bare, methods=ANY)
+        app.add_url_rule(f"/{prefix}/<path:subpath>", f"fwd_{prefix}_sub", nested, methods=ANY)
+
+    for prefix in ("auth", "profile", "interests", "admin", "stats",
+                   "forgot-password", "reset-password", "google-auth"):
+        forward(USER_SERVICE_URL, prefix)
+
+    for prefix in ("groups", "media", "wishlist", "uploads",
+                   "notifications", "invites", "browsing-events", "places"):
+        forward(ITINERARY_SERVICE_URL, prefix)
+
+    for prefix in ("autocomplete", "cameroon-locations"):
+        forward(DESTINATION_SERVICE_URL, prefix)
+
+    # Not yet owned by any service. The assistant and the catalogue-resources
+    # blueprint still live only in the monolith, so a split deployment has to
+    # keep one running or give them a home. Naming them here is the point.
+    UNSPLIT_RESOURCES = ("assistant", "resources", "config", "metrics")
+
+    @app.route("/__gateway/coverage", methods=["GET"])
+    def coverage():
+        """What this gateway can and cannot reach — for the architecture talk."""
+        return jsonify({
+            "forwarded": sorted({str(r).split("/")[1] for r in app.url_map.iter_rules()
+                                 if str(r) not in ("/", "/static/<path:filename>")}),
+            "not_yet_split": list(UNSPLIT_RESOURCES),
+        }), 200
 
     return app
 

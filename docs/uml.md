@@ -178,6 +178,8 @@ graph TB
             Itin["itineraries.py<br/>trips, checkpoints, payments"]
             Res["resources.py<br/>catalogue, discovery"]
             Comm["community.py<br/>groups, media"]
+            Chat["chat.py<br/>live group chat"]
+            Assist["assistant.py<br/>grounded travel assistant"]
         end
         Store["store.py<br/>DocumentStore adapter"]
         Static["client/dist<br/>built SPA"]
@@ -193,6 +195,9 @@ graph TB
     Itin --> Store
     Res --> Store
     Comm --> Store
+    Chat --> Store
+    Assist --> Store
+    Browser -.->|poll every 2s<br/>?since=cursor| Gunicorn
     Store -->|DATABASE_URL unset| Json
     Store -->|DATABASE_URL set| Pg
 ```
@@ -259,7 +264,43 @@ sequenceDiagram
 
 ---
 
-## 6. Activity diagram — creating an itinerary
+## 6. Sequence diagram — a live chat message
+
+Two travellers in one group. Delivery is a cursor rather than a socket: the
+application runs under two gunicorn workers, so a WebSocket broadcast would
+reach only the worker holding that connection. A poll is correct under any
+number of workers, and the upgrade to sockets waits on a shared broker, which
+is Phase 4.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Awa
+    actor Brice
+    participant API as POST /api/chat/rooms/group:id/messages
+    participant Chat as chat.py
+    participant Store as DocumentStore
+
+    Awa->>API: {"text": "We are at Down Beach"}
+    API->>Chat: send_message(room_id)
+    Chat->>Chat: is Awa a member of the group?
+    Note over Chat: A room *is* a group, so the<br/>group's membership is the rule
+    Chat->>Store: append to chat_messages
+    Chat-->>Awa: 201 + the message (shown at once, not on the next poll)
+
+    loop every 2 seconds
+        Brice->>API: GET .../messages?since=<cursor>
+        API->>Chat: read_messages(room_id, since)
+        Chat->>Store: read chat_messages for this room
+        Chat-->>Brice: messages newer than the cursor + a new cursor
+    end
+
+    Note over Brice: measured at 1.2s from send to seen
+```
+
+---
+
+## 7. Activity diagram — creating an itinerary
 
 Both paths through the feature, side by side.
 
@@ -293,7 +334,7 @@ flowchart TD
 
 ---
 
-## 7. Deployment diagram
+## 8. Deployment diagram
 
 What runs where today, and what Phase 2 changes.
 
@@ -306,7 +347,7 @@ graph TB
         C1 --> D1
     end
 
-    subgraph Next["Phase 2 — docker-compose.yml, not yet deployed"]
+    subgraph Next["Phase 2 — docker-compose.yml, six containers, not yet deployed"]
         direction TB
         GW["gateway :5000"]
         S1["user-service :8001"]

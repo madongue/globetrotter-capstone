@@ -34,6 +34,17 @@ services:
       - PORT=8003
       - SECRET_KEY=dev-secret
 
+  chat-service:
+    build:
+      context: .
+      dockerfile: services/chat_service/Dockerfile
+    container_name: chat-service
+    ports:
+      - "8005:8005"
+    environment:
+      - PORT=8005
+      - SECRET_KEY=dev-secret
+
   destination-service:
     build:
       context: .
@@ -59,6 +70,7 @@ services:
       - DESTINATION_SERVICE_URL=http://destination-service:8004
       - RECOMMENDATION_SERVICE_URL=http://recommendation-service:8003
       - ITINERARY_SERVICE_URL=http://itinerary-service:8002
+      - CHAT_SERVICE_URL=http://chat-service:8005
       # Generating an itinerary scans the whole catalogue and takes several
       # seconds; the default five-second proxy budget failed those requests.
       - UPSTREAM_TIMEOUT_SECONDS=30

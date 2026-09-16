@@ -12,6 +12,7 @@ is and which file to open to show it.
 | 5 | Demo — planning an itinerary | [5](#5-demo--planning-an-itinerary) |
 | 8 | Data from this itinerary | [8](#8-data-from-this-itinerary) |
 | 9 | Swapping and updating checkpoints | [9](#9-swapping-and-updating-checkpoints) |
+| + | Online, and the chat server | [10](#10-online-and-the-chat-server) |
 
 ---
 
@@ -380,6 +381,79 @@ There are **16 tests** covering this in `tests/test_itineraries.py`, including
 one that swaps two checkpoints, then saves an unrelated field, then reloads, to
 prove the order survives the rebuild, and one that deletes a checkpoint and
 asserts the remaining ids did not shift.
+
+---
+
+---
+
+## 10. Online, and the chat server
+
+Two requirements added after the original checklist. Both are done, and both
+were checked against the deployed site rather than a local copy.
+
+### It is online
+
+**https://globetrotter-capstone-1-kuqk.onrender.com**
+
+Verified on the live instance, end to end, in one pass:
+
+| | |
+| --- | --- |
+| Register and sign in, two accounts | created |
+| Generate a 3-day Kribi itinerary | 201 in 1.0s, 8 checkpoints |
+| Read the trip back | 140,000 FCFA, 3 days, route plan present |
+| Swap two checkpoints, edit a cost | order changed, total recalculated |
+| Two travellers chatting | both messages delivered |
+| Catalogue | 845 places, exactly 10 Cameroonian regions |
+
+One thing to say before anyone finds it: **`DATABASE_URL` is not set on
+Render**, so the live site runs on JSON files and anything created during the
+demonstration is lost when the instance restarts. The storage adapter means
+setting that variable is the whole of the change — no code moves.
+
+The free tier also sleeps after inactivity, so the first request of the
+session takes about a minute. **Open the site a few minutes before you
+present.**
+
+### The chat server
+
+A chat room per community group, at `/api/chat/rooms/...`. Demonstrate it with
+two browsers side by side: send from one, watch it arrive in the other.
+Measured at **1.2 seconds, with no reload**.
+
+**The question to expect: why not WebSockets?** This is the best
+distributed-systems answer in the project, so do not skip it.
+
+> The application runs under gunicorn with two workers. A WebSocket broadcast
+> reaches only the worker holding that connection, so two travellers served by
+> different workers would never see each other. Making sockets correct needs a
+> shared message broker — Redis — which this deployment does not have, and
+> which is Phase 4 of the course.
+>
+> So the client asks for everything newer than the last message it holds, and
+> asks again. It is correct under any number of workers, it survives a dropped
+> connection with no reconnection logic, and it passes through the API gateway
+> unchanged. The upgrade path stays open: swap the poll for a socket once a
+> broker exists, without changing the storage or the routes.
+
+A room *is* a group, addressed as `group:<id>`, so the group's membership
+already decides who may read and write — and leaving a group closes its chat
+without needing a rule of its own.
+
+### The chat in the split
+
+`services/chat_service/` is the sixth container, and completing it exposed
+that the gateway had only ever forwarded **11 of the application's 30
+resources**. Groups, media, saved places, the whole of account management
+simply 404'd once the app was split. The gateway now forwards 29 of them, and
+`GET /__gateway/coverage` prints what it reaches and what it still cannot —
+`assistant`, `resources`, `config` and `metrics` have no service yet, and that
+is stated rather than hidden.
+
+Verified by running all six services and driving the whole journey through the
+gateway: register, profile, generate an itinerary, swap checkpoints, create a
+group, chat between two travellers, saved places, recommendations,
+autocomplete. Every one served by the right container.
 
 ---
 
