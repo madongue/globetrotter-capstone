@@ -15,6 +15,9 @@ import './styles.css';
 // Loaded after styles.css so its overrides win. Removing this line returns the
 // app to its original light appearance without touching anything else.
 import './theme-dark.css';
+// Loaded last: narrow-width corrections to the original App shell. Removing
+// this line restores the previous mobile behaviour exactly.
+import './app-mobile.css';
 // The redesign's vocabulary. Additive: it declares --gt-* custom properties and
 // .gt-* classes that the stylesheets above never use, so screens can migrate to
 // it one at a time without disturbing the ones that have not.

@@ -1,0 +1,148 @@
+/* ==========================================================================
+   The original App shell, on a phone
+   ==========================================================================
+
+   The screens still served by App.jsx — the dashboard, media, saved places,
+   suggest-a-place, settings, admin and the full trip-tools view — share one
+   layout whose menu is a vertical column. That is right on a desktop and
+   wrong on a phone: measured at 390px, the menu block was 425px tall starting
+   106px down, so real content began 531px into an 844px screen. Nearly two
+   thirds of the first view was navigation.
+
+   Two changes fix it, both confined to narrow widths so the desktop layout is
+   untouched:
+
+     1. the menu becomes a single scrolling row of compact chips;
+     2. the same tab bar the redesigned pages use appears at the foot, so
+        moving between the old and new screens does not make the navigation
+        appear and disappear.
+
+   Loaded after styles.css and theme-dark.css, and scoped entirely to
+   max-width media queries, so removing the import restores the previous
+   behaviour exactly.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+
+  /* --------------------------------------------------------- the menu row */
+
+  .app-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gt-space-4, 16px);
+  }
+
+  .app-menu {
+    /* No card, no padding, no shadow — at this width it is a strip of
+       controls rather than a panel. */
+    position: static;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    width: 100%;
+  }
+
+  /* "Menu" as a heading costs a line and says nothing the icons do not. */
+  .app-menu > h3 { display: none; }
+
+  .app-menu-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    /* No edge bleed: a negative inline margin made the row wider than the
+       viewport, and an ancestor without overflow clipping turned that into a
+       horizontally scrolling page. The row scrolls inside its own box. */
+    margin: 0;
+    padding: 2px 0 10px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .app-menu-list::-webkit-scrollbar { display: none; }
+
+  .app-menu-list button {
+    flex: none;
+    width: auto;
+    margin: 0;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    /* The desktop rule indents the label away from the icon; in a chip the
+       two sit together. */
+    justify-content: center;
+    gap: 7px;
+  }
+
+  /* ------------------------------------------------ room for the tab bar */
+
+  .app-shell {
+    /* The bar is fixed, so the last row of content needs somewhere to go. */
+    padding-bottom: calc(68px + 16px);
+  }
+
+  /* ------------------------------------------------------------ header
+     The header was stacking Home / Dashboard / Logout one per line, plus the
+     language and currency pickers, which cost another ~340px before any
+     content. One compact scrolling row instead. */
+
+  .header-inner {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .app-header .nav-bar {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: auto;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    justify-content: flex-end;
+    margin-inline-start: auto;
+  }
+
+  .app-header .nav-bar::-webkit-scrollbar { display: none; }
+
+  .app-header .nav-bar > button {
+    width: auto;
+    flex: none;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .app-header .language-picker select,
+  .app-header .currency-picker select {
+    padding: 5px 8px;
+    font-size: 0.78rem;
+  }
+
+  .brand { font-size: 1.05rem; }
+
+  /* --------------------------------------------------------- assistant
+     The launcher is fixed to the bottom-right, where the tab bar now is; it
+     was covering two of the five tabs. */
+  .assistant-launcher {
+    bottom: calc(68px + 12px);
+    right: 14px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
+  .assistant-panel {
+    bottom: calc(68px + 12px);
+    max-height: calc(100vh - 68px - 90px);
+  }
+}
+
+/* The tab bar is for phones only; wider screens keep the sidebar and the
+   header they already had. */
+@media (min-width: 900px) {
+  .app-shell > .gt-tabbar { display: none; }
+}

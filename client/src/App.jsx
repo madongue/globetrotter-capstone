@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouteSync } from './useRouteSync';
+import { TabBar } from './components/Navigation';
 import {
   LayoutDashboard,
   Map as MapIcon,
@@ -6465,6 +6466,12 @@ function App() {
       {/* Available from every page, so a traveller can ask without losing
           their place in whatever they were doing. */}
       <TravelAssistant token={token} />
+
+      {/* Phones only — hidden above 900px by app-mobile.css, where the
+          sidebar and header already carry the navigation. Present here so
+          moving between these screens and the redesigned ones does not
+          make the bar appear and disappear. */}
+      <TabBar isAuthenticated={Boolean(token)} />
     </div>
   );
 }
