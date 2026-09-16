@@ -218,6 +218,12 @@ export function useItinerary(tripId, token) {
   return {
     trip, days, dayPlans, loading, error, busy,
     reload: load,
+    // Exposed so a component that has already been handed the updated
+    // itinerary by a mutation can apply it without a second request.
+    // NOTE: `reload` takes an AbortSignal, so it must never be used as a
+    // pass-through callback for a payload -- the payload lands in fetch's
+    // `signal` and throws.
+    absorb,
     moveCheckpoint, editCheckpoint, deleteCheckpoint, addPlace,
     moveToDay, renameTrip, setDates, refreshRoute,
   };

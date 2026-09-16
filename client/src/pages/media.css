@@ -175,3 +175,30 @@
 
 .shot__reply { display: flex; gap: var(--gt-space-2); }
 .shot__reply .gt-input { flex: 1; min-width: 0; }
+
+/* Choosing a file. The native control cannot be styled, so it is hidden
+   behind a label that can be — the label still triggers it. */
+.composer__pick { display: flex; align-items: center; gap: var(--gt-space-3); flex-wrap: wrap; }
+
+.composer__file {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border: 1px dashed var(--gt-border-strong);
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-surface-2);
+  font-size: var(--gt-small);
+  cursor: pointer;
+  min-width: 0;
+  transition: border-color var(--gt-fast) var(--gt-ease), background var(--gt-fast) var(--gt-ease);
+}
+
+.composer__file:hover { border-color: var(--gt-primary); background: var(--gt-primary-soft); }
+.composer__file svg { color: var(--gt-primary); flex-shrink: 0; }
+.composer__file span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.composer__file input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.composer__file:focus-within { outline: 2px solid var(--gt-primary); outline-offset: 2px; }
+
+/* A video preview and a video in the feed share the photo's box. */
+.composer__preview, .shot__img { background: var(--gt-surface-3); }

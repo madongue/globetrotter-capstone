@@ -1,0 +1,92 @@
+/* Fil d'Ariane — the trail back out of a page. */
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-3);
+  flex-wrap: wrap;
+  padding: var(--gt-space-4) 0 0;
+}
+
+/* ------------------------------------------------------------------ back */
+
+.crumbs__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-1);
+  padding: var(--gt-space-2) var(--gt-space-3);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-pill);
+  background: var(--gt-surface);
+  font: inherit;
+  font-size: var(--gt-small);
+  font-weight: 500;
+  color: var(--gt-text);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color var(--gt-fast) var(--gt-ease),
+              background var(--gt-fast) var(--gt-ease);
+}
+
+.crumbs__back:hover {
+  border-color: var(--gt-primary-line);
+  background: var(--gt-primary-soft);
+  color: var(--gt-primary-hover);
+}
+
+.crumbs__back:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 2px; }
+
+/* ----------------------------------------------------------------- trail */
+
+.crumbs__nav { min-width: 0; }
+
+.crumbs__list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gt-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.crumbs__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-1);
+  min-width: 0;
+}
+
+.crumbs__sep { color: var(--gt-border-strong); flex-shrink: 0; }
+
+.crumbs__link,
+.crumbs__here {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-1);
+  font-size: var(--gt-small);
+  /* A long trip title would otherwise push the trail past the screen edge. */
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crumbs__link {
+  color: var(--gt-text-soft);
+  text-decoration: none;
+  border-radius: var(--gt-radius-xs);
+}
+
+.crumbs__link:hover { color: var(--gt-primary); text-decoration: underline; }
+
+.crumbs__here { color: var(--gt-text); font-weight: 600; }
+
+/* On a phone the trail competes with the Back button for a narrow row, and
+   Back is the control people actually use. The trail keeps its first and last
+   step — where you came from and where you are — and drops the middle. */
+@media (max-width: 560px) {
+  .crumbs__item:not(:first-child):not(:last-child) { display: none; }
+  .crumbs__item:last-child .crumbs__sep { display: inline-flex; }
+  .crumbs__link, .crumbs__here { max-width: 9rem; }
+}

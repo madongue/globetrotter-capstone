@@ -8,6 +8,7 @@ import {
   Button, Card, EmptyState, SectionHead, Skeleton, ToastProvider,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { useTranslatedPage } from '../lib/i18n';
 import { useAuth, useSavedPlaces, useTrips } from '../lib/useTravellerData';
 import { formatMoney } from '../lib/useItinerary';
@@ -114,6 +115,8 @@ function DashboardInner() {
       />
 
       <main className="gt-page gt-has-tabbar dash__main">
+
+        <Breadcrumbs />
         <header className="dash__head">
           <div>
             <h1 className="dash__hello">Welcome back, {profile?.username || username}</h1>

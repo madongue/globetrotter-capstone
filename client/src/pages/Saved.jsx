@@ -5,6 +5,7 @@ import {
   Button, Chip, EmptyState, SearchInput, SectionHead, ToastProvider, useToast,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import PlaceCard from '../components/PlaceCard';
 import { useTranslatedPage } from '../lib/i18n';
 import { categoryLabel } from '../lib/useCatalogue';
@@ -95,6 +96,8 @@ function SavedInner() {
       />
 
       <main className="gt-page gt-has-tabbar saved__main">
+
+        <Breadcrumbs />
         <header className="saved__head">
           <h1 className="saved__title">Saved places</h1>
           <p className="saved__lede">

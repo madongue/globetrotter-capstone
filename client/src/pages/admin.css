@@ -183,3 +183,36 @@
 
 /* The signed-in administrator's own row, which cannot be demoted. */
 .admin__self { color: var(--gt-text-faint); font-size: var(--gt-caption); }
+
+/* A correction reads as a list of field → new value; the server stores only
+   what differs, so this is the whole of what approving would change. */
+.review__diff {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-2) var(--gt-space-5);
+  margin: var(--gt-space-3) 0 0;
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border-left: 3px solid var(--gt-warning);
+  background: var(--gt-surface-2);
+  border-radius: var(--gt-radius-sm);
+}
+
+.review__change { min-width: 0; }
+
+.review__change dt {
+  font-size: var(--gt-caption);
+  letter-spacing: var(--gt-tracking-label);
+  text-transform: uppercase;
+  color: var(--gt-text-faint);
+}
+
+.review__change dd {
+  margin: 2px 0 0;
+  font-size: var(--gt-small);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* The review meta row now leads with a Badge, which needs to sit on the
+   baseline of the text beside it rather than stretching the row. */
+.review__meta { align-items: center; }

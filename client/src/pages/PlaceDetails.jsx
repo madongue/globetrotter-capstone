@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import {
-  ArrowLeft, Clock, Compass, ExternalLink, Heart, Info, MapPin, Plus, Star,
-} from 'lucide-react';
+import { ArrowLeft, Clock, Compass, ExternalLink, Heart, Info, MapPin, PencilLine, Plus, Star } from 'lucide-react';
 import {
   Badge, Button, Card, EmptyState, SectionHead, Skeleton, ToastProvider, useToast,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import PlaceCard from '../components/PlaceCard';
 import AddToTripDialog from '../components/AddToTripDialog';
 import TravelMap from '../TravelMap';
@@ -77,6 +76,7 @@ function PlaceDetailsInner() {
 
   const place = data?.place;
   const photos = data?.photos || [];
+  const videos = data?.videos || [];
 
   /* The server groups nearby entries as { places, hotels, activities } rather
      than a flat list. Places come first because they are what someone reading
@@ -200,9 +200,8 @@ function PlaceDetailsInner() {
     <main className="gt-has-tabbar">
       {/* ------------------------------------------------------- gallery */}
       <section className="gt-page pd__gallery-wrap">
-        <Link to="/explore" className="pd__back">
-          <ArrowLeft size={16} aria-hidden="true" /> Back to Explore
-        </Link>
+        {/* Replaces a one-level "Back to Explore" link. */}
+        <Breadcrumbs currentLabel={place.name} />
 
         <div className="pd__gallery">
           <figure className="pd__hero">
@@ -312,6 +311,32 @@ function PlaceDetailsInner() {
             )}
           </section>
 
+          {/* ----------------------------------------------------- videos
+              Short clips travellers uploaded for this place. The endpoint has
+              always returned them; nothing showed them until now. Each one
+              carries controls and no autoplay, so opening a place does not
+              start several videos at once. */}
+          {videos.length > 0 && (
+            <section className="pd__section">
+              <h2 className="gt-h3">Videos</h2>
+              <div className="pd__videos">
+                {videos.map((clip) => (
+                  <figure className="pd__video" key={clip.id || clip.url}>
+                    <video src={clip.url} controls preload="metadata" playsInline />
+                    {(clip.caption || clip.username) && (
+                      <figcaption>
+                        {clip.caption}
+                        {clip.username && (
+                          <span className="gt-caption gt-muted"> — {clip.username}</span>
+                        )}
+                      </figcaption>
+                    )}
+                  </figure>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* ---------------------------------------------------- reviews */}
           <section className="pd__section">
             <h2 className="gt-h3">Reviews</h2>
@@ -360,6 +385,18 @@ function PlaceDetailsInner() {
             {mapsUrl && (
               <Button variant="ghost" block onClick={() => window.open(mapsUrl, '_blank', 'noopener')}>
                 <ExternalLink size={15} /> Open in Google Maps
+              </Button>
+            )}
+
+            {/* Anyone signed in can propose a correction; it queues for an
+                administrator rather than changing the catalogue directly. */}
+            {isAuthenticated && (
+              <Button
+                variant="ghost"
+                block
+                onClick={() => navigate(`/suggest?edit=${encodeURIComponent(place.id)}`)}
+              >
+                <PencilLine size={15} /> Suggest a correction
               </Button>
             )}
           </Card>

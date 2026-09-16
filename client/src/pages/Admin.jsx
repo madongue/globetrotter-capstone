@@ -5,6 +5,7 @@ import {
   Badge, Button, EmptyState, SearchInput, SectionHead, Skeleton, ToastProvider, useToast,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { Avatar } from './Community';
 import { useTranslatedPage } from '../lib/i18n';
 import { useAuth } from '../lib/useTravellerData';
@@ -25,6 +26,9 @@ import './admin.css';
  */
 
 /** The twelve metrics, grouped by the question they answer. */
+/** Filled in by the geocoder when a location changes, not typed by anyone. */
+const DERIVED_FIELDS = ['region', 'division', 'subdivision', 'city', 'quarter', 'country', 'country_code', 'continent'];
+
 const METRIC_GROUPS = [
   {
     label: 'People',
@@ -202,6 +206,8 @@ function AdminInner() {
       />
 
       <main className="gt-page gt-has-tabbar admin__main">
+
+        <Breadcrumbs />
         <header className="admin__head">
           <h1 className="admin__title">
             <Shield size={22} aria-hidden="true" /> Admin dashboard
@@ -264,8 +270,15 @@ function AdminInner() {
               {pending.map((submission) => (
                 <article className="review" key={submission.id}>
                   <div className="review__what">
-                    <h3 className="review__name">{submission.name}</h3>
+                    <h3 className="review__name">
+                      {submission.mode === 'edit'
+                        ? <>Correction · {submission.target_name || submission.name}</>
+                        : submission.name}
+                    </h3>
                     <p className="review__meta">
+                      <Badge tone={submission.mode === 'edit' ? 'warning' : 'primary'}>
+                        {submission.mode === 'edit' ? 'Edit' : 'New'}
+                      </Badge>
                       <span>{submission.location}</span>
                       <span>{submission.type}</span>
                       <span>by {submission.submitted_by}</span>
@@ -273,7 +286,29 @@ function AdminInner() {
                         <span>{new Date(submission.submitted_at).toLocaleDateString()}</span>
                       )}
                     </p>
-                    {submission.description && (
+
+                    {/* A correction is only readable as a before/after. The
+                        server stores just the fields that differ, so this is
+                        the whole of what approving would change. */}
+                    {submission.mode === 'edit' && submission.changes && (
+                      <dl className="review__diff">
+                        {Object.entries(submission.changes)
+                          // The geography fields are derived from a changed
+                          // location, not typed by the submitter.
+                          .filter(([field]) => !DERIVED_FIELDS.includes(field))
+                          .map(([field, value]) => (
+                            <div className="review__change" key={field}>
+                              <dt>{field.replace(/_/g, ' ')}</dt>
+                              <dd>{typeof value === 'object' ? JSON.stringify(value) : String(value)}</dd>
+                            </div>
+                          ))}
+                      </dl>
+                    )}
+
+                    {submission.reason && (
+                      <p className="review__desc"><strong>Reason given:</strong> {submission.reason}</p>
+                    )}
+                    {submission.description && submission.mode !== 'edit' && (
                       <p className="review__desc">{submission.description}</p>
                     )}
                   </div>

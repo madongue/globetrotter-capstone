@@ -7,6 +7,7 @@ import {
   Badge, Button, Card, Chip, EmptyState, SectionHead, Skeleton, ToastProvider, useToast,
 } from '../components/ui';
 import { LanguageToggle, TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { Avatar } from './Community';
 import { useTranslatedPage } from '../lib/i18n';
 import { useAuth, useSavedPlaces, useTrips } from '../lib/useTravellerData';
@@ -144,6 +145,8 @@ function ProfileInner() {
       </header>
 
       <main className="gt-page gt-has-tabbar profile__main">
+
+        <Breadcrumbs />
         {/* ------------------------------------------------------- figures */}
         <div className="profile__stats">
           {stats.map((stat) => (

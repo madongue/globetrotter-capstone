@@ -8,12 +8,17 @@ if ROOT not in sys.path:
 from flask import Flask, jsonify
 
 from app.recommendations import recommendations_bp
+# The assistant answers from the catalogue and the asking user's own trips,
+# which is the same work the recommender does, so it lives here rather than
+# gaining a container of its own.
+from app.assistant import assistant_bp
 
 
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "globetrotter-secret-change-in-prod")
     app.register_blueprint(recommendations_bp)
+    app.register_blueprint(assistant_bp)
 
     @app.route("/health", methods=["GET"])
     def health():

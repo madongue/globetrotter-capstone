@@ -8,6 +8,7 @@ import {
   Select, Skeleton, Textarea, ToastProvider, useToast,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import {
   DISCUSSION_TYPES, groupCover, initials, likeCount, replyCount, timeAgo, useCommunity,
 } from '../lib/useCommunity';
@@ -200,6 +201,8 @@ function CommunityInner() {
       </header>
 
       <main className="gt-page gt-has-tabbar community__main">
+
+        <Breadcrumbs />
         <div className="community__layout">
           <div className="community__feed">
             {/* ------------------------------------------------ composer */}

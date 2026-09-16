@@ -6,6 +6,8 @@ import {
   SkeletonCards, ToastProvider, useToast,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
+import CommunityTrips from '../components/CommunityTrips';
 import { useTranslatedPage } from '../lib/i18n';
 import { useAuth, useTrips } from '../lib/useTravellerData';
 import { formatMoney } from '../lib/useItinerary';
@@ -43,7 +45,7 @@ function TripsInner() {
 
   const navigate = useNavigate();
   const toast = useToast();
-  const { token, isAuthenticated } = useAuth();
+  const { token, username, isAuthenticated } = useAuth();
   const { trips, tripsLoading, reloadTrips } = useTrips(token);
 
   const [location, setLocation] = useState('');
@@ -126,6 +128,8 @@ function TripsInner() {
       />
 
       <main className="gt-page gt-has-tabbar trips__main">
+
+        <Breadcrumbs />
         {/* ------------------------------------------------------- create */}
         <section className="create" aria-labelledby="create-heading">
           <h1 id="create-heading" className="gt-h2">Create your trip</h1>
@@ -232,6 +236,10 @@ function TripsInner() {
             </div>
           )}
         </section>
+
+        {/* Public trips by other travellers: copy one into your own account,
+            or join the person who planned it. */}
+        <CommunityTrips token={token} username={username} onCopied={reloadTrips} />
       </main>
 
       <TabBar isAuthenticated />

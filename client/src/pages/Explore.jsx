@@ -6,6 +6,7 @@ import {
   SkeletonCards, ToastProvider, useToast,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import PlaceCard from '../components/PlaceCard';
 import AddToTripDialog from '../components/AddToTripDialog';
 import { CATEGORY_FILTERS, useCatalogue } from '../lib/useCatalogue';
@@ -199,6 +200,8 @@ function ExploreInner() {
       </header>
 
       <main className="gt-page gt-has-tabbar explore__main">
+
+        <Breadcrumbs />
         <div className="explore__count">
           <span>
             <strong>{results.length.toLocaleString('en-US')}</strong>

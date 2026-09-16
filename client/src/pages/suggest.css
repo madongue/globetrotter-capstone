@@ -83,3 +83,22 @@
   color: var(--gt-text-faint);
   line-height: var(--gt-leading-snug);
 }
+
+/* Which entry is being corrected, stated at the top of the form so it can
+   never be ambiguous which record the changes would land on. */
+.suggest__target {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  margin: 0;
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border-left: 3px solid var(--gt-warning);
+  background: var(--gt-warning-soft);
+  border-radius: var(--gt-radius-sm);
+  font-size: var(--gt-small);
+  color: var(--gt-text);
+}
+
+.suggest__target svg { color: #7a5c00; flex-shrink: 0; }
+
+.suggest__switch { margin: var(--gt-space-3) 0 0; }

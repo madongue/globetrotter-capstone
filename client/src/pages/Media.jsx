@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Image as ImageIcon, MapPin, Send } from 'lucide-react';
+import { Heart, Image as ImageIcon, MapPin, Send, Upload } from 'lucide-react';
 import {
   Button, EmptyState, Field, Input, SectionHead, Skeleton, ToastProvider, useToast,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { Avatar } from './Community';
 import { useTranslatedPage } from '../lib/i18n';
 import { useAuth } from '../lib/useTravellerData';
@@ -79,12 +80,24 @@ function Post({ post, me, token, onChanged }) {
   return (
     <article className="shot">
       <figure className="shot__figure">
-        <img
-          className="shot__img"
-          src={post.url}
-          alt={post.caption || `Shared by ${post.username}`}
-          loading="lazy"
-        />
+        {post.type === 'video' ? (
+          // controls, and nothing else: no autoplay, no loop. A wall of
+          // videos all playing at once is a page nobody can read.
+          <video
+            className="shot__img"
+            src={post.url}
+            controls
+            preload="metadata"
+            playsInline
+          />
+        ) : (
+          <img
+            className="shot__img"
+            src={post.url}
+            alt={post.caption || `Shared by ${post.username}`}
+            loading="lazy"
+          />
+        )}
       </figure>
 
       <div className="shot__body">
@@ -156,6 +169,7 @@ function MediaInner() {
   const [caption, setCaption] = useState('');
   const [posting, setPosting] = useState(false);
   const [previewOk, setPreviewOk] = useState(true);
+  const [file, setFile] = useState(null);
 
   const load = useCallback(() => {
     if (!token) { setLoading(false); return; }
@@ -173,15 +187,29 @@ function MediaInner() {
 
   useEffect(() => { load(); }, [load]);
 
+  /* Two ways in, because they are genuinely different acts: uploading a file
+     from the phone that took it, and pointing at something already on the web.
+     The server has an endpoint for each, and classifies photo vs video from
+     the file itself rather than from anything this form claims. */
   const share = async (event) => {
     event.preventDefault();
     setPosting(true);
     try {
-      const created = await api.postMedia({ url: url.trim(), caption: caption.trim() }, { token });
+      const created = file
+        ? await api.uploadMedia({ file, caption: caption.trim() }, { token })
+        : await api.postMedia({
+          url: url.trim(),
+          caption: caption.trim(),
+          // A web address carries no MIME type, so the extension is all there
+          // is to go on. Anything unrecognised stays a photo.
+          type: /\.(mp4|webm|ogg|ogv|mov|m4v)(\?|#|$)/i.test(url.trim()) ? 'video' : 'photo',
+        }, { token });
+
       setPosts((current) => [created, ...current]);
       setUrl('');
       setCaption('');
-      toast.push('Photo shared.');
+      setFile(null);
+      toast.push(created?.type === 'video' ? 'Video shared.' : 'Photo shared.');
     } catch (error) {
       toast.push(error.message || 'Could not share that.', 'error');
     } finally {
@@ -218,6 +246,8 @@ function MediaInner() {
       />
 
       <main className="gt-page gt-has-tabbar media__main">
+
+        <Breadcrumbs />
         <header className="media__head">
           <h1 className="media__title">Photos</h1>
           <p className="media__lede">
@@ -228,14 +258,31 @@ function MediaInner() {
 
         {/* ------------------------------------------------------- composer */}
         <form className="composer" onSubmit={share}>
+          <div className="composer__pick">
+            <label className="composer__file">
+              <Upload size={15} aria-hidden="true" />
+              <span>{file ? file.name : 'Choose a photo or video'}</span>
+              <input
+                type="file"
+                accept="image/*,video/*"
+                onChange={(e) => { setFile(e.target.files?.[0] || null); setUrl(''); }}
+              />
+            </label>
+            {file && (
+              <Button type="button" size="sm" variant="ghost" onClick={() => setFile(null)}>
+                Clear
+              </Button>
+            )}
+          </div>
+
           <div className="composer__row">
-            <Field label="Photo address">
+            <Field label="Or paste a web address" hint={file ? 'Not used while a file is chosen' : undefined}>
               <Input
                 type="url"
                 value={url}
                 onChange={(e) => { setUrl(e.target.value); setPreviewOk(true); }}
                 placeholder="https://…/photo.jpg"
-                required
+                disabled={Boolean(file)}
               />
             </Field>
             <Field label="Caption" hint="Optional">
@@ -246,22 +293,26 @@ function MediaInner() {
                 maxLength={280}
               />
             </Field>
-            <Button type="submit" disabled={posting || !url.trim()}>
+            <Button type="submit" disabled={posting || (!file && !url.trim())}>
               {posting ? 'Sharing…' : 'Share'}
             </Button>
           </div>
 
           {/* Shown only while the address actually loads, so a typo is obvious
               before it becomes a broken card in the feed. */}
-          {url.trim() && previewOk && (
-            <img
-              className="composer__preview"
-              src={url.trim()}
-              alt=""
-              onError={() => setPreviewOk(false)}
-            />
+          {!file && url.trim() && previewOk && (
+            /\.(mp4|webm|ogg|ogv|mov|m4v)(\?|#|$)/i.test(url.trim()) ? (
+              <video className="composer__preview" src={url.trim()} controls preload="metadata" />
+            ) : (
+              <img
+                className="composer__preview"
+                src={url.trim()}
+                alt=""
+                onError={() => setPreviewOk(false)}
+              />
+            )
           )}
-          {url.trim() && !previewOk && (
+          {!file && url.trim() && !previewOk && (
             <p className="gt-caption gt-muted">That address does not load as an image.</p>
           )}
         </form>

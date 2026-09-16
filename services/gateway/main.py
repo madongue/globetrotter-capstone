@@ -163,13 +163,37 @@ def create_app():
                    "notifications", "invites", "browsing-events", "places"):
         forward(ITINERARY_SERVICE_URL, prefix)
 
-    for prefix in ("autocomplete", "cameroon-locations"):
+    # The catalogue of places, hotels and activities, and the suggestion and
+    # correction queue that rides on it, belong with destinations: it is the
+    # same data. Unrouted, every /resources call 404'd once the app was split,
+    # which took out place detail, /suggest and the admin review queue.
+    for prefix in ("autocomplete", "cameroon-locations", "resources"):
         forward(DESTINATION_SERVICE_URL, prefix)
 
-    # Not yet owned by any service. The assistant and the catalogue-resources
-    # blueprint still live only in the monolith, so a split deployment has to
-    # keep one running or give them a home. Naming them here is the point.
-    UNSPLIT_RESOURCES = ("assistant", "resources", "config", "metrics")
+    # The assistant answers from the catalogue and the asking user's trips —
+    # the same work the recommender does — so it is hosted there.
+    forward(RECOMMENDATION_SERVICE_URL, "assistant")
+
+    @app.route("/config", methods=["GET"])
+    def config():
+        """Client configuration.
+
+        Served here rather than forwarded. These are values the *browser*
+        needs, read from this process's environment; asking a downstream
+        service for them would only return that service's copy of the same
+        environment, one network hop later.
+        """
+        return jsonify({
+            "googleClientId": os.environ.get("GOOGLE_CLIENT_ID", "") or "",
+            "googleMapsApiKey": os.environ.get("GOOGLE_MAPS_API_KEY", "") or "",
+        }), 200
+
+    # Still not owned by any service. `/metrics` counts requests per process,
+    # so there is no single answer to forward to: each service has its own, and
+    # a split deployment wanting one number needs a collector (Prometheus or
+    # similar) rather than a proxy rule. Named here so the gap stays visible
+    # instead of looking like an oversight.
+    UNSPLIT_RESOURCES = ("metrics",)
 
     @app.route("/__gateway/coverage", methods=["GET"])
     def coverage():

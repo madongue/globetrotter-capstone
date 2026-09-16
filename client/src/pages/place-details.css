@@ -214,3 +214,28 @@
 /* ---------------------------------------------------------------- nearby */
 
 .pd__nearby { padding-block: var(--gt-space-6) var(--gt-space-8); border-top: 1px solid var(--gt-border); }
+
+/* Traveller videos for a place. */
+.pd__videos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: var(--gt-space-4);
+}
+
+.pd__video { margin: 0; }
+
+.pd__video video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-surface-3);
+  display: block;
+}
+
+.pd__video figcaption {
+  margin-top: var(--gt-space-2);
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+  line-height: var(--gt-leading-snug);
+}

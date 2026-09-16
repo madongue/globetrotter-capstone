@@ -9,7 +9,9 @@ import {
   ToastProvider, useToast,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import TravelMap from '../TravelMap';
+import TripFeedback from '../components/TripFeedback';
 import { useTranslatedPage } from '../lib/i18n';
 import { useAuth } from '../lib/useTravellerData';
 import { formatClock, formatDuration, formatMoney, useItinerary } from '../lib/useItinerary';
@@ -141,7 +143,7 @@ function ItineraryInner() {
   const { token, isAuthenticated } = useAuth();
 
   const {
-    trip, days, loading, error, busy,
+    trip, days, loading, error, busy, absorb,
     moveCheckpoint, editCheckpoint, deleteCheckpoint, moveToDay, renameTrip,
   } = useItinerary(id, token);
 
@@ -240,7 +242,9 @@ function ItineraryInner() {
       {/* ------------------------------------------------------- header */}
       <header className="itin__head">
         <div className="gt-page">
-          <Link to="/trips" className="itin__back"><ArrowLeft size={16} aria-hidden="true" /> My trips</Link>
+          {/* Replaces a one-level "My trips" link: the same way out, plus the
+              rest of the trail and a Back that respects real history. */}
+          <Breadcrumbs currentLabel={trip.title} />
 
           {renaming ? (
             <div className="itin__rename">
@@ -398,6 +402,8 @@ function ItineraryInner() {
               Transport between towns and meals you book yourself are not included.
             </p>
           </Card>
+
+          <TripFeedback trip={trip} token={token} onUpdated={absorb} />
         </aside>
       </div>
     </main>,

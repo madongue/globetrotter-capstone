@@ -639,6 +639,48 @@ def resource_requests():
         if resource_type not in RESOURCE_CONFIG:
             return jsonify({"error": "type must be hotels, activities, or places"}), 400
 
+        # ------------------------------------------------ correct an entry
+        # "mode": "edit" proposes changes to a place that already exists,
+        # rather than adding a new one. It goes through the same review queue
+        # and the same approve/reject endpoints -- the only difference is what
+        # approval does with it.
+        if data.get("mode", "add").strip().lower() == "edit":
+            target_id = str(data.get("target_id") or "").strip()
+            if not target_id:
+                return jsonify({"error": "target_id is required to edit an entry"}), 400
+
+            target = _catalogue_record(resource_type, target_id)
+            if target is None:
+                return jsonify({"error": "that entry does not exist"}), 404
+
+            try:
+                changes = _proposed_changes(resource_type, target, data)
+            except ValueError as exc:
+                return jsonify({"error": str(exc)}), 400
+
+            if not changes:
+                return jsonify({"error": "nothing would change"}), 400
+
+            submission = {
+                "id": str(uuid.uuid4()),
+                "mode": "edit",
+                "type": resource_type,
+                "target_id": target_id,
+                # Kept so the queue reads "Correct: Lobe Falls" even if the
+                # live record is renamed or removed before it is reviewed.
+                "target_name": target.get("name", ""),
+                "name": target.get("name", ""),
+                "location": target.get("location", ""),
+                "changes": changes,
+                "reason": str(data.get("reason") or "").strip(),
+                "submitted_by": username,
+                "status": "pending",
+                "submitted_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "review_note": "",
+            }
+            save_place_request(submission)
+            return jsonify(submission), 201
+
         name = data.get("name", "").strip()
         location = ensure_cameroon_location(data.get("location", "").strip())
         cost_field = "cost_per_night" if resource_type == "hotels" else "cost"
@@ -659,6 +701,7 @@ def resource_requests():
 
         submission = {
             "id": request_id,
+            "mode": "add",
             "type": resource_type,
             "name": name,
             "location": location,
@@ -692,6 +735,75 @@ def resource_requests():
     return jsonify(items), 200
 
 
+#: Fields a traveller may propose changing on an existing catalogue entry.
+#: Deliberately closed: a submission cannot rewrite ``id``, ``submitted_by``,
+#: or anything the geocoder derives, because those are not facts about the
+#: place that a visitor is in a position to correct.
+EDITABLE_FIELDS = ("name", "location", "description", "cost", "cost_per_night", "cost_note", "tags")
+
+
+def _catalogue_record(resource_type: str, resource_id: str):
+    """Return the catalogue record of this type with this id, or None.
+
+    Distinct from ``_find_resource`` above, which returns a (record, updater)
+    pair: this one is used where only the record is wanted.
+    """
+    getter, _ = RESOURCE_CONFIG[resource_type]
+    for record in getter():
+        if record.get("id") == resource_id:
+            return record
+    return None
+
+
+def _proposed_changes(resource_type: str, current: dict, data: dict) -> dict:
+    """Return only the fields this submission actually changes.
+
+    Storing the whole record would make every approval overwrite fields the
+    submitter never touched -- including ones another administrator edited in
+    the meantime. Keeping just the differences means an approval applies the
+    correction and nothing else, and it also gives the reviewer something
+    readable: three changed fields rather than a wall of identical ones.
+    """
+    cost_field = "cost_per_night" if resource_type == "hotels" else "cost"
+    changes = {}
+
+    for field in EDITABLE_FIELDS:
+        if field in ("cost", "cost_per_night") and field != cost_field:
+            continue
+        if field not in data:
+            continue
+
+        value = data.get(field)
+        if field == cost_field:
+            if value in (None, ""):
+                continue
+            try:
+                value = _number_value(value, cost_field)
+            except ValueError:
+                raise
+        elif field == "tags":
+            value = _list_value(data, "tags") or value or []
+        elif isinstance(value, str):
+            value = value.strip()
+            # ensure_cameroon_location("") returns "Cameroon", so a blank field
+            # would be recorded as a deliberate move to the middle of nowhere.
+            if field == "location" and value:
+                value = ensure_cameroon_location(value)
+
+        if value in (None, "") and field != "description":
+            continue
+        if current.get(field) == value:
+            continue
+        changes[field] = value
+
+    # A changed location moves the place, so the derived geography has to move
+    # with it or the record would claim a region it is no longer in.
+    if "location" in changes:
+        changes.update(infer_cameroon_geo(changes["location"]))
+
+    return changes
+
+
 def _apply_request_decision(request_id, approve, review_note=""):
     submission = get_place_request_by_id(request_id)
     if not submission:
@@ -699,8 +811,28 @@ def _apply_request_decision(request_id, approve, review_note=""):
     if submission.get("status") != "pending":
         return None, (jsonify({"error": "request already reviewed"}), 400)
 
-    if approve:
-        resource_type = submission.get("type", "places")
+    resource_type = submission.get("type", "places")
+
+    if approve and submission.get("mode") == "edit":
+        # A correction to an entry that already exists: apply the proposed
+        # fields to the live record rather than creating a second one.
+        target = _catalogue_record(resource_type, submission.get("target_id", ""))
+        if target is None:
+            return None, (
+                jsonify({"error": "the place this request edits no longer exists"}),
+                409,
+            )
+        target.update(submission.get("changes") or {})
+        if "location" in (submission.get("changes") or {}):
+            target["map_info"] = _resource_map_info(
+                target.get("name", ""), target.get("location", "")
+            )
+        _, updater = RESOURCE_CONFIG[resource_type]
+        updater(target)
+        submission["resource_id"] = target.get("id")
+        submission["status"] = "approved"
+
+    elif approve:
         cost_field = "cost_per_night" if resource_type == "hotels" else "cost"
         resource = enrich_cameroon_item({
             "id": str(uuid.uuid4()),

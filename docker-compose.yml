@@ -1,6 +1,47 @@
-version: "3.9"
+# Phase 2 — the application split into services.
+#
+# Five services behind one gateway, plus the database they share.
+#
+# The shared database is the point, not a detail. Before it, every container
+# built its own copy of `data/*.json` into its image and wrote to it privately:
+# an account registered through user-service did not exist as far as
+# itinerary-service was concerned, and each service drifted away from the
+# others the moment anyone used it. That is not a distributed system, it is
+# five programs that happen to run at once.
+#
+# `DATABASE_URL` switches app/store.py from JSON files to Postgres, so the same
+# code runs in both deployments — the monolith on one machine with files, the
+# split with a shared database — and nothing above the storage layer knows
+# which it is.
+#
+#   docker compose up --build
+#   curl http://localhost:5000/health
+#   curl http://localhost:5000/__gateway/coverage    # what the gateway reaches
+#
+# Everything is reached through the gateway on :5000. The per-service ports are
+# published only so each one can be inspected on its own while presenting.
 
 services:
+  database:
+    image: postgres:16-alpine
+    container_name: globetrotter-db
+    environment:
+      - POSTGRES_USER=globetrotter
+      - POSTGRES_PASSWORD=globetrotter
+      - POSTGRES_DB=globetrotter
+    ports:
+      - "5432:5432"
+    volumes:
+      # Named volume, so stopping the stack does not discard the data.
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      # The services wait on this rather than on the container merely starting:
+      # Postgres accepts connections several seconds after the process does.
+      test: ["CMD-SHELL", "pg_isready -U globetrotter -d globetrotter"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
   user-service:
     build:
       context: .
@@ -11,6 +52,10 @@ services:
     environment:
       - PORT=8001
       - SECRET_KEY=dev-secret
+      - DATABASE_URL=postgresql://globetrotter:globetrotter@database:5432/globetrotter
+    depends_on:
+      database:
+        condition: service_healthy
 
   itinerary-service:
     build:
@@ -22,6 +67,10 @@ services:
     environment:
       - PORT=8002
       - SECRET_KEY=dev-secret
+      - DATABASE_URL=postgresql://globetrotter:globetrotter@database:5432/globetrotter
+    depends_on:
+      database:
+        condition: service_healthy
 
   recommendation-service:
     build:
@@ -33,17 +82,10 @@ services:
     environment:
       - PORT=8003
       - SECRET_KEY=dev-secret
-
-  chat-service:
-    build:
-      context: .
-      dockerfile: services/chat_service/Dockerfile
-    container_name: chat-service
-    ports:
-      - "8005:8005"
-    environment:
-      - PORT=8005
-      - SECRET_KEY=dev-secret
+      - DATABASE_URL=postgresql://globetrotter:globetrotter@database:5432/globetrotter
+    depends_on:
+      database:
+        condition: service_healthy
 
   destination-service:
     build:
@@ -55,6 +97,25 @@ services:
     environment:
       - PORT=8004
       - SECRET_KEY=dev-secret
+      - DATABASE_URL=postgresql://globetrotter:globetrotter@database:5432/globetrotter
+    depends_on:
+      database:
+        condition: service_healthy
+
+  chat-service:
+    build:
+      context: .
+      dockerfile: services/chat_service/Dockerfile
+    container_name: chat-service
+    ports:
+      - "8005:8005"
+    environment:
+      - PORT=8005
+      - SECRET_KEY=dev-secret
+      - DATABASE_URL=postgresql://globetrotter:globetrotter@database:5432/globetrotter
+    depends_on:
+      database:
+        condition: service_healthy
 
   gateway:
     build:
@@ -66,11 +127,23 @@ services:
     environment:
       - PORT=5000
       - SECRET_KEY=dev-secret
+      # Service discovery, such as it is: compose puts every service on one
+      # network and resolves these names to it. Kubernetes would do the same
+      # job with a Service object, which is Phase 3.
       - USER_SERVICE_URL=http://user-service:8001
-      - DESTINATION_SERVICE_URL=http://destination-service:8004
-      - RECOMMENDATION_SERVICE_URL=http://recommendation-service:8003
       - ITINERARY_SERVICE_URL=http://itinerary-service:8002
+      - RECOMMENDATION_SERVICE_URL=http://recommendation-service:8003
+      - DESTINATION_SERVICE_URL=http://destination-service:8004
       - CHAT_SERVICE_URL=http://chat-service:8005
       # Generating an itinerary scans the whole catalogue and takes several
       # seconds; the default five-second proxy budget failed those requests.
       - UPSTREAM_TIMEOUT_SECONDS=30
+    depends_on:
+      - user-service
+      - itinerary-service
+      - recommendation-service
+      - destination-service
+      - chat-service
+
+volumes:
+  db-data:

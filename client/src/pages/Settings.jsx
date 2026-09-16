@@ -6,6 +6,7 @@ import {
   ToastProvider, useToast,
 } from '../components/ui';
 import { LanguageToggle, TabBar, TopBar } from '../components/Navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { useTranslatedPage } from '../lib/i18n';
 import { useAuth } from '../lib/useTravellerData';
 import * as api from '../lib/api';
@@ -140,6 +141,8 @@ function SettingsInner() {
       />
 
       <main className="gt-page gt-has-tabbar settings__main">
+
+        <Breadcrumbs />
         <header className="settings__head">
           <h1 className="settings__title">Settings</h1>
           <p className="settings__lede">

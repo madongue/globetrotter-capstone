@@ -316,6 +316,21 @@ export const listPlaceRequests = ({ token, signal } = {}) =>
 export const submitPlaceRequest = (submission, { token } = {}) =>
   request('/resources/requests', { method: 'POST', body: submission, token });
 
+/**
+ * Propose a correction to an entry that already exists.
+ *
+ * Goes through the same queue and the same approve/reject endpoints as a new
+ * suggestion; only what approval does with it differs. Send just the fields
+ * being corrected -- the server records the difference against the live
+ * record, so anything unchanged is dropped rather than re-applied on approval.
+ */
+export const submitPlaceCorrection = ({ targetId, type = 'places', reason, ...fields }, { token } = {}) =>
+  request('/resources/requests', {
+    method: 'POST',
+    body: { mode: 'edit', type, target_id: targetId, reason, ...fields },
+    token,
+  });
+
 export const approvePlaceRequest = (requestId, { token } = {}) =>
   request(`/resources/requests/${encodeURIComponent(requestId)}/approve`, { method: 'POST', token });
 
@@ -346,3 +361,73 @@ export const listNotifications = ({ token, signal } = {}) =>
 
 export const markNotificationRead = (notificationId, { token } = {}) =>
   request(`/notifications/${encodeURIComponent(notificationId)}/read`, { method: 'POST', token });
+
+/* ------------------------------------------------- rating, copying, joining */
+
+/**
+ * Rate a trip, with an optional comment.
+ *
+ * One endpoint carries both: the server requires a rating of 1-5 and treats
+ * the comment as optional, so there is no way to leave a comment without a
+ * rating. The reply carries the whole updated itinerary, so the caller can
+ * refresh from it rather than re-fetching.
+ */
+export const rateTrip = (tripId, { rating, comment = '', tags = [] }, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/feedback`, {
+    method: 'POST', body: { rating, comment, tags }, token,
+  });
+
+/** Duplicate a public or shared trip into your own account. */
+export const copyTrip = (tripId, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/copy`, { method: 'POST', token });
+
+/**
+ * Join a trip as a participant.
+ *
+ * `paymentAmount` is optional; sending it also records a receipt, and for a
+ * trip listed as an event it takes a seat. Omitted, joining is free.
+ */
+export const joinTrip = (tripId, { paymentAmount, paymentMethod = 'mobile' } = {}, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/join`, {
+    method: 'POST',
+    body: paymentAmount == null ? {} : { payment_amount: paymentAmount, payment_method: paymentMethod },
+    token,
+  });
+
+/** Trips other travellers have made public. */
+export const listCommunityTrips = ({ token, signal } = {}) =>
+  request('/itineraries/community', { token, signal });
+
+/** Trips the recommender suggests for this traveller. */
+export const listSuggestedTrips = ({ token, signal } = {}) =>
+  request('/itineraries/suggestions', { token, signal });
+
+/**
+ * Upload a photo or video file.
+ *
+ * Multipart, so it does not go through `request` — that sets a JSON content
+ * type, and a multipart body must be left to the browser so it can add the
+ * boundary. The server classifies photo vs video from the file itself.
+ */
+export async function uploadMedia({ file, caption = '', placeId = null, groupId = null }, { token } = {}) {
+  const body = new FormData();
+  body.append('file', file);
+  body.append('caption', caption);
+  if (placeId) body.append('place_id', placeId);
+  if (groupId) body.append('group_id', groupId);
+
+  const response = await fetch('/api/media/upload', {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body,
+  });
+
+  let payload = null;
+  try { payload = await response.json(); } catch { payload = null; }
+  if (!response.ok) {
+    const error = new Error(payload?.error || `Upload failed (${response.status})`);
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
+}

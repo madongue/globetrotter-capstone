@@ -781,6 +781,26 @@ def _can_access_itinerary(itinerary: dict, username: str) -> bool:
     )
 
 
+def _can_participate_in_itinerary(itinerary: dict, username: str) -> bool:
+    """Whether this person may join or rate the trip.
+
+    Wider than :func:`_can_access_itinerary` by exactly one case: a trip its
+    owner has made public. Publishing a trip is an invitation -- it is listed
+    to everyone by ``/itineraries/community`` -- so refusing the two actions
+    that invitation implies made the community listing a wall of trips nobody
+    could act on. ``/copy`` already had this rule inline; joining and rating
+    did not, and 403'd.
+
+    Deliberately *not* folded into ``_can_access_itinerary``, which guards
+    seventeen other endpoints including payment receipts, uploaded documents
+    and the audit log. Publishing a trip should not publish those.
+    """
+    return (
+        _can_access_itinerary(itinerary, username)
+        or itinerary.get("visibility") == "public"
+    )
+
+
 def _share_permission(itinerary: dict, username: str) -> str | None:
     permissions = itinerary.get("shared_permissions", {})
     permission = permissions.get(username)
@@ -1901,6 +1921,11 @@ def upload_media():
     stored = get_upload_store().save(uploaded_file, folder="media")
     filename = stored["filename"]
     url = stored["url"]
+    # The store classifies the file from its MIME type. Prefer that over the
+    # form's "type", which is whatever the page happened to default to: a video
+    # uploaded through a form still set to "photo" was being stored as a photo,
+    # and then rendered in an <img> that could never display it.
+    media_type = stored.get("type") or media_type
     media_item = {
         "id": str(uuid.uuid4()),
         "username": username,
@@ -2241,7 +2266,7 @@ def join_itinerary(itinerary_id: str):
     if not itinerary:
         return jsonify({"error": "itinerary not found"}), 404
 
-    if not _can_access_itinerary(itinerary, username):
+    if not _can_participate_in_itinerary(itinerary, username):
         return jsonify({"error": "you do not have access to this itinerary"}), 403
 
     if username in itinerary.get("participants", []):
@@ -3185,7 +3210,7 @@ def itinerary_feedback(itinerary_id: str):
     if not itinerary:
         return jsonify({"error": "itinerary not found"}), 404
 
-    if not _can_access_itinerary(itinerary, username):
+    if not _can_participate_in_itinerary(itinerary, username):
         return jsonify({"error": "you do not have access to this itinerary"}), 403
 
     data = request.get_json(silent=True) or {}
