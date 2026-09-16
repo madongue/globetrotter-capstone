@@ -1,0 +1,91 @@
+/* Account settings. */
+
+.settings { background: var(--gt-bg); min-height: 100vh; }
+
+.settings__main { display: flex; flex-direction: column; gap: var(--gt-space-6); }
+
+.settings__head { padding-top: var(--gt-space-6); }
+
+.settings__title {
+  font-size: var(--gt-h3);
+  margin: 0 0 var(--gt-space-2);
+  letter-spacing: var(--gt-tracking-tight);
+}
+
+.settings__lede {
+  margin: 0;
+  color: var(--gt-text-soft);
+  font-size: var(--gt-small);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gt-space-2);
+}
+
+.settings__card { display: flex; flex-direction: column; gap: var(--gt-space-2); }
+
+/* One setting per row: label on the left, the control on the right, stacking
+   on a narrow screen rather than squeezing the control. */
+.srow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-3) 0;
+  border-bottom: 1px solid var(--gt-border);
+}
+
+.srow:last-of-type { border-bottom: none; }
+
+.srow__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  font-size: var(--gt-small);
+  font-weight: 500;
+  min-width: 0;
+}
+
+.srow__label svg { color: var(--gt-primary); flex-shrink: 0; }
+
+.srow__field { margin: 0; min-width: 14rem; }
+
+.settings__note {
+  margin: 0;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-faint);
+  line-height: var(--gt-leading-snug);
+}
+
+.settings__chips { display: flex; flex-wrap: wrap; gap: var(--gt-space-2); }
+
+/* ---------------------------------------------------------- notifications */
+
+.settings__notices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-4);
+  padding: var(--gt-space-4);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+}
+
+/* Unread is carried by a rail as well as by weight, so it survives a
+   greyscale screen and does not rely on colour alone. */
+.notice--unread { border-left: 3px solid var(--gt-primary); }
+
+.notice__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.notice__text strong { font-size: var(--gt-small); font-weight: 600; text-transform: capitalize; }
+.notice__text span { font-size: var(--gt-caption); color: var(--gt-text-soft); overflow-wrap: anywhere; }

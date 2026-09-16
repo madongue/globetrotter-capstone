@@ -1,0 +1,177 @@
+/* Photos travellers have shared. */
+
+.media { background: var(--gt-bg); min-height: 100vh; }
+
+.media__main { display: flex; flex-direction: column; gap: var(--gt-space-6); }
+
+.media__head { padding-top: var(--gt-space-6); }
+
+.media__title {
+  font-size: var(--gt-h3);
+  margin: 0 0 var(--gt-space-2);
+  letter-spacing: var(--gt-tracking-tight);
+}
+
+.media__lede {
+  margin: 0;
+  color: var(--gt-text-soft);
+  font-size: var(--gt-small);
+  line-height: var(--gt-leading-normal);
+  max-width: 42rem;
+}
+
+/* -------------------------------------------------------------- composer */
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-5);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+}
+
+.composer__row { display: grid; gap: var(--gt-space-3); }
+
+@media (min-width: 680px) {
+  .composer__row { grid-template-columns: 1.4fr 1fr auto; align-items: end; }
+}
+
+/* A live check that the URL actually resolves to an image, so a broken link is
+   caught here rather than becoming a broken card in the feed. */
+.composer__preview {
+  display: block;
+  width: 100%;
+  max-height: 14rem;
+  object-fit: cover;
+  border-radius: var(--gt-radius-sm);
+  border: 1px solid var(--gt-border);
+}
+
+/* ------------------------------------------------------------------ feed */
+
+.media__feed {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gt-space-5);
+}
+
+@media (min-width: 720px) { .media__feed { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .media__feed { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.shot {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+  overflow: hidden;
+}
+
+.shot__figure {
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  background: var(--gt-surface-2);
+}
+
+.shot__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.shot__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-4);
+}
+
+.shot__who {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-3);
+  min-width: 0;
+}
+
+.shot__who-text { display: flex; flex-direction: column; min-width: 0; }
+.shot__who-text strong { font-size: var(--gt-small); font-weight: 600; }
+.shot__when { font-size: var(--gt-caption); color: var(--gt-text-faint); }
+
+.shot__caption {
+  margin: 0;
+  font-size: var(--gt-small);
+  line-height: var(--gt-leading-normal);
+  color: var(--gt-text);
+  overflow-wrap: anywhere;
+}
+
+.shot__place {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-1);
+  font-size: var(--gt-caption);
+  color: var(--gt-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.shot__place:hover { text-decoration: underline; }
+
+.shot__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  padding-top: var(--gt-space-3);
+  border-top: 1px solid var(--gt-border);
+}
+
+.shot__like {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-2) var(--gt-space-3);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-pill);
+  background: transparent;
+  font: inherit;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+  cursor: pointer;
+  transition: border-color var(--gt-fast) var(--gt-ease),
+              color var(--gt-fast) var(--gt-ease),
+              background var(--gt-fast) var(--gt-ease);
+}
+
+.shot__like:hover:not(:disabled) { border-color: var(--gt-error); color: var(--gt-error); }
+
+/* The server has no unlike, so a liked post says so and stops being a
+   control rather than pretending it can be toggled back. */
+.shot__like--on {
+  border-color: var(--gt-error);
+  background: var(--gt-error-soft);
+  color: var(--gt-error);
+  cursor: default;
+}
+
+.shot__count { font-variant-numeric: tabular-nums; }
+
+/* -------------------------------------------------------------- comments */
+
+.shot__comments {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shot__comment {
+  font-size: var(--gt-caption);
+  line-height: var(--gt-leading-snug);
+  color: var(--gt-text-soft);
+  overflow-wrap: anywhere;
+}
+
+.shot__comment strong { color: var(--gt-text); font-weight: 600; }
+
+.shot__reply { display: flex; gap: var(--gt-space-2); }
+.shot__reply .gt-input { flex: 1; min-width: 0; }

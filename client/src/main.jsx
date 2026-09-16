@@ -11,6 +11,14 @@ import Itinerary from './pages/Itinerary';
 import Community from './pages/Community';
 import GroupDetail from './pages/GroupDetail';
 import Profile from './pages/Profile';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Admin from './pages/Admin';
+import Media from './pages/Media';
+import Saved from './pages/Saved';
+import Suggest from './pages/Suggest';
+import Settings from './pages/Settings';
 import 'leaflet/dist/leaflet.css';
 import './styles.css';
 // Loaded after styles.css so its overrides win. Removing this line returns the
@@ -56,6 +64,19 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         {/* The profile, rebuilt. /settings still opens the original screen,
             which carries notifications, currency and the rest. */}
         <Route path="/profile" element={<Profile />} />
+
+        {/* The account and administration screens. Until these existed, every
+            one of these paths fell through to App, so moving between the home
+            page and the dashboard crossed between two different designs. */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/media" element={<Media />} />
+        <Route path="/saved" element={<Saved />} />
+        <Route path="/suggest" element={<Suggest />} />
+        <Route path="/settings" element={<Settings />} />
+
         <Route path="/design" element={<DesignSystem />} />
         <Route path="*" element={<App />} />
       </Routes>

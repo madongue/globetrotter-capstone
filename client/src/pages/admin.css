@@ -1,0 +1,185 @@
+/* The administrator's screen: platform analytics, the review queue, accounts. */
+
+.admin { background: var(--gt-bg); min-height: 100vh; }
+
+.admin__main { display: flex; flex-direction: column; gap: var(--gt-space-7); }
+
+.admin__head { padding-top: var(--gt-space-6); }
+
+.admin__title {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-3);
+  font-size: var(--gt-h3);
+  margin: 0 0 var(--gt-space-2);
+  letter-spacing: var(--gt-tracking-tight);
+}
+
+.admin__title svg { color: var(--gt-primary); }
+
+.admin__lede {
+  margin: 0;
+  color: var(--gt-text-soft);
+  font-size: var(--gt-small);
+  line-height: var(--gt-leading-normal);
+  max-width: 44rem;
+}
+
+.admin__stamp {
+  font-size: var(--gt-caption);
+  color: var(--gt-text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------- metrics
+   Grouped, because twelve equal tiles is a wall of numbers. Each group is one
+   question an administrator actually asks. */
+
+.admin__group + .admin__group { margin-top: var(--gt-space-5); }
+
+.admin__group-label {
+  font-size: var(--gt-caption);
+  letter-spacing: var(--gt-tracking-label);
+  text-transform: uppercase;
+  color: var(--gt-text-faint);
+  margin: 0 0 var(--gt-space-3);
+}
+
+.admin__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gt-space-3);
+}
+
+@media (min-width: 680px) { .admin__metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1040px) { .admin__metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+.metric {
+  padding: var(--gt-space-5);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+}
+
+.metric__value {
+  display: block;
+  font-size: var(--gt-h2);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: var(--gt-space-2);
+}
+
+.metric__label {
+  display: block;
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+  line-height: var(--gt-leading-snug);
+}
+
+.metric__note {
+  display: block;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-faint);
+  margin-top: var(--gt-space-1);
+}
+
+/* A metric that is a queue rather than a count: it wants attention when it is
+   not zero, so it says so in form as well as number. */
+.metric--attention { border-color: var(--gt-warning); background: var(--gt-warning-soft); }
+.metric--attention .metric__value { color: #7a5c00; }
+
+/* ---------------------------------------------------------------- queue */
+
+.admin__queue { display: flex; flex-direction: column; gap: var(--gt-space-3); }
+
+.review {
+  display: grid;
+  gap: var(--gt-space-4);
+  padding: var(--gt-space-5);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+}
+
+@media (min-width: 760px) {
+  .review { grid-template-columns: 1fr auto; align-items: center; }
+}
+
+.review__what { min-width: 0; }
+
+.review__name {
+  font-size: var(--gt-body);
+  font-weight: 600;
+  margin: 0 0 var(--gt-space-1);
+}
+
+.review__meta {
+  margin: 0;
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-1) var(--gt-space-4);
+}
+
+.review__desc {
+  margin: var(--gt-space-2) 0 0;
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+  line-height: var(--gt-leading-normal);
+}
+
+.review__actions { display: flex; flex-wrap: wrap; gap: var(--gt-space-2); }
+
+/* ------------------------------------------------------------- accounts */
+
+.admin__table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+}
+
+.admin__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--gt-small);
+  min-width: 34rem;
+}
+
+.admin__table th,
+.admin__table td {
+  padding: var(--gt-space-3) var(--gt-space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--gt-border);
+  vertical-align: middle;
+}
+
+.admin__table th {
+  font-size: var(--gt-caption);
+  letter-spacing: var(--gt-tracking-label);
+  text-transform: uppercase;
+  color: var(--gt-text-faint);
+  font-weight: 600;
+  background: var(--gt-surface-2);
+  position: sticky;
+  top: 0;
+}
+
+.admin__table tr:last-child td { border-bottom: none; }
+
+.admin__who { display: flex; align-items: center; gap: var(--gt-space-3); }
+.admin__who strong { font-weight: 600; }
+
+.admin__tags {
+  color: var(--gt-text-faint);
+  font-size: var(--gt-caption);
+}
+
+.admin__row-actions { text-align: right; white-space: nowrap; }
+
+.admin__search { max-width: 22rem; margin-bottom: var(--gt-space-4); }
+
+/* The signed-in administrator's own row, which cannot be demoted. */
+.admin__self { color: var(--gt-text-faint); font-size: var(--gt-caption); }

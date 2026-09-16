@@ -135,7 +135,7 @@ function ProfileInner() {
           <div className="profile__who">
             <h1 className="gt-h2">{profile?.username || username}</h1>
             <p className="profile__meta">
-              {profile?.role === 'admin' && <Badge tone="brand">Administrator</Badge>}
+              {profile?.role === 'admin' && <Badge tone="primary">Administrator</Badge>}
               {profile?.google_linked && <Badge tone="neutral">Google account</Badge>}
               <span className="gt-small gt-muted">Travelling in Cameroon</span>
             </p>

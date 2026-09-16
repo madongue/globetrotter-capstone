@@ -1,0 +1,182 @@
+/* Sign in and register.
+   One stylesheet for both: they are the same layout with a different form. */
+
+.auth {
+  min-height: 100vh;
+  background: var(--gt-bg);
+  color: var(--gt-text);
+}
+
+/* The bar carries only the brand and the language switch: an account screen
+   should not offer a menu of places to go instead of signing in. */
+.auth__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-4);
+  height: 64px;
+}
+
+/* A two-panel split on desktop; the panel is dropped entirely on a phone
+   rather than stacked, because a decorative half-screen above a login form is
+   something to scroll past, not something to look at. */
+.auth__split {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: calc(100vh - 64px);
+}
+
+@media (min-width: 960px) {
+  .auth__split { grid-template-columns: 1.05fr 1fr; }
+}
+
+/* ------------------------------------------------------------- the panel */
+
+.auth__aside {
+  display: none;
+  position: relative;
+  padding: var(--gt-space-8) var(--gt-space-7);
+  background: linear-gradient(150deg, var(--gt-dark) 0%, var(--gt-secondary) 60%, #0b3f4d 100%);
+  color: #fff;
+  overflow: hidden;
+}
+
+@media (min-width: 960px) {
+  .auth__aside { display: flex; flex-direction: column; justify-content: space-between; }
+}
+
+.auth__aside-head { position: relative; z-index: 1; max-width: 26rem; }
+
+.auth__headline {
+  font-size: var(--gt-h2);
+  line-height: var(--gt-leading-tight);
+  letter-spacing: var(--gt-tracking-tight);
+  text-wrap: balance;
+  margin: 0 0 var(--gt-space-4);
+}
+
+.auth__sub {
+  font-size: var(--gt-body);
+  line-height: var(--gt-leading-normal);
+  color: rgba(255, 255, 255, 0.82);
+  margin: 0;
+}
+
+/* Real numbers from /api/stats, not invented social proof. Rendered only once
+   they arrive, so the panel never shows a zero that is really "not loaded". */
+.auth__figures {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-6);
+  margin: 0;
+}
+
+.auth__figure dt {
+  font-size: var(--gt-caption);
+  letter-spacing: var(--gt-tracking-label);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+  margin-bottom: var(--gt-space-1);
+}
+
+.auth__figure dd {
+  margin: 0;
+  font-size: var(--gt-h3);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A compass ring, echoing the brand mark. Decorative, so it is hidden from
+   assistive technology and kept behind the content. */
+.auth__ring {
+  position: absolute;
+  right: -14%;
+  bottom: -22%;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 3rem rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------- the form */
+
+.auth__main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gt-space-7) var(--gt-gutter);
+}
+
+.auth__form-wrap { width: 100%; max-width: 26rem; }
+
+.auth__title {
+  font-size: var(--gt-h3);
+  margin: 0 0 var(--gt-space-2);
+  letter-spacing: var(--gt-tracking-tight);
+}
+
+.auth__lede {
+  margin: 0 0 var(--gt-space-6);
+  color: var(--gt-text-soft);
+  font-size: var(--gt-small);
+  line-height: var(--gt-leading-normal);
+}
+
+.auth__form { display: flex; flex-direction: column; gap: var(--gt-space-4); }
+
+.auth__row { display: grid; gap: var(--gt-space-4); }
+
+@media (min-width: 520px) {
+  .auth__row--two { grid-template-columns: 1fr 1fr; }
+}
+
+/* The server rejects the whole submission, so the message belongs above the
+   button rather than beside a field we cannot attribute it to. */
+.auth__error {
+  display: flex;
+  gap: var(--gt-space-2);
+  align-items: flex-start;
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border: 1px solid var(--gt-error);
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-error-soft);
+  color: var(--gt-error);
+  font-size: var(--gt-small);
+  line-height: var(--gt-leading-snug);
+}
+
+.auth__hint {
+  font-size: var(--gt-caption);
+  color: var(--gt-text-faint);
+  line-height: var(--gt-leading-snug);
+  margin: calc(var(--gt-space-1) * -1) 0 0;
+}
+
+.auth__alt {
+  margin: var(--gt-space-6) 0 0;
+  padding-top: var(--gt-space-5);
+  border-top: 1px solid var(--gt-border);
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+  text-align: center;
+}
+
+.auth__alt a {
+  color: var(--gt-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth__alt a:hover { text-decoration: underline; }
+
+/* ------------------------------------------------------------- interests */
+
+.auth__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-2);
+}

@@ -1,0 +1,85 @@
+/* Suggest a place, and the state of what you have already sent in. */
+
+.suggest { background: var(--gt-bg); min-height: 100vh; }
+
+.suggest__main { display: flex; flex-direction: column; gap: var(--gt-space-6); }
+
+.suggest__head { padding-top: var(--gt-space-6); }
+
+.suggest__title {
+  font-size: var(--gt-h3);
+  margin: 0 0 var(--gt-space-2);
+  letter-spacing: var(--gt-tracking-tight);
+}
+
+.suggest__lede {
+  margin: 0;
+  color: var(--gt-text-soft);
+  font-size: var(--gt-small);
+  line-height: var(--gt-leading-normal);
+  max-width: 44rem;
+}
+
+.suggest__cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gt-space-6);
+  align-items: start;
+}
+
+@media (min-width: 940px) {
+  .suggest__cols { grid-template-columns: 1.1fr 1fr; }
+}
+
+/* ----------------------------------------------------------------- form */
+
+.suggest__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-4);
+  padding: var(--gt-space-5);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+}
+
+.suggest__row { display: grid; gap: var(--gt-space-4); }
+
+@media (min-width: 560px) {
+  .suggest__row--two { grid-template-columns: 1fr 1fr; }
+}
+
+/* ------------------------------------------------------------ submitted */
+
+.suggest__list { display: flex; flex-direction: column; gap: var(--gt-space-3); }
+
+.sub {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--gt-space-4);
+  padding: var(--gt-space-4);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+}
+
+.sub__text { min-width: 0; }
+
+.sub__name { margin: 0 0 var(--gt-space-1); font-size: var(--gt-small); font-weight: 600; }
+
+.sub__meta {
+  margin: 0;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-1) var(--gt-space-3);
+}
+
+.sub__note {
+  margin: var(--gt-space-2) 0 0;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-faint);
+  line-height: var(--gt-leading-snug);
+}

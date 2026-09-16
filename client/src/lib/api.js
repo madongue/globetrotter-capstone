@@ -249,3 +249,100 @@ export const sendChat = (roomId, text, { token } = {}) =>
 /* --------------------------------------------------------------- public */
 
 export const getStats = ({ signal } = {}) => request('/stats', { signal });
+
+/* ------------------------------------------------------------- accounts */
+
+/**
+ * Sign in with either a username or a phone number.
+ *
+ * The server returns `{ token }` and nothing else -- not the role, not the
+ * display name -- so a caller that needs either must follow up with
+ * `getProfile`. Storing the token is the caller's job.
+ */
+export const login = ({ username, phone, password }) =>
+  request('/login', { method: 'POST', body: { username, phone, password } });
+
+/**
+ * Register.
+ *
+ * `phone` is required by the server, and `preferences` must come from the
+ * controlled list served by `/interests` — free text is silently dropped.
+ */
+export const register = ({ username, password, phone, preferences = [] }) =>
+  request('/register', { method: 'POST', body: { username, password, phone, preferences } });
+
+export const listInterests = ({ signal } = {}) => request('/interests', { signal });
+
+export const getProfile = ({ token, signal } = {}) => request('/profile', { token, signal });
+
+export const updateProfile = (changes, { token } = {}) =>
+  request('/profile', { method: 'PATCH', body: changes, token });
+
+export const requestPasswordReset = (username) =>
+  request('/forgot-password', { method: 'POST', body: { username } });
+
+export const resetPassword = ({ token: resetToken, password }) =>
+  request('/reset-password', { method: 'POST', body: { token: resetToken, password } });
+
+/* ---------------------------------------------------------------- media */
+
+/**
+ * Post a photo by URL.
+ *
+ * The server's key is `url`, and `type` defaults to "photo". `group_id` posts
+ * into a group, which it refuses unless the poster has joined it.
+ */
+export const postMedia = ({ url, caption = '', type = 'photo', groupId = null, placeId = null }, { token } = {}) =>
+  request('/media', {
+    method: 'POST',
+    body: { url, caption, type, group_id: groupId, place_id: placeId },
+    token,
+  });
+
+export const likeMedia = (mediaId, { token } = {}) =>
+  request(`/media/${encodeURIComponent(mediaId)}/like`, { method: 'POST', token });
+
+/** The server takes `comment`, not `text`; sending the wrong key returns 400. */
+export const commentOnMedia = (mediaId, comment, { token } = {}) =>
+  request(`/media/${encodeURIComponent(mediaId)}/comment`, {
+    method: 'POST', body: { comment }, token,
+  });
+
+/* ----------------------------------------------------------- suggestions */
+
+export const listPlaceRequests = ({ token, signal } = {}) =>
+  request('/resources/requests', { token, signal });
+
+export const submitPlaceRequest = (submission, { token } = {}) =>
+  request('/resources/requests', { method: 'POST', body: submission, token });
+
+export const approvePlaceRequest = (requestId, { token } = {}) =>
+  request(`/resources/requests/${encodeURIComponent(requestId)}/approve`, { method: 'POST', token });
+
+export const rejectPlaceRequest = (requestId, note, { token } = {}) =>
+  request(`/resources/requests/${encodeURIComponent(requestId)}/reject`, {
+    method: 'POST', body: { review_note: note || '' }, token,
+  });
+
+/* ---------------------------------------------------------------- admin */
+//
+// Every one of these is refused with 403 for a non-admin account; the screens
+// that call them check the role first so the refusal is never what tells the
+// user they are not allowed.
+
+export const adminStats = ({ token, signal } = {}) => request('/admin/stats', { token, signal });
+
+export const adminUsers = ({ token, signal } = {}) => request('/admin/users', { token, signal });
+
+export const setUserRole = (username, role, { token } = {}) =>
+  request(`/admin/users/${encodeURIComponent(username)}/role`, {
+    method: 'PATCH', body: { role }, token,
+  });
+
+/* -------------------------------------------------------- notifications */
+
+export const listNotifications = ({ token, signal } = {}) =>
+  request('/notifications', { token, signal });
+
+export const markNotificationRead = (notificationId, { token } = {}) =>
+  request(`/notifications/${encodeURIComponent(notificationId)}/read`, { method: 'POST', token });

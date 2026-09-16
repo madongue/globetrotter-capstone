@@ -1,0 +1,175 @@
+/* The signed-in overview.
+   Four figures, then the two things most people came back to do. */
+
+.dash { background: var(--gt-bg); min-height: 100vh; }
+
+.dash__main { display: flex; flex-direction: column; gap: var(--gt-space-6); }
+
+/* ------------------------------------------------------------- greeting */
+
+.dash__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--gt-space-4);
+  padding-top: var(--gt-space-6);
+}
+
+.dash__hello {
+  font-size: var(--gt-h3);
+  margin: 0 0 var(--gt-space-1);
+  letter-spacing: var(--gt-tracking-tight);
+}
+
+.dash__date {
+  margin: 0;
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+}
+
+/* --------------------------------------------------------------- figures */
+
+.dash__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gt-space-3);
+}
+
+@media (min-width: 760px) {
+  .dash__stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.dstat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-5);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--gt-fast) var(--gt-ease),
+              box-shadow var(--gt-fast) var(--gt-ease),
+              transform var(--gt-fast) var(--gt-ease);
+}
+
+.dstat:hover {
+  border-color: var(--gt-primary-line);
+  box-shadow: var(--gt-shadow-sm);
+  transform: translateY(-1px);
+}
+
+.dstat:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 2px; }
+
+.dstat__icon { color: var(--gt-primary); display: inline-flex; }
+
+.dstat__value {
+  font-size: var(--gt-h2);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.dstat__label {
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+}
+
+/* ----------------------------------------------------------- two columns */
+
+.dash__cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gt-space-5);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .dash__cols { grid-template-columns: 1.6fr 1fr; }
+}
+
+/* ------------------------------------------------------------ next trip */
+
+.dash__next {
+  padding: var(--gt-space-6);
+  border-radius: var(--gt-radius-lg);
+  background: linear-gradient(140deg, var(--gt-dark) 0%, var(--gt-secondary) 100%);
+  color: #fff;
+}
+
+.dash__next-label {
+  font-size: var(--gt-caption);
+  letter-spacing: var(--gt-tracking-label);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 var(--gt-space-2);
+}
+
+.dash__next-title {
+  font-size: var(--gt-h3);
+  margin: 0 0 var(--gt-space-2);
+  letter-spacing: var(--gt-tracking-tight);
+  text-wrap: balance;
+}
+
+.dash__next-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-4);
+  margin: 0 0 var(--gt-space-5);
+  font-size: var(--gt-small);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.dash__next-meta span { display: inline-flex; align-items: center; gap: var(--gt-space-1); }
+
+.dash__next-actions { display: flex; flex-wrap: wrap; gap: var(--gt-space-3); }
+
+/* ------------------------------------------------------------- shortcuts */
+
+.dash__links { display: flex; flex-direction: column; gap: var(--gt-space-2); }
+
+.dlink {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-4);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--gt-fast) var(--gt-ease),
+              background var(--gt-fast) var(--gt-ease);
+}
+
+.dlink:hover { border-color: var(--gt-primary-line); background: var(--gt-primary-soft); }
+.dlink:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 2px; }
+
+.dlink__icon { color: var(--gt-primary); display: inline-flex; flex-shrink: 0; }
+
+.dlink__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.dlink__text strong { font-size: var(--gt-small); font-weight: 600; }
+.dlink__text span { font-size: var(--gt-caption); color: var(--gt-text-soft); }
+
+.dlink__go { margin-left: auto; color: var(--gt-text-faint); flex-shrink: 0; }
+
+/* The administrator's entry, marked so it does not read as one more
+   traveller feature. */
+.dlink--admin { border-color: var(--gt-accent); background: var(--gt-accent-soft); }
+.dlink--admin .dlink__icon { color: #8a6400; }
+
+/* The panel is dark, and the ghost button's colour is tuned for a light
+   surface -- on this gradient it renders as grey-on-green and all but
+   disappears. Both buttons are re-stated here against the dark ground. */
+.dash__next-actions .gt-btn--ghost {
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.dash__next-actions .gt-btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
