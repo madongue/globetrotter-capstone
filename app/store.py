@@ -196,7 +196,49 @@ class SqlDocumentStore(DocumentStore):
             Column("ordinal", Integer, nullable=False),
             Column("data", json_type, nullable=False),
         )
-        self._metadata.create_all(self._engine)
+        self._create_schema()
+
+    def _create_schema(self) -> None:
+        """Create the ``documents`` table, tolerating a worker that got there first.
+
+        ``create_all`` is check-then-create: it asks whether the table exists
+        and issues ``CREATE TABLE`` only if it does not. Gunicorn starts its
+        workers simultaneously, so on the first boot against an empty database
+        every worker answers "no" in the same instant, and all but one of the
+        ``CREATE TABLE`` statements fails with ``DuplicateTable``. That kills
+        the worker, and a worker that fails to boot brings the whole service
+        down -- the deploy ends with "Reason: Worker failed to boot" even
+        though the table was created perfectly well by the worker that won.
+
+        An advisory lock puts the check and the create in one critical section
+        across every worker. Postgres DDL is transactional, so the table is
+        committed at the same moment the lock is released, and the next worker
+        through finds it and does nothing.
+
+        The ``DuplicateTable`` branch stays behind that lock rather than being
+        replaced by it: a migration script or a second instance can create the
+        table without ever taking this lock, and losing that race is still not
+        an error worth refusing to start over.
+        """
+        from sqlalchemy import inspect, text
+        from sqlalchemy.exc import DatabaseError
+
+        try:
+            with self._engine.begin() as connection:
+                if not self._is_sqlite:
+                    connection.execute(
+                        text("SELECT pg_advisory_xact_lock(:key)"),
+                        {"key": self._advisory_lock_key("__schema__")},
+                    )
+                self._metadata.create_all(connection)
+        except DatabaseError:
+            # SQLite has no advisory locks, and a process outside this lock can
+            # always win the race anyway, so the outcome is what is checked:
+            # forgive the failure only if the table really is there now.
+            # Anything else -- bad credentials, no permission to create --
+            # must still fail loudly at boot rather than at the first request.
+            if not inspect(self._engine).has_table("documents"):
+                raise
 
     @property
     def engine(self):

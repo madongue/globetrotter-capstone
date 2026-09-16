@@ -531,3 +531,55 @@ def test_seeding_never_invents_users(tmp_path, monkeypatch):
     assert "users" not in models.SEED_COLLECTIONS
     assert "itineraries" not in models.SEED_COLLECTIONS
     models.reset_store()
+
+
+# ---------------------------------------------------------------------------
+# Schema creation under concurrent workers
+# ---------------------------------------------------------------------------
+#
+# gunicorn boots its workers simultaneously. On the first deploy against an
+# empty database every one of them called `create_all`, which is
+# check-then-create: all of them found no table, all of them issued
+# CREATE TABLE, and every loser died with
+#
+#     psycopg.errors.DuplicateTable: relation "documents" already exists
+#
+# A worker that fails to boot takes the service down with it, so a deploy that
+# had in fact created the table correctly ended with "Worker failed to boot".
+
+def test_a_second_store_on_the_same_database_does_not_recreate_the_table(tmp_path):
+    """Constructing the store twice is what a redeploy does every time."""
+    url = sql_url(tmp_path)
+    first = SqlDocumentStore(url)
+    first.write("users", [{"username": "ada"}])
+
+    second = SqlDocumentStore(url)
+
+    # Not merely "did not raise": the existing rows must still be there, which
+    # a create-then-drop or a fresh table would not satisfy.
+    assert second.read("users") == [{"username": "ada"}]
+
+
+def test_workers_starting_together_do_not_race_on_create_table(tmp_path):
+    """Several stores built at once, as gunicorn builds one per worker."""
+    import threading
+
+    url = sql_url(tmp_path)
+    barrier = threading.Barrier(4)
+    failures = []
+
+    def boot():
+        try:
+            barrier.wait(timeout=10)  # start all four inside the same instant
+            SqlDocumentStore(url)
+        except Exception as error:  # noqa: BLE001 - the assertion reports it
+            failures.append(error)
+
+    workers = [threading.Thread(target=boot) for _ in range(4)]
+    for worker in workers:
+        worker.start()
+    for worker in workers:
+        worker.join(timeout=30)
+
+    assert not failures, f"a worker failed to boot: {failures!r}"
+    assert SqlDocumentStore(url).read("users") == []
