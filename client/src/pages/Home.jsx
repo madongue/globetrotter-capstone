@@ -8,6 +8,7 @@ import { TabBar, TopBar } from '../components/Navigation';
 import PlaceCard from '../components/PlaceCard';
 import AddToTripDialog from '../components/AddToTripDialog';
 import { useCatalogue } from '../lib/useCatalogue';
+import { useTranslatedPage } from '../lib/i18n';
 import { useAuth, useSavedPlaces, useTrips } from '../lib/useTravellerData';
 import * as api from '../lib/api';
 import './home.css';
@@ -32,6 +33,9 @@ const CITY_SUGGESTIONS = [
 ];
 
 function HomeInner() {
+  // Applies the chosen language to everything this page renders.
+  const pageRef = useTranslatedPage();
+
   const navigate = useNavigate();
   const toast = useToast();
   const { token, isAuthenticated } = useAuth();
@@ -106,7 +110,7 @@ function HomeInner() {
   };
 
   return (
-    <div className="gt home">
+    <div ref={pageRef} className="gt home">
       <TopBar
         isAuthenticated={isAuthenticated}
         actions={isAuthenticated

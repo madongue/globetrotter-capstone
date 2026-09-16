@@ -10,6 +10,7 @@ import Trips from './pages/Trips';
 import Itinerary from './pages/Itinerary';
 import Community from './pages/Community';
 import GroupDetail from './pages/GroupDetail';
+import Profile from './pages/Profile';
 import 'leaflet/dist/leaflet.css';
 import './styles.css';
 // Loaded after styles.css so its overrides win. Removing this line returns the
@@ -51,6 +52,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             with the open thread carried as ?d=<id>. */}
         <Route path="/community" element={<Community />} />
         <Route path="/community/:id" element={<GroupDetail />} />
+
+        {/* The profile, rebuilt. /settings still opens the original screen,
+            which carries notifications, currency and the rest. */}
+        <Route path="/profile" element={<Profile />} />
         <Route path="/design" element={<DesignSystem />} />
         <Route path="*" element={<App />} />
       </Routes>

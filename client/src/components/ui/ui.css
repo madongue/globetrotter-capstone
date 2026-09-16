@@ -673,3 +673,38 @@ a.gt-card * { text-decoration: none; }
 @media (min-width: 900px) {
   .gt-has-tabbar { padding-bottom: var(--gt-space-6); }
 }
+
+/* ------------------------------------------------------------- language
+   Two labels, not a dropdown: there are exactly two languages, and a select
+   holding two options hides them both behind a click. */
+
+.gt-lang {
+  display: inline-flex;
+  flex: none;
+  padding: 2px;
+  border-radius: var(--gt-radius-pill);
+  background: var(--gt-surface-2);
+  border: 1px solid var(--gt-border);
+}
+
+.gt-lang__option {
+  padding: 0.3rem 0.62rem;
+  border: 0;
+  border-radius: var(--gt-radius-pill);
+  background: none;
+  color: var(--gt-text-faint);
+  font-family: var(--gt-font);
+  font-size: var(--gt-caption);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background var(--gt-fast) var(--gt-ease), color var(--gt-fast) var(--gt-ease);
+}
+
+.gt-lang__option:hover { color: var(--gt-text); }
+
+.gt-lang__option.is-active {
+  background: var(--gt-surface);
+  color: var(--gt-primary);
+  box-shadow: var(--gt-shadow-sm);
+}

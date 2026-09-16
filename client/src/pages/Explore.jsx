@@ -9,6 +9,7 @@ import { TabBar, TopBar } from '../components/Navigation';
 import PlaceCard from '../components/PlaceCard';
 import AddToTripDialog from '../components/AddToTripDialog';
 import { CATEGORY_FILTERS, useCatalogue } from '../lib/useCatalogue';
+import { useTranslatedPage } from '../lib/i18n';
 import { useAuth, useSavedPlaces, useTrips } from '../lib/useTravellerData';
 import './explore.css';
 
@@ -39,6 +40,9 @@ const PRICE_BANDS = [
 ];
 
 function ExploreInner() {
+  // Applies the chosen language to everything this page renders.
+  const pageRef = useTranslatedPage();
+
   const navigate = useNavigate();
   const toast = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -110,7 +114,7 @@ function ExploreInner() {
   };
 
   return (
-    <div className="gt explore">
+    <div ref={pageRef} className="gt explore">
       <TopBar
         isAuthenticated={isAuthenticated}
         actions={isAuthenticated

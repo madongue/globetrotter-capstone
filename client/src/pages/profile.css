@@ -1,0 +1,115 @@
+/* Profile. Composition only — values come from the Phase A tokens. */
+
+.profile { min-height: 100vh; }
+.profile__main { padding-block: var(--gt-space-5) var(--gt-space-8); }
+
+.profile__head {
+  background: var(--gt-surface);
+  border-bottom: 1px solid var(--gt-border);
+  padding-block: var(--gt-space-6);
+}
+
+.profile__head-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-5);
+  flex-wrap: wrap;
+}
+
+.profile__who { min-width: 0; }
+
+.profile__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gt-space-2);
+  margin: var(--gt-space-2) 0 0;
+}
+
+/* ---------------------------------------------------------------- figures
+   Three counts, each a link to the thing it counts — a number you cannot
+   click is a dead end. */
+
+.profile__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gt-space-3);
+}
+
+@media (max-width: 480px) {
+  .profile__stats { gap: var(--gt-space-2); }
+}
+
+.pstat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--gt-space-4) var(--gt-space-2);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-lg);
+  background: var(--gt-surface);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--gt-fast) var(--gt-ease), transform var(--gt-fast) var(--gt-ease);
+}
+
+.pstat:hover { border-color: var(--gt-primary-line); transform: translateY(-2px); }
+.pstat__icon { color: var(--gt-primary); }
+.pstat__value { font-size: var(--gt-h3); font-weight: 700; font-variant-numeric: tabular-nums; }
+.pstat__label { font-size: var(--gt-caption); color: var(--gt-text-soft); text-align: center; }
+
+.profile__planned { margin: var(--gt-space-3) 0 0; text-align: center; }
+
+/* --------------------------------------------------------------- sections */
+
+.profile__section { margin-top: var(--gt-space-7); }
+
+.plist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--gt-space-2); }
+
+.plist__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--gt-fast) var(--gt-ease);
+}
+
+.plist__row:hover { border-color: var(--gt-primary-line); }
+.plist__text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.plist__text strong { font-weight: 600; }
+.plist__text .gt-caption { display: inline-flex; align-items: center; gap: 4px; }
+.plist__value { font-size: var(--gt-small); font-weight: 600; color: var(--gt-primary); white-space: nowrap; }
+
+.profile__chips { display: flex; flex-wrap: wrap; gap: var(--gt-space-2); }
+.profile__chips .gt-chip { text-transform: capitalize; }
+
+/* --------------------------------------------------------------- settings */
+
+.profile__settings { padding: 0; }
+
+.prow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-4);
+  padding: var(--gt-space-4);
+  flex-wrap: wrap;
+}
+
+.prow + .prow { border-top: 1px solid var(--gt-border); }
+
+.prow__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  font-size: var(--gt-small);
+  font-weight: 500;
+  min-width: 0;
+}

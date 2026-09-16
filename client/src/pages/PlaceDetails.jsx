@@ -11,6 +11,7 @@ import PlaceCard from '../components/PlaceCard';
 import AddToTripDialog from '../components/AddToTripDialog';
 import TravelMap from '../TravelMap';
 import { categoryLabel, isContextualImage } from '../lib/useCatalogue';
+import { useTranslatedPage } from '../lib/i18n';
 import { useAuth, useSavedPlaces, useTrips } from '../lib/useTravellerData';
 import * as api from '../lib/api';
 import './place-details.css';
@@ -34,6 +35,9 @@ const fcfa = (value) => {
 };
 
 function PlaceDetailsInner() {
+  // Applies the chosen language to everything this page renders.
+  const pageRef = useTranslatedPage();
+
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
@@ -142,7 +146,7 @@ function PlaceDetailsInner() {
   };
 
   const shell = (children) => (
-    <div className="gt pd">
+    <div ref={pageRef} className="gt pd">
       <TopBar
         isAuthenticated={isAuthenticated}
         actions={<Button size="sm" variant="secondary" onClick={() => navigate('/explore')}>Explore</Button>}

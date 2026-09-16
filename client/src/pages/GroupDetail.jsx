@@ -13,6 +13,7 @@ import GroupChat from '../components/GroupChat';
 import {
   DISCUSSION_TYPES, groupCover, likeCount, replyCount, timeAgo,
 } from '../lib/useCommunity';
+import { useTranslatedPage } from '../lib/i18n';
 import { useAuth } from '../lib/useTravellerData';
 import * as api from '../lib/api';
 import './community.css';
@@ -35,6 +36,9 @@ const TABS = [
 ];
 
 function GroupDetailInner() {
+  // Applies the chosen language to everything this page renders.
+  const pageRef = useTranslatedPage();
+
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
@@ -171,7 +175,7 @@ function GroupDetailInner() {
   };
 
   const shell = (children) => (
-    <div className="gt community">
+    <div ref={pageRef} className="gt community">
       <TopBar
         isAuthenticated={isAuthenticated}
         actions={<Button size="sm" variant="secondary" onClick={() => navigate('/community')}>Community</Button>}

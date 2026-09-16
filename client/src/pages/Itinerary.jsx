@@ -10,6 +10,7 @@ import {
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
 import TravelMap from '../TravelMap';
+import { useTranslatedPage } from '../lib/i18n';
 import { useAuth } from '../lib/useTravellerData';
 import { formatClock, formatDuration, formatMoney, useItinerary } from '../lib/useItinerary';
 import './itinerary.css';
@@ -131,6 +132,9 @@ function Checkpoint({
 /* ------------------------------------------------------------------- page */
 
 function ItineraryInner() {
+  // Applies the chosen language to everything this page renders.
+  const pageRef = useTranslatedPage();
+
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
@@ -182,7 +186,7 @@ function ItineraryInner() {
   };
 
   const shell = (children) => (
-    <div className="gt itin">
+    <div ref={pageRef} className="gt itin">
       <TopBar
         isAuthenticated={isAuthenticated}
         actions={<Button size="sm" variant="secondary" onClick={() => navigate('/explore')}>Add places</Button>}

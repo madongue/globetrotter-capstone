@@ -6,6 +6,7 @@ import {
   SkeletonCards, ToastProvider, useToast,
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
+import { useTranslatedPage } from '../lib/i18n';
 import { useAuth, useTrips } from '../lib/useTravellerData';
 import { formatMoney } from '../lib/useItinerary';
 import * as api from '../lib/api';
@@ -37,6 +38,9 @@ const addDays = (date, n) => {
 };
 
 function TripsInner() {
+  // Applies the chosen language to everything this page renders.
+  const pageRef = useTranslatedPage();
+
   const navigate = useNavigate();
   const toast = useToast();
   const { token, isAuthenticated } = useAuth();
@@ -100,7 +104,7 @@ function TripsInner() {
 
   if (!isAuthenticated) {
     return (
-      <div className="gt trips">
+      <div ref={pageRef} className="gt trips">
         <TopBar actions={<Button size="sm" onClick={() => navigate('/login')}>Sign in</Button>} />
         <main className="gt-page gt-has-tabbar trips__main">
           <EmptyState
@@ -115,7 +119,7 @@ function TripsInner() {
   }
 
   return (
-    <div className="gt trips">
+    <div ref={pageRef} className="gt trips">
       <TopBar
         isAuthenticated
         actions={<Button size="sm" variant="secondary" onClick={() => navigate('/explore')}>Explore</Button>}

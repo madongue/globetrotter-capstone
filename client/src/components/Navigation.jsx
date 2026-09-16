@@ -5,6 +5,7 @@ import {
   Map as MapIcon, Settings, User, Users,
 } from 'lucide-react';
 import { NAV_ITEMS, TAB_ITEMS } from '../routes';
+import { LANGUAGES, useLanguage } from '../lib/i18n';
 
 /**
  * The two navigation shapes from the design board.
@@ -54,6 +55,35 @@ export function Brand({ withTagline = false }) {
   );
 }
 
+/**
+ * English or French.
+ *
+ * Two labels rather than a dropdown: there are exactly two languages, and a
+ * select that holds two options costs a click to discover what is in it. The
+ * choice is stored where App.jsx already reads it, so both halves of the
+ * application stay in step.
+ */
+export function LanguageToggle() {
+  const { language, setLanguage } = useLanguage();
+
+  return (
+    <div className="gt-lang" role="group" aria-label="Language">
+      {LANGUAGES.map((entry) => (
+        <button
+          key={entry.id}
+          type="button"
+          className={`gt-lang__option${language === entry.id ? ' is-active' : ''}`}
+          aria-pressed={language === entry.id}
+          title={entry.title}
+          onClick={() => setLanguage(entry.id)}
+        >
+          {entry.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function TopBar({ isAuthenticated = false, actions = null }) {
   const items = NAV_ITEMS.filter((item) => !item.authOnly || isAuthenticated);
 
@@ -79,7 +109,10 @@ export function TopBar({ isAuthenticated = false, actions = null }) {
           ))}
         </nav>
 
-        {actions && <div className="gt-topbar__actions">{actions}</div>}
+        <div className="gt-topbar__actions">
+          <LanguageToggle />
+          {actions}
+        </div>
       </div>
     </header>
   );

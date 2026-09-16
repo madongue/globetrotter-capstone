@@ -11,6 +11,7 @@ import { TabBar, TopBar } from '../components/Navigation';
 import {
   DISCUSSION_TYPES, groupCover, initials, likeCount, replyCount, timeAgo, useCommunity,
 } from '../lib/useCommunity';
+import { useTranslatedPage } from '../lib/i18n';
 import { useAuth } from '../lib/useTravellerData';
 import * as api from '../lib/api';
 import './community.css';
@@ -100,6 +101,9 @@ function DiscussionCard({ discussion, liked, onLike, canInteract }) {
 /* ------------------------------------------------------------------- page */
 
 function CommunityInner() {
+  // Applies the chosen language to everything this page renders.
+  const pageRef = useTranslatedPage();
+
   const navigate = useNavigate();
   const toast = useToast();
   const { token, username, isAuthenticated } = useAuth();
@@ -165,7 +169,7 @@ function CommunityInner() {
 
   if (!isAuthenticated) {
     return (
-      <div className="gt community">
+      <div ref={pageRef} className="gt community">
         <TopBar actions={<Button size="sm" onClick={() => navigate('/login')}>Sign in</Button>} />
         <main className="gt-page gt-has-tabbar community__main">
           <EmptyState
@@ -180,7 +184,7 @@ function CommunityInner() {
   }
 
   return (
-    <div className="gt community">
+    <div ref={pageRef} className="gt community">
       <TopBar
         isAuthenticated
         actions={<Button size="sm" variant="secondary" onClick={() => navigate('/explore')}>Explore</Button>}
