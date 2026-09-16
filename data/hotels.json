@@ -301,7 +301,7 @@
   {
     "id": "hotel-osm-node-4241126392",
     "name": "Apartamentos - Candy Vista Mar",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8595048,
     "longitude": 9.7584648,
     "country": "Cameroon",
@@ -336,7 +336,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -2177,7 +2177,7 @@
   {
     "id": "hotel-osm-node-2889955844",
     "name": "Complejo Turístico",
-    "location": "Mbini, Litoral, Cameroon",
+    "location": "Mbini, Littoral, Cameroon",
     "latitude": 1.5892804,
     "longitude": 9.6161645,
     "country": "Cameroon",
@@ -2212,7 +2212,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "",
     "subdivision": "",
     "city": "Mbini",
@@ -2855,7 +2855,7 @@
   {
     "id": "hotel-osm-node-2889955847",
     "name": "Dyoba y Bangui",
-    "location": "Mbini, Litoral, Cameroon",
+    "location": "Mbini, Littoral, Cameroon",
     "latitude": 1.5868997,
     "longitude": 9.6138703,
     "country": "Cameroon",
@@ -2890,7 +2890,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "",
     "subdivision": "",
     "city": "Mbini",
@@ -5056,7 +5056,7 @@
   {
     "id": "hotel-osm-node-4378104146",
     "name": "Hotel Hotspot Milenium",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8675727,
     "longitude": 9.7709359,
     "country": "Cameroon",
@@ -5091,7 +5091,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -5099,7 +5099,7 @@
   {
     "id": "hotel-osm-node-2889955854",
     "name": "Hotel Ilachi",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8267229,
     "longitude": 9.76808,
     "country": "Cameroon",
@@ -5134,7 +5134,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -5798,7 +5798,7 @@
   {
     "id": "hotel-osm-node-4241115391",
     "name": "Hotel Plaza ****",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.863612,
     "longitude": 9.765024,
     "country": "Cameroon",
@@ -5833,7 +5833,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -6112,7 +6112,7 @@
   {
     "id": "hotel-osm-node-2889955855",
     "name": "Hotel Yessica",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8622069,
     "longitude": 9.7699933,
     "country": "Cameroon",
@@ -6147,7 +6147,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -9290,7 +9290,7 @@
   {
     "id": "hotel-osm-node-2889955856",
     "name": "La Trisa",
-    "location": "Mbini, Litoral, Cameroon",
+    "location": "Mbini, Littoral, Cameroon",
     "latitude": 1.581295,
     "longitude": 9.6170306,
     "country": "Cameroon",
@@ -9325,7 +9325,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "",
     "subdivision": "",
     "city": "Mbini",
@@ -13110,7 +13110,7 @@
   {
     "id": "hotel-osm-node-2889955868",
     "name": "Pension Ebudu",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8632448,
     "longitude": 9.7695235,
     "country": "Cameroon",
@@ -13145,7 +13145,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -15221,7 +15221,7 @@
   {
     "id": "hotel-osm-node-2889955877",
     "name": "Technobat",
-    "location": "Mbini, Litoral, Cameroon",
+    "location": "Mbini, Littoral, Cameroon",
     "latitude": 1.5832256,
     "longitude": 9.6146681,
     "country": "Cameroon",
@@ -15256,7 +15256,7 @@
     "cost_per_night": 50000,
     "rating": 0,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "",
     "subdivision": "",
     "city": "Mbini",

@@ -158,6 +158,11 @@ function CommunityInner() {
     toast.push(result.ok ? `Joined ${group.name}.` : result.reason, result.ok ? 'success' : 'error');
   };
 
+  const onLeave = async (group) => {
+    const result = await community.leave(group.id);
+    toast.push(result.ok ? `Left ${group.name}.` : result.reason, result.ok ? 'success' : 'error');
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="gt community">
@@ -325,7 +330,7 @@ function CommunityInner() {
                           <Users size={12} aria-hidden="true" /> {members} member{members === 1 ? '' : 's'}
                         </span>
                         {joined
-                          ? <Badge tone="success">Joined</Badge>
+                          ? <Button size="sm" variant="ghost" onClick={() => onLeave(group)}>Leave</Button>
                           : <Button size="sm" variant="secondary" onClick={() => onJoin(group)}>Join</Button>}
                       </div>
                     </Card>

@@ -15,7 +15,7 @@ import './explore.css';
 /**
  * Explore Cameroon.
  *
- * The catalogue is 901 places, and 594 of them are eateries imported from
+ * The catalogue is 845 places, and 594 of them are eateries imported from
  * OpenStreetMap. Shown in file order it reads as a restaurant directory, so
  * two things keep the attractions in front:
  *
@@ -122,7 +122,7 @@ function ExploreInner() {
         <div className="gt-page">
           <h1 className="gt-h1">Explore Cameroon</h1>
           <p className="explore__lede">
-            Beaches, rainforest, highlands and cities — {catalogue.total || 901} places
+            Beaches, rainforest, highlands and cities — {catalogue.total || 845} places
             across all ten regions, with somewhere to stay and something to eat
             beside each of them.
           </p>

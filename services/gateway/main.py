@@ -14,7 +14,7 @@ DESTINATION_SERVICE_URL = os.environ.get("DESTINATION_SERVICE_URL", "http://dest
 RECOMMENDATION_SERVICE_URL = os.environ.get("RECOMMENDATION_SERVICE_URL", "http://recommendation-service:8003")
 ITINERARY_SERVICE_URL = os.environ.get("ITINERARY_SERVICE_URL", "http://itinerary-service:8002")
 
-# Generating an itinerary scans the whole catalogue — 901 places and 373 hotels
+# Generating an itinerary scans the whole catalogue — 845 places and 373 hotels
 # — and measures around 6 seconds against the JSON backend. In the monolith
 # that is a function call and nobody notices; behind the gateway it was a
 # 5-second timeout returning "upstream service unavailable" on a request that

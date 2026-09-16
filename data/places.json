@@ -41,55 +41,6 @@
     "city": "Kumba III"
   },
   {
-    "id": "place-osm-node-7002764885",
-    "name": "African Parks Office. Otzala-Kokoua National Park",
-    "location": "Ouésso, Sangha, Cameroon",
-    "latitude": 1.607645,
-    "longitude": 16.0444697,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 7002764885,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/7002764885"
-    ],
-    "description": "African Parks Office. Otzala-Kokoua National Park is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "African Parks Office. Otzala-Kokoua National Park, Ouésso, Sangha, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "African Parks Office. Otzala-Kokoua National Park, Cameroon",
-      "latitude": 1.607645,
-      "longitude": 16.0444697,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/7002764885",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "difficulty": "moderate",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Plan with a licensed guide or park operator; road conditions and access points can change seasonally.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Sangha",
-    "division": "District de Mokeko",
-    "subdivision": "District de Mokeko",
-    "city": "Ouésso"
-  },
-  {
     "id": "place-osm-node-5112822021",
     "name": "Aunty Nicole's Residence",
     "location": "Wovia, Limbé II, South West, Cameroon",
@@ -227,89 +178,6 @@
     "city": "Mbalmayo"
   },
   {
-    "id": "place-osm-node-4759499174",
-    "name": "CERCOPAN",
-    "location": "Calabar, Cross River State, Cameroon",
-    "latitude": 4.9773189,
-    "longitude": 8.3326081,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 4759499174,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/4759499174"
-    ],
-    "description": "CERCOPAN is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "CERCOPAN, Calabar, Cross River State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "CERCOPAN, Cameroon",
-      "latitude": 4.9773189,
-      "longitude": 8.3326081,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/4759499174",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Cross River State",
-    "division": "Calabar Municipal",
-    "subdivision": "Calabar Municipal",
-    "city": "Calabar"
-  },
-  {
-    "id": "place-osm-node-10837141109",
-    "name": "CITY STAR",
-    "location": "Old GRA, Maiduguri, Borno State, Cameroon",
-    "latitude": 11.8188624,
-    "longitude": 13.1532723,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 10837141109,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/10837141109"
-    ],
-    "description": "CITY STAR is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "CITY STAR, Old GRA, Maiduguri, Borno State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "CITY STAR, Cameroon",
-      "latitude": 11.8188624,
-      "longitude": 13.1532723,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/10837141109",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Borno State",
-    "division": "",
-    "subdivision": "",
-    "city": "Maiduguri",
-    "quarter": "Old GRA"
-  },
-  {
     "id": "place-osm-node-13671848974",
     "name": "Camp Licondo",
     "location": "Ngoyla, East, Cameroon",
@@ -353,7 +221,7 @@
   {
     "id": "place-osm-node-4812907422",
     "name": "Casa Vanessa",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8580911,
     "longitude": 9.7745533,
     "country": "Cameroon",
@@ -386,7 +254,7 @@
     },
     "cost": 5000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -777,172 +645,6 @@
     ]
   },
   {
-    "id": "place-osm-node-4773375819",
-    "name": "Corazón de Moaba",
-    "location": "Belebu, Bioko Sur, Cameroon",
-    "latitude": 3.2319076,
-    "longitude": 8.6195565,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 4773375819,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/4773375819"
-    ],
-    "description": "Corazón de Moaba is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "Corazón de Moaba, Belebu, Bioko Sur, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Corazón de Moaba, Cameroon",
-      "latitude": 3.2319076,
-      "longitude": 8.6195565,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/4773375819",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Bioko Sur",
-    "division": "",
-    "subdivision": "",
-    "city": "Belebu"
-  },
-  {
-    "id": "place-osm-node-10837141107",
-    "name": "DESERT VIEW",
-    "location": "Old GRA, Maiduguri, Borno State, Cameroon",
-    "latitude": 11.8113965,
-    "longitude": 13.149734,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 10837141107,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/10837141107"
-    ],
-    "description": "DESERT VIEW is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "DESERT VIEW, Old GRA, Maiduguri, Borno State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "DESERT VIEW, Cameroon",
-      "latitude": 11.8113965,
-      "longitude": 13.149734,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/10837141107",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Borno State",
-    "division": "",
-    "subdivision": "",
-    "city": "Maiduguri",
-    "quarter": "Old GRA"
-  },
-  {
-    "id": "place-osm-node-10837141110",
-    "name": "DUJIMA HOTEL",
-    "location": "Old GRA, Maiduguri, Borno State, Cameroon",
-    "latitude": 11.824605,
-    "longitude": 13.1501057,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 10837141110,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/10837141110"
-    ],
-    "description": "DUJIMA HOTEL is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "DUJIMA HOTEL, Old GRA, Maiduguri, Borno State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "DUJIMA HOTEL, Cameroon",
-      "latitude": 11.824605,
-      "longitude": 13.1501057,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/10837141110",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Borno State",
-    "division": "Jere",
-    "subdivision": "Jere",
-    "city": "Maiduguri",
-    "quarter": "Old GRA"
-  },
-  {
-    "id": "place-osm-node-4638964990",
-    "name": "ECG Fabrication Yard",
-    "location": "Malabo, Bioko Norte, Cameroon",
-    "latitude": 3.7493585,
-    "longitude": 8.6892695,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 4638964990,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/4638964990"
-    ],
-    "description": "ECG Fabrication Yard is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "ECG Fabrication Yard, Malabo, Bioko Norte, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "ECG Fabrication Yard, Cameroon",
-      "latitude": 3.7493585,
-      "longitude": 8.6892695,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/4638964990",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Bioko Norte",
-    "division": "Distrito de Malabo",
-    "subdivision": "Distrito de Malabo",
-    "city": "Malabo"
-  },
-  {
     "id": "place-osm-node-6275417785",
     "name": "ERV",
     "location": "Mbankomo, Centre, Cameroon",
@@ -1186,7 +888,7 @@
   {
     "id": "place-osm-node-4537005389",
     "name": "Entrada Nene Armengol - Ngoló - Bata - Guinea ecuatorial",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8610257,
     "longitude": 9.7875778,
     "country": "Cameroon",
@@ -1219,7 +921,7 @@
     },
     "cost": 5000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -1278,47 +980,6 @@
         "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
       }
     ]
-  },
-  {
-    "id": "place-osm-node-5909941285",
-    "name": "Finca Sampaka",
-    "location": "Sampaka, Bioko Norte, Cameroon",
-    "latitude": 3.7151635,
-    "longitude": 8.7475622,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 5909941285,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/5909941285"
-    ],
-    "description": "Finca Sampaka is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "Finca Sampaka, Sampaka, Bioko Norte, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Finca Sampaka, Cameroon",
-      "latitude": 3.7151635,
-      "longitude": 8.7475622,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/5909941285",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Bioko Norte",
-    "division": "Distrito de Malabo",
-    "subdivision": "Distrito de Malabo",
-    "city": "Sampaka"
   },
   {
     "id": "place-osm-node-8494153517",
@@ -1483,47 +1144,6 @@
         "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
       }
     ]
-  },
-  {
-    "id": "place-osm-node-4802487722",
-    "name": "Industrial Ruine (Forrestry)",
-    "location": "Bayanga, Sangha-Mbaéré, Cameroon",
-    "latitude": 2.8983892,
-    "longitude": 16.2606976,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 4802487722,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/4802487722"
-    ],
-    "description": "Industrial Ruine (Forrestry) is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "Industrial Ruine (Forrestry), Bayanga, Sangha-Mbaéré, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Industrial Ruine (Forrestry), Cameroon",
-      "latitude": 2.8983892,
-      "longitude": 16.2606976,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/4802487722",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Sangha-Mbaéré",
-    "division": "",
-    "subdivision": "",
-    "city": "Bayanga"
   },
   {
     "id": "place-osm-node-1067284463",
@@ -1752,130 +1372,6 @@
     ]
   },
   {
-    "id": "place-osm-node-11998216269",
-    "name": "MARCHE",
-    "location": "Ouésso, Sangha, Cameroon",
-    "latitude": 1.6158744,
-    "longitude": 16.049382,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 11998216269,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11998216269"
-    ],
-    "description": "MARCHE is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "MARCHE, Ouésso, Sangha, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "MARCHE, Cameroon",
-      "latitude": 1.6158744,
-      "longitude": 16.049382,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11998216269",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Sangha",
-    "division": "District de Mokeko",
-    "subdivision": "District de Mokeko",
-    "city": "Ouésso"
-  },
-  {
-    "id": "place-osm-node-11993261469",
-    "name": "MARCHE DE VIEND",
-    "location": "Ouésso, Sangha, Cameroon",
-    "latitude": 1.6110455,
-    "longitude": 16.0495099,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 11993261469,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11993261469"
-    ],
-    "description": "MARCHE DE VIEND is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "MARCHE DE VIEND, Ouésso, Sangha, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "MARCHE DE VIEND, Cameroon",
-      "latitude": 1.6110455,
-      "longitude": 16.0495099,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11993261469",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Sangha",
-    "division": "District de Mokeko",
-    "subdivision": "District de Mokeko",
-    "city": "Ouésso"
-  },
-  {
-    "id": "place-osm-node-10837141108",
-    "name": "MUNA HOTEL",
-    "location": "Old GRA, Maiduguri, Borno State, Cameroon",
-    "latitude": 11.8132152,
-    "longitude": 13.151689,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 10837141108,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/10837141108"
-    ],
-    "description": "MUNA HOTEL is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "MUNA HOTEL, Old GRA, Maiduguri, Borno State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "MUNA HOTEL, Cameroon",
-      "latitude": 11.8132152,
-      "longitude": 13.151689,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/10837141108",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Borno State",
-    "division": "",
-    "subdivision": "",
-    "city": "Maiduguri",
-    "quarter": "Old GRA"
-  },
-  {
     "id": "place-osm-node-6698708885",
     "name": "Makarous Residence",
     "location": "Wovia, Limbé II, South West, Cameroon",
@@ -2025,47 +1521,6 @@
         "license_note": "Contextual photograph of Douala. No photograph of this specific place is available yet."
       }
     ]
-  },
-  {
-    "id": "place-osm-node-4757969692",
-    "name": "Marina Resort",
-    "location": "Duke Town, Cross River State, Cameroon",
-    "latitude": 4.964998,
-    "longitude": 8.3172247,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 4757969692,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/4757969692"
-    ],
-    "description": "Marina Resort is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "Marina Resort, Duke Town, Cross River State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Marina Resort, Cameroon",
-      "latitude": 4.964998,
-      "longitude": 8.3172247,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/4757969692",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Cross River State",
-    "division": "Calabar Municipal",
-    "subdivision": "Calabar Municipal",
-    "city": "Duke Town"
   },
   {
     "id": "place-osm-node-10591293505",
@@ -2309,47 +1764,6 @@
     ]
   },
   {
-    "id": "place-osm-node-11990269370",
-    "name": "OUALI BAI",
-    "location": "Bon Coin, Sangha, Cameroon",
-    "latitude": 2.2328643,
-    "longitude": 16.2040161,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 11990269370,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11990269370"
-    ],
-    "description": "OUALI BAI is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "OUALI BAI, Bon Coin, Sangha, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "OUALI BAI, Cameroon",
-      "latitude": 2.2328643,
-      "longitude": 16.2040161,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11990269370",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Sangha",
-    "division": "District de Kabo",
-    "subdivision": "District de Kabo",
-    "city": "Bon Coin"
-  },
-  {
     "id": "place-osm-node-3323402406",
     "name": "Observatoire",
     "location": "Cameroon",
@@ -2385,98 +1799,6 @@
     },
     "cost": 5000,
     "continent": "Africa"
-  },
-  {
-    "id": "place-osm-node-2344815606",
-    "name": "Obudu Mountain Resort",
-    "location": "Ikwette, Cross River State, Cameroon",
-    "latitude": 6.3861285,
-    "longitude": 9.3746998,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 2344815606,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://en.wikipedia.org/wiki/Obudu_Mountain_Resort",
-      "https://www.wikidata.org/wiki/Q7075581",
-      "https://www.openstreetmap.org/node/2344815606"
-    ],
-    "description": "Obudu Mountain Resort is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "Obudu Mountain Resort, Ikwette, Cross River State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Obudu Mountain Resort, Cameroon",
-      "latitude": 6.3861285,
-      "longitude": 9.3746998,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/2344815606",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Cross River State",
-    "division": "Obanliku",
-    "subdivision": "Obanliku",
-    "city": "Ikwette"
-  },
-  {
-    "id": "place-osm-node-5941704755",
-    "name": "Offia Mkpuma",
-    "location": "Ndiofutu Echara, Ebonyi State, Cameroon",
-    "latitude": 6.1677909,
-    "longitude": 8.3072339,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 5941704755,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/5941704755"
-    ],
-    "description": "Offia Mkpuma is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "Offia Mkpuma, Ndiofutu Echara, Ebonyi State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Offia Mkpuma, Cameroon",
-      "latitude": 6.1677909,
-      "longitude": 8.3072339,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/5941704755",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Ebonyi State",
-    "division": "Ikwo",
-    "subdivision": "Ikwo",
-    "city": "Ndiofutu Echara"
   },
   {
     "id": "place-osm-node-5183632023",
@@ -2559,47 +1881,6 @@
     "division": "Meme",
     "subdivision": "Meme",
     "city": "Kumba II"
-  },
-  {
-    "id": "place-osm-node-4759494234",
-    "name": "Pandrillus",
-    "location": "Calabar, Cross River State, Cameroon",
-    "latitude": 4.9822492,
-    "longitude": 8.3435412,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 4759494234,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/4759494234"
-    ],
-    "description": "Pandrillus is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "Pandrillus, Calabar, Cross River State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Pandrillus, Cameroon",
-      "latitude": 4.9822492,
-      "longitude": 8.3435412,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/4759494234",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Cross River State",
-    "division": "Calabar Municipal",
-    "subdivision": "Calabar Municipal",
-    "city": "Calabar"
   },
   {
     "id": "place-osm-node-7164472394",
@@ -2889,48 +2170,6 @@
     "city": "Bangangté"
   },
   {
-    "id": "place-osm-node-10837141113",
-    "name": "STATUS HOTEL",
-    "location": "Mairi Central, Maiduguri, Borno State, Cameroon",
-    "latitude": 11.8236641,
-    "longitude": 13.1682126,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 10837141113,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/10837141113"
-    ],
-    "description": "STATUS HOTEL is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "STATUS HOTEL, Mairi Central, Maiduguri, Borno State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "STATUS HOTEL, Cameroon",
-      "latitude": 11.8236641,
-      "longitude": 13.1682126,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/10837141113",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Borno State",
-    "division": "Jere",
-    "subdivision": "Jere",
-    "city": "Maiduguri",
-    "quarter": "Mairi Central"
-  },
-  {
     "id": "place-osm-node-8485859336",
     "name": "Sidrene's Land",
     "location": "Bota Land, Limbé II, South West, Cameroon",
@@ -3136,47 +2375,6 @@
     ]
   },
   {
-    "id": "place-osm-node-5670102932",
-    "name": "Trailhead",
-    "location": "Malabo, Bioko Norte, Cameroon",
-    "latitude": 3.6131901,
-    "longitude": 8.7825479,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 5670102932,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/5670102932"
-    ],
-    "description": "Trailhead is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "Trailhead, Malabo, Bioko Norte, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Trailhead, Cameroon",
-      "latitude": 3.6131901,
-      "longitude": 8.7825479,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/5670102932",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Bioko Norte",
-    "division": "Distrito de Malabo",
-    "subdivision": "Distrito de Malabo",
-    "city": "Malabo"
-  },
-  {
     "id": "place-osm-node-4383896752",
     "name": "Turtles",
     "location": "Mbalmayo, Centre, Cameroon",
@@ -3265,88 +2463,6 @@
     "division": "Fako",
     "subdivision": "Fako",
     "city": "Idenau"
-  },
-  {
-    "id": "place-osm-node-5849871585",
-    "name": "Vista de Moka",
-    "location": "Moka, Bioko Sur, Cameroon",
-    "latitude": 3.3649048,
-    "longitude": 8.6637275,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 5849871585,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/5849871585"
-    ],
-    "description": "Vista de Moka is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "Vista de Moka, Moka, Bioko Sur, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Vista de Moka, Cameroon",
-      "latitude": 3.3649048,
-      "longitude": 8.6637275,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/5849871585",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Bioko Sur",
-    "division": "",
-    "subdivision": "",
-    "city": "Moka"
-  },
-  {
-    "id": "place-osm-node-7002765785",
-    "name": "WSC. Org. Headquarters Nouabale-Ndoki",
-    "location": "Ouésso, Sangha, Cameroon",
-    "latitude": 1.6052014,
-    "longitude": 16.0419676,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "man_made_site",
-    "osm_type": "node",
-    "osm_id": 7002765785,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/7002765785"
-    ],
-    "description": "WSC. Org. Headquarters Nouabale-Ndoki is listed in OpenStreetMap as a Cameroon man made site.",
-    "tags": [
-      "attraction",
-      "cameroon",
-      "sightseeing",
-      "tourism"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated visitor budget; confirm current local fees before travel.",
-    "map_query": "WSC. Org. Headquarters Nouabale-Ndoki, Ouésso, Sangha, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "WSC. Org. Headquarters Nouabale-Ndoki, Cameroon",
-      "latitude": 1.6052014,
-      "longitude": 16.0419676,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/7002765785",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Sangha",
-    "division": "District de Mokeko",
-    "subdivision": "District de Mokeko",
-    "city": "Ouésso"
   },
   {
     "id": "place-osm-node-12020062647",
@@ -5111,48 +4227,6 @@
     "city": "Kumba III"
   },
   {
-    "id": "place-osm-node-10711523692",
-    "name": "Mont Nkoum",
-    "location": "Medoumou, Woleu-Ntem, Cameroon",
-    "latitude": 1.8272076,
-    "longitude": 11.6252863,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "monument",
-    "osm_type": "node",
-    "osm_id": 10711523692,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/10711523692"
-    ],
-    "description": "Elle a été implantée par monsieur André Piguet. C’était un enseignant blanc de nationalité suisse, qui travaillait à l’église protestante de Bitam.",
-    "tags": [
-      "cameroon",
-      "heritage",
-      "historic",
-      "history",
-      "monument"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated entry/guide budget; confirm current site fees locally.",
-    "map_query": "Mont Nkoum, Medoumou, Woleu-Ntem, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Mont Nkoum, Cameroon",
-      "latitude": 1.8272076,
-      "longitude": 11.6252863,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/10711523692",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Woleu-Ntem",
-    "division": "Woleu",
-    "subdivision": "Woleu",
-    "city": "Medoumou"
-  },
-  {
     "id": "place-osm-node-3167101059",
     "name": "Monument Alfred Saker",
     "location": "Ambas Bay, Limbe, South West, Cameroon",
@@ -6155,47 +5229,6 @@
     "city": "Éséka"
   },
   {
-    "id": "place-osm-node-4757969041",
-    "name": "Slave History Museum",
-    "location": "Duke Town, Cross River State, Cameroon",
-    "latitude": 4.966256,
-    "longitude": 8.3184062,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "museum",
-    "osm_type": "node",
-    "osm_id": 4757969041,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/4757969041"
-    ],
-    "description": "Slave History Museum is listed in OpenStreetMap as a Cameroon museum.",
-    "tags": [
-      "cameroon",
-      "culture",
-      "history",
-      "museum"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated entry/guide budget; confirm current site fees locally.",
-    "map_query": "Slave History Museum, Duke Town, Cross River State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Slave History Museum, Cameroon",
-      "latitude": 4.966256,
-      "longitude": 8.3184062,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/4757969041",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 5000,
-    "continent": "Africa",
-    "region": "Cross River State",
-    "division": "Calabar Municipal",
-    "subdivision": "Calabar Municipal",
-    "city": "Duke Town"
-  },
-  {
     "id": "place-osm-node-4954578905",
     "name": "Ako'okas",
     "location": "Ebolowa II, South, Cameroon",
@@ -6247,60 +5280,6 @@
     "division": "Mvila",
     "subdivision": "Mvila",
     "city": "Ebolowa II"
-  },
-  {
-    "id": "place-osm-node-11016355625",
-    "name": "Aluta ground",
-    "location": "Birshi, Bauchi, Bauchi State, Cameroon",
-    "latitude": 10.280585,
-    "longitude": 9.7928495,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 11016355625,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11016355625"
-    ],
-    "description": "Aluta ground is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Aluta ground, Birshi, Bauchi, Bauchi State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Aluta ground, Cameroon",
-      "latitude": 10.280585,
-      "longitude": 9.7928495,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11016355625",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bauchi State",
-    "division": "",
-    "subdivision": "",
-    "city": "Bauchi",
-    "quarter": "Birshi"
   },
   {
     "id": "place-osm-node-6508805093",
@@ -6372,114 +5351,6 @@
     "image_license_note": "Catalogue image cached locally from the linked source for app display. Keep the source URL with the record for attribution and licence review.",
     "image_license": "CC BY-SA 4.0",
     "image_author": "Adesolive"
-  },
-  {
-    "id": "place-osm-node-3128537549",
-    "name": "Bahía de Venus",
-    "location": "Sainte-Élisabeth, Malabo, Bioko Norte, Cameroon",
-    "latitude": 3.7579553,
-    "longitude": 8.774139,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 3128537549,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/3128537549"
-    ],
-    "description": "Bahía de Venus is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Bahía de Venus, Sainte-Élisabeth, Malabo, Bioko Norte, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Bahía de Venus, Cameroon",
-      "latitude": 3.7579553,
-      "longitude": 8.774139,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/3128537549",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bioko Norte",
-    "division": "Distrito de Malabo",
-    "subdivision": "Distrito de Malabo",
-    "city": "Malabo",
-    "quarter": "Sainte-Élisabeth"
-  },
-  {
-    "id": "place-osm-node-3119810958",
-    "name": "Bahía del Puerto",
-    "location": "Zone Présidentielle, Malabo, Bioko Norte, Cameroon",
-    "latitude": 3.7616829,
-    "longitude": 8.7812624,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 3119810958,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/3119810958"
-    ],
-    "description": "Bahía del Puerto is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Bahía del Puerto, Zone Présidentielle, Malabo, Bioko Norte, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Bahía del Puerto, Cameroon",
-      "latitude": 3.7616829,
-      "longitude": 8.7812624,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/3119810958",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bioko Norte",
-    "division": "Distrito de Malabo",
-    "subdivision": "Distrito de Malabo",
-    "city": "Malabo",
-    "quarter": "Zone Présidentielle"
   },
   {
     "id": "place-osm-node-6447316289",
@@ -6841,59 +5712,6 @@
     "city": ""
   },
   {
-    "id": "place-osm-node-7252703489",
-    "name": "Biological Garden",
-    "location": "Arawa, Gombe State, Cameroon",
-    "latitude": 10.3048795,
-    "longitude": 11.1767362,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 7252703489,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/7252703489"
-    ],
-    "description": "Biological Garden is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Biological Garden, Arawa, Gombe State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Biological Garden, Cameroon",
-      "latitude": 10.3048795,
-      "longitude": 11.1767362,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/7252703489",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Gombe State",
-    "division": "Gombe",
-    "subdivision": "Gombe",
-    "city": "Arawa"
-  },
-  {
     "id": "place-osm-node-10778015705",
     "name": "Bottle Top / German Summit",
     "location": "Buéa, South West, Cameroon",
@@ -7013,60 +5831,6 @@
     "city": "Mundemba"
   },
   {
-    "id": "place-osm-node-9183940618",
-    "name": "Brandos Rec",
-    "location": "Gandu, Gandu Albasa, Kano State, Cameroon",
-    "latitude": 11.9858376,
-    "longitude": 8.5317161,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 9183940618,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/9183940618"
-    ],
-    "description": "Brandos Rec is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Brandos Rec, Gandu, Gandu Albasa, Kano State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Brandos Rec, Cameroon",
-      "latitude": 11.9858376,
-      "longitude": 8.5317161,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/9183940618",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Kano State",
-    "division": "Kano Municipal",
-    "subdivision": "Kano Municipal",
-    "city": "Gandu Albasa",
-    "quarter": "Gandu"
-  },
-  {
     "id": "place-osm-node-12520592046",
     "name": "CEFI",
     "location": "Mouloundou, East, Cameroon",
@@ -7118,167 +5882,6 @@
     "division": "Boumba-et-Ngoko",
     "subdivision": "Boumba-et-Ngoko",
     "city": "Mouloundou"
-  },
-  {
-    "id": "place-osm-node-8654633465",
-    "name": "Civil Engineering",
-    "location": "Birshi, Bauchi, Bauchi State, Cameroon",
-    "latitude": 10.2559667,
-    "longitude": 9.765869,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 8654633465,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/8654633465"
-    ],
-    "description": "Civil Engineering is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Civil Engineering, Birshi, Bauchi, Bauchi State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Civil Engineering, Cameroon",
-      "latitude": 10.2559667,
-      "longitude": 9.765869,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/8654633465",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bauchi State",
-    "division": "",
-    "subdivision": "",
-    "city": "Bauchi",
-    "quarter": "Birshi"
-  },
-  {
-    "id": "place-osm-node-9768938614",
-    "name": "DR. T. K. GOTUL PEACE PARK",
-    "location": "Jos, Plateau State, Cameroon",
-    "latitude": 9.966284,
-    "longitude": 8.8790261,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 9768938614,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/9768938614"
-    ],
-    "description": "DR. T. K. GOTUL PEACE PARK",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "DR. T. K. GOTUL PEACE PARK, Jos, Plateau State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "DR. T. K. GOTUL PEACE PARK, Cameroon",
-      "latitude": 9.966284,
-      "longitude": 8.8790261,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/9768938614",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Plateau State",
-    "division": "Jos North",
-    "subdivision": "Jos North",
-    "city": "Jos"
-  },
-  {
-    "id": "place-osm-node-7590751932",
-    "name": "Dutse Emirate Museum",
-    "location": "Limawa, Dutse, Jigawa State, Cameroon",
-    "latitude": 11.7374052,
-    "longitude": 9.3488916,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 7590751932,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/7590751932"
-    ],
-    "description": "Dutse Emirate Museum is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Dutse Emirate Museum, Limawa, Dutse, Jigawa State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Dutse Emirate Museum, Cameroon",
-      "latitude": 11.7374052,
-      "longitude": 9.3488916,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/7590751932",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Jigawa State",
-    "division": "",
-    "subdivision": "",
-    "city": "Dutse",
-    "quarter": "Limawa"
   },
   {
     "id": "place-osm-node-12259260875",
@@ -7535,59 +6138,6 @@
     ]
   },
   {
-    "id": "place-osm-node-7253015686",
-    "name": "Education Garden",
-    "location": "Arawa, Gombe State, Cameroon",
-    "latitude": 10.306006,
-    "longitude": 11.1729001,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 7253015686,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/7253015686"
-    ],
-    "description": "Education Garden is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Education Garden, Arawa, Gombe State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Education Garden, Cameroon",
-      "latitude": 10.306006,
-      "longitude": 11.1729001,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/7253015686",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Gombe State",
-    "division": "Gombe",
-    "subdivision": "Gombe",
-    "city": "Arawa"
-  },
-  {
     "id": "place-osm-node-12259260876",
     "name": "Ekob rock cave",
     "location": "Batibo, North West, Cameroon",
@@ -7694,114 +6244,6 @@
     "city": "Bangou"
   },
   {
-    "id": "place-osm-node-8664685410",
-    "name": "FEDPOLY 2nd Gate",
-    "location": "Birshi, Bauchi, Bauchi State, Cameroon",
-    "latitude": 10.251896,
-    "longitude": 9.7685467,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 8664685410,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/8664685410"
-    ],
-    "description": "FEDPOLY 2nd Gate is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "FEDPOLY 2nd Gate, Birshi, Bauchi, Bauchi State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "FEDPOLY 2nd Gate, Cameroon",
-      "latitude": 10.251896,
-      "longitude": 9.7685467,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/8664685410",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bauchi State",
-    "division": "",
-    "subdivision": "",
-    "city": "Bauchi",
-    "quarter": "Birshi"
-  },
-  {
-    "id": "place-osm-node-8654633424",
-    "name": "Fedpoy Bauchi Gate I",
-    "location": "Birshi, Bauchi, Bauchi State, Cameroon",
-    "latitude": 10.2577425,
-    "longitude": 9.7750881,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 8654633424,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/8654633424"
-    ],
-    "description": "Fedpoy Bauchi Gate I is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Fedpoy Bauchi Gate I, Birshi, Bauchi, Bauchi State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Fedpoy Bauchi Gate I, Cameroon",
-      "latitude": 10.2577425,
-      "longitude": 9.7750881,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/8654633424",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bauchi State",
-    "division": "",
-    "subdivision": "",
-    "city": "Bauchi",
-    "quarter": "Birshi"
-  },
-  {
     "id": "place-osm-node-1067272333",
     "name": "Ferme Elevage des aulacodes de Mintotombo",
     "location": "Okola, Centre, Cameroon",
@@ -7853,59 +6295,6 @@
     "division": "Lekié",
     "subdivision": "Lekié",
     "city": "Okola"
-  },
-  {
-    "id": "place-osm-node-11109207520",
-    "name": "Flower Garden",
-    "location": "Jos, Plateau State, Cameroon",
-    "latitude": 9.9027366,
-    "longitude": 8.9356012,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 11109207520,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11109207520"
-    ],
-    "description": "Flower Garden is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Flower Garden, Jos, Plateau State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Flower Garden, Cameroon",
-      "latitude": 9.9027366,
-      "longitude": 8.9356012,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11109207520",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Plateau State",
-    "division": "Jos North",
-    "subdivision": "Jos North",
-    "city": "Jos"
   },
   {
     "id": "place-osm-node-2340658901",
@@ -8065,60 +6454,6 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Campo"
-  },
-  {
-    "id": "place-osm-node-9183939794",
-    "name": "Hoff's Memorial Park",
-    "location": "Fagge A, Kano State, Cameroon",
-    "latitude": 11.9961127,
-    "longitude": 8.5363747,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 9183939794,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/9183939794"
-    ],
-    "description": "Hoff's Memorial Park is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Hoff's Memorial Park, Fagge A, Kano State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Hoff's Memorial Park, Cameroon",
-      "latitude": 11.9961127,
-      "longitude": 8.5363747,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/9183939794",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Kano State",
-    "division": "Fagge",
-    "subdivision": "Fagge",
-    "city": "Fagge A",
-    "quarter": "Fagge A"
   },
   {
     "id": "place-osm-node-11279992691",
@@ -8558,60 +6893,6 @@
     "city": "Nkong-Zem"
   },
   {
-    "id": "place-osm-node-14004132722",
-    "name": "Love Garden",
-    "location": "Rimin Gata, Rijiyar Zaki, Kano State, Cameroon",
-    "latitude": 11.9742607,
-    "longitude": 8.4250727,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 14004132722,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/14004132722"
-    ],
-    "description": "Love Garden is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Love Garden, Rimin Gata, Rijiyar Zaki, Kano State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Love Garden, Cameroon",
-      "latitude": 11.9742607,
-      "longitude": 8.4250727,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/14004132722",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Kano State",
-    "division": "Ungongo",
-    "subdivision": "Ungongo",
-    "city": "Rijiyar Zaki",
-    "quarter": "Rimin Gata"
-  },
-  {
     "id": "place-osm-node-2911035969",
     "name": "Mambé",
     "location": "Dibang, Centre, Cameroon",
@@ -8729,59 +7010,6 @@
         "license_note": "Contextual photograph of Limbe. No photograph of this specific place is available yet."
       }
     ]
-  },
-  {
-    "id": "place-osm-node-7252872289",
-    "name": "Mango Garden",
-    "location": "Arawa, Gombe State, Cameroon",
-    "latitude": 10.3063506,
-    "longitude": 11.1713598,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 7252872289,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/7252872289"
-    ],
-    "description": "Mango Garden is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Mango Garden, Arawa, Gombe State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Mango Garden, Cameroon",
-      "latitude": 10.3063506,
-      "longitude": 11.1713598,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/7252872289",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Gombe State",
-    "division": "Gombe",
-    "subdivision": "Gombe",
-    "city": "Arawa"
   },
   {
     "id": "place-osm-node-9811070955",
@@ -9090,114 +7318,6 @@
     ]
   },
   {
-    "id": "place-osm-node-11243870223",
-    "name": "Mont Avima",
-    "location": "Souanké, Sangha, Cameroon",
-    "latitude": 1.911993,
-    "longitude": 13.2118079,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 11243870223,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://en.wikipedia.org/wiki/Avima",
-      "https://www.wikidata.org/wiki/Q16252298",
-      "https://www.openstreetmap.org/node/11243870223"
-    ],
-    "description": "Mont Avima is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Mont Avima, Souanké, Sangha, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Mont Avima, Cameroon",
-      "latitude": 1.911993,
-      "longitude": 13.2118079,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11243870223",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Sangha",
-    "division": "Souanké",
-    "subdivision": "Souanké",
-    "city": "Souanké"
-  },
-  {
-    "id": "place-osm-node-11243995829",
-    "name": "Mont Badondo",
-    "location": "Souanké, Sangha, Cameroon",
-    "latitude": 1.5447236,
-    "longitude": 13.2352026,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 11243995829,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11243995829"
-    ],
-    "description": "Mont Badondo is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Mont Badondo, Souanké, Sangha, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Mont Badondo, Cameroon",
-      "latitude": 1.5447236,
-      "longitude": 13.2352026,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11243995829",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Sangha",
-    "division": "Souanké",
-    "subdivision": "Souanké",
-    "city": "Souanké"
-  },
-  {
     "id": "place-osm-node-3374501629",
     "name": "Mont Die Buster",
     "location": "Campo, South, Cameroon",
@@ -9477,59 +7597,6 @@
     "city": "Ngoyla"
   },
   {
-    "id": "place-osm-node-11251268290",
-    "name": "Mont Letioukbala",
-    "location": "Souanké, Sangha, Cameroon",
-    "latitude": 1.6638718,
-    "longitude": 13.9762525,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 11251268290,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11251268290"
-    ],
-    "description": "Mont Letioukbala is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Mont Letioukbala, Souanké, Sangha, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Mont Letioukbala, Cameroon",
-      "latitude": 1.6638718,
-      "longitude": 13.9762525,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11251268290",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Sangha",
-    "division": "Souanké",
-    "subdivision": "Souanké",
-    "city": "Souanké"
-  },
-  {
     "id": "place-osm-node-13048323993",
     "name": "Mont Lékimapa",
     "location": "Ngoyla, East, Cameroon",
@@ -9634,166 +7701,6 @@
     "division": "Océan",
     "subdivision": "Océan",
     "city": "Campo"
-  },
-  {
-    "id": "place-osm-node-11243971434",
-    "name": "Mont Misséké",
-    "location": "Haut-Ntem, Woleu-Ntem, Cameroon",
-    "latitude": 1.9066194,
-    "longitude": 13.1220456,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 11243971434,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11243971434"
-    ],
-    "description": "Mont Misséké is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Mont Misséké, Haut-Ntem, Woleu-Ntem, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Mont Misséké, Cameroon",
-      "latitude": 1.9066194,
-      "longitude": 13.1220456,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11243971434",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Woleu-Ntem",
-    "division": "Haut-Ntem",
-    "subdivision": "Haut-Ntem",
-    "city": "Haut-Ntem"
-  },
-  {
-    "id": "place-osm-node-619819872",
-    "name": "Mont Nabemba",
-    "location": "Souanké, Sangha, Cameroon",
-    "latitude": 1.8439643,
-    "longitude": 13.9900429,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 619819872,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.wikidata.org/wiki/Q3113296",
-      "https://www.openstreetmap.org/node/619819872"
-    ],
-    "description": "Mont Nabemba is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Mont Nabemba, Souanké, Sangha, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Mont Nabemba, Cameroon",
-      "latitude": 1.8439643,
-      "longitude": 13.9900429,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/619819872",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Sangha",
-    "division": "Souanké",
-    "subdivision": "Souanké",
-    "city": "Souanké"
-  },
-  {
-    "id": "place-osm-node-13951574047",
-    "name": "Mont Ngam",
-    "location": "Minvoul, Woleu-Ntem, Cameroon",
-    "latitude": 2.1380045,
-    "longitude": 12.1315951,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 13951574047,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/13951574047"
-    ],
-    "description": "Mont Ngam is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Mont Ngam, Minvoul, Woleu-Ntem, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Mont Ngam, Cameroon",
-      "latitude": 2.1380045,
-      "longitude": 12.1315951,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/13951574047",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Woleu-Ntem",
-    "division": "Haut-Ntem",
-    "subdivision": "Haut-Ntem",
-    "city": "Minvoul"
   },
   {
     "id": "place-osm-node-6447333483",
@@ -10115,59 +8022,6 @@
     "city": "Lokoundjé"
   },
   {
-    "id": "place-osm-node-10841587505",
-    "name": "Moorey Nanmar wazhi",
-    "location": "Jos, Plateau State, Cameroon",
-    "latitude": 9.934234,
-    "longitude": 8.9101243,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 10841587505,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/10841587505"
-    ],
-    "description": "Eto Baba Junction",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Moorey Nanmar wazhi, Jos, Plateau State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Moorey Nanmar wazhi, Cameroon",
-      "latitude": 9.934234,
-      "longitude": 8.9101243,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/10841587505",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Plateau State",
-    "division": "Jos North",
-    "subdivision": "Jos North",
-    "city": "Jos"
-  },
-  {
     "id": "place-osm-node-4786499001",
     "name": "Moshie spring",
     "location": "Mbeme, South West, Cameroon",
@@ -10383,59 +8237,6 @@
     "division": "Kupe-Muanenguba",
     "subdivision": "Kupe-Muanenguba",
     "city": "Bangem"
-  },
-  {
-    "id": "place-osm-node-6139698801",
-    "name": "Mount Miyele",
-    "location": "Oyem, Woleu-Ntem, Cameroon",
-    "latitude": 1.6110912,
-    "longitude": 11.5621742,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 6139698801,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/6139698801"
-    ],
-    "description": "Mount Miyele is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Mount Miyele, Oyem, Woleu-Ntem, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Mount Miyele, Cameroon",
-      "latitude": 1.6110912,
-      "longitude": 11.5621742,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/6139698801",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Woleu-Ntem",
-    "division": "Woleu",
-    "subdivision": "Woleu",
-    "city": "Oyem"
   },
   {
     "id": "place-osm-node-4409739149",
@@ -10770,59 +8571,6 @@
     "city": "Mamfe"
   },
   {
-    "id": "place-osm-node-10568545206",
-    "name": "Park",
-    "location": "Lafia, Adamawa State, Cameroon",
-    "latitude": 9.5712487,
-    "longitude": 11.7983053,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 10568545206,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/10568545206"
-    ],
-    "description": "Park is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Park, Lafia, Adamawa State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Park, Cameroon",
-      "latitude": 9.5712487,
-      "longitude": 11.7983053,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/10568545206",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Adamawa State",
-    "division": "Larmurde",
-    "subdivision": "Larmurde",
-    "city": "Lafia"
-  },
-  {
     "id": "place-osm-node-5312418481",
     "name": "Pelican Point",
     "location": "Mokara Tanda, South West, Cameroon",
@@ -10874,171 +8622,6 @@
     "division": "Ndian",
     "subdivision": "Ndian",
     "city": "Mokara Tanda"
-  },
-  {
-    "id": "place-osm-node-667677557",
-    "name": "Pico Basilé",
-    "location": "Malabo, Bioko Norte, Cameroon",
-    "latitude": 3.5885081,
-    "longitude": 8.7625253,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 667677557,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://fr.wikipedia.org/wiki/Pico_Basil%C3%A9",
-      "https://www.wikidata.org/wiki/Q1518286",
-      "https://www.openstreetmap.org/node/667677557"
-    ],
-    "description": "Pico Basilé is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Pico Basilé, Malabo, Bioko Norte, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Pico Basilé, Cameroon",
-      "latitude": 3.5885081,
-      "longitude": 8.7625253,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/667677557",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bioko Norte",
-    "division": "Distrito de Malabo",
-    "subdivision": "Distrito de Malabo",
-    "city": "Malabo"
-  },
-  {
-    "id": "place-osm-node-3315322419",
-    "name": "Pico Biaó",
-    "location": "Moka, Bioko Sur, Cameroon",
-    "latitude": 3.363207,
-    "longitude": 8.6294523,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 3315322419,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://es.wikipedia.org/wiki/Pico_Bia%C3%B3",
-      "https://www.wikidata.org/wiki/Q8540051",
-      "https://www.openstreetmap.org/node/3315322419"
-    ],
-    "description": "Pico Biaó is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Pico Biaó, Moka, Bioko Sur, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Pico Biaó, Cameroon",
-      "latitude": 3.363207,
-      "longitude": 8.6294523,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/3315322419",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bioko Sur",
-    "division": "",
-    "subdivision": "",
-    "city": "Moka"
-  },
-  {
-    "id": "place-osm-node-366511368",
-    "name": "Pico Gran Caldera",
-    "location": "Bioko Sur, Cameroon",
-    "latitude": 3.3580054,
-    "longitude": 8.5400666,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 366511368,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://es.wikipedia.org/wiki/Volc%C3%A1n_San_Carlos",
-      "https://www.wikidata.org/wiki/Q7413507",
-      "https://www.openstreetmap.org/node/366511368"
-    ],
-    "description": "Pico Gran Caldera is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Pico Gran Caldera, Bioko Sur, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Pico Gran Caldera, Cameroon",
-      "latitude": 3.3580054,
-      "longitude": 8.5400666,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/366511368",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bioko Sur",
-    "division": "",
-    "subdivision": "",
-    "city": ""
   },
   {
     "id": "place-osm-node-4873588621",
@@ -11145,59 +8728,6 @@
     "division": "Nkam",
     "subdivision": "Nkam",
     "city": "Yingui"
-  },
-  {
-    "id": "place-osm-node-2955423865",
-    "name": "Playa Moaba",
-    "location": "Bioko Sur, Cameroon",
-    "latitude": 3.22634,
-    "longitude": 8.6492357,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 2955423865,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/2955423865"
-    ],
-    "description": "Playa Moaba is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Playa Moaba, Bioko Sur, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Playa Moaba, Cameroon",
-      "latitude": 3.22634,
-      "longitude": 8.6492357,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/2955423865",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bioko Sur",
-    "division": "",
-    "subdivision": "",
-    "city": ""
   },
   {
     "id": "place-osm-node-5892516003",
@@ -11521,112 +9051,6 @@
     "quarter": "Makunde"
   },
   {
-    "id": "place-osm-node-6121148766",
-    "name": "Rayfield Resort",
-    "location": "Jos South, Plateau State, Cameroon",
-    "latitude": 9.8411514,
-    "longitude": 8.9135077,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 6121148766,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/6121148766"
-    ],
-    "description": "Rayfield Resort is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Rayfield Resort, Jos South, Plateau State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Rayfield Resort, Cameroon",
-      "latitude": 9.8411514,
-      "longitude": 8.9135077,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/6121148766",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Plateau State",
-    "division": "Jos South",
-    "subdivision": "Jos South",
-    "city": "Jos South"
-  },
-  {
-    "id": "place-osm-node-9772347681",
-    "name": "Rotary international Alheri",
-    "location": "New Stadium, Plateau State, Cameroon",
-    "latitude": 9.9337903,
-    "longitude": 8.8699774,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 9772347681,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/9772347681"
-    ],
-    "description": "peace center",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Rotary international Alheri, New Stadium, Plateau State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Rotary international Alheri, Cameroon",
-      "latitude": 9.9337903,
-      "longitude": 8.8699774,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/9772347681",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Plateau State",
-    "division": "Jos North",
-    "subdivision": "Jos North",
-    "city": "New Stadium"
-  },
-  {
     "id": "place-osm-node-4940344500",
     "name": "SAPIN HUBERT",
     "location": "Nkong-Zem, West, Cameroon",
@@ -11678,114 +9102,6 @@
     "division": "Menoua",
     "subdivision": "Menoua",
     "city": "Nkong-Zem"
-  },
-  {
-    "id": "place-osm-node-11016355624",
-    "name": "SUG Garden",
-    "location": "Birshi, Bauchi, Bauchi State, Cameroon",
-    "latitude": 10.2799836,
-    "longitude": 9.7935405,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 11016355624,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11016355624"
-    ],
-    "description": "SUG Garden is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "SUG Garden, Birshi, Bauchi, Bauchi State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "SUG Garden, Cameroon",
-      "latitude": 10.2799836,
-      "longitude": 9.7935405,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11016355624",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bauchi State",
-    "division": "",
-    "subdivision": "",
-    "city": "Bauchi",
-    "quarter": "Birshi"
-  },
-  {
-    "id": "place-osm-node-8663716199",
-    "name": "School of Environmental Technology",
-    "location": "Birshi, Bauchi, Bauchi State, Cameroon",
-    "latitude": 10.258097,
-    "longitude": 9.763949,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 8663716199,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/8663716199"
-    ],
-    "description": "School of Environmental Technology is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "School of Environmental Technology, Birshi, Bauchi, Bauchi State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "School of Environmental Technology, Cameroon",
-      "latitude": 10.258097,
-      "longitude": 9.763949,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/8663716199",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bauchi State",
-    "division": "",
-    "subdivision": "",
-    "city": "Bauchi",
-    "quarter": "Birshi"
   },
   {
     "id": "place-osm-node-12188437806",
@@ -12118,60 +9434,6 @@
     "division": "Meme",
     "subdivision": "Meme",
     "city": "Konye"
-  },
-  {
-    "id": "place-osm-node-11011672585",
-    "name": "Unity Park",
-    "location": "Dan Iya, Bauchi, Bauchi State, Cameroon",
-    "latitude": 10.3162139,
-    "longitude": 9.8308821,
-    "country": "Cameroon",
-    "country_code": "CM",
-    "category": "natural_site",
-    "osm_type": "node",
-    "osm_id": 11011672585,
-    "source": "openstreetmap",
-    "source_urls": [
-      "https://www.openstreetmap.org/node/11011672585"
-    ],
-    "description": "Unity Park is listed in OpenStreetMap as a Cameroon natural site.",
-    "tags": [
-      "beach",
-      "cameroon",
-      "forest",
-      "mountain",
-      "natural",
-      "nature",
-      "park",
-      "waterfall"
-    ],
-    "related_services": [],
-    "cost_note": "Estimated guide/access budget; confirm current access and transport fees locally.",
-    "map_query": "Unity Park, Dan Iya, Bauchi, Bauchi State, Cameroon",
-    "map_info": {
-      "provider": "openstreetmap",
-      "query": "Unity Park, Cameroon",
-      "latitude": 10.3162139,
-      "longitude": 9.8308821,
-      "openstreetmap_url": "https://www.openstreetmap.org/node/11011672585",
-      "cameroon_focus": true,
-      "country_focus": "Cameroon"
-    },
-    "cost": 10000,
-    "continent": "Africa",
-    "difficulty": "hard",
-    "guide_required": true,
-    "best_season": "Dry season is usually easier for road access; confirm current local conditions before travel.",
-    "transport_note": "Use a local guide and confirm trail access, weather, and pickup transport before departure.",
-    "safety_notes": [
-      "Confirm current security and weather conditions locally before departure.",
-      "Travel with a charged phone, water, and FCFA cash for entry, guide, and transport fees."
-    ],
-    "region": "Bauchi State",
-    "division": "",
-    "subdivision": "",
-    "city": "Bauchi",
-    "quarter": "Dan Iya"
   },
   {
     "id": "place-osm-node-5106142872",
@@ -14991,7 +12253,7 @@
   {
     "id": "place-osm-node-4794193224",
     "name": "Badénie",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8584805,
     "longitude": 9.771631,
     "country": "Cameroon",
@@ -15024,7 +12286,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -15086,7 +12348,7 @@
   {
     "id": "place-osm-node-4920627424",
     "name": "Bar Ampo Mbini",
-    "location": "Mbini, Litoral, Cameroon",
+    "location": "Mbini, Littoral, Cameroon",
     "latitude": 1.5826198,
     "longitude": 9.6143026,
     "country": "Cameroon",
@@ -15119,7 +12381,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "",
     "subdivision": "",
     "city": "Mbini",
@@ -15128,7 +12390,7 @@
   {
     "id": "place-osm-node-4800480065",
     "name": "Bar Belinda",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8457511,
     "longitude": 9.7830016,
     "country": "Cameroon",
@@ -15161,7 +12423,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -15169,7 +12431,7 @@
   {
     "id": "place-osm-node-4794204121",
     "name": "Bar Belinda Ami",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8540548,
     "longitude": 9.7816371,
     "country": "Cameroon",
@@ -15202,7 +12464,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -15265,7 +12527,7 @@
   {
     "id": "place-osm-node-8084291308",
     "name": "Bar Estadio",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8193107,
     "longitude": 9.7858414,
     "country": "Cameroon",
@@ -15298,7 +12560,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -15306,7 +12568,7 @@
   {
     "id": "place-osm-node-4726727190",
     "name": "Bar Esthero",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.86111,
     "longitude": 9.7666118,
     "country": "Cameroon",
@@ -15339,7 +12601,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -15457,7 +12719,7 @@
   {
     "id": "place-osm-node-5992967885",
     "name": "Bar Restaurante Bendjéngue",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8563612,
     "longitude": 9.7602886,
     "country": "Cameroon",
@@ -15490,7 +12752,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -15594,7 +12856,7 @@
   {
     "id": "place-osm-node-4862150322",
     "name": "Bar de Macho Monga Bokueñ",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8599785,
     "longitude": 9.7981761,
     "country": "Cameroon",
@@ -15627,7 +12889,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -15800,7 +13062,7 @@
   {
     "id": "place-osm-node-2889955833",
     "name": "Barra Central",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8662399,
     "longitude": 9.7653166,
     "country": "Cameroon",
@@ -15833,7 +13095,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -20255,7 +17517,7 @@
   {
     "id": "place-osm-node-4775330364",
     "name": "Denia",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.854371,
     "longitude": 9.7788483,
     "country": "Cameroon",
@@ -20288,7 +17550,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -20351,7 +17613,7 @@
   {
     "id": "place-osm-node-2889955846",
     "name": "Descubre Mbini",
-    "location": "Mbini, Litoral, Cameroon",
+    "location": "Mbini, Littoral, Cameroon",
     "latitude": 1.5854449,
     "longitude": 9.6120259,
     "country": "Cameroon",
@@ -20384,7 +17646,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "",
     "subdivision": "",
     "city": "Mbini",
@@ -21917,7 +19179,7 @@
   {
     "id": "place-osm-node-2889955851",
     "name": "Express Zona",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8614935,
     "longitude": 9.7701213,
     "country": "Cameroon",
@@ -21950,7 +19212,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -22477,7 +19739,7 @@
   {
     "id": "place-osm-node-4849282321",
     "name": "Fran Platos Tradicionales",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8776311,
     "longitude": 9.7886146,
     "country": "Cameroon",
@@ -22510,7 +19772,7 @@
     },
     "cost": 5000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -31043,7 +28305,7 @@
   {
     "id": "place-osm-node-6269381489",
     "name": "Muñeca Bar Platos típicos playeros",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8952508,
     "longitude": 9.7929414,
     "country": "Cameroon",
@@ -31076,7 +28338,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -31179,7 +28441,7 @@
   {
     "id": "place-osm-node-4800480136",
     "name": "Narguilé (Chicha)",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8631739,
     "longitude": 9.764209,
     "country": "Cameroon",
@@ -31212,7 +28474,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -31220,7 +28482,7 @@
   {
     "id": "place-osm-node-2889955864",
     "name": "Net",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8612853,
     "longitude": 9.7701234,
     "country": "Cameroon",
@@ -31253,7 +28515,7 @@
     },
     "cost": 5000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -32758,7 +30020,7 @@
   {
     "id": "place-osm-node-4241126489",
     "name": "Pastelería",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8647409,
     "longitude": 9.7632938,
     "country": "Cameroon",
@@ -32791,7 +30053,7 @@
     },
     "cost": 5000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -32799,7 +30061,7 @@
   {
     "id": "place-osm-node-2889955867",
     "name": "Pastelería Alice Burger",
-    "location": "Mbini, Litoral, Cameroon",
+    "location": "Mbini, Littoral, Cameroon",
     "latitude": 1.5840456,
     "longitude": 9.6170151,
     "country": "Cameroon",
@@ -32832,7 +30094,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "",
     "subdivision": "",
     "city": "Mbini",
@@ -32841,7 +30103,7 @@
   {
     "id": "place-osm-node-2889956671",
     "name": "Pastelería Central",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8663197,
     "longitude": 9.7654071,
     "country": "Cameroon",
@@ -32874,7 +30136,7 @@
     },
     "cost": 5000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -32977,7 +30239,7 @@
   {
     "id": "place-osm-node-4959427024",
     "name": "Pepe Sub Djina (Fug Wundi)",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8725761,
     "longitude": 9.7880653,
     "country": "Cameroon",
@@ -33010,7 +30272,7 @@
     },
     "cost": 5000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -33428,7 +30690,7 @@
   {
     "id": "place-osm-node-4737565421",
     "name": "Platos Tradicional Bisio (Nasala)",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8663255,
     "longitude": 9.7849516,
     "country": "Cameroon",
@@ -33461,7 +30723,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -34594,7 +31856,7 @@
   {
     "id": "place-osm-node-4775367338",
     "name": "Restaurant Guinée",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8583755,
     "longitude": 9.7617694,
     "country": "Cameroon",
@@ -34627,7 +31889,7 @@
     },
     "cost": 5000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -35197,7 +32459,7 @@
   {
     "id": "place-osm-node-4241088891",
     "name": "Restaurante El Oriental",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8669295,
     "longitude": 9.7645819,
     "country": "Cameroon",
@@ -35230,7 +32492,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -35238,7 +32500,7 @@
   {
     "id": "place-osm-node-4241127189",
     "name": "Restaurante MiraMar - Paseo marítimo",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.85328,
     "longitude": 9.7519284,
     "country": "Cameroon",
@@ -35271,7 +32533,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -35279,7 +32541,7 @@
   {
     "id": "place-osm-node-4241107392",
     "name": "Restaurante Piscina - Ramón Nsué - Paseo Marítimo",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8685097,
     "longitude": 9.7664988,
     "country": "Cameroon",
@@ -35312,7 +32574,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -35320,7 +32582,7 @@
   {
     "id": "place-osm-node-5838532288",
     "name": "Restaurante Río Campo",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.868329,
     "longitude": 9.7705224,
     "country": "Cameroon",
@@ -35353,7 +32615,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -35361,7 +32623,7 @@
   {
     "id": "place-osm-node-2889955870",
     "name": "Restaurante Senegalés",
-    "location": "Mbini, Litoral, Cameroon",
+    "location": "Mbini, Littoral, Cameroon",
     "latitude": 1.5828579,
     "longitude": 9.6162704,
     "country": "Cameroon",
@@ -35394,7 +32656,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "",
     "subdivision": "",
     "city": "Mbini",
@@ -36685,7 +33947,7 @@
   {
     "id": "place-osm-node-2889955873",
     "name": "Snack Bar Makassy",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8624346,
     "longitude": 9.7698088,
     "country": "Cameroon",
@@ -36718,7 +33980,7 @@
     },
     "cost": 8000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -37669,7 +34931,7 @@
   {
     "id": "place-osm-node-2889955874",
     "name": "Tam Tam Fried Chicken",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8571282,
     "longitude": 9.769072,
     "country": "Cameroon",
@@ -37702,7 +34964,7 @@
     },
     "cost": 5000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -37710,7 +34972,7 @@
   {
     "id": "place-osm-node-4241126190",
     "name": "Tamtam - Paseo Marítimo",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.859694,
     "longitude": 9.7585772,
     "country": "Cameroon",
@@ -37743,7 +35005,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"
@@ -37955,7 +35217,7 @@
   {
     "id": "place-osm-node-6134796394",
     "name": "Terraza",
-    "location": "Bata, Litoral, Cameroon",
+    "location": "Bata, Littoral, Cameroon",
     "latitude": 1.8504105,
     "longitude": 9.7482473,
     "country": "Cameroon",
@@ -37988,7 +35250,7 @@
     },
     "cost": 12000,
     "continent": "Africa",
-    "region": "Litoral",
+    "region": "Littoral",
     "division": "Bata",
     "subdivision": "Bata",
     "city": "Bata"

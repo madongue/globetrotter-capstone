@@ -3792,8 +3792,15 @@ function App() {
               </div>
               <div className="stat-card">
                 <Users size={20} strokeWidth={2} aria-hidden="true" />
-                <span className="stat-value">{groups.length}</span>
-                <span className="stat-label">Community groups</span>
+                {/* The groups this traveller is in, not every group that
+                    exists. `groups` holds the whole directory, and counting
+                    it here put "7 Community groups" beside "1 itinerary" and
+                    "0 saved places" — two of their own figures and one of
+                    everybody's. */}
+                <span className="stat-value">
+                  {groups.filter((group) => (group.members || []).includes(profile?.username)).length}
+                </span>
+                <span className="stat-label">Groups joined</span>
               </div>
               <div className="stat-card">
                 <ClipboardCheck size={20} strokeWidth={2} aria-hidden="true" />

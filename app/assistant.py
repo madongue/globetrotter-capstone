@@ -6,7 +6,7 @@ trips, and how to use GlobeTrotter.
 
 Where the answers come from
 ---------------------------
-Every answer is grounded in data the application already holds — the 901-place
+Every answer is grounded in data the application already holds — the 845-place
 catalogue, the hotel list, and the asking user's own itineraries — or in a short
 set of written explanations of how the app works. Nothing is invented, and every
 factual answer carries the records it was built from, so a claim on screen can

@@ -201,3 +201,82 @@ def test_replying_still_works_and_counts(client):
     listing = client.get(f"/api/groups/{gid}/discussions", headers=auth(token)).get_json()
     discussions = listing if isinstance(listing, list) else listing.get("discussions", [])
     assert len(discussions[0]["posts"]) == 2
+
+
+# ------------------------------------------------------------- leaving a group
+#
+# Join existed on its own since the group feature was written, so a traveller
+# could join a group and then had no way out of it.
+
+
+def test_a_member_can_leave(client):
+    owner = register_and_login(client, "alice")
+    gid = make_group(client, owner)
+    joiner = register_and_login(client, "bob")
+
+    client.post(f"/api/groups/{gid}/join", headers=auth(joiner))
+    before = client.get(f"/api/groups/{gid}", headers=auth(joiner)).get_json()
+    before = before.get("group") or before
+    assert "bob" in before["members"]
+
+    response = client.post(f"/api/groups/{gid}/leave", headers=auth(joiner))
+    assert response.status_code == 200
+    after = response.get_json()["group"]
+    assert "bob" not in after["members"]
+
+
+def test_leaving_twice_is_not_an_error(client):
+    """The second call should report the state, not fail."""
+    owner = register_and_login(client, "alice")
+    gid = make_group(client, owner)
+    joiner = register_and_login(client, "bob")
+    client.post(f"/api/groups/{gid}/join", headers=auth(joiner))
+
+    client.post(f"/api/groups/{gid}/leave", headers=auth(joiner))
+    second = client.post(f"/api/groups/{gid}/leave", headers=auth(joiner))
+    assert second.status_code == 200
+    assert second.get_json()["message"] == "not a member"
+
+
+def test_the_creator_cannot_leave_their_own_group(client):
+    """A group with no owner has nobody who can answer for it."""
+    owner = register_and_login(client, "alice")
+    gid = make_group(client, owner)
+    response = client.post(f"/api/groups/{gid}/leave", headers=auth(owner))
+    assert response.status_code == 409
+
+
+def test_leaving_keeps_the_discussions_already_posted(client):
+    """Removing them would tear holes in conversations others are reading."""
+    owner = register_and_login(client, "alice")
+    gid = make_group(client, owner)
+    joiner = register_and_login(client, "bob")
+    client.post(f"/api/groups/{gid}/join", headers=auth(joiner))
+    make_discussion(client, joiner, gid, title="Bob's question")
+
+    client.post(f"/api/groups/{gid}/leave", headers=auth(joiner))
+
+    listing = client.get(f"/api/groups/{gid}/discussions", headers=auth(owner)).get_json()
+    discussions = listing if isinstance(listing, list) else listing.get("discussions", [])
+    assert any(d["title"] == "Bob's question" for d in discussions)
+
+
+def test_leaving_withdraws_the_right_to_post(client):
+    owner = register_and_login(client, "alice")
+    gid = make_group(client, owner)
+    joiner = register_and_login(client, "bob")
+    client.post(f"/api/groups/{gid}/join", headers=auth(joiner))
+    client.post(f"/api/groups/{gid}/leave", headers=auth(joiner))
+
+    assert make_discussion(client, joiner, gid).status_code == 403
+
+
+def test_leaving_requires_signing_in(client):
+    owner = register_and_login(client, "alice")
+    gid = make_group(client, owner)
+    assert client.post(f"/api/groups/{gid}/leave").status_code == 401
+
+
+def test_leaving_an_unknown_group_is_a_404(client):
+    token = register_and_login(client)
+    assert client.post("/api/groups/nope/leave", headers=auth(token)).status_code == 404

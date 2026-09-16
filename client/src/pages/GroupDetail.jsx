@@ -96,6 +96,16 @@ function GroupDetailInner() {
   const joined = members.includes(username);
   const cover = groupCover(group || {});
 
+  const leave = async () => {
+    try {
+      await api.leaveGroup(id, { token });
+      await load();
+      toast.push(`Left ${group.name}.`, 'success');
+    } catch (err) {
+      toast.push(err.message, 'error');
+    }
+  };
+
   const join = async () => {
     try {
       await api.joinGroup(id, { token });
@@ -222,7 +232,16 @@ function GroupDetailInner() {
         </div>
 
         <div className="gd__actions">
-          {joined ? <Badge tone="success">Joined</Badge> : <Button size="sm" onClick={join}>Join group</Button>}
+          {joined ? (
+            <>
+              <Badge tone="success">Joined</Badge>
+              {/* The creator cannot leave — the server refuses, so the control
+                  is not offered either. */}
+              {group.created_by !== username && (
+                <Button size="sm" variant="ghost" onClick={leave}>Leave group</Button>
+              )}
+            </>
+          ) : <Button size="sm" onClick={join}>Join group</Button>}
         </div>
       </section>
 

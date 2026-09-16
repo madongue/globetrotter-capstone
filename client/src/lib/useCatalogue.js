@@ -4,7 +4,7 @@ import * as api from './api';
 /**
  * Loading and searching the Cameroon catalogue.
  *
- * The catalogue is 901 places, 373 hotels and 9 activities, and the places
+ * The catalogue is 845 places, 373 hotels and 9 activities, and the places
  * alone are 1.3 MB and take two seconds to serve. Waiting for all of it before
  * showing anything would make Explore feel broken, so it arrives in two
  * stages:
@@ -61,7 +61,7 @@ export function categoryLabel(item) {
 /**
  * True when the image shows the surrounding city rather than this place.
  *
- * The catalogue flags these, and only 46 of 901 places carry a photograph of
+ * The catalogue flags these, and only 46 of 845 places carry a photograph of
  * their own. Labelling the stand-ins is the honest option: a generic city shot
  * presented as a photograph of one specific waterfall is a difference the
  * traveller discovers on arrival.

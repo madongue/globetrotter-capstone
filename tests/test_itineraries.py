@@ -1158,3 +1158,97 @@ def test_discovery_prefers_places_that_have_a_photograph(client, monkeypatch):
     )
     places = response.get_json()["suggestions"]["places"]
     assert places[0].get("image_url"), "the leading suggestion should carry an image"
+
+
+# ---------------------------------------------------------------------------
+# The two generators
+#
+# /itineraries/quick and /itineraries/generate look alike and are not. One
+# commits, the other previews. These pin the difference so neither is removed
+# as a duplicate of the other.
+# ---------------------------------------------------------------------------
+
+
+def test_quick_saves_the_trip_it_builds(client):
+    token = register_and_login(client)
+    before = len(client.get("/api/itineraries", headers={"Authorization": f"Bearer {token}"}).get_json())
+
+    response = client.post(
+        "/api/itineraries/quick",
+        data=json.dumps({"location": "Kribi", "days": 2}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 201
+    assert response.get_json()["itinerary"]["id"]
+
+    after = client.get("/api/itineraries", headers={"Authorization": f"Bearer {token}"}).get_json()
+    assert len(after) == before + 1
+
+
+def test_generate_returns_a_draft_and_saves_nothing(client):
+    """The preview half: a traveller can look before committing."""
+    token = register_and_login(client)
+    before = len(client.get("/api/itineraries", headers={"Authorization": f"Bearer {token}"}).get_json())
+
+    response = client.post(
+        "/api/itineraries/generate",
+        data=json.dumps({"location": "Kribi", "duration_days": 2}),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    body = response.get_json()
+    assert "generated_itinerary" in body
+    assert "suggestions" in body
+    # No id, because nothing was stored.
+    assert "id" not in body["generated_itinerary"]
+
+    after = client.get("/api/itineraries", headers={"Authorization": f"Bearer {token}"}).get_json()
+    assert len(after) == before, "generate must not create a trip"
+
+
+def test_the_two_generators_have_different_shapes(client):
+    """If these ever converge, one of them has quietly changed."""
+    token = register_and_login(client)
+    headers = {"Authorization": f"Bearer {token}"}
+
+    quick = client.post(
+        "/api/itineraries/quick",
+        data=json.dumps({"location": "Kribi", "days": 2}),
+        content_type="application/json", headers=headers,
+    ).get_json()
+    draft = client.post(
+        "/api/itineraries/generate",
+        data=json.dumps({"location": "Kribi", "duration_days": 2}),
+        content_type="application/json", headers=headers,
+    ).get_json()
+
+    assert set(quick) >= {"itinerary", "matched"}
+    assert set(draft) >= {"generated_itinerary", "suggestions"}
+
+
+def test_generate_accepts_the_geography_quick_does_not(client):
+    """The finer filters are the reason generate exists."""
+    token = register_and_login(client)
+    response = client.post(
+        "/api/itineraries/generate",
+        data=json.dumps({
+            "location": "Kribi", "duration_days": 2,
+            "region": "South", "division": "Ocean", "city": "Kribi",
+        }),
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    assert response.get_json()["generated_itinerary"]["region"] == "South"
+
+
+def test_both_generators_still_require_a_location(client):
+    token = register_and_login(client)
+    headers = {"Authorization": f"Bearer {token}"}
+    for path, body in (("/api/itineraries/quick", {"days": 2}),
+                       ("/api/itineraries/generate", {"duration_days": 2})):
+        response = client.post(path, data=json.dumps(body),
+                               content_type="application/json", headers=headers)
+        assert response.status_code == 400, path

@@ -191,6 +191,9 @@ export const createGroup = ({ name, description }, { token } = {}) =>
 export const joinGroup = (groupId, { token } = {}) =>
   request(`/groups/${encodeURIComponent(groupId)}/join`, { method: 'POST', body: {}, token });
 
+export const leaveGroup = (groupId, { token } = {}) =>
+  request(`/groups/${encodeURIComponent(groupId)}/leave`, { method: 'POST', body: {}, token });
+
 export const listDiscussions = (groupId, { token, signal } = {}) =>
   request(`/groups/${encodeURIComponent(groupId)}/discussions`, { token, signal });
 

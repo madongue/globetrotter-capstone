@@ -126,7 +126,7 @@ function HomeInner() {
 
         <div className="gt-page hero__inner">
           <p className="hero__eyebrow">
-            <Compass size={15} aria-hidden="true" /> 901 places across all 10 regions
+            <Compass size={15} aria-hidden="true" /> 845 places across all 10 regions
           </p>
 
           <h1 className="hero__title">Explore Cameroon,<br />Your&nbsp;Way</h1>

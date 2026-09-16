@@ -136,6 +136,16 @@ export function useCommunity(token, username) {
     }
   }, [token, load]);
 
+  const leave = useCallback(async (groupId) => {
+    try {
+      await api.leaveGroup(groupId, { token });
+      await load();
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, reason: err.message };
+    }
+  }, [token, load]);
+
   /** Post a discussion, joining the group first if that is what is missing. */
   const post = useCallback(async (groupId, fields) => {
     try {
@@ -173,7 +183,7 @@ export function useCommunity(token, username) {
 
   return {
     groups, discussions, loading, error,
-    filter, isMember, join, post, toggleLike,
+    filter, isMember, join, leave, post, toggleLike,
     reload: load,
   };
 }

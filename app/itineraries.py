@@ -1034,6 +1034,10 @@ def _balanced_stop_selection(places: list, limit: int) -> list:
 def create_quick_itinerary():
     """Build a complete, ready-to-edit itinerary from a destination alone.
 
+    The committing half of the pair described on ``generate_itinerary``: this
+    one saves what it builds and returns a trip that exists, where
+    ``/itineraries/generate`` returns an unsaved draft with finer filters.
+
     The full create form asks for a hotel, activities, places, dates and a
     budget before it will produce anything, which is far more than someone
     needs to answer to get started. This route takes a destination and an
@@ -1614,6 +1618,45 @@ def join_group(group_id: str):
     members.append(username)
     update_group(group)
     return jsonify({"message": "joined group", "group": group}), 200
+
+
+@itineraries_bp.route("/groups/<group_id>/leave", methods=["POST"])
+def leave_group(group_id: str):
+    """Leave a community group.
+
+    The counterpart to join, which has existed on its own since the group
+    feature was written — a traveller could join a group and then had no way
+    out of it.
+
+    What is deliberately left behind: the discussions and replies already
+    posted. Removing them would tear holes in conversations other people are
+    still reading, and a question that helped someone is useful whether or not
+    its author is still in the group. Leaving withdraws membership, which is
+    what governs posting and replying, and nothing else.
+
+    The creator of a group cannot leave it, because a group with no owner has
+    nobody who can answer for it.
+    """
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    group = get_group_by_id(group_id)
+    if not group:
+        return jsonify({"error": "group not found"}), 404
+
+    members = group.setdefault("members", [])
+    if username not in members:
+        return jsonify({"message": "not a member", "group": group}), 200
+
+    if group.get("created_by") == username:
+        return jsonify({
+            "error": "the traveller who created a group cannot leave it",
+        }), 409
+
+    members.remove(username)
+    update_group(group)
+    return jsonify({"message": "left group", "group": group}), 200
 
 
 @itineraries_bp.route("/groups/<group_id>/discussions", methods=["GET"])
@@ -3177,15 +3220,39 @@ def itinerary_feedback(itinerary_id: str):
 @itineraries_bp.route("/itineraries/generate", methods=["POST"])
 @itineraries_bp.route("/trips/generate", methods=["POST"])
 def generate_itinerary():
-    """Generate a draft itinerary from local catalogue/resource data."""
+    """Generate a draft itinerary without saving it.
+
+    The other half of a deliberate pair; the two are not duplicates:
+
+        POST /itineraries/generate  (this one)
+            Returns ``{generated_itinerary, suggestions}`` and writes nothing.
+            Takes the full Cameroon geography — region, division, subdivision,
+            city, quarter — plus an explicit budget, so a traveller can narrow
+            a search and look at the result before committing to it.
+
+        POST /itineraries/quick
+            Takes a destination and a number of days, builds a plan, and
+            **saves** it, returning ``{itinerary, matched}``. One step from an
+            empty screen to a trip that exists.
+
+    Preview against commit, fine-grained against fast. Both rank candidates
+    through the same ``_quick_plan_rank`` and ``_match_resources``, so they
+    agree about what is worth seeing; they differ only in how much the
+    traveller is asked beforehand and whether the result persists.
+    """
     username = get_current_user(request)
     if not username:
         return jsonify({"error": "authentication required"}), 401
 
     data = request.get_json(silent=True) or {}
-    location = ensure_cameroon_location(data.get("location", "").strip())
-    if not location:
+    # Validated before normalising: ensure_cameroon_location("") returns
+    # "Cameroon", so checking the normalised value accepted a blank field and
+    # generated a draft for the whole country. The same fault was fixed in
+    # /itineraries/quick; comparing the two is what surfaced it here.
+    requested_location = str(data.get("location", "")).strip()
+    if not requested_location:
         return jsonify({"error": "location is required"}), 400
+    location = ensure_cameroon_location(requested_location)
 
     budget = _parse_budget(data, 500)
     duration_days = int(data.get("duration_days", 3) or 3)
