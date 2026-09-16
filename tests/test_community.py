@@ -45,6 +45,22 @@ def auth(token):
     return {"Authorization": f"Bearer {token}"}
 
 
+def _set_live(group):
+    """Put a group live, as an administrator would.
+
+    Creating a group now queues it for review unless an administrator made it
+    (see tests/test_group_moderation.py). These tests are about what happens
+    *inside* a group, so being live is their precondition rather than the thing
+    under test -- set directly, so they do not need an administrator account
+    each just to get started.
+    """
+    from app.models import get_group_by_id, update_group
+    stored = get_group_by_id(group["id"] if isinstance(group, dict) else group)
+    stored["status"] = "approved"
+    update_group(stored)
+    return stored
+
+
 def make_group(client, token, name="Kribi Travelers"):
     response = client.post(
         "/api/groups",
@@ -53,7 +69,9 @@ def make_group(client, token, name="Kribi Travelers"):
         headers=auth(token),
     )
     payload = response.get_json()
-    return (payload.get("group") or payload)["id"]
+    group_id = (payload.get("group") or payload)["id"]
+    _set_live(group_id)
+    return group_id
 
 
 def make_discussion(client, token, group_id, **extra):

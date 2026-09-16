@@ -477,3 +477,23 @@ export const askAssistant = (message) =>
 
 export const assistantStarters = ({ signal } = {}) =>
   request('/assistant/starters', { token: getToken(), signal });
+
+/* ------------------------------------------------- group moderation */
+//
+// A traveller's group waits for review; an administrator's is live at once.
+// The state lives on the group, so these are status changes rather than a
+// separate request being turned into a group.
+
+/** Groups waiting for review. Refused for anyone but an administrator. */
+export const listPendingGroups = ({ token, signal } = {}) =>
+  request('/groups?status=pending', { token, signal });
+
+export const approveGroup = (groupId, note, { token } = {}) =>
+  request(`/groups/${encodeURIComponent(groupId)}/approve`, {
+    method: 'POST', body: { note: note || '' }, token,
+  });
+
+export const rejectGroup = (groupId, note, { token } = {}) =>
+  request(`/groups/${encodeURIComponent(groupId)}/reject`, {
+    method: 'POST', body: { note: note || '' }, token,
+  });

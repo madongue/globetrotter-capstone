@@ -404,3 +404,14 @@
 
 /* The group's chat tab: the call panel sits above the transcript. */
 .gd__talk { display: flex; flex-direction: column; gap: var(--gt-space-4); }
+
+/* Starting a group, from the community sidebar. */
+.newgroup { display: flex; flex-direction: column; gap: var(--gt-space-3); }
+.newgroup .gt-caption { margin: 0; }
+
+/* Why a group of the traveller's own is not joinable yet. */
+.group__note {
+  margin: 0;
+  padding: 0 var(--gt-space-4) var(--gt-space-4);
+  line-height: var(--gt-leading-snug);
+}

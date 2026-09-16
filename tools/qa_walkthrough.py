@@ -247,9 +247,33 @@ def main():
         section("Traveller — community")
         goto(a, "/community")
         check("community page renders", a.locator("h1").count() > 0)
-        made = api(a, "POST", "/groups", {"name": "QA crew", "description": "qa"})
-        gid = ((made["body"] or {}).get("group") or made["body"] or {}).get("id")
-        check("group created", bool(gid), str(made["status"]))
+
+        # Starting a group, through the form rather than the API.
+        check("the community offers a way to start a group",
+              a.locator(".newgroup").count() == 1)
+        a.locator(".newgroup input").first.fill("QA crew")
+        a.locator(".newgroup textarea").first.fill("a group made by the walkthrough")
+        a.locator(".newgroup button[type=submit]").click()
+        a.wait_for_timeout(3000)
+
+        mine = [g for g in (api(a, "GET", "/groups")["body"] or []) if g["name"] == "QA crew"]
+        check("the group reaches the server", len(mine) == 1, str(len(mine)))
+        check("a traveller's group waits for approval",
+              bool(mine) and mine[0]["status"] == "pending",
+              mine[0]["status"] if mine else "none")
+        check("the traveller is shown that it is waiting",
+              "Waiting for approval" in a.locator(".groups").inner_text(),
+              a.locator(".groups").inner_text()[:80].replace(chr(10), " "))
+        gid = mine[0]["id"] if mine else None
+        check("group created", bool(gid))
+
+        # Another traveller must not see it yet.
+        ectx = new_ctx(browser, TOK["eric"])
+        e = ectx.new_page()
+        goto(e, "/community", 1200)
+        others = [g for g in (api(e, "GET", "/groups")["body"] or []) if g["name"] == "QA crew"]
+        check("a group under review is hidden from other travellers", not others)
+        ectx.close()
         if gid:
             goto(a, f"/community/{gid}")
             check("group page has tabs", a.locator(".gd__tab").count() >= 3)
@@ -357,12 +381,30 @@ def main():
             approve.click(); b.wait_for_timeout(3000)
             check("approving clears it from the queue", b.locator(".review").count() == rows - 1)
 
+        # the group queue
+        gq = b.locator(".review", has_text="QA crew")
+        check("the group queue lists what travellers asked for", gq.count() == 1)
+        check("the analytics count groups awaiting approval",
+              "Groups awaiting approval" in b.locator("main").inner_text())
+        if gq.count():
+            gq.locator("button", has_text="Approve").first.click()
+            b.wait_for_timeout(3000)
+            check("approving clears the group from the queue",
+                  b.locator(".review", has_text="QA crew").count() == 0)
+            live = [g for g in (api(b, "GET", "/groups")["body"] or []) if g["name"] == "QA crew"]
+            check("the approved group is live", bool(live) and live[0]["status"] == "approved",
+                  live[0]["status"] if live else "gone")
+
         # promote
         promote = b.locator("tr", has_text="eric").locator("button", has_text="Make admin")
         if promote.count():
             promote.click(); b.wait_for_timeout(2500)
             check("an account can be promoted",
                   "Administrator" in b.locator("tr", has_text="eric").inner_text())
+
+        # Now that it is live, someone else can join.
+        joined = api(b, "POST", f"/groups/{gid}/join", {}) if gid else {"status": 0}
+        check("an approved group can be joined", joined["status"] == 200, str(joined["status"]))
 
         # admin assistant
         b.locator(".dock__open").click(); b.wait_for_timeout(500)

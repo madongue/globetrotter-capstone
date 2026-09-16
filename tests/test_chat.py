@@ -15,6 +15,23 @@ import pytest
 from app import create_app
 
 
+def _set_live(group):
+    """Put a group live, as an administrator would.
+
+    Creating a group now queues it for review unless an administrator made it
+    (see tests/test_group_moderation.py). These tests are about what happens
+    *inside* a group, so being live is their precondition rather than the thing
+    under test -- set directly, so they do not need an administrator account
+    each just to get started.
+    """
+    from app.models import get_group_by_id, update_group
+    stored = get_group_by_id(group["id"] if isinstance(group, dict) else group)
+    stored["status"] = "approved"
+    update_group(stored)
+    return stored
+
+
+
 def _phone_for(username: str) -> str:
     digest = hashlib.md5(username.encode()).hexdigest()
     return "+237" + str(int(digest[:8], 16) % 900000000 + 100000000)
@@ -53,7 +70,9 @@ def make_group(client, token, name="Kribi Travelers"):
         content_type="application/json",
         headers=auth(token),
     ).get_json()
-    return (payload.get("group") or payload)["id"]
+    group_id = (payload.get("group") or payload)["id"]
+    _set_live(group_id)
+    return group_id
 
 
 def say(client, token, room, text):

@@ -1617,14 +1617,84 @@ def copy_itinerary(itinerary_id: str):
 DISCUSSION_TYPES = ("question", "recommendation", "experience")
 
 
+# ---------------------------------------------------------------------------
+# Group moderation
+#
+# A group is a space other travellers are invited into, so who may open one is
+# a moderation question rather than a technical one. An administrator's group
+# is live immediately; anyone else's waits for review.
+#
+# The state lives on the group itself rather than in a parallel "requests"
+# collection. A pending group already holds everything a reviewer needs to
+# judge it -- its name, its description, who asked -- and approving it is then
+# a status change rather than a second object being turned into a first.
+#
+# Groups created before this existed carry no status at all. They are treated
+# as approved, because they were: refusing them retroactively would empty the
+# community of everything already in it.
+# ---------------------------------------------------------------------------
+
+GROUP_STATUSES = ("pending", "approved", "rejected")
+
+
+def _group_status(group: dict) -> str:
+    return group.get("status") or "approved"
+
+
+def _is_admin(username: str | None) -> bool:
+    if not username:
+        return False
+    user = get_user_by_username(username)
+    return bool(user) and user.get("role") == "admin"
+
+
+def _can_see_group(group: dict, username: str | None) -> bool:
+    """Everyone sees a live group; only its creator and admins see one under review."""
+    if _group_status(group) == "approved":
+        return True
+    return bool(username) and (
+        group.get("created_by") == username or _is_admin(username)
+    )
+
+
+def _require_group_admin(request_obj):
+    username = get_current_user(request_obj)
+    if not username:
+        return None, (jsonify({"error": "authentication required"}), 401)
+    if not _is_admin(username):
+        return None, (jsonify({"error": "admin access required"}), 403)
+    return username, None
+
+
 @itineraries_bp.route("/groups", methods=["GET"])
 def list_groups():
-    """List all community groups."""
+    """List the community groups this traveller may see.
+
+    Live groups for everyone, plus their own while those are under review, so
+    someone who has just asked for a group can see that they asked. An
+    administrator sees every group, which is how the review queue is built.
+
+    ``?status=pending`` narrows it to what is waiting -- refused to anyone but
+    an administrator, since it would otherwise list other people's unreviewed
+    groups.
+    """
     username = get_current_user(request)
     if not username:
         return jsonify({"error": "authentication required"}), 401
 
-    return jsonify(get_all_groups()), 200
+    wanted = (request.args.get("status") or "").strip().lower()
+    groups = [g for g in get_all_groups() if _can_see_group(g, username)]
+
+    if wanted:
+        if wanted not in GROUP_STATUSES:
+            return jsonify({"error": f"status must be one of {', '.join(GROUP_STATUSES)}"}), 400
+        if not _is_admin(username):
+            return jsonify({"error": "admin access required"}), 403
+        groups = [g for g in get_all_groups() if _group_status(g) == wanted]
+
+    # Stated explicitly on every group, so a client never has to infer "no
+    # status means approved" for itself.
+    return jsonify([{**g, "status": _group_status(g)} for g in groups]), 200
 
 
 @itineraries_bp.route("/groups", methods=["POST"])
@@ -1639,17 +1709,36 @@ def create_group():
     if not name:
         return jsonify({"error": "group name is required"}), 400
 
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    by_admin = _is_admin(username)
+
     group = {
         "id": str(uuid.uuid4()),
         "name": name,
         "description": data.get("description", ""),
         "topics": data.get("topics", []),
         "created_by": username,
+        # The creator is a member from the start either way, so an approved
+        # group is immediately usable and a pending one is visible to the
+        # person waiting on it.
         "members": [username],
         "discussions": [],
-        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "created_at": now,
+        "status": "approved" if by_admin else "pending",
+        "reviewed_by": username if by_admin else None,
+        "reviewed_at": now if by_admin else None,
+        "review_note": "",
     }
     save_group(group)
+
+    if not by_admin:
+        _notify(
+            username,
+            "group_submitted",
+            f"Your group \"{name}\" was sent for review.",
+            {"group_id": group["id"]},
+        )
+
     return jsonify(group), 201
 
 
@@ -1661,10 +1750,77 @@ def get_group(group_id: str):
         return jsonify({"error": "authentication required"}), 401
 
     group = get_group_by_id(group_id)
-    if not group:
+    # 404 rather than 403 for a group under review: the same rule the trip
+    # sharing model uses, so an id cannot be probed to learn that it exists.
+    if not group or not _can_see_group(group, username):
         return jsonify({"error": "group not found"}), 404
 
-    return jsonify(group), 200
+    return jsonify({**group, "status": _group_status(group)}), 200
+
+
+@itineraries_bp.route("/groups/<group_id>/approve", methods=["POST"])
+def approve_group(group_id: str):
+    """Let a group that was asked for go live."""
+    admin, error = _require_group_admin(request)
+    if error:
+        return error
+
+    group = get_group_by_id(group_id)
+    if not group:
+        return jsonify({"error": "group not found"}), 404
+    if _group_status(group) == "approved":
+        return jsonify({"message": "already approved", "group": group}), 200
+
+    data = request.get_json(silent=True) or {}
+    group["status"] = "approved"
+    group["reviewed_by"] = admin
+    group["reviewed_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    group["review_note"] = str(data.get("note", "")).strip()[:300]
+    update_group(group)
+
+    _audit(admin, "group_approved", group_id, {"name": group.get("name")})
+    _notify(
+        group.get("created_by"),
+        "group_approved",
+        f"Your group \"{group.get('name')}\" is now live.",
+        {"group_id": group_id},
+    )
+    return jsonify({"message": "group approved", "group": group}), 200
+
+
+@itineraries_bp.route("/groups/<group_id>/reject", methods=["POST"])
+def reject_group(group_id: str):
+    """Refuse a group, with a reason its creator can read.
+
+    The group is kept rather than deleted: someone who asked for one is owed
+    the outcome, and a record that simply vanished would read as a bug.
+    """
+    admin, error = _require_group_admin(request)
+    if error:
+        return error
+
+    group = get_group_by_id(group_id)
+    if not group:
+        return jsonify({"error": "group not found"}), 404
+    if _group_status(group) == "approved":
+        return jsonify({"error": "that group is already live"}), 409
+
+    data = request.get_json(silent=True) or {}
+    group["status"] = "rejected"
+    group["reviewed_by"] = admin
+    group["reviewed_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    group["review_note"] = str(data.get("note", "")).strip()[:300]
+    update_group(group)
+
+    _audit(admin, "group_rejected", group_id, {"name": group.get("name")})
+    _notify(
+        group.get("created_by"),
+        "group_rejected",
+        f"Your group \"{group.get('name')}\" was not approved."
+        + (f" {group['review_note']}" if group["review_note"] else ""),
+        {"group_id": group_id},
+    )
+    return jsonify({"message": "group rejected", "group": group}), 200
 
 
 @itineraries_bp.route("/groups/<group_id>/join", methods=["POST"])
@@ -1675,8 +1831,12 @@ def join_group(group_id: str):
         return jsonify({"error": "authentication required"}), 401
 
     group = get_group_by_id(group_id)
-    if not group:
+    if not group or not _can_see_group(group, username):
         return jsonify({"error": "group not found"}), 404
+
+    if _group_status(group) != "approved":
+        # The creator is already inside; nobody else joins until it is live.
+        return jsonify({"error": "this group is still waiting for review"}), 409
 
     members = group.setdefault("members", [])
     if username in members:

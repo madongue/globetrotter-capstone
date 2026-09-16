@@ -181,9 +181,28 @@ export function useCommunity(token, username) {
     }
   }, [token, username]);
 
+  /**
+   * Ask for a new group.
+   *
+   * An administrator's is live at once; anyone else's waits for review, and
+   * the server says which in the record it returns. Reloading rather than
+   * splicing it in locally means the list shows exactly what the server will
+   * show on the next visit, including the status.
+   */
+  const createGroup = useCallback(async ({ name, description }) => {
+    if (!token) return { ok: false, reason: 'auth' };
+    try {
+      const group = await api.createGroup({ name, description }, { token });
+      await load();
+      return { ok: true, group };
+    } catch (err) {
+      return { ok: false, reason: err.message };
+    }
+  }, [token, load]);
+
   return {
     groups, discussions, loading, error,
-    filter, isMember, join, leave, post, toggleLike,
+    filter, isMember, join, leave, post, toggleLike, createGroup,
     reload: load,
   };
 }

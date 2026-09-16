@@ -20,6 +20,23 @@ from app import create_app
 from app.models import get_call_by_id, update_call
 
 
+def _set_live(group):
+    """Put a group live, as an administrator would.
+
+    Creating a group now queues it for review unless an administrator made it
+    (see tests/test_group_moderation.py). These tests are about what happens
+    *inside* a group, so being live is their precondition rather than the thing
+    under test -- set directly, so they do not need an administrator account
+    each just to get started.
+    """
+    from app.models import get_group_by_id, update_group
+    stored = get_group_by_id(group["id"] if isinstance(group, dict) else group)
+    stored["status"] = "approved"
+    update_group(stored)
+    return stored
+
+
+
 def _phone_for(username: str) -> str:
     digest = hashlib.md5(username.encode()).hexdigest()
     return "+237" + str(int(digest[:8], 16) % 900000000 + 100000000)
@@ -56,6 +73,7 @@ def room(client):
                           json={"name": "Kribi crew", "description": "weekend"})
     group = created.get_json()
     group = group.get("group", group)
+    _set_live(group)
     client.post(f"/api/groups/{group['id']}/join", headers=_auth(bob))
 
     return {

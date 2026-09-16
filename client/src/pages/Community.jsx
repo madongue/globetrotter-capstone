@@ -153,6 +153,10 @@ function CommunityInner() {
     }
   };
 
+  const [groupName, setGroupName] = useState('');
+  const [groupAbout, setGroupAbout] = useState('');
+  const [creating, setCreating] = useState(false);
+
   const onLike = async (discussion) => {
     const result = await community.toggleLike(discussion.groupId, discussion.id);
     if (!result.ok) toast.push(result.reason, 'error');
@@ -166,6 +170,23 @@ function CommunityInner() {
   const onLeave = async (group) => {
     const result = await community.leave(group.id);
     toast.push(result.ok ? `Left ${group.name}.` : result.reason, result.ok ? 'success' : 'error');
+  };
+
+  const onCreateGroup = async (event) => {
+    event.preventDefault();
+    const name = groupName.trim();
+    if (!name) return;
+    setCreating(true);
+    const result = await community.createGroup({ name, description: groupAbout.trim() });
+    setCreating(false);
+
+    if (!result.ok) { toast.push(result.reason || 'Could not create that group.', 'error'); return; }
+    setGroupName('');
+    setGroupAbout('');
+    // The server decides which of these it is, from the role on the account.
+    toast.push(result.group?.status === 'approved'
+      ? `${name} is live.`
+      : `${name} was sent for approval.`);
   };
 
   if (!isAuthenticated) {
@@ -310,6 +331,42 @@ function CommunityInner() {
 
           {/* ---------------------------------------------------- sidebar */}
           <aside className="community__side">
+            {/* Starting a group had no way in at all: the endpoint and its
+                client helper both existed, and nothing on any screen called
+                them. */}
+            <section>
+              <SectionHead
+                title="Start a group"
+                subtitle="A space for people travelling the same way."
+              />
+              <form className="newgroup" onSubmit={onCreateGroup}>
+                <Field label="Group name">
+                  <Input
+                    value={groupName}
+                    onChange={(e) => setGroupName(e.target.value)}
+                    placeholder="Kribi beach weekenders"
+                    maxLength={60}
+                  />
+                </Field>
+                <Field label="What is it for?" hint="Optional">
+                  <Textarea
+                    rows={2}
+                    value={groupAbout}
+                    onChange={(e) => setGroupAbout(e.target.value)}
+                    placeholder="Weekend trips down the coast, mostly by road."
+                    maxLength={300}
+                  />
+                </Field>
+                <Button type="submit" size="sm" disabled={creating || !groupName.trim()}>
+                  <Plus size={15} aria-hidden="true" />
+                  {creating ? 'Sending…' : 'Create group'}
+                </Button>
+                <p className="gt-caption gt-muted">
+                  An administrator reads it before it opens to everyone.
+                </p>
+              </form>
+            </section>
+
             <section>
               <SectionHead title="Popular groups" />
               <div className="groups">
@@ -336,10 +393,23 @@ function CommunityInner() {
                         <span className="gt-caption gt-muted">
                           <Users size={12} aria-hidden="true" /> {members} member{members === 1 ? '' : 's'}
                         </span>
-                        {joined
+                        {/* A group waiting for review is only ever listed to
+                            the person who asked for it, so saying so here is
+                            the whole explanation they need for why nobody has
+                            joined yet. Rejected groups stay visible to them
+                            too -- an asked-for thing that simply vanished
+                            reads as a bug. */}
+                        {group.status === 'pending' ? (
+                          <Badge tone="warning">Waiting for approval</Badge>
+                        ) : group.status === 'rejected' ? (
+                          <Badge tone="error">Not approved</Badge>
+                        ) : joined
                           ? <Button size="sm" variant="ghost" onClick={() => onLeave(group)}>Leave</Button>
                           : <Button size="sm" variant="secondary" onClick={() => onJoin(group)}>Join</Button>}
                       </div>
+                      {group.status === 'rejected' && group.review_note && (
+                        <p className="group__note gt-caption gt-muted">{group.review_note}</p>
+                      )}
                     </Card>
                   );
                 })}

@@ -232,3 +232,29 @@ def test_every_runnable_action_carries_what_it_needs(client, traveller):
         if action.get("run"):
             assert action["run"]["location"], action
             assert isinstance(action["run"]["days"], int) and action["run"]["days"] >= 1
+
+
+# ------------------------------------------------- the group review queue
+
+def test_an_admin_is_told_which_groups_are_waiting(client, admin, traveller):
+    client.post("/api/groups", headers=_auth(traveller),
+                json={"name": "Kribi weekenders", "description": "coast trips"})
+
+    reply = _ask(client, "what is waiting for review?", admin)["reply"]
+    assert "Kribi weekenders" in reply
+    assert "amina" in reply
+
+
+def test_a_traveller_is_not_told_about_the_group_queue(client, admin, traveller):
+    client.post("/api/groups", headers=_auth(traveller),
+                json={"name": "Secret weekenders", "description": ""})
+
+    payload = _ask(client, "what is waiting for review?", traveller)
+    assert "Secret weekenders" not in payload["reply"]
+    assert all(a["path"] != "/admin" for a in payload["actions"])
+
+
+def test_the_platform_numbers_count_groups_awaiting_approval(client, admin, traveller):
+    client.post("/api/groups", headers=_auth(traveller), json={"name": "Waiting crew"})
+    reply = _ask(client, "show me the platform numbers", admin)["reply"]
+    assert "1 group waiting for approval" in reply

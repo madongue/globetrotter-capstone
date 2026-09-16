@@ -582,10 +582,11 @@ ACTIONS = (
      "keywords": ("profile", "account", "interests", "sign out", "my account")},
 
     # Administrators only
-    {"id": "admin-queue", "label": "Review pending suggestions", "path": "/admin",
+    {"id": "admin-queue", "label": "Review what is waiting", "path": "/admin",
      "roles": ("admin",),
      "keywords": ("pending", "review", "approve", "reject", "queue", "request",
-                  "requests", "suggestion", "moderate", "waiting")},
+                  "requests", "suggestion", "moderate", "waiting", "group",
+                  "groups")},
     {"id": "admin-stats", "label": "Open platform analytics", "path": "/admin",
      "roles": ("admin",),
      "keywords": ("how many", "statistic", "stats", "analytics", "total",
@@ -702,6 +703,10 @@ def _answer_admin_overview(message, role):
             len(get_all_places()), len(get_all_hotels()), len(get_all_activities())),
         "- {} suggestion{} waiting for review".format(
             len(pending), "" if len(pending) == 1 else "s"),
+        "- {} group{} waiting for approval".format(
+            len([g for g in get_all_groups() if (g.get("status") or "approved") == "pending"]),
+            "" if len([g for g in get_all_groups()
+                       if (g.get("status") or "approved") == "pending"]) == 1 else "s"),
     ]
     return ("\n".join(lines), ["admin/stats"],
             ["What is waiting for review?", "Who are the administrators?"])
@@ -715,13 +720,30 @@ def _answer_pending_queue(message, role):
         return None
 
     pending = [r for r in get_all_place_requests() if r.get("status") == "pending"]
-    if not pending:
+    waiting_groups = [g for g in get_all_groups() if (g.get("status") or "approved") == "pending"]
+
+    if not pending and not waiting_groups:
         return ("Nothing is waiting for review - the queue is empty.",
-                ["place_requests"],
+                ["place_requests", "groups"],
                 ["How many users do I have?", "Who are the administrators?"])
 
-    lines = ["{} suggestion{} waiting for you:".format(
-        len(pending), "" if len(pending) == 1 else "s")]
+    lines = []
+    if waiting_groups:
+        lines.append("{} group{} waiting for approval:".format(
+            len(waiting_groups), "" if len(waiting_groups) == 1 else "s"))
+        for group in waiting_groups[:MAX_RESULTS]:
+            lines.append("- {}, asked for by {}".format(
+                group.get("name"), group.get("created_by")))
+        if pending:
+            lines.append("")
+
+    if not pending:
+        lines.append("Open the admin dashboard to approve or reject them.")
+        return ("\n".join(lines), ["groups"],
+                ["How many users do I have?", "Show me the platform numbers"])
+
+    lines.append("{} suggestion{} waiting for you:".format(
+        len(pending), "" if len(pending) == 1 else "s"))
     for item in pending[:MAX_RESULTS]:
         kind = "correction to" if item.get("mode") == "edit" else "new"
         name = item.get("target_name") or item.get("name")

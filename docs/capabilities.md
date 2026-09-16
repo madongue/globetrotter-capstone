@@ -98,7 +98,7 @@ They cannot save anything, plan anything, or see other travellers.
 
 ### The community
 
-- Create a group, browse groups, **join** and **leave**
+- **Ask for a group**, browse groups, **join** and **leave**. A traveller's group is reviewed before it opens to everyone; they see it waiting, and are told when it goes live or is refused
 - Post a **discussion** in a group, reply to one, and like a reply
 - **Live chat** in a group, delivered on a two-second cursor
 - **Audio and video calls** with another member of a group *(see the limits in §6)*
@@ -138,7 +138,7 @@ Twelve live figures, grouped by the question they answer:
 | People | registered accounts · active today · administrators · community groups |
 | Planning | itineraries created · shared publicly · photos posted |
 | Catalogue | places · hotels · activities |
-| Review queue | pending suggestions, out of the total ever submitted |
+| Review queue | pending suggestions, out of the total ever submitted · groups awaiting approval, out of the community total |
 
 All counted from live data. Nothing is sampled or estimated.
 
@@ -149,6 +149,13 @@ All counted from live data. Nothing is sampled or estimated.
 - **Approve** — a new suggestion joins the catalogue; a correction is applied to the existing entry, and only the fields that actually changed
 - **Reject**, with a note the submitter can read
 - A decision is final: the same request cannot be approved twice
+
+### Groups
+
+- Create a group, which is **live immediately** — no review for an administrator's own
+- See every group travellers have asked for, with who asked and what for
+- **Approve** one, which opens it to everyone and notifies the person who asked
+- **Reject** one with a reason they can read. The group is kept, not deleted: someone who asked for one is owed the outcome
 
 ### Accounts and roles
 
@@ -170,7 +177,7 @@ Asking the same questions returns administrator answers, read from the same
 collections the dashboard reads:
 
 - *"How many users do I have?"* → the account and administrator counts
-- *"What is waiting for review?"* → the actual pending items, named, with who sent each
+- *"What is waiting for review?"* → the actual pending suggestions **and groups**, named, with who sent each
 - *"Who are the administrators?"* → the list
 
 And it offers administrator actions — the review queue, the analytics, the

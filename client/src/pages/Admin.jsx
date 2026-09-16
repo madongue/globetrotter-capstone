@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, Search, Shield, ShieldOff, X } from 'lucide-react';
+import { Check, Search, Shield, ShieldOff, Users, X } from 'lucide-react';
 import {
   Badge, Button, EmptyState, SearchInput, SectionHead, Skeleton, ToastProvider, useToast,
 } from '../components/ui';
@@ -67,6 +67,7 @@ function AdminInner() {
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [denied, setDenied] = useState(false);
   const [query, setQuery] = useState('');
@@ -79,14 +80,16 @@ function AdminInner() {
       setMe(profile);
       if (profile?.role !== 'admin') { setDenied(true); setLoading(false); return; }
 
-      const [statsPayload, userList, requestList] = await Promise.all([
+      const [statsPayload, userList, requestList, groupList] = await Promise.all([
         api.adminStats({ token }),
         api.adminUsers({ token }),
         api.listPlaceRequests({ token }),
+        api.listPendingGroups({ token }).catch(() => []),
       ]);
       setStats(statsPayload);
       setUsers(Array.isArray(userList) ? userList : []);
       setRequests(Array.isArray(requestList) ? requestList : []);
+      setGroups(Array.isArray(groupList) ? groupList : []);
     } catch {
       setDenied(true);
     } finally {
@@ -155,6 +158,22 @@ function AdminInner() {
       // stale; re-reading is cheaper than modelling which one moved.
       api.adminStats({ token }).then(setStats).catch(() => {});
       toast.push(approve ? `${submission.name} added to the catalogue.` : 'Suggestion rejected.');
+    } catch (error) {
+      toast.push(error.message || 'Could not record the decision.', 'error');
+    } finally {
+      setBusyOn('');
+    }
+  };
+
+  const decideGroup = async (group, approve) => {
+    setBusyOn(group.id);
+    try {
+      if (approve) await api.approveGroup(group.id, '', { token });
+      else await api.rejectGroup(group.id, '', { token });
+      setGroups((current) => current.filter((item) => item.id !== group.id));
+      // An approved group joins the community count above.
+      api.adminStats({ token }).then(setStats).catch(() => {});
+      toast.push(approve ? `${group.name} is now live.` : `${group.name} was not approved.`);
     } catch (error) {
       toast.push(error.message || 'Could not record the decision.', 'error');
     } finally {
@@ -247,6 +266,13 @@ function AdminInner() {
                       of {stats?.total_place_requests ?? 0} submitted in total
                     </span>
                   </div>
+                  <div className={`metric${groups.length > 0 ? ' metric--attention' : ''}`}>
+                    <span className="metric__value">{loading ? '—' : groups.length}</span>
+                    <span className="metric__label">Groups awaiting approval</span>
+                    <span className="metric__note">
+                      of {stats?.total_groups ?? 0} in the community
+                    </span>
+                  </div>
                 </div>
               </div>
             </>
@@ -325,6 +351,58 @@ function AdminInner() {
                       variant="secondary"
                       disabled={busyOn === submission.id}
                       onClick={() => decide(submission, false)}
+                    >
+                      <X size={14} aria-hidden="true" /> Reject
+                    </Button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* --------------------------------------------------- group queue */}
+        <section>
+          <SectionHead
+            title="Groups awaiting approval"
+            subtitle="A group is a space other travellers are invited into, so someone reads it first. Your own groups go live without this step."
+          />
+          {loading ? <Skeleton height="6rem" /> : groups.length === 0 ? (
+            <EmptyState
+              icon={<Users size={20} />}
+              title="No groups waiting"
+              body="Every group travellers have asked for has been reviewed."
+            />
+          ) : (
+            <div className="admin__queue">
+              {groups.map((group) => (
+                <article className="review" key={group.id}>
+                  <div className="review__what">
+                    <h3 className="review__name">{group.name}</h3>
+                    <p className="review__meta">
+                      <Badge tone="warning">Group</Badge>
+                      <span>asked for by {group.created_by}</span>
+                      {group.created_at && (
+                        <span>{new Date(group.created_at).toLocaleDateString()}</span>
+                      )}
+                    </p>
+                    {group.description && (
+                      <p className="review__desc">{group.description}</p>
+                    )}
+                  </div>
+                  <div className="review__actions">
+                    <Button
+                      size="sm"
+                      disabled={busyOn === group.id}
+                      onClick={() => decideGroup(group, true)}
+                    >
+                      <Check size={14} aria-hidden="true" /> Approve
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={busyOn === group.id}
+                      onClick={() => decideGroup(group, false)}
                     >
                       <X size={14} aria-hidden="true" /> Reject
                     </Button>
