@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import TravelMap from './TravelMap';
 import { CAMEROON_CENTER, getItemCoordinates } from './mapCoordinates';
-import TravelAssistant from './TravelAssistant';
 
 const API_BASE = '/api';
 const DEFAULT_CURRENCY = 'XAF';
@@ -6229,9 +6228,9 @@ function App() {
         ) : null}
       </main>
 
-      {/* Available from every page, so a traveller can ask without losing
-          their place in whatever they were doing. */}
-      <TravelAssistant token={token} />
+      {/* The assistant is mounted once in main.jsx, outside the router, so
+          there is one of it on every screen -- old shell and redesigned pages
+          alike -- rather than one per half of the application. */}
 
       {/* Phones only — hidden above 900px by app-mobile.css, where the
           sidebar and header already carry the navigation. Present here so

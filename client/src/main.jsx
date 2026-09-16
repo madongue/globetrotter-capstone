@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
+import AssistantDock from './components/AssistantDock';
 import Media from './pages/Media';
 import Saved from './pages/Saved';
 import Suggest from './pages/Suggest';
@@ -42,6 +43,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         way proves the structure without touching the old one. Phase B adds
         Home, Explore and Place Details beside it. */}
     <BrowserRouter>
+      <AssistantDock />
       <Routes>
         {/* Phase B: the discovery experience, rebuilt as real pages.
             Everything else still renders App, whose own navigation state is

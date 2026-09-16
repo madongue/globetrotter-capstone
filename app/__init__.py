@@ -114,6 +114,7 @@ def create_app():
     from app.resources import resources_bp
     from app.assistant import assistant_bp
     from app.chat import chat_bp
+    from app.calls import calls_bp
     from app.ui import ui_bp
 
     app.register_blueprint(auth_bp, url_prefix=api_prefix)
@@ -123,6 +124,7 @@ def create_app():
     app.register_blueprint(resources_bp, url_prefix=api_prefix)
     app.register_blueprint(assistant_bp, url_prefix=api_prefix)
     app.register_blueprint(chat_bp, url_prefix=api_prefix)
+    app.register_blueprint(calls_bp, url_prefix=api_prefix)
 
     app.add_url_rule("/register", view_func=app.view_functions["auth.register"], methods=["POST"])
     app.add_url_rule("/login", view_func=app.view_functions["auth.login"], methods=["POST"])

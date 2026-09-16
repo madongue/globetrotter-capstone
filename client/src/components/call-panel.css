@@ -1,0 +1,145 @@
+/* Audio and video calls. */
+
+.call {
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ idle */
+
+.call--idle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-3) var(--gt-space-4);
+}
+
+.call__hint { font-size: var(--gt-small); color: var(--gt-text-soft); }
+.call__start { display: flex; gap: var(--gt-space-2); flex-wrap: wrap; }
+
+/* -------------------------------------------------------------- incoming */
+
+.call--incoming {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-4);
+  border-color: var(--gt-primary);
+  background: var(--gt-primary-soft);
+  /* A ringing phone should be hard to miss, but a pulse that never stops is
+     hard to read next to. It fades in once and holds. */
+  animation: call-arrive var(--gt-slow) var(--gt-ease);
+}
+
+@keyframes call-arrive {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .call--incoming { animation: none; }
+}
+
+.call__who { font-size: var(--gt-small); }
+
+/* ------------------------------------------------------------------ live */
+
+.call__stage {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #0d1b1a;
+}
+
+/* An audio call has no picture to show, so the stage collapses to a strip
+   that still carries the element the audio plays through. */
+.call--audio .call__stage { aspect-ratio: auto; height: 4.5rem; }
+
+.call__remote {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #0d1b1a;
+}
+
+.call--audio .call__remote { height: 0; }
+
+/* Your own picture, inset. Mirrored, because a self-view that is not mirrored
+   reads as somebody else. */
+.call__local {
+  position: absolute;
+  right: var(--gt-space-3);
+  bottom: var(--gt-space-3);
+  width: 28%;
+  max-width: 9rem;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--gt-radius-sm);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: #0d1b1a;
+  transform: scaleX(-1);
+}
+
+.call__status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--gt-small);
+}
+
+.call--audio .call__status { position: static; height: 100%; }
+
+/* -------------------------------------------------------------- controls */
+
+.call__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-3);
+  background: var(--gt-surface-2);
+}
+
+.call__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--gt-border-strong);
+  background: var(--gt-surface);
+  color: var(--gt-text);
+  cursor: pointer;
+  transition: background var(--gt-fast) var(--gt-ease),
+              border-color var(--gt-fast) var(--gt-ease);
+}
+
+.call__btn:hover { border-color: var(--gt-primary); color: var(--gt-primary); }
+.call__btn:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 2px; }
+
+/* Muted and camera-off are states, so they are carried by fill as well as by
+   the icon swap — the icon alone is a small difference to catch mid-call. */
+.call__btn--off {
+  background: var(--gt-error-soft);
+  border-color: var(--gt-error);
+  color: var(--gt-error);
+}
+
+.call__btn--end {
+  background: var(--gt-error);
+  border-color: var(--gt-error);
+  color: #fff;
+}
+
+.call__btn--end:hover { background: #b0161f; border-color: #b0161f; color: #fff; }

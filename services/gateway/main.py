@@ -174,6 +174,10 @@ def create_app():
     # the same work the recommender does — so it is hosted there.
     forward(RECOMMENDATION_SERVICE_URL, "assistant")
 
+    # Call signalling lives with chat: the same rooms, the same membership
+    # rule and the same cursor, so it belongs to the same service.
+    forward(CHAT_SERVICE_URL, "calls")
+
     @app.route("/config", methods=["GET"])
     def config():
         """Client configuration.

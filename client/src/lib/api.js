@@ -431,3 +431,49 @@ export async function uploadMedia({ file, caption = '', placeId = null, groupId 
   }
   return payload;
 }
+
+/* ----------------------------------------------------------------- calls */
+//
+// Signalling only. The audio and video go browser-to-browser and never touch
+// the server; these carry the introduction the two peers need first.
+
+export const startCall = ({ roomId, mode = 'video' }, { token } = {}) =>
+  request('/calls', { method: 'POST', body: { room_id: roomId, mode }, token });
+
+export const getActiveCall = (roomId, { token, signal } = {}) =>
+  request(`/calls/active?room_id=${encodeURIComponent(roomId)}`, { token, signal });
+
+export const answerCall = (callId, { token } = {}) =>
+  request(`/calls/${encodeURIComponent(callId)}/answer`, { method: 'POST', token });
+
+export const sendCallSignal = (callId, { kind, payload }, { token } = {}) =>
+  request(`/calls/${encodeURIComponent(callId)}/signals`, {
+    method: 'POST', body: { kind, payload }, token,
+  });
+
+/** Signals from the other peer only; your own are filtered out server-side. */
+export const readCallSignals = (callId, { since, token, signal } = {}) => {
+  // Same "+00:00 decodes to a space" trap the chat cursor has.
+  const query = since ? `?since=${encodeURIComponent(since)}` : '';
+  return request(`/calls/${encodeURIComponent(callId)}/signals${query}`, { token, signal });
+};
+
+export const endCall = (callId, reason, { token } = {}) =>
+  request(`/calls/${encodeURIComponent(callId)}/end`, {
+    method: 'POST', body: { reason: reason || 'hung_up' }, token,
+  });
+
+/* ------------------------------------------------------------- assistant */
+
+/**
+ * Ask the assistant.
+ *
+ * The token is read here rather than passed, because the dock is mounted on
+ * every page and has no reason to care who is signed in — the server decides
+ * what to answer and what to offer from the role on the account.
+ */
+export const askAssistant = (message) =>
+  request('/assistant/chat', { method: 'POST', body: { message }, token: getToken() });
+
+export const assistantStarters = ({ signal } = {}) =>
+  request('/assistant/starters', { token: getToken(), signal });

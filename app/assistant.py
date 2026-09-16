@@ -41,9 +41,15 @@ from app.auth import get_current_user
 from app.cameroon_geo import iter_location_units
 from app.models import (
     get_all_activities,
+    get_all_groups,
     get_all_hotels,
+    get_all_itineraries,
+    get_all_media,
+    get_all_place_requests,
     get_all_places,
+    get_all_users,
     get_itineraries_for_user,
+    get_user_by_username,
 )
 
 assistant_bp = Blueprint("assistant", __name__)
@@ -527,7 +533,195 @@ FALLBACK = (
 )
 
 
-def _route(message: str, username: str | None):
+# ---------------------------------------------------------------------------
+# What the assistant can offer to do
+#
+# The bot proposes actions; it does not take them. That distinction matters
+# more than it sounds. A bot that acts on its own reading of a sentence will
+# eventually approve the wrong suggestion or promote the wrong account, and
+# nobody will be able to say why. Proposing leaves the decision with the person
+# who is accountable for it, and costs them one click either way.
+#
+# Each action names the roles that may see it, so an administrator is offered
+# the review queue and a traveller never is.
+# ---------------------------------------------------------------------------
+
+#: id, label, where it goes, who may see it, and what makes it relevant.
+ACTIONS = (
+    # Everyone
+    {"id": "explore", "label": "Browse all 845 places", "path": "/explore",
+     "roles": ("user", "admin"),
+     "keywords": ("place", "places", "see", "visit", "explore", "where",
+                  "attraction", "beach", "waterfall", "park")},
+    {"id": "plan", "label": "Plan a trip in two fields", "path": "/trips",
+     "roles": ("user", "admin"),
+     "keywords": ("plan", "trip", "itinerary", "days", "budget", "cost", "how much")},
+    {"id": "my-trips", "label": "Open my trips", "path": "/trips",
+     "roles": ("user", "admin"),
+     "keywords": ("my trip", "my trips", "my itinerary", "checkpoint", "swap", "reorder")},
+    {"id": "saved", "label": "See my saved places", "path": "/saved",
+     "roles": ("user", "admin"),
+     "keywords": ("save", "saved", "wishlist", "bookmark", "later")},
+    {"id": "community", "label": "Open the community", "path": "/community",
+     "roles": ("user", "admin"),
+     "keywords": ("group", "groups", "community", "chat", "call", "friend",
+                  "discussion", "together", "video call", "audio call")},
+    {"id": "media", "label": "See travellers' photos", "path": "/media",
+     "roles": ("user", "admin"),
+     "keywords": ("photo", "photos", "picture", "video", "media", "upload")},
+    {"id": "suggest", "label": "Suggest a place or a correction", "path": "/suggest",
+     "roles": ("user", "admin"),
+     "keywords": ("suggest", "missing", "add a place", "wrong", "correct",
+                  "incorrect", "outdated", "update", "mistake")},
+    {"id": "settings", "label": "Change language or currency", "path": "/settings",
+     "roles": ("user", "admin"),
+     "keywords": ("language", "french", "english", "currency", "fcfa", "euro",
+                  "setting", "settings", "notification")},
+    {"id": "profile", "label": "Open my profile", "path": "/profile",
+     "roles": ("user", "admin"),
+     "keywords": ("profile", "account", "interests", "sign out", "my account")},
+
+    # Administrators only
+    {"id": "admin-queue", "label": "Review pending suggestions", "path": "/admin",
+     "roles": ("admin",),
+     "keywords": ("pending", "review", "approve", "reject", "queue", "request",
+                  "requests", "suggestion", "moderate", "waiting")},
+    {"id": "admin-stats", "label": "Open platform analytics", "path": "/admin",
+     "roles": ("admin",),
+     "keywords": ("how many", "statistic", "stats", "analytics", "total",
+                  "numbers", "count", "growth", "platform")},
+    {"id": "admin-users", "label": "Manage accounts and roles", "path": "/admin",
+     "roles": ("admin",),
+     "keywords": ("user", "users", "account", "accounts", "role", "roles",
+                  "promote", "demote", "permission", "administrator")},
+)
+
+#: Offered when nothing in the message matches: what each role does most.
+DEFAULT_ACTION_IDS = {
+    "user": ("plan", "explore", "community"),
+    "admin": ("admin-queue", "admin-stats", "plan"),
+    None: ("explore", "plan"),
+}
+
+MAX_ACTIONS = 3
+
+
+def _actions_for(message, role):
+    """The few things this role could do next, given what was just asked.
+
+    Scored by how many of an action's keywords appear, so "the hotel price on
+    my trip is wrong" offers both the trip and the correction route, while a
+    bare greeting falls back to what that role does most.
+    """
+    allowed = [a for a in ACTIONS if role in a["roles"]] if role else []
+    if not allowed:
+        # Signed out: offer what anyone can look at, not what needs an account.
+        allowed = [a for a in ACTIONS if a["id"] in ("explore", "plan")]
+
+    lowered = (message or "").lower()
+    scored = []
+    for action in allowed:
+        hits = sum(1 for keyword in action["keywords"] if keyword in lowered)
+        if hits:
+            scored.append((hits, action))
+
+    if scored:
+        scored.sort(key=lambda pair: -pair[0])
+        chosen = [action for _, action in scored[:MAX_ACTIONS]]
+    else:
+        wanted = DEFAULT_ACTION_IDS.get(role, DEFAULT_ACTION_IDS[None])
+        by_id = {a["id"]: a for a in allowed}
+        chosen = [by_id[i] for i in wanted if i in by_id][:MAX_ACTIONS]
+
+    return [{"id": a["id"], "label": a["label"], "path": a["path"]} for a in chosen]
+
+
+# ---------------------------------------------------------------------------
+# Administrator answers
+#
+# These read the same collections the admin dashboard reads. An administrator
+# who asks "how many users do I have" should get the number, not directions to
+# a page that shows the number.
+# ---------------------------------------------------------------------------
+
+def _answer_admin_overview(message, role):
+    if role != "admin":
+        return None
+    if not _matches(message, ("how many", "stats", "statistic", "analytics", "total",
+                              "overview", "numbers", "count", "platform")):
+        return None
+
+    users = get_all_users()
+    admin_count = sum(1 for u in users if u.get("role") == "admin")
+    itineraries = get_all_itineraries()
+    public_count = sum(1 for i in itineraries if i.get("visibility") == "public")
+    pending = [r for r in get_all_place_requests() if r.get("status") == "pending"]
+
+    lines = [
+        "Here is where the platform stands right now:",
+        "- {} registered account{} ({} administrator{})".format(
+            len(users), "" if len(users) == 1 else "s",
+            admin_count, "" if admin_count == 1 else "s"),
+        "- {} itinerar{} ({} public)".format(
+            len(itineraries), "y" if len(itineraries) == 1 else "ies", public_count),
+        "- {} community groups, {} photos posted".format(
+            len(get_all_groups()), len(get_all_media())),
+        "- {} places, {} hotels, {} activities in the catalogue".format(
+            len(get_all_places()), len(get_all_hotels()), len(get_all_activities())),
+        "- {} suggestion{} waiting for review".format(
+            len(pending), "" if len(pending) == 1 else "s"),
+    ]
+    return ("\n".join(lines), ["admin/stats"],
+            ["What is waiting for review?", "Who are the administrators?"])
+
+
+def _answer_pending_queue(message, role):
+    if role != "admin":
+        return None
+    if not _matches(message, ("pending", "waiting", "review", "queue", "approve",
+                              "reject", "request", "requests", "moderate")):
+        return None
+
+    pending = [r for r in get_all_place_requests() if r.get("status") == "pending"]
+    if not pending:
+        return ("Nothing is waiting for review - the queue is empty.",
+                ["place_requests"],
+                ["How many users do I have?", "Who are the administrators?"])
+
+    lines = ["{} suggestion{} waiting for you:".format(
+        len(pending), "" if len(pending) == 1 else "s")]
+    for item in pending[:MAX_RESULTS]:
+        kind = "correction to" if item.get("mode") == "edit" else "new"
+        name = item.get("target_name") or item.get("name")
+        lines.append("- {} {} in {}, sent by {}".format(
+            kind, name, item.get("location"), item.get("submitted_by")))
+    if len(pending) > MAX_RESULTS:
+        lines.append("...and {} more.".format(len(pending) - MAX_RESULTS))
+    lines.append("Open the admin dashboard to approve or reject them.")
+    return ("\n".join(lines), ["place_requests"],
+            ["How many users do I have?", "Show me the platform numbers"])
+
+
+def _answer_admin_users(message, role):
+    if role != "admin":
+        return None
+    if not _matches(message, ("who is admin", "administrators", "admin accounts",
+                              "which users", "who are the", "promote", "demote",
+                              "roles")):
+        return None
+
+    users = get_all_users()
+    admins = [u.get("username") for u in users if u.get("role") == "admin"]
+    reply = "{} account{} in total. {} You can promote or demote anyone from the Accounts table on the admin dashboard.".format(
+        len(users),
+        "" if len(users) == 1 else "s",
+        ("Administrators: " + ", ".join(admins) + ".") if admins else "There are no administrators.",
+    )
+    return (reply, ["admin/users"],
+            ["What is waiting for review?", "Show me the platform numbers"])
+
+
+def _route(message: str, username: str | None, role: str | None = None):
     """Pick an answer for the message. Order matters: the most specific first."""
     city = _find_location(message)
 
@@ -547,6 +741,11 @@ def _route(message: str, username: str | None):
             return how_to
 
     for builder in (
+        # Administrator questions first. "How many users do I have?" contains
+        # no city and no trip, and would otherwise reach the fallback.
+        lambda: _answer_pending_queue(message, role),
+        lambda: _answer_admin_users(message, role),
+        lambda: _answer_admin_overview(message, role),
         lambda: _answer_my_trips(message, username),
         lambda: _answer_budget(message, city),
         lambda: _answer_hotels(message, city),
@@ -638,12 +837,23 @@ def assistant_chat():
         }), 400
 
     username = get_current_user(request)
-    reply, sources, suggestions = _route(message, username)
+    # The role decides both what the assistant will answer and what it offers
+    # to do next: an administrator asking about the review queue gets the
+    # queue, a traveller asking the same thing does not learn it exists.
+    user = get_user_by_username(username) if username else None
+    role = (user or {}).get("role") if user else None
+
+    reply, sources, suggestions = _route(message, username, role)
 
     return jsonify({
         "reply": _rephrase_with_model(message, reply),
         "sources": sources,
         "suggestions": suggestions,
+        # Things this role can actually do, given what was just asked. The
+        # interface renders them as links; the assistant never follows them
+        # itself.
+        "actions": _actions_for(message, role),
+        "role": role or "guest",
         # Lets the interface show that the answer came from the catalogue
         # rather than from a model's memory.
         "grounded": True,

@@ -186,6 +186,31 @@ class SqlDocumentStore(DocumentStore):
             engine_kwargs.update(pool_pre_ping=True, pool_recycle=280)
 
         self._engine = create_engine(database_url, **engine_kwargs)
+
+        if self._is_sqlite:
+            # SQLite allows one writer at a time and, by default, gives up
+            # immediately when the lock is held: concurrent writers get
+            # "database is locked" rather than waiting their turn. Two peers in
+            # a call post ICE candidates within milliseconds of each other and
+            # hit exactly that.
+            #
+            # busy_timeout makes a blocked writer wait for the lock instead of
+            # failing immediately. Postgres needs nothing here; this is only
+            # about making the development and CI backend behave like the
+            # production one under concurrency.
+            #
+            # Deliberately *not* also setting journal_mode=WAL: that pragma
+            # itself takes an exclusive lock, so running it on every new
+            # connection creates the very contention it is meant to relieve.
+            # With four threads opening connections at once it made the
+            # concurrent-schema test fail three runs in four.
+            from sqlalchemy import event
+
+            @event.listens_for(self._engine, "connect")
+            def _sqlite_busy_timeout(dbapi_connection, _record):
+                cursor = dbapi_connection.cursor()
+                cursor.execute("PRAGMA busy_timeout = 10000")
+                cursor.close()
         self._metadata = MetaData()
         json_type = JSON().with_variant(JSONB, "postgresql")
         self._documents = Table(

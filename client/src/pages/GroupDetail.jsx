@@ -11,6 +11,7 @@ import { TabBar, TopBar } from '../components/Navigation';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { Avatar } from './Community';
 import GroupChat from '../components/GroupChat';
+import CallPanel from '../components/CallPanel';
 import {
   DISCUSSION_TYPES, groupCover, likeCount, replyCount, timeAgo,
 } from '../lib/useCommunity';
@@ -414,14 +415,25 @@ function GroupDetailInner() {
           </div>
         ))}
 
-        {/* --------------------------------------------------------- chat */}
+        {/* --------------------------------------------------- chat + calls */}
         {tab === 'chat' && (
-          <GroupChat
-            roomId={`group:${id}`}
-            token={token}
-            username={username}
-            canPost={joined}
-          />
+          <div className="gd__talk">
+            {/* Above the transcript: a call is the more urgent thing on the
+                screen when one is ringing, and the panel is a single row
+                until it is. */}
+            <CallPanel
+              roomId={`group:${id}`}
+              token={token}
+              username={username}
+              canCall={joined}
+            />
+            <GroupChat
+              roomId={`group:${id}`}
+              token={token}
+              username={username}
+              canPost={joined}
+            />
+          </div>
         )}
 
         {/* ------------------------------------------------------ members */}

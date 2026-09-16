@@ -24,12 +24,16 @@ if ROOT not in sys.path:
 from flask import Flask, jsonify
 
 from app.chat import chat_bp
+# Calls share the chat's rooms, membership rule and cursor, so they share its
+# service rather than gaining a seventh container for a signalling relay.
+from app.calls import calls_bp
 
 
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "globetrotter-secret-change-in-prod")
     app.register_blueprint(chat_bp)
+    app.register_blueprint(calls_bp)
 
     @app.route("/health", methods=["GET"])
     def health():

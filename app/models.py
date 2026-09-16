@@ -35,6 +35,8 @@ PLACES_FILE = os.path.join(DATA_DIR, "places.json")
 GROUPS_FILE = os.path.join(DATA_DIR, "groups.json")
 MEDIA_FILE = os.path.join(DATA_DIR, "media.json")
 CHAT_FILE = os.path.join(DATA_DIR, "chat_messages.json")
+CALLS_FILE = os.path.join(DATA_DIR, "calls.json")
+CALL_SIGNALS_FILE = os.path.join(DATA_DIR, "call_signals.json")
 NOTIFICATIONS_FILE = os.path.join(DATA_DIR, "notifications.json")
 INVITES_FILE = os.path.join(DATA_DIR, "invites.json")
 AUDIT_LOG_FILE = os.path.join(DATA_DIR, "audit_log.json")
@@ -67,6 +69,8 @@ _COLLECTION_PATHS = {
     "groups": "GROUPS_FILE",
     "media": "MEDIA_FILE",
     "chat_messages": "CHAT_FILE",
+    "calls": "CALLS_FILE",
+    "call_signals": "CALL_SIGNALS_FILE",
     "notifications": "NOTIFICATIONS_FILE",
     "invites": "INVITES_FILE",
     "audit_log": "AUDIT_LOG_FILE",
@@ -409,6 +413,67 @@ def save_chat_message(message: dict) -> None:
         messages = _read_json_unlocked(CHAT_FILE)
         messages.append(message)
         _write_json_unlocked(CHAT_FILE, messages)
+
+
+def get_calls() -> list:
+    """Every call record, oldest first."""
+    return _read_json(CALLS_FILE)
+
+
+def get_call_by_id(call_id: str):
+    for call in _read_json(CALLS_FILE):
+        if call.get("id") == call_id:
+            return call
+    return None
+
+
+def save_call(call: dict) -> None:
+    with _locked(CALLS_FILE):
+        calls = _read_json_unlocked(CALLS_FILE)
+        calls.append(call)
+        _write_json_unlocked(CALLS_FILE, calls)
+
+
+def update_call(call: dict) -> None:
+    with _locked(CALLS_FILE):
+        calls = _read_json_unlocked(CALLS_FILE)
+        for index, existing in enumerate(calls):
+            if existing.get("id") == call.get("id"):
+                calls[index] = call
+                _write_json_unlocked(CALLS_FILE, calls)
+                return
+    raise ValueError("Call not found")
+
+
+def get_call_signals(call_id: str) -> list:
+    """Signalling messages for one call, oldest first.
+
+    Filtered on read for the same reason chat messages are: one collection
+    keeps the storage shape identical across both backends.
+    """
+    return [s for s in _read_json(CALL_SIGNALS_FILE) if s.get("call_id") == call_id]
+
+
+def save_call_signal(signal: dict) -> None:
+    with _locked(CALL_SIGNALS_FILE):
+        signals = _read_json_unlocked(CALL_SIGNALS_FILE)
+        signals.append(signal)
+        _write_json_unlocked(CALL_SIGNALS_FILE, signals)
+
+
+def delete_call_signals(call_id: str) -> None:
+    """Drop a finished call's signalling traffic.
+
+    Offers and ICE candidates are worthless the moment a call ends, and they
+    are by far the largest rows the application writes -- an SDP offer is
+    several kilobytes. Keeping them would grow the store without ever being
+    read again.
+    """
+    with _locked(CALL_SIGNALS_FILE):
+        signals = _read_json_unlocked(CALL_SIGNALS_FILE)
+        remaining = [s for s in signals if s.get("call_id") != call_id]
+        if len(remaining) != len(signals):
+            _write_json_unlocked(CALL_SIGNALS_FILE, remaining)
 
 
 def get_all_media() -> list:

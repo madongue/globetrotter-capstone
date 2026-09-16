@@ -1,0 +1,190 @@
+/* The assistant, docked on every screen. */
+
+.dock__open,
+.dock {
+  position: fixed;
+  right: var(--gt-space-5);
+  /* Clear of the mobile tab bar, and of the phone's own home indicator. */
+  bottom: calc(var(--gt-tabbar-h) + var(--gt-space-4) + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+}
+
+@media (min-width: 900px) {
+  .dock__open, .dock { bottom: calc(var(--gt-space-5) + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* ------------------------------------------------------------ the button */
+
+.dock__open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-3) var(--gt-space-5);
+  border: none;
+  border-radius: var(--gt-radius-pill);
+  background: var(--gt-primary);
+  color: var(--gt-on-primary);
+  font: inherit;
+  font-size: var(--gt-small);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--gt-shadow-primary);
+  transition: background var(--gt-fast) var(--gt-ease), transform var(--gt-fast) var(--gt-ease);
+}
+
+.dock__open:hover { background: var(--gt-primary-hover); transform: translateY(-1px); }
+.dock__open:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 3px; }
+
+/* ------------------------------------------------------------- the panel */
+
+.dock {
+  display: flex;
+  flex-direction: column;
+  width: min(23rem, calc(100vw - var(--gt-space-5) * 2));
+  max-height: min(34rem, calc(100vh - 6rem));
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-lg);
+  background: var(--gt-surface);
+  box-shadow: var(--gt-shadow-lg);
+  overflow: hidden;
+}
+
+.dock__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border-bottom: 1px solid var(--gt-border);
+  background: var(--gt-surface-2);
+}
+
+.dock__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  font-size: var(--gt-small);
+  font-weight: 600;
+}
+
+.dock__title svg { color: var(--gt-primary); }
+
+.dock__close {
+  display: inline-flex;
+  padding: var(--gt-space-1);
+  border: none;
+  background: none;
+  color: var(--gt-text-soft);
+  cursor: pointer;
+  border-radius: var(--gt-radius-xs);
+}
+
+.dock__close:hover { color: var(--gt-text); background: var(--gt-surface-3); }
+
+/* ------------------------------------------------------------ transcript */
+
+.dock__log {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--gt-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-3);
+}
+
+.dock__msg {
+  margin: 0;
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border-radius: var(--gt-radius-md);
+  font-size: var(--gt-small);
+  line-height: var(--gt-leading-normal);
+  max-width: 92%;
+  /* The server's lists arrive as plain text with newlines. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.dock__msg--bot { background: var(--gt-surface-2); color: var(--gt-text); align-self: flex-start; }
+
+.dock__msg--you {
+  background: var(--gt-primary);
+  color: var(--gt-on-primary);
+  align-self: flex-end;
+}
+
+.dock__msg--failed { background: var(--gt-error-soft); color: var(--gt-error); }
+
+.dock__typing { color: var(--gt-text-faint); font-style: italic; }
+
+/* -------------------------------------------------------------- actions */
+
+.dock__actions { display: flex; flex-direction: column; gap: var(--gt-space-2); }
+
+.dock__actions-label {
+  margin: 0;
+  font-size: var(--gt-caption);
+  letter-spacing: var(--gt-tracking-label);
+  text-transform: uppercase;
+  color: var(--gt-text-faint);
+}
+
+.dock__action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border: 1px solid var(--gt-primary-line);
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-primary-soft);
+  color: var(--gt-primary-hover);
+  font: inherit;
+  font-size: var(--gt-small);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--gt-fast) var(--gt-ease);
+}
+
+.dock__action:hover { background: var(--gt-primary); color: var(--gt-on-primary); }
+.dock__action:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 2px; }
+
+/* ------------------------------------------------------------- starters */
+
+.dock__starters { display: flex; flex-wrap: wrap; gap: var(--gt-space-2); }
+
+.dock__starter {
+  padding: var(--gt-space-2) var(--gt-space-3);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-pill);
+  background: var(--gt-surface);
+  font: inherit;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+  cursor: pointer;
+}
+
+.dock__starter:hover { border-color: var(--gt-primary); color: var(--gt-primary); }
+
+/* ------------------------------------------------------------- the input */
+
+.dock__ask {
+  display: flex;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-3);
+  border-top: 1px solid var(--gt-border);
+  background: var(--gt-surface-2);
+}
+
+.dock__input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--gt-space-2) var(--gt-space-3);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-sm);
+  background: var(--gt-surface);
+  font: inherit;
+  font-size: var(--gt-small);
+  color: var(--gt-text);
+}
+
+.dock__input:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 1px; }
