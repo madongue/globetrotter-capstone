@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-  ArrowLeft, BedDouble, ChevronDown, ChevronUp, Clock, ExternalLink, Map as MapIcon,
+  ArrowLeft, BedDouble, ChevronDown, ChevronUp, Clock, Crosshair, ExternalLink, Map as MapIcon,
   MoreHorizontal, Pencil, Plus, Route, Settings2, Trash2, Wallet, X,
 } from 'lucide-react';
 import {
@@ -12,6 +12,7 @@ import { TabBar, TopBar } from '../components/Navigation';
 import Breadcrumbs from '../components/Breadcrumbs';
 import TravelMap from '../TravelMap';
 import TripFeedback from '../components/TripFeedback';
+import * as api from '../lib/api';
 import { useTranslatedPage } from '../lib/i18n';
 import { useAuth } from '../lib/useTravellerData';
 import { formatClock, formatDuration, formatMoney, useItinerary } from '../lib/useItinerary';
@@ -158,10 +159,61 @@ function ItineraryInner() {
         const lat = Number(stage.map_info?.latitude ?? stage.latitude);
         const lon = Number(stage.map_info?.longitude ?? stage.longitude);
         if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-        return { id: stage.id, name: stage.name, location: stage.location, position: [lat, lon] };
+        return {
+          id: stage.id,
+          name: stage.name,
+          location: stage.location,
+          position: [lat, lon],
+          // Every pin can be navigated to. Seeing where a checkpoint is and
+          // being able to get there are different things, and the second is
+          // the one you want while actually travelling.
+          href: `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`,
+        };
       })
       .filter(Boolean);
   }, [trip]);
+
+  /* Where the traveller is now.
+
+     Read from the browser, shown on the map, and sent to the server so that
+     anyone the trip is shared with sees it too -- which is the whole point of
+     sharing a trip you are currently on. Asked for, never taken: the browser
+     prompts, and nothing is sent if the answer is no. */
+  const [here, setHere] = useState(null);
+  const [locating, setLocating] = useState(false);
+
+  const locate = () => {
+    if (!navigator.geolocation) {
+      toast.push('This browser cannot report a location.', 'error');
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        const position = [coords.latitude, coords.longitude];
+        setHere(position);
+        setLocating(false);
+        try {
+          await api.updateTripTracking(
+            id, { latitude: coords.latitude, longitude: coords.longitude }, { token },
+          );
+        } catch {
+          // Shown on the map regardless; only the sharing half failed.
+          toast.push('Shown here, but could not be shared with the trip.', 'error');
+        }
+      },
+      (error) => {
+        setLocating(false);
+        toast.push(
+          error.code === error.PERMISSION_DENIED
+            ? 'Location permission was refused.'
+            : 'Could not read your location.',
+          'error',
+        );
+      },
+      { enableHighAccuracy: true, timeout: 15000 },
+    );
+  };
 
   const withResult = async (promise, successMessage) => {
     const result = await promise;
@@ -369,6 +421,7 @@ function ItineraryInner() {
             {markers.length > 0 ? (
               <TravelMap
                 markers={markers}
+                selectedPosition={here}
                 className="itin__map-canvas"
                 ariaLabel={`Map of the checkpoints in ${trip.title}`}
               />
@@ -384,6 +437,17 @@ function ItineraryInner() {
                 {routeUrl && <> · <a href={routeUrl} target="_blank" rel="noreferrer noopener">open the route</a></>}
               </p>
             )}
+            <div className="itin__map-actions">
+              <Button size="sm" variant="secondary" onClick={locate} disabled={locating}>
+                <Crosshair size={14} aria-hidden="true" />
+                {locating ? 'Locating…' : here ? 'Update my position' : 'Show where I am'}
+              </Button>
+              {here && (
+                <span className="gt-caption gt-muted">
+                  Shown on the map, and visible to anyone this trip is shared with.
+                </span>
+              )}
+            </div>
           </Card>
 
           <Card padded className="itin__budget">

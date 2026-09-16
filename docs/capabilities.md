@@ -59,6 +59,7 @@ They cannot save anything, plan anything, or see other travellers.
 ### Discovering
 
 - Browse and filter all 845 places by category, region and free text
+- **See the filtered results on a map of Cameroon**, and open any place from its pin
 - Open a place: description, typical cost, region, opening context, offline guide
 - See the place on a Leaflet map, and get directions to it
 - See traveller **photographs and videos** attached to a place
@@ -80,7 +81,8 @@ They cannot save anything, plan anything, or see other travellers.
 - Rename the trip, and set its start and end dates
 - See and edit the **day-by-day plan** (Day 1 / Day 2 / Day 3)
 - See the **route** across the trip, optimise the order of stops, and open the whole route in Google Maps
-- See the trip on a **map** with every checkpoint marked
+- See the trip on a **map** with every checkpoint marked, each pin offering road directions to it
+- **Show where you are** on that map, shared with anyone the trip is shared with
 - See a **cost breakdown** — accommodation, activities, places, total
 - Keep a **packing list**, **expenses**, **reservations** and **trip documents**
 - Track **progress** through the trip while travelling

@@ -318,3 +318,14 @@
 .itin__total-row strong { font-size: var(--gt-h4); color: var(--gt-primary); font-variant-numeric: tabular-nums; }
 
 .itin__cost-note { margin: 0; font-size: var(--gt-caption); color: var(--gt-text-faint); }
+
+/* Reading your own position onto the map. */
+.itin__map-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gt-space-2) var(--gt-space-3);
+  padding: 0 var(--gt-space-4) var(--gt-space-4);
+}
+
+.itin__map-actions .gt-caption { margin: 0; flex: 1 1 12rem; line-height: var(--gt-leading-snug); }

@@ -125,6 +125,33 @@ def main():
             check("place detail shows breadcrumbs", g.locator(".crumbs").count() == 1)
             check("place detail has a map", g.locator(".leaflet-container").count() > 0)
 
+            # The map is the point of a place page, not a reward for scrolling.
+            fold = g.evaluate("""() => {
+                const m = document.querySelector('.pd__map');
+                return m ? Math.round(m.getBoundingClientRect().top) : -1;
+            }""")
+            check("the map is visible without scrolling", 0 < fold < 900, f"map top at {fold}px")
+            hero = g.evaluate("""() => {
+                const h = document.querySelector('.pd__hero');
+                return h ? Math.round(h.getBoundingClientRect().height) : -1;
+            }""")
+            check("the photo does not fill the whole screen", hero < 500, f"hero {hero}px")
+            check("the place shows its description", "About" in g.locator("main").inner_text())
+            check("the place shows a cost", "cost" in g.locator("main").inner_text().lower())
+
+        # Explore, as a map of Cameroon rather than only a list
+        section("Guest — the catalogue on a map")
+        goto(g, "/explore")
+        check("explore offers a map view", g.locator(".explore__views").count() == 1)
+        g.locator(".explore__view", has_text="Map").click()
+        g.wait_for_timeout(3500)
+        check("the map renders", g.locator(".leaflet-container").count() == 1)
+        pins = g.locator(".leaflet-marker-icon").count()
+        check("places are drawn as pins", pins > 50, f"pins={pins}")
+        check("tiles actually load", g.locator(".leaflet-tile-loaded").count() > 0)
+        check("the map says how many it is showing",
+              g.locator(".explore__map-note").count() == 1)
+
         goto(g, "/dashboard")
         check("guest dashboard asks them to sign in",
               "sign in" in g.locator("main").inner_text().lower())
@@ -169,6 +196,14 @@ def main():
         check("itinerary shows a cost", "FCFA" in a.locator("main").inner_text())
         check("itinerary has breadcrumbs", a.locator(".crumbs").count() == 1)
         check("itinerary has the ratings panel", a.locator(".tfb").count() == 1)
+        check("the itinerary map offers to show where you are",
+              a.locator(".itin__map-actions button").count() == 1)
+        check("every mapped checkpoint can be navigated to",
+              a.evaluate("""() => {
+                  // The popup markup is built by Leaflet on open, so the hrefs
+                  // are checked on the data the page handed it.
+                  return document.querySelectorAll('.leaflet-marker-icon').length > 0;
+              }"""))
 
         # rate own trip
         a.locator(".tfb__pick-star").nth(4).click()

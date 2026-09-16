@@ -126,3 +126,64 @@
   gap: var(--gt-space-2);
   padding-block: var(--gt-space-7);
 }
+
+/* ------------------------------------------------------------ cards / map
+   Two ways to read the same filtered results. The toggle sits above them
+   both, so switching never changes what is being shown, only how. */
+
+.explore__views {
+  display: inline-flex;
+  gap: var(--gt-space-1);
+  padding: var(--gt-space-1);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-pill);
+  background: var(--gt-surface-2);
+  margin-bottom: var(--gt-space-4);
+}
+
+.explore__view {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-2) var(--gt-space-4);
+  border: none;
+  border-radius: var(--gt-radius-pill);
+  background: transparent;
+  font: inherit;
+  font-size: var(--gt-small);
+  font-weight: 600;
+  color: var(--gt-text-soft);
+  cursor: pointer;
+  transition: background var(--gt-fast) var(--gt-ease), color var(--gt-fast) var(--gt-ease);
+}
+
+.explore__view:hover { color: var(--gt-text); }
+.explore__view:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 2px; }
+
+.explore__view.is-active {
+  background: var(--gt-surface);
+  color: var(--gt-primary);
+  box-shadow: var(--gt-shadow-sm);
+}
+
+.explore__map { display: flex; flex-direction: column; gap: var(--gt-space-3); }
+
+.explore__map-canvas {
+  /* Tall enough to be a map rather than a strip, and capped against the
+     viewport so the note underneath stays reachable without scrolling past
+     a full screen of tiles. */
+  height: min(68vh, 34rem);
+  border-radius: var(--gt-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--gt-border);
+}
+
+.explore__map-note { margin: 0; }
+
+/* The popup's link to the place. */
+.leaflet-popup-open {
+  display: inline-block;
+  margin-top: var(--gt-space-2);
+  font-weight: 600;
+  color: var(--gt-primary);
+}

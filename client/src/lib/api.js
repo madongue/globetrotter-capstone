@@ -534,3 +534,14 @@ export const removeAvatar = ({ token } = {}) =>
 /** Use a picture already on the web instead of uploading one. */
 export const setAvatarUrl = (avatarUrl, { token } = {}) =>
   request('/profile', { method: 'PATCH', body: { avatar_url: avatarUrl }, token });
+
+/* --------------------------------------------------------- live position */
+
+/** Where the traveller is now, so a shared trip can show it on the map. */
+export const getTripTracking = (tripId, { token, signal } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/tracking`, { token, signal });
+
+export const updateTripTracking = (tripId, { latitude, longitude }, { token } = {}) =>
+  request(`/itineraries/${encodeURIComponent(tripId)}/tracking`, {
+    method: 'POST', body: { latitude, longitude }, token,
+  });

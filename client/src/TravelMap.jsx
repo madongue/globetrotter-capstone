@@ -99,6 +99,12 @@ export default function TravelMap({
               <strong>{marker.name}</strong>
               {marker.location && <p>{marker.location}</p>}
               {marker.description && <p>{marker.description}</p>}
+              {/* A pin that names a place but cannot open it is a dead end.
+                  A plain anchor, not a router Link: the popup is rendered by
+                  Leaflet outside React Router's tree. */}
+              {marker.href && (
+                <a className="leaflet-popup-open" href={marker.href}>Open this place</a>
+              )}
             </Popup>
           </Marker>
         ))}

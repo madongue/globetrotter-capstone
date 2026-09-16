@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Compass, Search, SlidersHorizontal, X } from 'lucide-react';
+import {
+  Compass, LayoutGrid, Map as MapIcon, Search, SlidersHorizontal, X,
+} from 'lucide-react';
 import {
   Button, Chip, EmptyState, Field, SearchInput, Select,
   SkeletonCards, ToastProvider, useToast,
@@ -8,6 +10,7 @@ import {
 import { TabBar, TopBar } from '../components/Navigation';
 import Breadcrumbs from '../components/Breadcrumbs';
 import PlaceCard from '../components/PlaceCard';
+import TravelMap from '../TravelMap';
 import AddToTripDialog from '../components/AddToTripDialog';
 import { CATEGORY_FILTERS, useCatalogue } from '../lib/useCatalogue';
 import { useTranslatedPage } from '../lib/i18n';
@@ -31,6 +34,9 @@ import './explore.css';
  */
 
 const PAGE_SIZE = 24;
+
+/** How many pins the map draws at once. See `markers` below. */
+const MAP_MARKER_LIMIT = 300;
 
 const PRICE_BANDS = [
   { id: '', label: 'Any price', max: null },
@@ -64,6 +70,7 @@ function ExploreInner() {
   const [draftQuery, setDraftQuery] = useState(query);
   const [showFilters, setShowFilters] = useState(false);
   const [visible, setVisible] = useState(PAGE_SIZE);
+  const [view, setView] = useState('grid'); // grid | map
   const [tripTarget, setTripTarget] = useState(null);
 
   // Typing should not push a history entry per keystroke.
@@ -90,6 +97,26 @@ function ExploreInner() {
     () => catalogue.filter({ query, category, region, city, maxCost }),
     [catalogue, query, category, region, city, maxCost],
   );
+
+  /* The filtered places as map pins.
+
+     Capped, because Leaflet draws every marker itself: all 845 at once makes
+     panning stutter on a phone, and a map nobody can move is worse than a
+     shorter one. The count below says plainly how many of the matches are
+     drawn, rather than letting the map quietly imply it is showing
+     everything. */
+  const markers = useMemo(() => results.slice(0, MAP_MARKER_LIMIT).map((place) => {
+    const lat = Number(place.latitude ?? place.map_info?.latitude);
+    const lon = Number(place.longitude ?? place.map_info?.longitude);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || (!lat && !lon)) return null;
+    return {
+      id: `${place.__kind}-${place.id}`,
+      name: place.name,
+      location: [place.city, place.region].filter(Boolean).join(', '),
+      href: `/places/${place.id}`,
+      position: [lat, lon],
+    };
+  }).filter(Boolean), [results]);
 
   const activeFilters = [
     region && { key: 'region', label: region },
@@ -230,6 +257,41 @@ function ExploreInner() {
           />
         ) : (
           <>
+            <div className="explore__views" role="tablist" aria-label="How to browse">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={view === 'grid'}
+                className={`explore__view${view === 'grid' ? ' is-active' : ''}`}
+                onClick={() => setView('grid')}
+              >
+                <LayoutGrid size={15} aria-hidden="true" /> Cards
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={view === 'map'}
+                className={`explore__view${view === 'map' ? ' is-active' : ''}`}
+                onClick={() => setView('map')}
+              >
+                <MapIcon size={15} aria-hidden="true" /> Map
+              </button>
+            </div>
+
+            {view === 'map' ? (
+              <div className="explore__map">
+                <TravelMap
+                  markers={markers}
+                  className="explore__map-canvas"
+                  ariaLabel="The places matching your filters, on a map of Cameroon"
+                />
+                <p className="explore__map-note gt-caption gt-muted">
+                  {markers.length < results.length
+                    ? `${markers.length} of ${results.length.toLocaleString('en-US')} matches shown — narrow the filters to map the rest.`
+                    : `${markers.length} place${markers.length === 1 ? '' : 's'} on the map. Tap a pin to open it.`}
+                </p>
+              </div>
+            ) : (
             <div className="gt-grid">
               {results.slice(0, visible).map((place) => (
                 <PlaceCard
@@ -243,7 +305,9 @@ function ExploreInner() {
               ))}
             </div>
 
-            {visible < results.length && (
+            )}
+
+            {view === 'grid' && visible < results.length && (
               <div className="explore__more">
                 <Button variant="secondary" size="lg" onClick={() => setVisible((v) => v + PAGE_SIZE)}>
                   Show more places
