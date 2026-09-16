@@ -1252,3 +1252,63 @@ def test_both_generators_still_require_a_location(client):
         response = client.post(path, data=json.dumps(body),
                                content_type="application/json", headers=headers)
         assert response.status_code == 400, path
+
+
+def test_moving_a_checkpoint_reorders_the_day_the_screen_renders(client):
+    """The page renders days, not the raw stage list.
+
+    Reordering used to write `stage_order` and stop there, so the request
+    succeeded, the new order was stored, and the screen showed exactly what it
+    showed before -- because it builds its days from `day_plans[].stage_ids`.
+    """
+    token = register_and_login(client, "planner")
+    created = client.post("/api/itineraries/quick", headers={"Authorization": f"Bearer {token}"},
+                          json={"location": "Kribi", "days": 1})
+    trip_id = created.get_json()["itinerary"]["id"]
+    # Day plans are written on first read, not at creation.
+    trip = client.get(f"/api/itineraries/{trip_id}",
+                      headers={"Authorization": f"Bearer {token}"}).get_json()
+    trip = trip.get("itinerary", trip)
+
+    plans = trip.get("day_plans") or []
+    day = next((p for p in plans if len(p.get("stage_ids") or []) >= 2), None)
+    assert day is not None, (
+        f"needs a day with two checkpoints; stages={[s['id'] for s in trip.get('stages', [])]} "
+        f"plans={[(p.get('id'), p.get('stage_ids')) for p in plans]}"
+    )
+    before = list(day["stage_ids"])
+
+    moved = client.patch(f"/api/itineraries/{trip['id']}/stages", headers={"Authorization": f"Bearer {token}"},
+                         json={"move": before[0], "direction": "down"})
+    assert moved.status_code == 200, moved.get_json()
+
+    after_trip = moved.get_json()["itinerary"]
+    after_day = next(p for p in after_trip["day_plans"] if p["id"] == day["id"])
+
+    assert after_day["stage_ids"][:2] == [before[1], before[0]], (
+        f"the day still reads {after_day['stage_ids'][:2]} (was {before[:2]})"
+    )
+    # Membership is untouched: moving to another day is a different action.
+    assert sorted(after_day["stage_ids"]) == sorted(before)
+
+
+def test_a_reorder_does_not_move_a_checkpoint_between_days(client):
+    token = register_and_login(client, "planner2")
+    created = client.post("/api/itineraries/quick", headers={"Authorization": f"Bearer {token}"},
+                          json={"location": "Kribi", "days": 1})
+    trip_id = created.get_json()["itinerary"]["id"]
+    trip = client.get(f"/api/itineraries/{trip_id}",
+                      headers={"Authorization": f"Bearer {token}"}).get_json()
+    trip = trip.get("itinerary", trip)
+    plans = trip.get("day_plans") or []
+    day = next((p for p in plans if len(p.get("stage_ids") or []) >= 1), None)
+    assert day is not None
+
+    membership_before = {p["id"]: sorted(p.get("stage_ids") or []) for p in plans}
+    client.patch(f"/api/itineraries/{trip['id']}/stages", headers={"Authorization": f"Bearer {token}"},
+                 json={"move": day["stage_ids"][-1], "direction": "down"})
+
+    after = client.get(f"/api/itineraries/{trip['id']}", headers={"Authorization": f"Bearer {token}"}).get_json()
+    after = after.get("itinerary", after)
+    membership_after = {p["id"]: sorted(p.get("stage_ids") or []) for p in after["day_plans"]}
+    assert membership_after == membership_before

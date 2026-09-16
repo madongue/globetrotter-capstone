@@ -606,12 +606,19 @@ DEFAULT_ACTION_IDS = {
 MAX_ACTIONS = 3
 
 
-def _actions_for(message, role):
+def _actions_for(message, role, city=None, days=None):
     """The few things this role could do next, given what was just asked.
 
-    Scored by how many of an action's keywords appear, so "the hotel price on
-    my trip is wrong" offers both the trip and the correction route, while a
-    bare greeting falls back to what that role does most.
+    Two kinds come back. Most are somewhere to go: the client follows the
+    `path`. One is something to do -- when the conversation has settled on a
+    destination, the first action *creates that trip* and opens it, because
+    "plan a trip to Limbe" followed by a button that merely opens the planning
+    page and forgets the destination is a button that did nothing.
+
+    The list is never empty. An assistant that answers and then offers nothing
+    leaves the person to work out for themselves what the answer was for, so
+    when scoring finds too few the remainder is padded from what that role does
+    most.
     """
     allowed = [a for a in ACTIONS if role in a["roles"]] if role else []
     if not allowed:
@@ -624,16 +631,41 @@ def _actions_for(message, role):
         hits = sum(1 for keyword in action["keywords"] if keyword in lowered)
         if hits:
             scored.append((hits, action))
+    scored.sort(key=lambda pair: -pair[0])
+    chosen = [action for _, action in scored]
 
-    if scored:
-        scored.sort(key=lambda pair: -pair[0])
-        chosen = [action for _, action in scored[:MAX_ACTIONS]]
-    else:
-        wanted = DEFAULT_ACTION_IDS.get(role, DEFAULT_ACTION_IDS[None])
-        by_id = {a["id"]: a for a in allowed}
-        chosen = [by_id[i] for i in wanted if i in by_id][:MAX_ACTIONS]
+    # Pad, never truncate to nothing: the defaults fill whatever is left.
+    wanted = DEFAULT_ACTION_IDS.get(role, DEFAULT_ACTION_IDS[None])
+    by_id = {a["id"]: a for a in allowed}
+    for action_id in wanted:
+        if len(chosen) >= MAX_ACTIONS:
+            break
+        action = by_id.get(action_id)
+        if action and action not in chosen:
+            chosen.append(action)
+    for action in allowed:
+        if len(chosen) >= MAX_ACTIONS:
+            break
+        if action not in chosen:
+            chosen.append(action)
 
-    return [{"id": a["id"], "label": a["label"], "path": a["path"]} for a in chosen]
+    chosen = chosen[:MAX_ACTIONS]
+    actions = [{"id": a["id"], "label": a["label"], "path": a["path"]} for a in chosen]
+
+    # The one action that does the thing rather than pointing at it. Offered
+    # only when a real destination was recognised, and only to someone signed
+    # in -- creating a trip needs an account to own it.
+    if city and role:
+        nights = days or 3
+        actions.insert(0, {
+            "id": "create-trip",
+            "label": f"Create a {nights}-day trip to {city}",
+            "path": "/trips",
+            "run": {"kind": "create_trip", "location": city, "days": nights},
+        })
+        actions = actions[:MAX_ACTIONS]
+
+    return actions
 
 
 # ---------------------------------------------------------------------------
@@ -845,6 +877,12 @@ def assistant_chat():
 
     reply, sources, suggestions = _route(message, username, role)
 
+    # The same extraction the answers use, so the offered trip matches the
+    # trip that was just described rather than a second guess at the sentence.
+    city = _find_location(message)
+    days_match = re.search(r"(\d+)\s*[- ]?\s*day", message.lower())
+    days = max(1, min(int(days_match.group(1)), 14)) if days_match else None
+
     return jsonify({
         "reply": _rephrase_with_model(message, reply),
         "sources": sources,
@@ -852,7 +890,7 @@ def assistant_chat():
         # Things this role can actually do, given what was just asked. The
         # interface renders them as links; the assistant never follows them
         # itself.
-        "actions": _actions_for(message, role),
+        "actions": _actions_for(message, role, city, days),
         "role": role or "guest",
         # Lets the interface show that the answer came from the catalogue
         # rather than from a model's memory.

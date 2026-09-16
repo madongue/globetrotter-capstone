@@ -56,17 +56,23 @@ function SavedInner() {
     });
   }, [savedItems, query, category]);
 
-  const unsave = async (placeId) => {
-    const result = await toggleSaved(placeId);
-    if (!result.ok) toast.push(result.reason || 'Could not update.', 'error');
+  /* PlaceCard hands its callbacks the whole place, not an id -- Explore has
+     always relied on that to name the place in its toast. Taking an id here
+     meant every unsave asked the server to remove a place whose id was
+     "[object Object]", which it politely did nothing about: the control looked
+     like it worked and the place stayed saved. */
+  const unsave = async (place) => {
+    const result = await toggleSaved(place.id);
+    if (result.ok) toast.push(`${place.name} removed.`);
+    else toast.push(result.reason || 'Could not update.', 'error');
   };
 
-  const addToTrip = async (placeId) => {
+  const addToTrip = async (place) => {
     if (trips.length === 0) {
       toast.push('Create a trip first, then add places to it.', 'error');
       return;
     }
-    const result = await addPlaceToTrip(trips[0].id, placeId);
+    const result = await addPlaceToTrip(trips[0].id, place.id);
     toast.push(result.ok ? result.message : (result.reason || 'Could not add it.'),
       result.ok ? 'success' : 'error');
   };

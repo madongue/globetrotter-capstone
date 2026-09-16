@@ -179,15 +179,21 @@ is not told the review queue exists.
 
 ---
 
-## 5. What the assistant will not do
+## 5. What the assistant does and does not do
 
-It **proposes** actions; it never takes them. Every suggestion is a link the
-person chooses to follow.
+Every answer ends with up to three things to do next, chosen for the role
+asking. The list is never empty.
 
-This is a deliberate limit, not a missing feature. A bot that acted on its own
-reading of a sentence would eventually approve the wrong suggestion or promote
-the wrong account, and there would be no record of who decided it. Proposing
-leaves the decision with the person accountable for it and costs them one click.
+Most of them navigate. One **acts**: name a destination and the first action
+builds that trip and opens it — *"Create a 3-day trip to Limbe"* creates the
+trip, with its hotel, places and day-by-day plan, rather than opening the
+planning page and forgetting where you said you were going.
+
+What it will **not** do is act without being asked. It never approves a
+suggestion, changes a role, deletes anything, or spends money on its own
+reading of a sentence — those stay one deliberate click by the person
+accountable for them. Creating a trip is safe to offer because it is additive,
+reversible, and exactly what was just described.
 
 It also answers only from the application's own data, so it will say a place is
 not in the catalogue rather than invent one.

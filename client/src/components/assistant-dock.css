@@ -188,3 +188,32 @@
 }
 
 .dock__input:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 1px; }
+
+/* A reply is rendered as real paragraphs and lists rather than one pre-wrap
+   block, so a costed estimate reads as an estimate. */
+.dock__msg--bot { white-space: normal; }
+
+.dock__para { margin: 0; }
+.dock__para + .dock__para { margin-top: var(--gt-space-2); }
+
+.dock__list {
+  margin: var(--gt-space-2) 0 0;
+  padding-left: var(--gt-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-1);
+}
+
+.dock__list li { line-height: var(--gt-leading-snug); }
+.dock__list + .dock__para { margin-top: var(--gt-space-3); }
+
+/* The action that does the thing rather than pointing at it, marked so the
+   difference is visible before it is clicked. */
+.dock__action--do {
+  border-color: var(--gt-primary);
+  background: var(--gt-primary);
+  color: var(--gt-on-primary);
+}
+
+.dock__action--do:hover { background: var(--gt-primary-hover); }
+.dock__action:disabled { opacity: 0.6; cursor: progress; }

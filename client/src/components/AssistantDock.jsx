@@ -23,6 +23,53 @@ import './assistant-dock.css';
  * eventually approve the wrong suggestion, and the click costs nothing.
  */
 
+/**
+ * Render one reply.
+ *
+ * The server sends plain text, because the original shell renders it as plain
+ * text too. Dropping it into a single pre-wrap paragraph is what made answers
+ * read badly: a costed estimate arrived as five run-on lines with bullet
+ * characters sitting in the middle of a sentence.
+ *
+ * So the lines are read for what they are. A line that begins with a bullet or
+ * a dash becomes a list item and the run of them becomes a real list;
+ * everything else is a paragraph. Stray markdown emphasis is stripped rather
+ * than displayed, since nothing here renders markdown and `**total**` on
+ * screen is worse than no emphasis at all.
+ */
+function renderReply(text) {
+  const clean = String(text || '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')   // **bold**
+    .replace(/(^|\s)\*(\S.*?)\*(?=\s|$)/g, '$1$2');  // *emphasis*
+
+  const blocks = [];
+  let list = null;
+
+  clean.split('\n').forEach((raw) => {
+    const line = raw.trim();
+    if (!line) return;
+
+    const bullet = /^[•\-\u2022]\s+(.*)$/.exec(line);
+    if (bullet) {
+      if (!list) { list = []; blocks.push({ kind: 'list', items: list }); }
+      list.push(bullet[1]);
+    } else {
+      list = null;
+      blocks.push({ kind: 'text', text: line });
+    }
+  });
+
+  if (blocks.length === 0) return null;
+
+  return blocks.map((block, index) => (block.kind === 'list' ? (
+    <ul className="dock__list" key={index}>
+      {block.items.map((item, i) => <li key={i}>{item}</li>)}
+    </ul>
+  ) : (
+    <p className="dock__para" key={index}>{block.text}</p>
+  )));
+}
+
 const GREETING = {
   from: 'bot',
   text:
@@ -43,6 +90,7 @@ export default function AssistantDock() {
   const [starters, setStarters] = useState([]);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
+  const [running, setRunning] = useState('');
 
   const endRef = useRef(null);
   const inputRef = useRef(null);
@@ -93,7 +141,48 @@ export default function AssistantDock() {
     }
   };
 
-  const follow = (path) => { setOpen(false); navigate(path); };
+  /**
+   * Take an offered action.
+   *
+   * Most are somewhere to go. One does the thing: "Create a 3-day trip to
+   * Limbe" creates it and opens it, because an action that only opened the
+   * planning page and forgot the destination is an action that did nothing --
+   * which is exactly how it behaved before.
+   */
+  const take = async (action) => {
+    if (!action.run) { setOpen(false); navigate(action.path); return; }
+
+    if (action.run.kind === 'create_trip') {
+      setRunning(action.id);
+      setMessages((current) => [...current, {
+        from: 'bot',
+        text: `Building a ${action.run.days}-day trip to ${action.run.location}…`,
+      }]);
+      try {
+        const result = await api.quickPlan(
+          { location: action.run.location, days: action.run.days },
+          { token: api.getToken() },
+        );
+        const trip = result?.itinerary || result;
+        if (!trip?.id) throw new Error('The trip came back without an id.');
+        setMessages((current) => [...current, {
+          from: 'bot',
+          text: `Done — "${trip.title}" with ${(trip.stages || []).length} checkpoints. Opening it now.`,
+        }]);
+        setActions([]);
+        setOpen(false);
+        navigate(`/trips/${trip.id}`);
+      } catch (error) {
+        setMessages((current) => [...current, {
+          from: 'bot',
+          text: error.message || 'I could not build that trip. You can plan it yourself on the Trips page.',
+          failed: true,
+        }]);
+      } finally {
+        setRunning('');
+      }
+    }
+  };
 
   if (HIDDEN_ON.includes(pathname)) return null;
 
@@ -132,8 +221,7 @@ export default function AssistantDock() {
               message.failed ? 'dock__msg--failed' : '',
             ].filter(Boolean).join(' ')}
           >
-            {/* The server sends plain text with newlines for its lists. */}
-            {message.text}
+            {message.from === 'bot' ? renderReply(message.text) : message.text}
           </p>
         ))}
 
@@ -148,10 +236,11 @@ export default function AssistantDock() {
               <button
                 key={action.id || action.path}
                 type="button"
-                className="dock__action"
-                onClick={() => follow(action.path)}
+                className={`dock__action${action.run ? ' dock__action--do' : ''}`}
+                onClick={() => take(action)}
+                disabled={Boolean(running)}
               >
-                {action.label}
+                {running === action.id ? 'Working…' : action.label}
                 <ArrowRight size={14} aria-hidden="true" />
               </button>
             ))}

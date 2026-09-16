@@ -106,22 +106,49 @@ export const Badge = ({ tone = 'neutral', className, children, ...r }) => (
 
 /* ------------------------------------------------------------------ fields */
 
+/**
+ * Whether this child is something a <label for> may point at.
+ *
+ * A label's `for` must name a form control. Several fields here wrap a row of
+ * chips or a composed search box instead, and pointing a label at that <div>
+ * is invalid HTML that assistive technology cannot follow -- the browser
+ * reports it as "Incorrect use of <label for=FORM_ELEMENT>". Those get a group
+ * label instead, which is both valid and what they actually are.
+ */
+function isFormControl(child) {
+  if (!React.isValidElement(child)) return false;
+  if (child.type === Input || child.type === Select || child.type === Textarea) return true;
+  return ['input', 'select', 'textarea'].includes(child.type);
+}
+
 export function Field({ label, hint, error, children, className }) {
   const id = useId();
+  const labelled = isFormControl(children);
+
   // Cloned rather than wrapped so the label's `for` reaches the real control
   // and the error is announced with it.
+  const described = error ? `${id}-err` : hint ? `${id}-hint` : undefined;
   const control = React.isValidElement(children)
     ? React.cloneElement(children, {
-        id: children.props.id || id,
+        ...(labelled ? { id: children.props.id || id } : {}),
         'aria-invalid': error ? 'true' : undefined,
-        'aria-describedby': error ? `${id}-err` : hint ? `${id}-hint` : undefined,
+        'aria-describedby': described,
       })
     : children;
 
   return (
     <div className={cx('gt-field', className)}>
-      {label && <label className="gt-field__label" htmlFor={control?.props?.id || id}>{label}</label>}
-      {control}
+      {label && (labelled ? (
+        <label className="gt-field__label" htmlFor={control?.props?.id || id}>{label}</label>
+      ) : (
+        // Not a control: name the group rather than claiming a `for` target.
+        <span className="gt-field__label" id={`${id}-label`}>{label}</span>
+      ))}
+      {label && !labelled ? (
+        <div role="group" aria-labelledby={`${id}-label`} aria-describedby={described}>
+          {control}
+        </div>
+      ) : control}
       {hint && !error && <p className="gt-field__hint" id={`${id}-hint`}>{hint}</p>}
       {error && <p className="gt-field__error" id={`${id}-err`} role="alert">{error}</p>}
     </div>

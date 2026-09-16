@@ -9,8 +9,9 @@ collections the admin dashboard reads, so the two cannot disagree.
 
 The second is the boundary. A traveller asking exactly the same question must
 not learn that a review queue exists, and must never be handed a link to it.
-The assistant *proposes* actions and never takes them, so a wrong proposal is
-not a wrong action -- but a proposal shown to the wrong person is still a leak.
+Most actions only navigate, so a wrong one is merely a wrong door -- but a door
+shown to the wrong person is still a leak, and one action now *creates a trip*
+rather than pointing at the page that would.
 """
 import hashlib
 
@@ -170,3 +171,64 @@ def test_no_more_than_three_actions_are_offered(client, admin):
 def test_every_offered_action_has_a_label_and_a_path(client, admin):
     for action in _ask(client, "hello", admin)["actions"]:
         assert action["label"] and action["path"].startswith("/")
+
+
+# ------------------------------------------------- always something to do
+
+@pytest.mark.parametrize("question", [
+    "hello",
+    "thanks",
+    "what is the weather like",
+    "asdfghjkl",
+    "tell me something",
+    "how many users do I have?",
+    "what can I see in Kribi?",
+])
+def test_the_assistant_always_offers_something(client, admin, question):
+    """An answer with nothing to do next leaves the person to work out why they asked."""
+    actions = _ask(client, question, admin)["actions"]
+    assert actions, f"no actions offered for {question!r}"
+    assert len(actions) <= 3
+
+
+def test_a_signed_out_visitor_is_still_offered_something(client):
+    assert _ask(client, "asdfghjkl")["actions"]
+
+
+# ---------------------------------------------- the action that acts
+
+def test_naming_a_destination_offers_to_build_that_trip(client, traveller):
+    """The old behaviour opened the planning page and forgot the destination."""
+    actions = _ask(client, "plan a 3 day trip to Limbe", traveller)["actions"]
+    build = next((a for a in actions if a.get("run")), None)
+
+    assert build is not None, "no runnable action was offered"
+    assert build["run"]["kind"] == "create_trip"
+    assert build["run"]["location"].lower() == "limbe"
+    assert build["run"]["days"] == 3
+    assert "Limbe" in build["label"] and "3" in build["label"]
+
+
+def test_the_build_action_defaults_to_three_days_when_none_is_given(client, traveller):
+    actions = _ask(client, "I want to go to Kribi", traveller)["actions"]
+    build = next((a for a in actions if a.get("run")), None)
+    assert build and build["run"]["days"] == 3
+
+
+def test_a_signed_out_visitor_is_not_offered_to_build_a_trip(client):
+    """A trip needs an account to own it."""
+    actions = _ask(client, "plan a 3 day trip to Limbe")["actions"]
+    assert all(not a.get("run") for a in actions)
+
+
+def test_a_question_with_no_destination_offers_no_build(client, traveller):
+    actions = _ask(client, "how do I change the language?", traveller)["actions"]
+    assert all(not a.get("run") for a in actions)
+
+
+def test_every_runnable_action_carries_what_it_needs(client, traveller):
+    actions = _ask(client, "plan a 2 day trip to Buea", traveller)["actions"]
+    for action in actions:
+        if action.get("run"):
+            assert action["run"]["location"], action
+            assert isinstance(action["run"]["days"], int) and action["run"]["days"] >= 1

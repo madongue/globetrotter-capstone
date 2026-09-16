@@ -239,10 +239,14 @@ function SuggestInner() {
                 />
               </Field>
               <Field label={costLabel}>
+                {/* step="1", not a round 500: a real entry fee is 7,500 or
+                    1,200, and a step the price does not land on makes the
+                    browser refuse the whole form with a tooltip that never
+                    explains the cost box was the problem. */}
                 <Input
                   type="number"
                   min="0"
-                  step="500"
+                  step="1"
                   value={form.cost}
                   onChange={set('cost')}
                   placeholder="5000"

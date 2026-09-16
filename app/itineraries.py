@@ -267,6 +267,29 @@ def _apply_stage_order(stages: list, stage_order: list | None) -> list:
     )
 
 
+def _day_plan_holding(itinerary: dict, stage_id: str):
+    """The day plan a checkpoint sits in, or None."""
+    for plan in itinerary.get("day_plans") or []:
+        if stage_id in (plan.get("stage_ids") or []):
+            return plan
+    return None
+
+
+def _sync_day_plans_to_order(itinerary: dict, order: list) -> None:
+    """Re-sort each day's checkpoints to follow a new global order.
+
+    The screen renders days from ``day_plans[].stage_ids``, not from the stage
+    list, so a reorder that touched only ``stage_order`` was invisible: the
+    request succeeded, the server stored the new order, and the page showed
+    exactly what it showed before. Day *membership* is left alone -- moving a
+    checkpoint to another day is a separate action with its own control.
+    """
+    position = {stage_id: index for index, stage_id in enumerate(order)}
+    for plan in itinerary.get("day_plans") or []:
+        ids = plan.get("stage_ids") or []
+        plan["stage_ids"] = sorted(ids, key=lambda i: position.get(i, len(position)))
+
+
 def _source_record_for_stage(itinerary: dict, stage_id: str) -> tuple[dict | None, list | None, int]:
     """Locate the hotel/activity/place a derived stage was built from.
 
@@ -1303,11 +1326,33 @@ def reorder_itinerary_stages(itinerary_id: str):
             return jsonify({"error": "direction must be 'up' or 'down'"}), 400
         if stage_id not in current:
             return jsonify({"error": "checkpoint not found"}), 404
+
         order = list(current)
-        index = order.index(stage_id)
+
+        # Nudge within the day the checkpoint belongs to. Moving against the
+        # global list instead would swap a checkpoint with whatever happens to
+        # sit next to it in the rebuilt stage list -- which, on a generated
+        # trip, is regularly the accommodation or a stop on another day, so
+        # the arrow appeared to do nothing.
+        plan = _day_plan_holding(itinerary, stage_id)
+        neighbours = (plan.get("stage_ids") if plan else None) or order
+
+        index = neighbours.index(stage_id)
         target = index - 1 if direction == "up" else index + 1
-        if 0 <= target < len(order):
-            order[index], order[target] = order[target], order[index]
+
+        # A checkpoint alone in its day has no one to trade places with there.
+        # Fall back to the trip's own order, which is what the original flat
+        # checkpoint list has always reordered against. The redesigned screen
+        # never reaches this: it disables the arrow at each day's boundary.
+        if not 0 <= target < len(neighbours):
+            neighbours = order
+            index = order.index(stage_id)
+            target = index - 1 if direction == "up" else index + 1
+
+        if 0 <= target < len(neighbours):
+            other = neighbours[target]
+            a, b = order.index(stage_id), order.index(other)
+            order[a], order[b] = order[b], order[a]
     elif isinstance(data.get("swap"), list) and len(data["swap"]) == 2:
         first, second = (str(value) for value in data["swap"])
         if first not in current or second not in current:
@@ -1319,6 +1364,8 @@ def reorder_itinerary_stages(itinerary_id: str):
         return jsonify({"error": "provide stage_ids, move + direction, or swap"}), 400
 
     itinerary["stage_order"] = order
+    # Without this the new order is stored and never seen: the page reads days.
+    _sync_day_plans_to_order(itinerary, order)
     _sync_itinerary_calculations(itinerary)
     itinerary["route_plan"] = _route_plan_for_itinerary(itinerary)
     itinerary["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
