@@ -113,3 +113,68 @@
   font-weight: 500;
   min-width: 0;
 }
+
+/* ------------------------------------------------------------- portrait
+   The picture itself is the control for changing it. */
+
+.profile__portrait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gt-space-1);
+}
+
+.profile__portrait-btn {
+  position: relative;
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: var(--gt-radius-pill);
+  cursor: pointer;
+}
+
+.profile__portrait-btn:disabled { cursor: progress; opacity: 0.7; }
+.profile__portrait-btn:focus-visible { outline: 2px solid var(--gt-primary); outline-offset: 3px; }
+
+/* The camera badge says the face is clickable without a caption explaining
+   that it is. */
+.profile__portrait-hint {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--gt-primary);
+  color: var(--gt-on-primary);
+  border: 2px solid var(--gt-surface);
+  transition: background var(--gt-fast) var(--gt-ease);
+}
+
+.profile__portrait-btn:hover .profile__portrait-hint { background: var(--gt-primary-hover); }
+
+/* The native control cannot be styled, so it is hidden behind the button
+   that triggers it -- not display:none, which some browsers refuse to click. */
+.profile__file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.profile__portrait-drop {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: var(--gt-caption);
+  color: var(--gt-text-faint);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.profile__portrait-drop:hover { color: var(--gt-error); }

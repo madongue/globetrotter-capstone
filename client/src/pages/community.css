@@ -60,6 +60,16 @@
   color: var(--gt-primary);
   font-weight: 700;
   letter-spacing: 0.02em;
+  /* The inline width/height are the size; without this a wide neighbour in a
+     flex row can still stretch the circle into an oval. */
+  overflow: hidden;
+}
+
+/* A real picture fills the same circle. `object-fit` matters: a portrait
+   photograph squashed to a square is worse than one cropped to it. */
+.avatar--photo {
+  object-fit: cover;
+  background: var(--gt-surface-2);
 }
 
 /* -------------------------------------------------------------- composer */

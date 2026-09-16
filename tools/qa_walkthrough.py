@@ -17,6 +17,14 @@ os.makedirs(OUT, exist_ok=True)
 RESULTS = []
 CONSOLE = []
 
+#: A 1x1 PNG, so the picture upload is exercised with a real image rather than
+#: bytes the server would rightly refuse.
+PNG = bytes.fromhex(
+    "89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c489"
+    "0000000a49444154789c6360000002000100ffff03000006000557bfabd4000000"
+    "0049454e44ae426082"
+)
+
 
 def check(name, condition, detail=""):
     RESULTS.append((bool(condition), name, detail))
@@ -306,6 +314,44 @@ def main():
         goto(a, "/profile")
         check("profile renders", a.locator("h1").count() > 0)
         check("profile has breadcrumbs", a.locator(".crumbs").count() == 1)
+
+        # profile picture
+        check("the portrait is the control for changing it",
+              a.locator(".profile__portrait-btn").count() == 1)
+        check("no picture to start with", a.locator(".avatar--photo").count() == 0)
+
+        a.locator(".profile__file").set_input_files({
+            "name": "face.png", "mimeType": "image/png", "buffer": PNG,
+        })
+        a.wait_for_timeout(3000)
+        check("uploading a picture shows it",
+              a.locator(".profile__portrait .avatar--photo").count() == 1)
+        stored = (api(a, "GET", "/profile")["body"] or {}).get("avatar_url")
+        check("the picture reaches the server", bool(stored), str(stored))
+
+        # It follows the account onto what they have already posted.
+        feed = api(a, "GET", "/media")["body"] or []
+        mine_posts = [m for m in feed if m.get("username") == "amina"]
+        check("the picture reaches posts already made",
+              bool(mine_posts) and bool(mine_posts[0].get("avatar_url")),
+              str(mine_posts[0].get("avatar_url")) if mine_posts else "no posts")
+
+        goto(a, "/media", 1500)
+        check("the media feed renders the picture",
+              a.locator(".shot .avatar--photo").count() >= 1)
+
+        goto(a, "/profile", 1500)
+        check("a picture can be removed", a.locator(".profile__portrait-drop").count() == 1)
+        a.locator(".profile__portrait-drop").click()
+        a.wait_for_timeout(2500)
+        check("removing it goes back to initials",
+              a.locator(".profile__portrait .avatar--photo").count() == 0)
+
+        # Put it back, so the admin screen has one to show.
+        a.locator(".profile__file").set_input_files({
+            "name": "face.png", "mimeType": "image/png", "buffer": PNG,
+        })
+        a.wait_for_timeout(2500)
         goto(a, "/settings")
         check("settings renders", a.locator("h1").count() > 0)
         check("settings has a currency control", a.locator("select").count() >= 1)
@@ -372,6 +418,8 @@ def main():
         check("the review queue has the submissions", rows >= 2, f"rows={rows}")
         check("a correction shows its diff", b.locator(".review__diff").count() >= 1)
         check("accounts table lists users", b.locator(".admin__table tbody tr").count() >= 3)
+        check("the accounts table shows profile pictures",
+              b.locator(".admin__table .avatar--photo").count() >= 1)
         check("admin cannot demote themselves",
               "That is you" in b.locator(".admin__table").inner_text())
 

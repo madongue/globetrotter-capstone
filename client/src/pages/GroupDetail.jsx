@@ -45,7 +45,7 @@ function GroupDetailInner() {
   const navigate = useNavigate();
   const toast = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { token, username, isAuthenticated } = useAuth();
+  const { token, username, avatarUrl, isAuthenticated } = useAuth();
 
   const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -276,7 +276,7 @@ function GroupDetailInner() {
             </button>
 
             <header className="thread__head">
-              <Avatar username={openThread.created_by} size={44} />
+              <Avatar username={openThread.created_by} src={openThread.avatar_url} size={44} />
               <div className="thread__who">
                 <strong>{openThread.created_by}</strong>
                 <span className="gt-caption gt-muted">{timeAgo(openThread.created_at)}</span>
@@ -310,7 +310,7 @@ function GroupDetailInner() {
             <section className="thread__replies">
               {(openThread.posts || []).slice(1).map((post) => (
                 <div key={post.id} className="reply">
-                  <Avatar username={post.username} size={34} />
+                  <Avatar username={post.username} src={post.avatar_url} size={34} />
                   <div className="reply__body">
                     <div className="reply__who">
                       <strong>{post.username}</strong>
@@ -329,7 +329,7 @@ function GroupDetailInner() {
             </section>
 
             <form className="thread__compose" onSubmit={sendReply}>
-              <Avatar username={username} size={34} />
+              <Avatar username={username} src={avatarUrl} size={34} />
               <Textarea
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
@@ -388,7 +388,7 @@ function GroupDetailInner() {
               <Card key={d.id} className="post">
                 <button type="button" className="post__link" onClick={() => setSearchParams({ d: d.id })}>
                   <header className="post__head">
-                    <Avatar username={d.created_by} />
+                    <Avatar username={d.created_by} src={d.avatar_url} />
                     <div className="post__who">
                       <strong>{d.created_by}</strong>
                       <span className="gt-caption gt-muted">{timeAgo(d.created_at)}</span>
@@ -441,7 +441,7 @@ function GroupDetailInner() {
           <ul className="members">
             {members.map((member) => (
               <li key={member} className="member">
-                <Avatar username={member} size={38} />
+                <Avatar username={member} src={group?.member_avatars?.[member]} size={38} />
                 <span>
                   <strong>{member}</strong>
                   {member === group.created_by && <span className="gt-caption gt-muted"> · created this group</span>}

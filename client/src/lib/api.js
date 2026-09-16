@@ -497,3 +497,40 @@ export const rejectGroup = (groupId, note, { token } = {}) =>
   request(`/groups/${encodeURIComponent(groupId)}/reject`, {
     method: 'POST', body: { note: note || '' }, token,
   });
+
+/* ------------------------------------------------------ profile picture */
+
+/**
+ * Upload a profile picture.
+ *
+ * Multipart, so it bypasses `request` for the reason uploadMedia does: a
+ * multipart body must be left to the browser to build, boundary and all.
+ * The server decides whether the file is an image from the file itself.
+ */
+export async function uploadAvatar(file, { token } = {}) {
+  const body = new FormData();
+  body.append('file', file);
+
+  const response = await fetch('/api/profile/avatar', {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body,
+  });
+
+  let payload = null;
+  try { payload = await response.json(); } catch { payload = null; }
+  if (!response.ok) {
+    const error = new Error(payload?.error || `Upload failed (${response.status})`);
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
+}
+
+/** Go back to the lettered circle. The stored file is left alone. */
+export const removeAvatar = ({ token } = {}) =>
+  request('/profile/avatar', { method: 'DELETE', token });
+
+/** Use a picture already on the web instead of uploading one. */
+export const setAvatarUrl = (avatarUrl, { token } = {}) =>
+  request('/profile', { method: 'PATCH', body: { avatar_url: avatarUrl }, token });

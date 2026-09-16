@@ -18,7 +18,7 @@ import urllib.parse
 
 from flask import Blueprint, Response, request, jsonify, send_from_directory
 
-from app.auth import get_current_user
+from app.auth import avatars_for, get_current_user
 from app.cameroon_geo import (
     CAMEROON_COUNTRY,
     enrich_cameroon_item,
@@ -1755,7 +1755,13 @@ def get_group(group_id: str):
     if not group or not _can_see_group(group, username):
         return jsonify({"error": "group not found"}), 404
 
-    return jsonify({**group, "status": _group_status(group)}), 200
+    return jsonify({
+        **group,
+        "status": _group_status(group),
+        # Usernames alone cannot render a face. One read of the accounts, so
+        # the member list costs the same for two members as for fifty.
+        "member_avatars": avatars_for(group.get("members") or []),
+    }), 200
 
 
 @itineraries_bp.route("/groups/<group_id>/approve", methods=["POST"])
@@ -1897,7 +1903,22 @@ def list_group_discussions(group_id: str):
     if not group:
         return jsonify({"error": "group not found"}), 404
 
-    return jsonify(group.get("discussions", [])), 200
+    discussions = group.get("discussions", [])
+    pictures = avatars_for(
+        [d.get("created_by") for d in discussions]
+        + [p.get("username") for d in discussions for p in (d.get("posts") or [])]
+    )
+    return jsonify([
+        {
+            **discussion,
+            "avatar_url": pictures.get(discussion.get("created_by"), ""),
+            "posts": [
+                {**post, "avatar_url": pictures.get(post.get("username"), "")}
+                for post in (discussion.get("posts") or [])
+            ],
+        }
+        for discussion in discussions
+    ]), 200
 
 
 @itineraries_bp.route("/groups/<group_id>/discussions", methods=["POST"])
@@ -2049,7 +2070,15 @@ def list_media():
         media_items = [item for item in media_items if item.get("place_id") == place_id]
     if city:
         media_items = [item for item in media_items if item.get("city", "").lower() == city]
-    return jsonify(media_items), 200
+
+    # Whose picture goes beside each post. Resolved at read time rather than
+    # copied onto the post when it was made, so changing your picture updates
+    # everything you have ever posted instead of only what you post next.
+    pictures = avatars_for(item.get("username") for item in media_items)
+    return jsonify([
+        {**item, "avatar_url": pictures.get(item.get("username"), "")}
+        for item in media_items
+    ]), 200
 
 
 @itineraries_bp.route("/media", methods=["POST"])

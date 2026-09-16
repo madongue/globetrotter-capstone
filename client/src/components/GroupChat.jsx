@@ -126,7 +126,7 @@ export default function GroupChat({ roomId, token, username, canPost }) {
           const mine = message.username === username;
           return (
             <div key={message.id} className={`chat__row${mine ? ' is-mine' : ''}`}>
-              {!mine && <Avatar username={message.username} size={30} />}
+              {!mine && <Avatar username={message.username} src={message.avatar_url} size={30} />}
               <div className="chat__bubble">
                 {!mine && <span className="chat__who">{message.username}</span>}
                 <p>{message.text}</p>

@@ -47,7 +47,7 @@ import uuid
 
 from flask import Blueprint, jsonify, request
 
-from app.auth import get_current_user
+from app.auth import avatars_for, get_current_user
 from app.models import (
     get_all_groups,
     get_chat_messages,
@@ -157,9 +157,12 @@ def read_messages(room_id: str):
 
     messages = messages[-MAX_MESSAGES:]
 
+    pictures = avatars_for(m.get("username") for m in messages)
     return jsonify({
         "room_id": room_id,
-        "messages": messages,
+        "messages": [
+            {**m, "avatar_url": pictures.get(m.get("username"), "")} for m in messages
+        ],
         # What to pass back as `since` next time. Unchanged when nothing new
         # arrived, so an idle client keeps asking the same question.
         "cursor": messages[-1]["sent_at"] if messages else since,

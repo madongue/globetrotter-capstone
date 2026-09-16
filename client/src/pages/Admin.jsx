@@ -449,7 +449,7 @@ function AdminInner() {
                       <tr key={user.id || user.username}>
                         <td>
                           <span className="admin__who">
-                            <Avatar username={user.username} size={30} />
+                            <Avatar username={user.username} src={user.avatar_url} size={30} />
                             <strong>{user.username}</strong>
                             {user.google_linked && <Badge tone="neutral">Google</Badge>}
                           </span>

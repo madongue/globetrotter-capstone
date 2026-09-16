@@ -49,6 +49,7 @@ They cannot save anything, plan anything, or see other travellers.
 - Sign in with **either** the username or the phone number
 - Sign in with Google, if a `GOOGLE_CLIENT_ID` is configured
 - Request a password reset and set a new password with the token
+- **Add a profile picture** — upload one, or point at a web address — and remove it again
 - Edit their travel interests, which reorder what they are recommended
 - Switch the interface between **English and French**
 - Switch the display currency (FCFA, EUR, USD, GBP, NGN) — prices are recorded in FCFA and converted for display
@@ -165,6 +166,11 @@ All counted from live data. Nothing is sampled or estimated.
 - **Demote** an administrator back to a traveller
 - Cannot demote themselves
 
+### Their own profile picture
+
+An administrator sets theirs the same way anyone does, and sees everyone
+else's in the accounts table.
+
 ### The catalogue directly
 
 - Create, edit and delete places, hotels and activities
@@ -216,7 +222,7 @@ Things people reasonably expect that this application does **not** do:
 | **Calls are two people** | WebRTC peer-to-peer is a connection between two browsers. Three or more needs a media server to mix the streams. |
 | **Calls need a cooperative network** | STUN only, no TURN relay. On the same Wi-Fi or most home connections calls connect; on some mobile networks no direct path exists and the call will fail — the interface says so rather than spinning. |
 | **Chat is polled, not pushed** | Two-second cursor rather than WebSockets, because the app runs multiple workers with no shared broker. Correct under any number of workers; a two-second delay is the cost. |
-| **Uploaded files are not permanent on the free tier** | They go to local disk, which Render discards on redeploy. Setting `CLOUDINARY_URL` switches to cloud storage; the code path already exists. |
+| **Uploaded files are not permanent on the free tier** | Photos, videos and profile pictures go to local disk, which Render discards on redeploy. Setting `CLOUDINARY_URL` switches to cloud storage; the code path already exists. A picture that no longer loads falls back to the account's initials rather than a broken image. |
 | **`opening_hours` is not a field** | No place record carries opening times, so nothing can display them. |
 | **No password change while signed in** | Only the forgotten-password flow can set a new one. |
 | **Metrics are per process** | `/api/metrics` counts one worker's requests. A single platform-wide number needs a collector such as Prometheus — Phase 4. |

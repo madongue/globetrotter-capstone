@@ -16,6 +16,7 @@ import * as api from './api';
 export function useAuth() {
   const [token, setToken] = useState(() => api.getToken());
   const [username, setUsername] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
 
   // Signing in or out happens in App.jsx, which writes the same key. A storage
   // event fires for other tabs; the focus check covers this one.
@@ -37,12 +38,18 @@ export function useAuth() {
     if (!token) { setUsername(''); return undefined; }
     fetch('/api/profile', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => (r.ok ? r.json() : null))
-      .then((profile) => { if (!cancelled && profile?.username) setUsername(profile.username); })
+      .then((profile) => {
+        if (cancelled || !profile?.username) return;
+        setUsername(profile.username);
+        // Carried here so every screen that shows "you" can show your face
+        // without fetching the profile again for itself.
+        setAvatarUrl(profile.avatar_url || '');
+      })
       .catch(() => {});
     return () => { cancelled = true; };
   }, [token]);
 
-  return { token, username, isAuthenticated: Boolean(token) };
+  return { token, username, avatarUrl, isAuthenticated: Boolean(token) };
 }
 
 export function useSavedPlaces(token) {

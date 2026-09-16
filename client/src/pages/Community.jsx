@@ -39,9 +39,40 @@ const TYPE_TONE = { question: 'primary', recommendation: 'success', experience: 
 
 /* ------------------------------------------------------------------ avatar */
 
-export function Avatar({ username, size = 40 }) {
+/**
+ * Someone's picture, or their initials.
+ *
+ * The lettered circle is the fallback rather than a placeholder to be replaced
+ * later: most accounts will never upload a picture, and initials in the
+ * account's own colour identify a person perfectly well.
+ *
+ * A picture that fails to load falls back to the letters too. An uploaded file
+ * can disappear -- on the free tier the disk is discarded on every redeploy --
+ * and a broken image icon where a face should be looks like the account is
+ * broken rather than the file.
+ */
+export function Avatar({ username, src, size = 40 }) {
+  const [failed, setFailed] = React.useState(false);
+  React.useEffect(() => setFailed(false), [src]);
+
+  const style = { width: size, height: size, fontSize: size * 0.36 };
+
+  if (src && !failed) {
+    return (
+      <img
+        className="avatar avatar--photo"
+        style={style}
+        src={src}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
   return (
-    <span className="avatar" style={{ width: size, height: size, fontSize: size * 0.36 }} aria-hidden="true">
+    <span className="avatar" style={style} aria-hidden="true">
       {initials(username)}
     </span>
   );
@@ -58,7 +89,7 @@ function DiscussionCard({ discussion, liked, onLike, canInteract }) {
     <Card className="post">
       <Link to={`/community/${discussion.groupId}?d=${discussion.id}`} className="post__link">
         <header className="post__head">
-          <Avatar username={discussion.created_by} />
+          <Avatar username={discussion.created_by} src={discussion.avatar_url} />
           <div className="post__who">
             <strong>{discussion.created_by}</strong>
             <span className="gt-caption gt-muted">
@@ -107,7 +138,7 @@ function CommunityInner() {
 
   const navigate = useNavigate();
   const toast = useToast();
-  const { token, username, isAuthenticated } = useAuth();
+  const { token, username, avatarUrl, isAuthenticated } = useAuth();
   const community = useCommunity(token, username);
 
   const [tab, setTab] = useState('all');
@@ -230,7 +261,7 @@ function CommunityInner() {
             <Card className="ask" padded>
               {!open ? (
                 <button type="button" className="ask__prompt" onClick={() => setOpen(true)}>
-                  <Avatar username={username} size={38} />
+                  <Avatar username={username} src={avatarUrl} size={38} />
                   <span>What would you like to ask or share?</span>
                   <Plus size={18} aria-hidden="true" />
                 </button>

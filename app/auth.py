@@ -24,6 +24,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import limiter
 from app.interests import PREDEFINED_INTERESTS, normalize_interests
+from app.media_storage import get_upload_store
 from app.models import (
     get_all_users,
     get_user_by_email,
@@ -476,6 +477,48 @@ def reset_password():
     return jsonify({"message": "password reset successful"}), 200
 
 
+#: The largest picture accepted for a profile. Generous for a photograph
+#: straight off a phone, small enough that the free instance's disk and a
+#: slow connection both survive it.
+MAX_AVATAR_BYTES = 5 * 1024 * 1024
+
+
+def public_profile(user: dict) -> dict:
+    """The account as its owner and the interface see it.
+
+    One definition, because this shape was already written out three times and
+    a fourth would eventually have disagreed with the others about a field.
+    Never includes the password hash, the reset token, or anything else the
+    record carries for the server's own use.
+    """
+    return {
+        "id": user.get("id"),
+        "username": user.get("username"),
+        "preferences": user.get("preferences", []),
+        "role": user.get("role", "user"),
+        "google_linked": bool(user.get("google_id")),
+        "avatar_url": user.get("avatar_url") or "",
+    }
+
+
+def avatars_for(usernames) -> dict:
+    """Map usernames to their picture, reading the accounts once.
+
+    A feed of twenty posts by twenty people needs twenty pictures. Looking each
+    one up separately would read the whole accounts collection twenty times --
+    cheap against a JSON file, twenty round trips against Postgres. One read
+    and a dictionary costs the same for one author as for fifty.
+    """
+    wanted = {u for u in usernames if u}
+    if not wanted:
+        return {}
+    return {
+        user.get("username"): user.get("avatar_url") or ""
+        for user in get_all_users()
+        if user.get("username") in wanted and user.get("avatar_url")
+    }
+
+
 @auth_bp.route("/profile", methods=["GET", "PATCH"])
 def profile():
     """Read or update the authenticated user's profile/preferences."""
@@ -488,13 +531,7 @@ def profile():
         return jsonify({"error": "user not found"}), 404
 
     if request.method == "GET":
-        return jsonify({
-            "id": user.get("id"),
-            "username": user.get("username"),
-            "preferences": user.get("preferences", []),
-            "role": user.get("role", "user"),
-            "google_linked": bool(user.get("google_id")),
-        }), 200
+        return jsonify(public_profile(user)), 200
 
     data = request.get_json(silent=True) or {}
     if "preferences" in data:
@@ -503,17 +540,79 @@ def profile():
             return jsonify({"error": "preferences must be a list"}), 400
         user["preferences"] = normalize_interests(preferences)
 
+    # A picture already on the web, as an alternative to uploading one.
+    # Sending "" clears it, which is how the interface removes a picture
+    # without a second endpoint.
+    if "avatar_url" in data:
+        avatar_url = str(data.get("avatar_url") or "").strip()
+        if avatar_url and not avatar_url.startswith(("http://", "https://", "/")):
+            return jsonify({"error": "avatar_url must be a web address"}), 400
+        if len(avatar_url) > 500:
+            return jsonify({"error": "avatar_url is too long"}), 400
+        user["avatar_url"] = avatar_url
+
     update_user(user)
     return jsonify({
         "message": "profile updated",
-        "profile": {
-            "id": user.get("id"),
-            "username": user.get("username"),
-            "preferences": user.get("preferences", []),
-            "role": user.get("role", "user"),
-            "google_linked": bool(user.get("google_id")),
-        },
+        "profile": public_profile(user),
     }), 200
+
+
+@auth_bp.route("/profile/avatar", methods=["POST"])
+def upload_avatar():
+    """Upload a profile picture.
+
+    Multipart, field name ``file``. The file's own MIME type decides whether it
+    is an image -- not its extension, and not anything the form claims, since
+    neither is evidence about the bytes.
+    """
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    user = get_user_by_username(username)
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+
+    uploaded = request.files.get("file")
+    if not uploaded or not uploaded.filename:
+        return jsonify({"error": "file is required"}), 400
+
+    if not (uploaded.mimetype or "").startswith("image/"):
+        return jsonify({"error": "a profile picture must be an image"}), 400
+
+    # Measured rather than trusted: Content-Length is whatever the client said.
+    uploaded.stream.seek(0, os.SEEK_END)
+    size = uploaded.stream.tell()
+    uploaded.stream.seek(0)
+    if size > MAX_AVATAR_BYTES:
+        return jsonify({
+            "error": f"a profile picture must be under {MAX_AVATAR_BYTES // (1024 * 1024)} MB",
+        }), 400
+
+    stored = get_upload_store().save(uploaded, folder="avatars")
+    user["avatar_url"] = stored["url"]
+    update_user(user)
+
+    return jsonify({"message": "profile picture updated", "profile": public_profile(user)}), 201
+
+
+@auth_bp.route("/profile/avatar", methods=["DELETE"])
+def remove_avatar():
+    """Go back to the lettered circle."""
+    username = get_current_user(request)
+    if not username:
+        return jsonify({"error": "authentication required"}), 401
+
+    user = get_user_by_username(username)
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+
+    # The stored file is deliberately left alone: it may be the picture on a
+    # post someone already made, and deleting it would blank that instead.
+    user["avatar_url"] = ""
+    update_user(user)
+    return jsonify({"message": "profile picture removed", "profile": public_profile(user)}), 200
 
 
 def _require_admin_user(request_obj):
@@ -537,13 +636,7 @@ def list_users_admin():
 
     users = []
     for user in get_all_users():
-        users.append({
-            "id": user.get("id"),
-            "username": user.get("username"),
-            "preferences": user.get("preferences", []),
-            "role": user.get("role", "user"),
-            "google_linked": bool(user.get("google_id")),
-        })
+        users.append(public_profile(user))
     return jsonify(users), 200
 
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Bookmark, Globe, LogOut, MapPin, Route, Settings as SettingsIcon, Users,
+  Bookmark, Camera, Globe, LogOut, MapPin, Route, Settings as SettingsIcon, Users,
 } from 'lucide-react';
 import {
   Badge, Button, Card, Chip, EmptyState, SectionHead, Skeleton, ToastProvider, useToast,
@@ -45,6 +45,8 @@ function ProfileInner() {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInput = useRef(null);
 
   useEffect(() => {
     if (!token) { setLoading(false); return undefined; }
@@ -95,6 +97,38 @@ function ProfileInner() {
     }
   };
 
+  const pickPicture = async (event) => {
+    const file = event.target.files?.[0];
+    // Clearing the input matters: choosing the same file twice in a row fires
+    // no change event otherwise, so a failed upload could not be retried.
+    event.target.value = '';
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const result = await api.uploadAvatar(file, { token });
+      setProfile(result.profile);
+      toast.push('Profile picture updated.');
+    } catch (err) {
+      toast.push(err.message || 'Could not upload that picture.', 'error');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const dropPicture = async () => {
+    setUploading(true);
+    try {
+      const result = await api.removeAvatar({ token });
+      setProfile(result.profile);
+      toast.push('Profile picture removed.');
+    } catch (err) {
+      toast.push(err.message || 'Could not remove it.', 'error');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const signOut = () => {
     try { localStorage.removeItem('gt_token'); } catch { /* private window */ }
     navigate('/');
@@ -132,7 +166,45 @@ function ProfileInner() {
 
       <header className="profile__head">
         <div className="gt-page profile__head-inner">
-          <Avatar username={profile?.username || username} size={76} />
+          {/* The picture is the control. A separate "change picture" button
+              elsewhere on the page would be one more thing to find; clicking
+              the face is what people try first. */}
+          <div className="profile__portrait">
+            <button
+              type="button"
+              className="profile__portrait-btn"
+              onClick={() => fileInput.current?.click()}
+              disabled={uploading}
+              aria-label={profile?.avatar_url ? 'Change your profile picture' : 'Add a profile picture'}
+            >
+              <Avatar
+                username={profile?.username || username}
+                src={profile?.avatar_url}
+                size={76}
+              />
+              <span className="profile__portrait-hint" aria-hidden="true">
+                <Camera size={15} />
+              </span>
+            </button>
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/*"
+              className="profile__file"
+              onChange={pickPicture}
+              tabIndex={-1}
+            />
+            {profile?.avatar_url && (
+              <button
+                type="button"
+                className="profile__portrait-drop"
+                onClick={dropPicture}
+                disabled={uploading}
+              >
+                Remove
+              </button>
+            )}
+          </div>
           <div className="profile__who">
             <h1 className="gt-h2">{profile?.username || username}</h1>
             <p className="profile__meta">

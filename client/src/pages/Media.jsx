@@ -102,7 +102,7 @@ function Post({ post, me, token, onChanged }) {
 
       <div className="shot__body">
         <div className="shot__who">
-          <Avatar username={post.username} size={32} />
+          <Avatar username={post.username} src={post.avatar_url} size={32} />
           <span className="shot__who-text">
             <strong>{post.username}</strong>
             <span className="shot__when">{relativeTime(post.created_at)}</span>
