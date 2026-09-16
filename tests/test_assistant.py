@@ -72,8 +72,16 @@ def temp_data_files(monkeypatch, tmp_path):
     monkeypatch.setattr("app.models.ACTIVITIES_FILE", str(activities_file))
     monkeypatch.setattr("app.models.PLACES_FILE", str(places_file))
 
-    for name in ("NOTIFICATIONS_FILE", "INVITES_FILE", "AUDIT_LOG_FILE"):
-        path = tmp_path / f"{name.lower()}.json"
+    # Named after the collection, not the constant: a file called
+    # "audit_log_file.json" has the collection name "audit_log_file", which the
+    # registry does not know, so the resolver falls back to the real data
+    # directory and the redirect quietly does nothing.
+    for name, collection in (
+        ("NOTIFICATIONS_FILE", "notifications"),
+        ("INVITES_FILE", "invites"),
+        ("AUDIT_LOG_FILE", "audit_log"),
+    ):
+        path = tmp_path / f"{collection}.json"
         path.write_text("[]", encoding="utf-8")
         monkeypatch.setattr(f"app.models.{name}", str(path))
 

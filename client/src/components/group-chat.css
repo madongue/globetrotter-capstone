@@ -1,0 +1,106 @@
+/* Group chat. Composition only — values come from the Phase A tokens. */
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius-lg);
+  background: var(--gt-surface);
+  overflow: hidden;
+  max-width: 46rem;
+}
+
+.chat__log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-3);
+  padding: var(--gt-space-4);
+  /* Tall enough to hold a conversation, short enough that the composer stays
+     on screen without scrolling the page. */
+  height: min(26rem, 55vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.chat__state {
+  margin: auto;
+  text-align: center;
+  max-width: 32ch;
+}
+
+.chat__row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--gt-space-2);
+  max-width: 85%;
+}
+
+/* Your own messages sit on the right, as they do in every chat anyone has
+   used — the alignment is what says who is speaking. */
+.chat__row.is-mine { margin-inline-start: auto; flex-direction: row-reverse; }
+
+.chat__bubble {
+  padding: var(--gt-space-3) var(--gt-space-4);
+  border-radius: var(--gt-radius-lg);
+  background: var(--gt-surface-2);
+  min-width: 0;
+}
+
+.chat__row.is-mine .chat__bubble {
+  background: var(--gt-primary);
+  color: var(--gt-on-primary);
+}
+
+.chat__who {
+  display: block;
+  font-size: var(--gt-caption);
+  font-weight: 600;
+  color: var(--gt-primary);
+  margin-bottom: 2px;
+}
+
+.chat__bubble p {
+  margin: 0;
+  font-size: var(--gt-small);
+  line-height: 1.45;
+  /* A pasted link or a long word must wrap rather than widen the bubble. */
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.chat__time {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.68rem;
+  opacity: 0.7;
+}
+
+.chat__error {
+  margin: 0;
+  padding: var(--gt-space-2) var(--gt-space-4);
+  font-size: var(--gt-caption);
+  color: var(--gt-error);
+  background: var(--gt-error-soft);
+}
+
+.chat__compose {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--gt-space-2);
+  padding: var(--gt-space-3);
+  border-top: 1px solid var(--gt-border);
+}
+
+.chat__compose .gt-textarea {
+  min-height: 2.75rem;
+  max-height: 8rem;
+  resize: none;
+  padding-block: 0.7rem;
+}
+
+.chat__locked {
+  margin: 0;
+  padding: var(--gt-space-4);
+  border-top: 1px solid var(--gt-border);
+  text-align: center;
+}

@@ -9,6 +9,7 @@ import {
 } from '../components/ui';
 import { TabBar, TopBar } from '../components/Navigation';
 import { Avatar } from './Community';
+import GroupChat from '../components/GroupChat';
 import {
   DISCUSSION_TYPES, groupCover, likeCount, replyCount, timeAgo,
 } from '../lib/useCommunity';
@@ -28,6 +29,7 @@ import './community.css';
 const TYPE_TONE = { question: 'primary', recommendation: 'success', experience: 'warning' };
 const TABS = [
   { id: 'discussions', label: 'Discussions' },
+  { id: 'chat', label: 'Chat' },
   { id: 'members', label: 'Members' },
   { id: 'media', label: 'Media' },
 ];
@@ -405,6 +407,16 @@ function GroupDetailInner() {
             ))}
           </div>
         ))}
+
+        {/* --------------------------------------------------------- chat */}
+        {tab === 'chat' && (
+          <GroupChat
+            roomId={`group:${id}`}
+            token={token}
+            username={username}
+            canPost={joined}
+          />
+        )}
 
         {/* ------------------------------------------------------ members */}
         {tab === 'members' && (

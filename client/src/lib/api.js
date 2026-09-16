@@ -224,6 +224,28 @@ export const likeDiscussion = (groupId, discussionId, { token } = {}) =>
 
 export const listMedia = ({ token, signal } = {}) => request('/media', { token, signal });
 
+/* ------------------------------------------------------------------ chat */
+
+export const listChatRooms = ({ token, signal } = {}) => request('/chat/rooms', { token, signal });
+
+/**
+ * Messages in a room, optionally only those newer than a cursor.
+ *
+ * The cursor is an ISO timestamp ending in "+00:00", and a bare plus in a
+ * query string decodes to a space — so it is encoded here rather than left to
+ * chance. (The server also undoes the mangling, but a client should not rely
+ * on that.)
+ */
+export const readChat = (roomId, { since, token, signal } = {}) => {
+  const query = since ? `?since=${encodeURIComponent(since)}` : '';
+  return request(`/chat/rooms/${encodeURIComponent(roomId)}/messages${query}`, { token, signal });
+};
+
+export const sendChat = (roomId, text, { token } = {}) =>
+  request(`/chat/rooms/${encodeURIComponent(roomId)}/messages`, {
+    method: 'POST', body: { text }, token,
+  });
+
 /* --------------------------------------------------------------- public */
 
 export const getStats = ({ signal } = {}) => request('/stats', { signal });

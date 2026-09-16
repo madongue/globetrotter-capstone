@@ -34,6 +34,7 @@ ACTIVITIES_FILE = os.path.join(DATA_DIR, "activities.json")
 PLACES_FILE = os.path.join(DATA_DIR, "places.json")
 GROUPS_FILE = os.path.join(DATA_DIR, "groups.json")
 MEDIA_FILE = os.path.join(DATA_DIR, "media.json")
+CHAT_FILE = os.path.join(DATA_DIR, "chat_messages.json")
 NOTIFICATIONS_FILE = os.path.join(DATA_DIR, "notifications.json")
 INVITES_FILE = os.path.join(DATA_DIR, "invites.json")
 AUDIT_LOG_FILE = os.path.join(DATA_DIR, "audit_log.json")
@@ -65,6 +66,7 @@ _COLLECTION_PATHS = {
     "places": "PLACES_FILE",
     "groups": "GROUPS_FILE",
     "media": "MEDIA_FILE",
+    "chat_messages": "CHAT_FILE",
     "notifications": "NOTIFICATIONS_FILE",
     "invites": "INVITES_FILE",
     "audit_log": "AUDIT_LOG_FILE",
@@ -389,6 +391,24 @@ def update_group(updated_group: dict) -> None:
                 _write_json_unlocked(GROUPS_FILE, groups)
                 return
         raise ValueError("Group not found")
+
+
+def get_chat_messages(room_id: str) -> list:
+    """Every message in one chat room, oldest first.
+
+    Filtered on read rather than stored per room, so the chat uses the same
+    single-collection shape as everything else and works unchanged against
+    either storage backend.
+    """
+    return [m for m in _read_json(CHAT_FILE) if m.get("room_id") == room_id]
+
+
+def save_chat_message(message: dict) -> None:
+    """Append one message to the chat store."""
+    with _locked(CHAT_FILE):
+        messages = _read_json_unlocked(CHAT_FILE)
+        messages.append(message)
+        _write_json_unlocked(CHAT_FILE, messages)
 
 
 def get_all_media() -> list:

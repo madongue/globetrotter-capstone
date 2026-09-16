@@ -24,6 +24,7 @@ RUNTIME_COLLECTIONS = (
     "ITINERARIES_FILE",
     "GROUPS_FILE",
     "MEDIA_FILE",
+    "CHAT_FILE",
     "NOTIFICATIONS_FILE",
     "INVITES_FILE",
     "AUDIT_LOG_FILE",
@@ -55,10 +56,29 @@ def isolate_runtime_data(monkeypatch, tmp_path_factory):
 
     import app.models as models
 
+    # The sandbox file must keep the *collection's* name, not the constant's.
+    #
+    # Reads go models -> collection_name_for(path) -> _path_for_collection(name)
+    # -> the constant again. Naming the file after the constant broke that
+    # round trip: GROUPS_FILE pointed at "groups_file.json", whose collection
+    # name is "groups_file", which is not in the registry, so the resolver fell
+    # back to DATA_DIR and every read and write went to the real data
+    # directory under a new filename. The isolation looked right and was not.
+    #
+    # The registry is the authority on which constant serves which collection,
+    # so it is inverted here rather than guessed at from the constant's name —
+    # CHAT_FILE serves "chat_messages", which no naming rule would produce.
+    collection_for_constant = {
+        constant: collection
+        for collection, constant in models._COLLECTION_PATHS.items()
+    }
+
     for name in RUNTIME_COLLECTIONS:
         if not hasattr(models, name):
             continue
-        target = sandbox / f"{name.lower()}.json"
+        collection = collection_for_constant.get(name)
+        assert collection, f"{name} is not in models._COLLECTION_PATHS"
+        target = sandbox / f"{collection}.json"
         # Written empty so a read before the first write behaves the way it does
         # on a fresh install rather than raising.
         target.write_text("[]", encoding="utf-8")

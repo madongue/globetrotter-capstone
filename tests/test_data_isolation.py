@@ -76,3 +76,40 @@ def test_catalogue_seeds_are_still_readable():
     """Isolation must not blind the tests that validate the shipped catalogue."""
     places = models.get_all_places()
     assert len(places) > 500, "the real catalogue should still be visible to tests"
+
+
+def test_a_sandbox_path_still_resolves_to_its_own_collection():
+    """The round trip that the first version of this fixture broke.
+
+    A read goes path -> collection_name_for -> _path_for_collection -> path.
+    If the sandbox file is not named after its collection, the middle step
+    falls back to DATA_DIR and every read and write lands in the real data
+    directory under a new filename — isolation that looks right and is not.
+    """
+    from app.store import collection_name_for
+
+    for constant, collection in (
+        ("GROUPS_FILE", "groups"),
+        ("CHAT_FILE", "chat_messages"),
+        ("AUDIT_LOG_FILE", "audit_log"),
+        ("PLACE_REQUESTS_FILE", "place_requests"),
+    ):
+        path = getattr(models, constant)
+        assert collection_name_for(path) == collection, (
+            f"{constant} points at {path}, whose collection name is "
+            f"{collection_name_for(path)!r} rather than {collection!r}"
+        )
+        # And the resolver must send that name straight back to the sandbox.
+        assert os.path.abspath(models._path_for_collection(collection)) == os.path.abspath(path)
+
+
+def test_no_stray_collection_files_are_left_in_the_real_data_directory():
+    """The leak this bug produced: data/groups_file.json and friends."""
+    strays = [
+        name for name in os.listdir(REAL_DATA_DIR)
+        if name.endswith("_file.json")
+    ]
+    assert not strays, (
+        f"{strays} are in data/ — a test wrote there through a mis-resolved "
+        f"collection name."
+    )
