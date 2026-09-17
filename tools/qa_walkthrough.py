@@ -50,8 +50,14 @@ def goto(page, path, wait=1400):
 
 
 def new_ctx(browser, token=None, width=1440):
-    ctx = browser.new_context(viewport={"width": width, "height": 950},
-                              permissions=["camera", "microphone"])
+    # Geolocation is granted and pinned to Buea: the map page reads the
+    # browser's position, and a context that cannot answer makes the feature
+    # look broken when it is only unasked.
+    ctx = browser.new_context(
+        viewport={"width": width, "height": 950},
+        permissions=["camera", "microphone", "geolocation"],
+        geolocation={"latitude": 4.1527, "longitude": 9.2410},
+    )
     if token:
         ctx.add_init_script(f"try{{localStorage.setItem('gt_token','{token}')}}catch(e){{}}")
     return ctx
@@ -151,6 +157,12 @@ def main():
         check("tiles actually load", g.locator(".leaflet-tile-loaded").count() > 0)
         check("the map says how many it is showing",
               g.locator(".explore__map-note").count() == 1)
+
+        goto(g, "/map", 5000)
+        check("a guest can open the map page", g.locator(".leaflet-container").count() == 1)
+        check("a guest is not offered the account-only layers",
+              g.locator(".mapp__layers .gt-chip").count() == 1,
+              f"{g.locator('.mapp__layers .gt-chip').count()} switches")
 
         goto(g, "/dashboard")
         check("guest dashboard asks them to sign in",
@@ -343,6 +355,51 @@ def main():
         if a.locator(".shot__like").count():
             a.locator(".shot__like").first.click(); a.wait_for_timeout(2000)
             check("a photo can be liked", "1" in a.locator(".shot__count").first.inner_text())
+
+        # the dedicated map
+        section("Traveller — the map page")
+        goto(a, "/map", 5000)
+        check("the map page renders a map", a.locator(".leaflet-container").count() == 1)
+        pins = a.locator(".leaflet-marker-icon").count()
+        check("the catalogue is drawn on it", pins > 100, f"pins={pins}")
+        check("tiles load", a.locator(".leaflet-tile-loaded").count() > 0)
+        check("it can be filtered", a.locator(".mapp__chips .gt-chip").count() >= 4)
+        check("it says what it is showing", a.locator(".mapp__count").count() == 1)
+
+        a.locator(".leaflet-marker-icon.travel-map-marker").first.click(force=True)
+        a.wait_for_timeout(1500)
+        check("clicking a pin opens the place", a.locator(".mapp__panel").count() == 1)
+        check("the panel names the place", bool(a.locator(".mapp__name").inner_text().strip()))
+        check("the panel offers actions", a.locator(".mapp__actions button").count() >= 3)
+        check("a place can be added to a trip from the map",
+              a.locator(".mapp__actions select").count() == 1)
+
+        a.locator(".mapp__layers .gt-chip", has_text="My trips").click()
+        a.wait_for_timeout(2500)
+        trip_pins = a.locator(".travel-map-marker-trip, .travel-map-marker-done").count()
+        check("your trips can be drawn on it", trip_pins > 0, f"trip pins={trip_pins}")
+        check("the legend explains the pins", a.locator(".mapp__legend span").count() >= 2)
+
+        a.locator(".mapp__layers .gt-chip", has_text="Where am I").click()
+        a.wait_for_timeout(3000)
+        check("your own position can be shown",
+              a.locator(".travel-map-marker-me").count() == 1)
+
+        a.locator(".mapp__layers .gt-chip", has_text="Add a place").click()
+        a.wait_for_timeout(600)
+        box = a.locator(".mapp__canvas .leaflet-container").bounding_box()
+        a.mouse.click(box["x"] + box["width"] * 0.4, box["y"] + box["height"] * 0.55)
+        a.wait_for_timeout(1500)
+        check("a point can be dropped on the map", a.locator(".mapp__panel--drop").count() == 1)
+        drop = a.locator(".mapp__panel--drop")
+        drop.locator("input").first.fill("QA map point")
+        drop.locator("button[type=submit]").click()
+        a.wait_for_timeout(3000)
+        mine = api(a, "GET", "/resources/requests")["body"] or []
+        placed = [r for r in mine if r.get("name") == "QA map point"]
+        check("the dropped point is submitted with its coordinates",
+              bool(placed) and placed[0].get("latitude") is not None,
+              str(placed[0].get("latitude")) if placed else "not submitted")
 
         # profile + settings
         section("Traveller — account")

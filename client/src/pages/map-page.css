@@ -1,0 +1,177 @@
+/* The whole application on one map. */
+
+.mapp { background: var(--gt-bg); min-height: 100vh; }
+
+.mapp__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-3);
+  padding-bottom: var(--gt-space-6);
+}
+
+/* ------------------------------------------------------------- controls */
+
+.mapp__controls { display: flex; flex-direction: column; gap: var(--gt-space-3); }
+
+.mapp__chips,
+.mapp__layers { display: flex; flex-wrap: wrap; gap: var(--gt-space-2); }
+
+/* The layer switches read as a separate decision from the category filters:
+   one narrows what the catalogue shows, the other adds a whole new thing. */
+.mapp__layers { padding-top: var(--gt-space-1); border-top: 1px dashed var(--gt-border); }
+
+.mapp__count { margin: 0; }
+
+/* ------------------------------------------------------------- the map */
+
+.mapp__canvas-wrap {
+  position: relative;
+  margin-inline: var(--gt-gutter);
+  border-radius: var(--gt-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--gt-border);
+}
+
+/* Tall, because this page *is* the map. Capped against the viewport so the
+   legend below it stays reachable. */
+.mapp__canvas { height: min(72vh, 40rem); }
+
+/* While dropping a point the cursor says so -- the map is doing something
+   different from what it does the rest of the time. */
+.mapp__canvas-wrap.is-placing .leaflet-container { cursor: crosshair; }
+
+/* --------------------------------------------------------------- panel */
+
+.mapp__panel {
+  position: absolute;
+  right: var(--gt-space-3);
+  top: var(--gt-space-3);
+  z-index: 500;              /* above Leaflet's own panes */
+  width: min(23rem, calc(100% - var(--gt-space-6)));
+  max-height: calc(100% - var(--gt-space-6));
+  overflow-y: auto;
+  padding: var(--gt-space-5);
+  border-radius: var(--gt-radius-md);
+  background: var(--gt-surface);
+  box-shadow: var(--gt-shadow-lg);
+  border: 1px solid var(--gt-border);
+}
+
+/* On a phone the panel is a sheet across the bottom: a floating card over a
+   small map hides the thing it is describing. */
+@media (max-width: 720px) {
+  .mapp__panel {
+    right: 0;
+    left: 0;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    max-height: 62%;
+    border-radius: var(--gt-radius-lg) var(--gt-radius-lg) 0 0;
+  }
+}
+
+.mapp__close {
+  position: absolute;
+  top: var(--gt-space-3);
+  right: var(--gt-space-3);
+  display: inline-flex;
+  padding: var(--gt-space-1);
+  border: none;
+  background: none;
+  color: var(--gt-text-soft);
+  cursor: pointer;
+  border-radius: var(--gt-radius-xs);
+}
+
+.mapp__close:hover { color: var(--gt-text); background: var(--gt-surface-2); }
+
+.mapp__name {
+  font-size: var(--gt-h4);
+  margin: 0 var(--gt-space-6) var(--gt-space-1) 0;
+  letter-spacing: var(--gt-tracking-tight);
+}
+
+.mapp__where {
+  display: flex;
+  align-items: center;
+  gap: var(--gt-space-1);
+  margin: 0 0 var(--gt-space-3);
+  font-size: var(--gt-small);
+  color: var(--gt-text-soft);
+}
+
+.mapp__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-2);
+  margin: 0 0 var(--gt-space-3);
+}
+
+.mapp__desc {
+  margin: 0 0 var(--gt-space-4);
+  font-size: var(--gt-small);
+  line-height: var(--gt-leading-normal);
+  color: var(--gt-text-soft);
+}
+
+/* --------------------------------------------------------------- facts */
+
+.mapp__facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gt-space-2);
+  margin: 0 0 var(--gt-space-4);
+  padding: var(--gt-space-3) var(--gt-space-4);
+  background: var(--gt-surface-2);
+  border-radius: var(--gt-radius-sm);
+}
+
+.mapp__facts > div { display: flex; gap: var(--gt-space-3); justify-content: space-between; }
+.mapp__facts dt { font-size: var(--gt-caption); color: var(--gt-text-faint); }
+.mapp__facts dd {
+  margin: 0;
+  font-size: var(--gt-caption);
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.mapp__safety {
+  margin: 0 0 var(--gt-space-4);
+  padding-left: var(--gt-space-4);
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+  line-height: var(--gt-leading-snug);
+}
+
+.mapp__actions { display: flex; flex-direction: column; gap: var(--gt-space-2); }
+.mapp__form { display: flex; flex-direction: column; gap: var(--gt-space-3); }
+.mapp__form .gt-caption { margin: 0; line-height: var(--gt-leading-snug); }
+
+.mapp__panel--drop { border-color: var(--gt-primary); }
+
+/* -------------------------------------------------------------- legend */
+
+.mapp__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gt-space-2) var(--gt-space-5);
+  font-size: var(--gt-caption);
+  color: var(--gt-text-soft);
+}
+
+.mapp__legend span { display: inline-flex; align-items: center; gap: var(--gt-space-2); }
+
+.mapp__key {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--gt-border);
+}
+
+.mapp__key--place { background: #0f9b8e; }
+.mapp__key--trip  { background: #f5b301; }
+.mapp__key--done  { background: #24a148; }
+.mapp__key--me    { background: #0f62fe; }

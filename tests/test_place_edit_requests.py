@@ -255,3 +255,85 @@ def test_adding_a_place_still_works_and_is_marked_as_such(client, admin_token):
     places = client.get("/api/resources/places").get_json()
     rows = places if isinstance(places, list) else places.get("places", [])
     assert any(row["name"] == "Ekom Nkam Falls" for row in rows)
+
+
+# ------------------------------------------------ a point picked on the map
+
+def test_a_new_place_can_carry_a_point_from_the_map(client, admin_token):
+    traveller = _token(client, "amina")
+
+    submission = client.post("/api/resources/requests", headers=_auth(traveller), json={
+        "type": "places", "name": "Cliff viewpoint", "location": "Buea, South West",
+        "cost": 0, "latitude": 4.1527, "longitude": 9.2410,
+    }).get_json()
+
+    assert submission["latitude"] == 4.1527
+    assert submission["longitude"] == 9.2410
+
+    client.post(f"/api/resources/requests/{submission['id']}/approve", headers=_auth(admin_token))
+
+    places = client.get("/api/resources/places").get_json()
+    rows = places if isinstance(places, list) else places.get("places", [])
+    created = next(p for p in rows if p["name"] == "Cliff viewpoint")
+    # Approved where it was pointed at, not where the town name geocodes to.
+    assert created["latitude"] == 4.1527
+    assert created["longitude"] == 9.2410
+
+
+def test_a_correction_can_move_a_place_on_the_map(client, place, admin_token):
+    traveller = _token(client, "amina")
+
+    submission = client.post("/api/resources/requests", headers=_auth(traveller), json={
+        "mode": "edit", "type": "places", "target_id": place["id"],
+        "latitude": 2.9500, "longitude": 9.9100, "reason": "The pin was in the sea.",
+    }).get_json()
+
+    assert submission["changes"]["latitude"] == 2.95
+    assert submission["changes"]["longitude"] == 9.91
+
+    client.post(f"/api/resources/requests/{submission['id']}/approve", headers=_auth(admin_token))
+    moved = client.get(f"/api/resources/places/{place['id']}").get_json()["place"]
+    assert moved["latitude"] == 2.95
+
+
+def test_half_a_coordinate_is_not_a_position(client):
+    """A lone latitude would place the pin on the equator, not admit it is unknown."""
+    traveller = _token(client, "amina")
+    response = client.post("/api/resources/requests", headers=_auth(traveller), json={
+        "type": "places", "name": "Somewhere", "location": "Buea, South West",
+        "cost": 0, "latitude": 4.15,
+    })
+    assert response.status_code == 201
+    assert "latitude" not in response.get_json()
+
+
+def test_coordinates_must_be_numbers(client):
+    traveller = _token(client, "amina")
+    response = client.post("/api/resources/requests", headers=_auth(traveller), json={
+        "type": "places", "name": "Somewhere", "location": "Buea, South West",
+        "cost": 0, "latitude": "north", "longitude": "west",
+    })
+    assert response.status_code == 400
+
+
+def test_coordinates_must_be_on_the_planet(client):
+    traveller = _token(client, "amina")
+    response = client.post("/api/resources/requests", headers=_auth(traveller), json={
+        "type": "places", "name": "Somewhere", "location": "Buea, South West",
+        "cost": 0, "latitude": 991, "longitude": 9.2,
+    })
+    assert response.status_code == 400
+
+
+def test_resubmitting_the_same_point_is_not_a_change(client, place, admin_token):
+    traveller = _token(client, "amina")
+    current = client.get(f"/api/resources/places/{place['id']}").get_json()["place"]
+    if current.get("latitude") is None:
+        pytest.skip("the fixture place has no coordinates to round-trip")
+
+    response = client.post("/api/resources/requests", headers=_auth(traveller), json={
+        "mode": "edit", "type": "places", "target_id": place["id"],
+        "latitude": current["latitude"], "longitude": current["longitude"],
+    })
+    assert response.status_code == 400
+    assert "nothing would change" in response.get_json()["error"]

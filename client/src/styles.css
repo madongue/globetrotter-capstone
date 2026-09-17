@@ -924,6 +924,45 @@ textarea {
   background: var(--primary);
 }
 
+/* Pins that mean different things, told apart by colour *and* size, so the
+   difference survives a greyscale screen and a small phone. */
+
+.travel-map-marker-trip {
+  background: rgba(245, 179, 1, 0.22);
+  border-color: rgba(245, 179, 1, 0.5);
+}
+
+.travel-map-marker-trip span { background: #f5b301; }
+
+.travel-map-marker-done {
+  background: rgba(36, 161, 72, 0.22);
+  border-color: rgba(36, 161, 72, 0.5);
+}
+
+.travel-map-marker-done span { background: #24a148; }
+
+/* Where the traveller is standing. It pulses, because it is the one pin that
+   means "now" -- and it stops pulsing for anyone who asked for less motion. */
+.travel-map-marker-me {
+  background: rgba(15, 98, 254, 0.22);
+  border-color: rgba(15, 98, 254, 0.55);
+}
+
+.travel-map-marker-me span {
+  background: #0f62fe;
+  animation: gt-pulse 2s ease-out infinite;
+}
+
+@keyframes gt-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(15, 98, 254, 0.5); }
+  70%  { box-shadow: 0 0 0 12px rgba(15, 98, 254, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(15, 98, 254, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .travel-map-marker-me span { animation: none; }
+}
+
 .map-search-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

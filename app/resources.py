@@ -695,6 +695,11 @@ def resource_requests():
         except ValueError as exc:
             return jsonify({"error": str(exc)}), 400
 
+        try:
+            point = _coordinates_from(data)
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+
         request_id = str(uuid.uuid4())
         map_query = data.get("map_query", "").strip() or ", ".join(part for part in [name, location] if part)
         media_items = _place_media_from_request(request_id, data) if resource_type == "places" else []
@@ -712,6 +717,10 @@ def resource_requests():
             "cost_note": data.get("cost_note", ""),
             "map_query": map_query,
             "media": media_items,
+            # Carried through review so an approved place lands exactly where
+            # it was pointed at, instead of wherever geocoding the town name
+            # happens to put it.
+            **({"latitude": point[0], "longitude": point[1]} if point else {}),
             "submitted_by": username,
             "status": "pending",
             "submitted_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -740,6 +749,30 @@ def resource_requests():
 #: or anything the geocoder derives, because those are not facts about the
 #: place that a visitor is in a position to correct.
 EDITABLE_FIELDS = ("name", "location", "description", "cost", "cost_per_night", "cost_note", "tags")
+
+#: Correcting where a place *is* is separate from correcting what it is
+#: called: it arrives as a pair from a click on the map, so it is read and
+#: validated together rather than field by field.
+COORDINATE_FIELDS = ("latitude", "longitude")
+
+
+def _coordinates_from(data):
+    """Read a latitude/longitude pair from a submission, or return None.
+
+    Both or neither: half a coordinate places nothing, and storing it would
+    put a marker on the equator off the coast of Africa rather than admit the
+    point is unknown.
+    """
+    lat, lon = data.get("latitude"), data.get("longitude")
+    if lat in (None, "") or lon in (None, ""):
+        return None
+    try:
+        lat, lon = float(lat), float(lon)
+    except (TypeError, ValueError):
+        raise ValueError("latitude and longitude must be numbers")
+    if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+        raise ValueError("latitude or longitude is outside valid bounds")
+    return lat, lon
 
 
 def _catalogue_record(resource_type: str, resource_id: str):
@@ -801,6 +834,15 @@ def _proposed_changes(resource_type: str, current: dict, data: dict) -> dict:
     if "location" in changes:
         changes.update(infer_cameroon_geo(changes["location"]))
 
+    # A point picked on the map. Only recorded when it actually differs, so
+    # a form that round-trips the existing coordinates is not a correction.
+    point = _coordinates_from(data)
+    if point:
+        lat, lon = point
+        if (current.get("latitude"), current.get("longitude")) != (lat, lon):
+            changes["latitude"] = lat
+            changes["longitude"] = lon
+
     return changes
 
 
@@ -849,6 +891,10 @@ def _apply_request_decision(request_id, approve, review_note=""):
             "cost_note": submission.get("cost_note", ""),
             "map_query": submission.get("map_query", ""),
             "map_info": _resource_map_info(submission.get("name", ""), submission.get("map_query") or submission.get("location", "")),
+            **({
+                "latitude": submission["latitude"],
+                "longitude": submission["longitude"],
+            } if submission.get("latitude") is not None else {}),
             "media": submission.get("media", []),
             "images": [item for item in submission.get("media", []) if item.get("type") == "photo"],
             "videos": [item for item in submission.get("media", []) if item.get("type") == "video"],

@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
+import MapPage from './pages/MapPage';
 import AssistantDock from './components/AssistantDock';
 import Media from './pages/Media';
 import Saved from './pages/Saved';
@@ -50,6 +51,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             mirrored into the URL by useRouteSync. */}
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
+        {/* The whole catalogue, your trips, your progress and your position
+            on one map. */}
+        <Route path="/map" element={<MapPage />} />
         <Route path="/places/:id" element={<PlaceDetails />} />
 
         {/* Phase C: planning. /trips/:id/manage is deliberately left to App,

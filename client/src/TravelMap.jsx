@@ -24,10 +24,47 @@ const selectedMarkerIcon = L.divIcon({
   popupAnchor: [0, -12],
 });
 
-function MapBounds({ markers, selectedPosition }) {
+/**
+ * Pins that mean different things look different.
+ *
+ * A map showing the catalogue, the stops on your trip, the ones you have
+ * already reached and where you are standing needs four pins that can be told
+ * apart at a glance -- otherwise it is one undifferentiated cloud of dots. The
+ * shapes are styled in CSS by class, so the map stays free of colour values.
+ */
+const VARIANT_ICONS = {
+  place: markerIcon,
+  trip: L.divIcon({
+    className: 'travel-map-marker travel-map-marker-trip',
+    html: '<span></span>',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -11],
+  }),
+  done: L.divIcon({
+    className: 'travel-map-marker travel-map-marker-done',
+    html: '<span></span>',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -11],
+  }),
+  me: L.divIcon({
+    className: 'travel-map-marker travel-map-marker-me',
+    html: '<span></span>',
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    popupAnchor: [0, -10],
+  }),
+};
+
+function MapBounds({ markers, selectedPosition, enabled = true }) {
   const map = useMap();
 
   useEffect(() => {
+    // A map the reader is exploring must not jump every time the pins change.
+    // Refitting on each filter keystroke throws away the view they had just
+    // panned to, which reads as the map fighting back.
+    if (!enabled) return;
     const points = [
       ...markers.map((marker) => marker.position),
       selectedPosition,
@@ -44,7 +81,7 @@ function MapBounds({ markers, selectedPosition }) {
     }
 
     map.fitBounds(points, { padding: [28, 28], maxZoom: 12 });
-  }, [map, markers, selectedPosition]);
+  }, [map, markers, selectedPosition, enabled]);
 
   return null;
 }
@@ -74,6 +111,8 @@ export default function TravelMap({
   className = '',
   ariaLabel = 'Interactive Cameroon map',
   onMapClick,
+  onMarkerClick,
+  fitBounds = true,
 }) {
   const validMarkers = useMemo(() => markers.filter((marker) => (
     Array.isArray(marker.position)
@@ -91,10 +130,15 @@ export default function TravelMap({
     <div className={`leaflet-map-canvas ${onMapClick ? 'leaflet-map-canvas-clickable' : ''} ${className}`} aria-label={ariaLabel}>
       <MapContainer center={center} zoom={zoom} scrollWheelZoom className="leaflet-map">
         <TileLayer attribution={TILE_ATTRIBUTION} url={TILE_URL} />
-        <MapBounds markers={validMarkers} selectedPosition={normalizedSelectedPosition} />
+        <MapBounds markers={validMarkers} selectedPosition={normalizedSelectedPosition} enabled={fitBounds} />
         {onMapClick && <MapClickHandler onMapClick={onMapClick} />}
         {validMarkers.map((marker) => (
-          <Marker key={marker.id || `${marker.name}-${marker.position.join(',')}`} position={marker.position} icon={marker.icon || markerIcon}>
+          <Marker
+            key={marker.id || `${marker.name}-${marker.position.join(',')}`}
+            position={marker.position}
+            icon={marker.icon || VARIANT_ICONS[marker.variant] || markerIcon}
+            eventHandlers={onMarkerClick ? { click: () => onMarkerClick(marker) } : undefined}
+          >
             <Popup>
               <strong>{marker.name}</strong>
               {marker.location && <p>{marker.location}</p>}

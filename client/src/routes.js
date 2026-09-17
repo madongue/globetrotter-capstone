@@ -35,6 +35,7 @@ export const ROUTES = [
   // better than "discovery", and "saved" better than "resources".
   { path: '/dashboard',   page: 'dashboard', view: 'overview' },
   { path: '/explore',     page: 'dashboard', view: 'discovery' },
+  { path: '/map',         page: 'dashboard', view: 'discovery' },
   { path: '/trips',       page: 'dashboard', view: 'itineraries' },
   { path: '/community',   page: 'dashboard', view: 'community' },
   { path: '/media',       page: 'dashboard', view: 'media' },
@@ -134,6 +135,7 @@ export function pathFor(page, view, entityId, { suffix } = {}) {
 export const NAV_ITEMS = [
   { path: '/dashboard', label: 'Home',      icon: 'home',     primary: true,  authOnly: true },
   { path: '/explore',   label: 'Explore',   icon: 'compass',  primary: true,  authOnly: false },
+  { path: '/map',       label: 'Map',       icon: 'map',      primary: false, authOnly: false },
   { path: '/trips',     label: 'Trips',     icon: 'map',      primary: true,  authOnly: true },
   { path: '/community', label: 'Community', icon: 'users',    primary: true,  authOnly: true },
   { path: '/profile',   label: 'Profile',   icon: 'user',     primary: true,  authOnly: true },

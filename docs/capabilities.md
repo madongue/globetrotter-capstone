@@ -60,6 +60,14 @@ They cannot save anything, plan anything, or see other travellers.
 
 - Browse and filter all 845 places by category, region and free text
 - **See the filtered results on a map of Cameroon**, and open any place from its pin
+- Open **`/map`** — the whole application on one map:
+  - every catalogue place as a pin, searchable and filterable
+  - tap a pin for what the catalogue holds: kind, cost, region, coordinates, and for curated entries the best season, how to get there, difficulty and safety notes
+  - **add that place to a trip**, or **build a trip around it**, without leaving the map
+  - save it, get road directions, or open its full page
+  - **draw your own trips on it**, with checkpoints you have already reached shown apart from those still to come
+  - **follow your own position live**, shared with anyone the trip is shared with
+  - **drop a pin to propose a new place**, whose exact coordinates survive review
 - Open a place: description, typical cost, region, opening context, offline guide
 - See the place on a Leaflet map, and get directions to it
 - See traveller **photographs and videos** attached to a place
@@ -226,6 +234,7 @@ Things people reasonably expect that this application does **not** do:
 | **Chat is polled, not pushed** | Two-second cursor rather than WebSockets, because the app runs multiple workers with no shared broker. Correct under any number of workers; a two-second delay is the cost. |
 | **Uploaded files are not permanent on the free tier** | Photos, videos and profile pictures go to local disk, which Render discards on redeploy. Setting `CLOUDINARY_URL` switches to cloud storage; the code path already exists. A picture that no longer loads falls back to the account's initials rather than a broken image. |
 | **`opening_hours` is not a field** | No place record carries opening times, so nothing can display them. |
+| **Google's own place data is not imported** | Live opening hours, reviews and photographs belong to Google and need a billed API key this deployment does not have; copying them into this catalogue would breach their terms. Every place instead *links out* to Google Maps for directions and for what they hold — a link, not a copy. |
 | **No password change while signed in** | Only the forgotten-password flow can set a new one. |
 | **Metrics are per process** | `/api/metrics` counts one worker's requests. A single platform-wide number needs a collector such as Prometheus — Phase 4. |
 
